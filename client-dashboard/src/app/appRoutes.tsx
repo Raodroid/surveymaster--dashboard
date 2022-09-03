@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import React, { lazy, useEffect, Suspense } from 'react';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { ROUTE_PATH } from '../enums';
