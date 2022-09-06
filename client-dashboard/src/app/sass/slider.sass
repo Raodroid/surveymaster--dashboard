@@ -1,0 +1,27 @@
+.ant-slider
+  .ant-slider-rail
+    height: 8px
+    background-color: $text-primary-color
+    opacity: 0.1
+    border-radius: 3px
+  .ant-slider-track
+    height: 8px
+    border-radius: 3px
+    background-color: $primary-color
+  .ant-slider-step
+    height: 8px
+    .ant-slider-dot
+      display: none
+  .ant-slider-handle
+    margin-top: -6px
+    border: 2px solid rgba(35, 37, 103, 0.2)
+    background-color: $primary-color
+    width: 20px
+    height: 20px
+    &:focus
+      box-shadow: 0 0 0 5px rgba(201, 67, 151, 0.12)
+  &:hover > .ant-slider-track
+    background-color: $primary-color
+    opacity: 0.9
+  &:hover > .ant-slider-handle
+    border-color: rgba(35, 37, 103, 0.3) !important

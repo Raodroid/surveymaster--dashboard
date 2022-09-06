@@ -1,0 +1,23 @@
+import React, { memo } from 'react';
+import { Input } from 'antd';
+import { InputProps } from 'antd/lib/input';
+import { OnchangeType } from '../../type';
+
+export type CustomInputProps = InputProps & OnchangeType;
+
+const CustomInput = (props: CustomInputProps) => {
+  const customOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (props.onChange) props.onChange(e.target.value);
+  };
+  const customProps: { onChange?: typeof customOnChange } = {};
+  if (props.onChange) customProps.onChange = customOnChange;
+  return (
+    <Input
+      {...props}
+      {...customProps}
+      autoComplete="chrome-off"
+      aria-label="Custom Input"
+    />
+  );
+};
+export default memo(CustomInput);

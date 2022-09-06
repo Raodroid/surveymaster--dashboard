@@ -1,0 +1,59 @@
+// #================#
+// # ==> TABLE <== #
+// #================#
+
+.ant-table table
+  border-spacing: 0 3px
+
+.ant-table-thead > tr > th
+  height: 16px
+  color: $text-primary-color
+  font-size: 12px
+  font-weight: 600
+  background: white
+
+.ant-table-tbody > tr:nth-child(2n)
+  background: #2929290a
+
+.ant-table-tbody > tr.ant-table-row
+  > td
+    &:first-child
+      border-top-left-radius: 6px
+      border-bottom-left-radius: 6px
+      border-left: 1px solid transparent
+    &:last-child
+      border-top-right-radius: 6px
+      border-bottom-right-radius: 6px
+      border-right: 1px solid transparent
+  &:hover
+    > td
+      border-color: $border-color-hover
+      background: transparent
+
+      &:first-child
+        border-left-color: $border-color-hover
+      &:last-child
+        border-right-color: $border-color-hover
+
+.ant-table-tbody > tr.ant-table-row-selected
+  > td
+    background: transparent
+  &:hover
+    > td
+      background: rgb(204, 210, 255)
+
+.ant-table-tbody > tr > td
+  height: 16px
+  color: $text-primary-color
+  font-size: 12px
+  border-top: 1px solid transparent
+  border-bottom: 1px solid transparent
+
+  .ant-table-sell
+    margin: 5px 0
+    .ant-table-row-selected
+      border: 1px solid
+      border-radius: 2px
+
+.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td
+  padding: 10px

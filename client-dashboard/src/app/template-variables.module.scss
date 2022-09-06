@@ -1,0 +1,174 @@
+$border-radius: var(--border-radius);
+$border-color: var(--border-color);
+$border-color-hover: var(--border-color-hover);
+
+$app-bg-color: var(--app-bg-color);
+
+$text-primary-color: var(--text-color);
+$text-color-hover: rgb(67, 67, 67);
+$text-color-outline: #1c1c1c;
+$text-color-active: rgb(90, 89, 89);
+$text-color-deprecated-bg: rgb(233,231,229);
+$text-color-deprecated-border: rgba(41, 41, 41, 0.2);
+
+$font-size: 14px;
+
+$primary-color: var(--ant-primary-color);
+$primary-color-hover: var(--ant-primary-color-hover);
+$primary-color-outline: var(--ant-primary-color-outline);
+$primary-color-active: var(--ant-primary-color-active);
+$primary-color-deprecated-bg: var(--ant-primary-color-deprecated-l-20);
+
+$secondary-color: var(--secondary-color);
+$secondary-color-hover: var(--secondary-color-hover);
+$secondary-color-outline: var(--secondary-color-outline);
+$secondary-color-active: var(--secondary-color-active);
+$secondary-color-deprecated-bg: var(--secondary-color-deprecated-bg);
+$secondary-color-deprecated-border: var(--secondary-color-deprecated-border);
+
+$link-color: #007AE7;
+$link-color-hover: rgb(3,112,206);
+$link-color-outline: #036ac8;
+$link-color-active: #007AE7;
+$link-color-deprecated-bg: #fff2f0;
+$link-color-deprecated-border: rgba(0, 122, 231, 0.24);
+
+$success-color: #36BB9D;
+$success-color-hover: #2ed7b0;
+$success-color-active: #30a78d;
+$success-color-outline: #36BB9D;
+$success-color-deprecated-bg: rgba(54,187,157,0.04);
+$success-color-deprecated-border: #b7eb8f;
+
+$danger-color: #FA668A;
+$danger-color-hover: rgb(223,94,126);
+$danger-color-active: #f85077;
+$danger-color-outline: #a9465d;
+$danger-color-deprecated-bg: #fff9fa;
+$danger-color-deprecated-border: #ffccc7;
+
+$warning-color: #F99444;
+$warning-color-hover: #e58b44;
+$warning-color-active: #fb8b2f;
+$warning-color-outline: #F99444;
+$warning-color-deprecated-bg: rgba(249,148,68,0.04);
+$warning-color-deprecated-border: #ffe58f;
+
+$info-color: #007AE7;
+$info-color-hover: #0385f8;
+$info-color-active: #0264bc;
+$info-color-outline: #007AE7;
+$info-color-deprecated-bg: rgb(219,232,244);
+$info-color-deprecated-border: rgb(224, 239, 252);
+
+$dark-color: $text-primary-color;
+$dark-color-hover: $text-color-hover;
+$dark-color-active: $text-color-active;
+$dark-color-outline:$text-color-outline;
+$dark-color-deprecated-bg: $text-color-deprecated-bg;
+$dark-color-deprecated-border: $text-color-deprecated-border;
+
+$color-astronaut-20-percent: rgba(35, 37, 103, 0.2);
+
+$padding-card: 36px;
+
+$default-bg-color: #C94397;
+$default-text-color-btn: white;
+
+$primary-bg-input: #ffffff;
+$primary-bg-input-disabled: rgba(35, 37, 103, 0.04);
+$primary-border-input-color: rgba(41, 41, 41, 0.2);
+
+
+$small: 576px;
+$medium: 768px;
+$large: 992px;
+$extraLarge: 1200px;
+$superLarge: 1600px;
+$element-spacing: 16px;
+$section-spacing: 24px;
+
+:export {
+  small: $small;
+  medium: $medium;
+  large: $large;
+  extraLarge: $extraLarge;
+  superLarge: $superLarge;
+  element_spacing: $element-spacing;
+  section_spacing: $section-spacing;
+
+  font_size: $font-size;
+  border_color: $border-color;
+  border_radius: $border-radius;
+
+  text_primary_color: $text-primary-color;
+  text_color_hover: $text-color-hover;
+  text_color_outline: $text-color-outline;
+  text_color_active: $text-color-active;
+  text_color_deprecated_bg: $text-color-deprecated-bg;
+  text_color_deprecated_border: $text-color-deprecated-border;
+
+
+  primary_color: $primary-color;
+  primary_color_hover: $primary_color_hover;
+  primary_color_active: $primary_color_active;
+  primary_color_outline: $primary_color_outline;
+  primary_color_deprecated_bg: $primary-color-deprecated-bg;
+
+  app_bg_color: $app-bg-color;
+
+  secondary_color: $secondary-color;
+  secondary_color_hover: $secondary-color-hover;
+  secondary_color_outline: $secondary-color-outline;
+  secondary_color_active: $secondary-color-active;
+  secondary_color_deprecated_bg: $secondary-color-deprecated-bg;
+  secondary_color_deprecated_border: $secondary-color-deprecated-border;
+
+  link_color: $link-color;
+  link_color_hover: $link-color-hover;
+  link_color_outline: $link-color-outline;
+  link_color_active: $link-color-active;
+  link_color_deprecated_bg: $link-color-deprecated-bg;
+  link_color_deprecated_border: $link-color-deprecated-border;
+
+  success_color: $success-color;
+  success_color_hover: $success-color-hover;
+  success_color_active: $success-color-active;
+  success_color_outline: $success-color-outline;
+  success_color_deprecated_bg: $success-color-deprecated-bg;
+  success_color_deprecated_border: $success-color-deprecated-border;
+
+  danger_color: $danger-color;
+  danger_color_hover: $danger-color-hover;
+  danger_color_active: $danger-color-active;
+  danger_color_outline: $danger-color-outline;
+  danger_color_deprecated_bg: $danger-color-deprecated-bg;
+  danger_color_deprecated_border: $danger-color-deprecated-border;
+
+  warning_color: $warning-color;
+  warning_color_hover: $warning-color-hover;
+  warning_color_active: $warning-color-active;
+  warning_color_outline: $warning-color-outline;
+  warning_color_deprecated_bg: $danger-color-deprecated-bg;
+  warning_color_deprecated_border: $warning-color-deprecated-border;
+
+  info_color: $info-color;
+  info_color_hover: $info-color-hover;
+  info_color_active: $info-color-active;
+  info_color_outline: $info-color-outline;
+  info_color_deprecated_bg: $info-color-deprecated-bg;
+  info_color_deprecated_border: $info-color-deprecated-border;
+
+  dark_color: $dark-color;
+  dark_color_hover: $dark-color-hover;
+  dark_color_active: $dark-color-active;
+  dark_color_outline: $dark-color-outline;
+  dark_color_deprecated_bg: $dark-color-deprecated-bg;
+  dark_color_deprecated_border: $dark-color-deprecated-border;
+
+  default_text_color_btn: $default-text-color-btn;
+
+  primary_bg_input: $primary-bg-input;
+  primary_bg_input_disabled: $primary-bg-input-disabled;
+  primary_border_input_color: $primary-border-input-color;
+}

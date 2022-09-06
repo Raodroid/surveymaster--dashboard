@@ -1,0 +1,134 @@
+@font-face
+  font-family: 'Open Sans'
+  font-weight: 200
+  src: url(../fonts/OpenSans-Light.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: 'Open Sans'
+  font-weight: 300
+  src: url(../fonts/OpenSans-Light.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: 'Open Sans'
+  font-weight: 400
+  src: url(../fonts/OpenSans-Regular.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: 'Open Sans'
+  font-weight: 500
+  src: url(../fonts/OpenSans-SemiBold.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: 'Open Sans'
+  font-weight: 600
+  src: url(../fonts/OpenSans-SemiBold.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: 'Open Sans'
+  font-weight: 700
+  src: url(../fonts/OpenSans-Bold.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: 'Open Sans'
+  font-weight: 800
+  src: url(../fonts/OpenSans-ExtraBold.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: 'Open Sans'
+  font-weight: 900
+  src: url(../fonts/OpenSans-ExtraBold.ttf) format('truetype')
+  font-display: swap
+
+// DM Sans font
+@font-face
+  font-family: 'DM Sans'
+  font-weight: 600
+  src: url(../fonts/DMSans-Bold.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: DM Sans
+  font-weight: 600
+  font-style: italic
+  src: url(../fonts/DMSans-BoldItalic.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: DM Sans
+  font-weight: 400
+  font-style: italic
+  src: url(../fonts/DMSans-Italic.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: DM Sans
+  font-weight: 400
+  src: url(../fonts/DMSans-Medium.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: DM Sans
+  font-weight: 400
+  font-style: italic
+  src: url(../fonts/DMSans-MediumItalic.ttf) format('truetype')
+  font-display: swap
+
+@font-face
+  font-family: 'DM Sans'
+  src: url(../fonts/DMSans-Regular.ttf) format('truetype')
+  font-display: swap
+
+@import "template-variables.module"
+@import "sass/tooltip"
+@import "sass/header"
+@import "sass/card"
+@import "sass/button"
+@import "sass/icon"
+@import "sass/slider"
+@import "sass/input"
+@import "sass/tag"
+@import "sass/checkbox"
+@import "sass/table"
+@import "sass/pagegination"
+@import "sass/modal"
+@import "sass/picker"
+@import "sass/confirm"
+@import "sass/radio"
+@import "sass/select"
+@import "sass/form"
+@import "sass/dropdown"
+@import "sass/tab"
+@import "sass/checkable-tag"
+@import "sass/notification"
+@import "sass/joyride"
+@import "sass/general-class"
+@import "sass/menu"
+@import 'slick-carousel/slick/slick.css'
+@import 'slick-carousel/slick/slick-theme.css'
+
+*
+  font-family: DM Sans, Open Sans, sans-serif
+  font-size: $font-size
+  scroll-behavior: smooth
+  border-width: 0
+
+body
+  background-color: var(--app-bg-color)
+  color: $text-primary-color
+
+h1, h2, h3, h4, h5, h6
+  color: $text-primary-color
+
+#root
+  width: 100%
+  height: 100%
+
+.scroll-bars-hanh > div:first-child
+  overflow: scroll !important

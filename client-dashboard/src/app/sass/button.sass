@@ -1,0 +1,145 @@
+// #================#
+// # ==> BUTTON <== #
+// #================#
+.ant-btn
+  display: flex
+  align-items: center
+  justify-content: center
+  border-radius: 4px
+  padding: 4px 1.5rem
+
+  span
+    font-size: 12px
+    font-weight: bold
+.ant-btn-lg
+  height: 40px
+  border-radius: 6px
+  span
+    font-size: 14px
+.ant-btn-sm
+  height: 24px
+  span
+    font-size: 12px
+
+.ant-btn-default
+  border: 0
+  color: var(--ant-primary-color)
+  background: var(--ant-primary-color-deprecated-f-12)
+
+  &:hover
+    background: var(--ant-primary-color-deprecated-l-35)
+
+  &.secondary-btn
+    color: $secondary-color
+    background: $secondary-color-deprecated-bg
+
+    &:hover
+      color: $secondary-color
+      background: $secondary-color-hover
+    &:active,
+    &:focus
+      color: $secondary-color-active
+      background: var(--secondary-1)
+
+    &.ant-btn-default
+      border-color: $secondary-color
+
+  &.info-btn
+    color: $info-color
+    background: $info-color-deprecated-bg
+
+    &:hover
+      color: $info-color
+      background: rgb(193,218,242)
+    &:active,
+    &:focus
+      color: $info-color-active
+      background: rgb(193,218,242)
+
+    &.ant-btn-default
+      border-color: $info-color
+
+  &.dark-btn
+    color: $dark-color
+    background: $dark-color-deprecated-bg
+
+    &:hover
+      color: $dark-color
+      background: rgb(197,196,195)
+    &:active,
+    &:focus
+      color: $dark-color
+      background: rgb(197,196,195)
+
+    &.ant-btn-default
+      border-color: $dark-color
+
+.ant-btn-primary
+  border: 0
+
+  &.secondary-btn
+    background: $secondary-color
+    &:hover
+      background: $secondary-color-hover
+    &:active,
+    &:focus
+      background: $secondary-color-active
+
+    &.ant-btn-default
+      border-color: $secondary-color
+
+  &.info-btn
+    background: $info-color
+    &:hover
+      background: $info-color-hover
+    &:active,
+    &:focus
+      background: $info-color-active
+
+    &.ant-btn-default
+      border-color: $info-color
+
+  &.dark-btn
+    background: $dark-color
+    &:hover
+      background: $dark-color-hover
+    &:active,
+    &:focus
+      background: $dark-color-active
+
+    &.ant-btn-default
+      border-color: $dark-color
+
+.ant-btn-text
+  &.secondary-btn
+    color: $secondary-color
+    &:hover
+      background: $secondary-color-deprecated-bg
+    &:active,
+    &:focus
+      color: $secondary-color
+      background: var(--secondary-1)
+      &.ant-btn-primary
+        border-color: $secondary-color
+
+  &.info-btn
+    color: $info-color
+    &:hover
+      background: $info-color-deprecated-bg
+    &:active,
+    &:focus
+      color: $info-color
+      background: rgb(224, 239, 252)
+      &.ant-btn-primary
+        border-color: $info-color
+
+  &.dark-btn
+    color: $dark-color
+    &:hover
+      background: $dark-color-deprecated-bg
+    &:active,
+    &:focus
+      color: $dark-color
+      background: rgb(218, 218, 218)
+      &.ant-btn-primary
+        border-color: $dark-color

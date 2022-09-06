@@ -1,0 +1,58 @@
+.ant-select:not(.ant-select-customize-input) .ant-select-selector
+  border-radius: 6px
+
+.ant-select .ant-select-selector .ant-select-selection-item
+  font-weight: 600
+  color: $text-primary-color
+  font-size: 12px
+
+.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-item
+  color: $text-primary-color
+
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled)
+  color: $text-primary-color
+  font-weight: 600
+  background-color: white
+  padding-bottom: 10px
+.ant-select-selection-placeholder
+  font-weight: 600
+  font-size: 12px
+
+.ant-select-dropdown.select-background-blue
+  background-color: #34556C
+  padding: 0
+  border-radius: 6px
+  .rc-virtual-list-holder-inner
+    .ant-select-item.ant-select-item-option
+      height: 56px
+      border-bottom: 1px solid #ffffff
+      background-color: #34556C
+      .ant-select-item-option-content
+        display: flex
+        align-items: center
+        font-size: 14px
+        font-weight: bold
+        letter-spacing: 0
+        line-height: 16px
+        color: #ffffff
+        padding-left: 12px
+        span:last-child
+          border-radius: 4px
+          background: rgb(93, 119, 137)
+          padding: 3px 5px
+          font-weight: bold
+          font-size: 12px
+          margin-left: 0.5rem
+    .ant-select-item.ant-select-item-option:last-child
+      border-bottom: none
+    .ant-select-item.ant-select-item-option.ant-select-item-option-active.ant-select-item-option-selected
+      padding: 8px
+      border-radius: 4px
+      .ant-select-item-option-content
+        color: $text-primary-color
+        background: #ffffff
+        border-radius: 4px
+        padding: 12px
+        span:last-child
+          background: #eeeeee
+          color: $text-primary-color

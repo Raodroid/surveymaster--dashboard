@@ -1,0 +1,27 @@
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ROUTE_PATH } from 'enums';
+import { AuthSelectors } from 'redux/auth/index';
+import { Component, HigherOrderComType } from '../../../type';
+import qs from 'qs';
+
+const requireAuthentication: HigherOrderComType = (Com: Component) => {
+  return props => {
+    const isLogged = !!useSelector(AuthSelectors.getIdToken);
+    const history = useNavigate();
+    const location = useLocation();
+    const currentPath = location.pathname;
+    const { nextUrl } = qs.parse(location.search, { ignoreQueryPrefix: true });
+    useEffect(() => {
+      if (isLogged) {
+        if (currentPath === '/login' && nextUrl) {
+          return history(nextUrl as string);
+        }
+        return history(ROUTE_PATH.DASHBOARD_PATHS.HOME);
+      }
+    }, [isLogged, history, currentPath, nextUrl]);
+    return <Com {...props} />;
+  };
+};
+export default requireAuthentication;
