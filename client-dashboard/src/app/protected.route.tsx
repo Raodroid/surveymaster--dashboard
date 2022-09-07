@@ -1,12 +1,32 @@
 import { ROUTE_PATH } from 'enums';
-import React from 'react';
+import React, { lazy } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
+import { Layout } from 'antd';
+import styled from 'styled-components';
+const { Content } = Layout;
+
+const LayoutNavbar = lazy(() => import('modules/dashboard/components/Navbar'));
 
 export const ProtectedRoutes = () => {
-  const idToken = useSelector(AuthSelectors.getIdToken);
+  const idToken = useSelector(AuthSelectors.getIdToken) || true;
   const isLogged = !!idToken;
 
-  return isLogged ? <Outlet /> : <Navigate to={ROUTE_PATH.LOGIN} />;
+  return isLogged ? (
+    <Layout>
+      <LayoutNavbar />
+      <BodyAppWrapper>
+        <Outlet />
+      </BodyAppWrapper>
+    </Layout>
+  ) : (
+    <Navigate to={ROUTE_PATH.LOGIN} />
+  );
 };
+
+const BodyAppWrapper = styled(Content)`
+  @media only screen and (max-width: 768px) {
+    margin: 0 2rem;
+  }
+`;

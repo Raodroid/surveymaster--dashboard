@@ -11,7 +11,7 @@ import {
 import { NotFoundPage } from 'modules/common-pages';
 import { ROUTE_PATH } from 'enums';
 import AuthLayout from 'modules/common/auth-layout/AuthLayout';
-import { CustomSpinSuspense } from 'modules/dashboard/components/Content/styles';
+import { CustomSpinSuspense } from 'modules/common/styles';
 
 const SignInUpPage = lazy(
   () => import('modules/auth/sign-in-wrapper/SignInPage'),

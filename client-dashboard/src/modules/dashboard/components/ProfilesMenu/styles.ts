@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Menu, Card } from 'antd';
-import { screenSize } from '../../../../enums/screenSize';
-import templateVariable from '../../../../app/template-variables.module.scss';
+import { screenSize } from 'enums';
+import templateVariable from 'app/template-variables.module.scss';
 
 export const ProfilesMenuWrapper = styled.div`
   margin-bottom: 1.5rem;

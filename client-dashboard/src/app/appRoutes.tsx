@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React, { lazy, useEffect, Suspense } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+
 import { useScrollbarContext } from '../scrollbarContext/useScrollBar';
 import { ProtectedRoutes } from './protected.route';
 import { NoAuthenticationRoutes } from './public.route';
-import ReactGA from 'react-ga4';
 import { ROUTE_PATH } from '../enums';
-import UserDashboardLayout from '../modules/dashboard';
+import { CustomSpinSuspense } from 'modules/common/styles';
 
-if (process.env.REACT_APP_ENV === 'prod') {
-  ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTIC_TRACKING_ID || '');
-}
+const Home = lazy(() => import('modules/dashboard/pages/Home'));
+const Project = lazy(() => import('modules/dashboard/pages/Project'));
+const Profile = lazy(() => import('modules/dashboard/pages/Profile'));
+const QuestionBank = lazy(() => import('modules/dashboard/pages/QuestionBack'));
 
 export const ScrollToTop = props => {
   const { scrollToTop } = useScrollbarContext();
@@ -24,15 +25,27 @@ export const ScrollToTop = props => {
 const AppRoutes = () => {
   return (
     <ScrollToTop>
-      <Routes>
-        <Route path="/app" element={<ProtectedRoutes />}>
-          <Route
-            path={ROUTE_PATH.DASHBOARD_PATHS.HOME}
-            element={<UserDashboardLayout />}
-          />
-        </Route>
-        <Route path="*" element={<NoAuthenticationRoutes />} />
-      </Routes>
+      <Suspense fallback={<CustomSpinSuspense />}>
+        <Routes>
+          <Route path={'/app'} element={<ProtectedRoutes />}>
+            <Route index element={<Home />} />
+            <Route
+              path={ROUTE_PATH.DASHBOARD_PATHS.PROJECT}
+              element={<Project />}
+            />
+            <Route
+              path={ROUTE_PATH.DASHBOARD_PATHS.PROFILE}
+              element={<Profile />}
+            />
+            <Route
+              path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK}
+              element={<QuestionBank />}
+            />
+            <Route path="*" element={<Navigate to={'/app'} replace />} />
+          </Route>
+          <Route path="*" element={<NoAuthenticationRoutes />} />
+        </Routes>
+      </Suspense>
     </ScrollToTop>
   );
 };

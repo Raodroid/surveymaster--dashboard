@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { CHANGE_EMAIL_FIELD } from 'modules/common/validate/validate';
-import { FormWrapper, SubmitBtn } from 'modules/common/styles';
+import { FormWrapper } from 'modules/common/styles';
 import Modal from 'antd/lib/modal/Modal';
 import { useMutation } from 'react-query';
 import { AuthService, CognitoService } from 'services';

@@ -4,7 +4,7 @@ import templateVariable from '../app/template-variables.module.scss';
 const unActiveColor = templateVariable.text_primary_color;
 const activeColor = templateVariable.primary_color;
 
-export const LogoBiome = props => {
+export const LogoBiomeIcon = props => {
   const { style, className, isActive } = props;
   return (
     <svg
@@ -15,6 +15,7 @@ export const LogoBiome = props => {
       y="0px"
       viewBox="0 0 260.52 90.95"
       className={className}
+      width={150}
       style={{ ...style }}
     >
       <g>

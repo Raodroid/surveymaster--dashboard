@@ -11,12 +11,10 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
 
 import { GlobalStyle } from 'styles/global-styles';
-import { ConfigProvider, Spin } from 'antd';
+import { ConfigProvider } from 'antd';
 
 import { useTranslation } from 'react-i18next';
 import AppRoutes from './appRoutes';
-import { useSelector } from 'react-redux';
-import { AuthSelectors } from 'redux/auth';
 import { AppContainer } from './style';
 
 import 'antd/dist/antd.variable.min.css';
@@ -29,8 +27,6 @@ import { setSecondaryColor } from '../modules/common/funcs';
 export function App() {
   const { i18n } = useTranslation();
   const { t } = useTranslation();
-
-  const token = useSelector(AuthSelectors.getAccessToken);
 
   useEffect(() => {
     ConfigProvider.config({
@@ -46,7 +42,7 @@ export function App() {
   }, []);
 
   return (
-    <AppContainer className={token ? '' : 'unauthenticated'}>
+    <AppContainer>
       <Helmet
         titleTemplate={`%s - ${t('titles.app')}`}
         defaultTitle={t('titles.app')}
