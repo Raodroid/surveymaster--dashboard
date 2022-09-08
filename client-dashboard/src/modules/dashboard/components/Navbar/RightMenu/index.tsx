@@ -18,7 +18,7 @@ export const rightNavbarMenu: MenuProps['items'] = [
         Profile
       </AvatarMenuWrapper>
     ),
-    key: ROUTE_PATH.DASHBOARD_PATHS.PROFILE,
+    key: FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME,
   },
 ];
 
