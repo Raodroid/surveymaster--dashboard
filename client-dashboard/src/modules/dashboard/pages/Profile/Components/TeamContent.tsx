@@ -3,9 +3,9 @@ import { CustomSlider } from 'modules/common/input/inputs';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { AuthAction } from 'redux/auth';
-import { UserContentStyled } from './styles';
+import { UserContentStyled } from '../styles';
 
-function UserContent() {
+function TeamContent() {
   const dispatch = useDispatch();
   return (
     <UserContentStyled className="flex">
@@ -89,4 +89,4 @@ function UserContent() {
   );
 }
 
-export default UserContent;
+export default TeamContent;
