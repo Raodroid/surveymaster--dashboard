@@ -14,8 +14,6 @@ import { SignInUpFormWrapper, PlaceholderCenter } from './style';
 import requireAuthentication from 'modules/common/hoc/requireAuthentication';
 import { FormWrapper } from 'modules/common/styles';
 
-const countryCode = 'SG';
-
 interface SignInPayload {
   email: string;
   password: string;
@@ -103,7 +101,7 @@ const SignInForm = () => {
                   loading={isSigningIn}
                   htmlType="submit"
                 >
-                  {t(`common.logIn'}`)}
+                  {t('common.logIn')}
                 </Button>
                 <Link
                   to={ROUTE_PATH.RESET_PASSWORD}
