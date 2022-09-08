@@ -28,7 +28,6 @@ export const ProfileStyled = styled.div`
     width: 100%;
     min-height: 100%;
     gap: 20px;
-    padding: 0 20px 20px;
   }
 
   .sider {
@@ -122,8 +121,14 @@ export const ProfileStyled = styled.div`
       border-radius: 2px;
       background-color: #e0effc;
       color: #007ae7;
-      padding-top: 6px;
     }
+  }
+
+  .inputs,
+  .ant-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .submit-btn {
@@ -143,6 +148,7 @@ export const UserContentStyled = styled.div`
   flex-direction: column;
   gap: 20px;
   justify-content: flex-start;
+  flex: 1;
 
   .part {
     min-height: 76px;

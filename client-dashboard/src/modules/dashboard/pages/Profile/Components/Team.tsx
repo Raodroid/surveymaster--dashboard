@@ -1,20 +1,14 @@
-import { Button, Layout, Radio, Tabs, Upload } from 'antd';
-import { Content, Footer, Header } from 'antd/lib/layout/layout';
-import Sider from 'antd/lib/layout/Sider';
-import { ControlledInput } from 'modules/common';
-import siderContentLayout from 'modules/common/hoc/siderContentLayout';
-import { INPUT_TYPES } from 'modules/common/input/type';
-import React from 'react';
-import { ProfileStyled } from './styles';
-import UserContent from './UserContent';
-import { useState } from 'react';
+import { Button, Radio } from 'antd';
+import { FULL_ROUTE_PATH } from 'enums';
 import { CustomImageUpload } from 'modules/common/input/inputs';
-import { useNavigate } from 'react-router';
-import { FULL_ROUTE_PATH, ROUTE_PATH } from 'enums';
-import { useParams } from 'react-router';
-import { useLocation } from 'react-router';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import SharedForm from '../form/SharedForm';
+import TeamForm from '../form/TeamForm';
+import { ProfileStyled } from '../styles';
+import UserContent from './UserContent';
 
-const Home = () => {
+const Team = () => {
   const navigate = useNavigate();
   const path = useLocation();
 
@@ -55,18 +49,8 @@ const Home = () => {
           </div>
 
           <div className="inputs">
-            {/* <CustomInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'text'}
-                name="email"
-                label="Full Name"
-                placeholder="name"
-                customFormProps={{ required: true }}
-              /> */}
-            <input />
+            <SharedForm Inputs={TeamForm} />
           </div>
-
-          <Button className="submit-btn">Save Edits</Button>
         </div>
         <UserContent />
       </div>
@@ -74,4 +58,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Team;
