@@ -9,7 +9,7 @@ import {
   RequiredChangePasswordPage,
 } from 'modules/auth';
 import { NotFoundPage } from 'modules/common-pages';
-import { ROUTE_PATH } from 'enums';
+import { FULL_ROUTE_PATH, ROUTE_PATH } from 'enums';
 import AuthLayout from 'modules/common/auth-layout/AuthLayout';
 import { CustomSpinSuspense } from 'modules/common/styles';
 
@@ -36,7 +36,10 @@ export const NoAuthenticationRoutes = () => (
         />
 
         <Route path={ROUTE_PATH.NOTFOUND} element={<NotFoundPage />} />
-        <Route path="*" element={<Navigate to={ROUTE_PATH.LOGIN} replace />} />
+        <Route
+          path="*"
+          element={<Navigate to={FULL_ROUTE_PATH.LOGIN} replace />}
+        />
       </Routes>
     </Suspense>
   </AuthLayout>

@@ -2,7 +2,7 @@ import { RecordOf, Record } from 'immutable';
 import UserAction from './user.actions';
 import { StandardAction } from '../types';
 import { UserPayload, UserState, ChangePasswordPayload } from './types';
-import { updateAndIndexingData } from 'redux/helpers';
+import { generateIndexes, updateAndIndexingData } from 'redux/helpers';
 import { ReduxCollections, ReduxCollectionType, ReduxModules } from 'enums';
 
 export const initData: UserState = {
@@ -10,6 +10,7 @@ export const initData: UserState = {
   error: '',
   isFetching: false,
   isChangePassword: false,
+  indexes: generateIndexes(ReduxModules.USER),
 };
 
 const initialState = Record(initData)(initData);

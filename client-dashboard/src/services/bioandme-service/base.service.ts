@@ -1,4 +1,4 @@
-import axios, { AxiosRequestHeaders } from 'axios';
+import axios from 'axios';
 import { store } from 'store';
 import { AuthSelectors, AuthAction } from 'redux/auth';
 import qs from 'qs';
@@ -10,16 +10,6 @@ const APIService = axios.create({
   },
 });
 
-const regexUsedForCheckPathNeedToAttachCognitoInfo = [
-  /^(\/)?users/,
-  /^(\/)?auth/,
-  /^(\/)?tenant-address/,
-  /^(\/)?user-address/,
-  /^(\/)?orders/,
-  /^(\/)?profiles/,
-  /^(\/)?internal-surveys/,
-];
-
 APIService.interceptors.request.use(
   request => {
     const state = store.getState();
@@ -30,7 +20,7 @@ APIService.interceptors.request.use(
     }
     if (!request.headers) request.headers = {};
     if (request.url?.includes('countrystatecity')) {
-      (request.headers as AxiosRequestHeaders)['X-CSCAPI-KEY'] = process.env
+      request.headers['X-CSCAPI-KEY'] = process.env
         .REACT_APP_X_CSCAPI_KEY as string;
       request.headers.Authorization = delete request.headers.Authorization;
     } else if (token) {
@@ -40,12 +30,8 @@ APIService.interceptors.request.use(
     }
     request.baseURL = process.env.REACT_APP_BACKEND_API_URL;
     request.paramsSerializer = params => qs.stringify(params);
-    if (
-      regexUsedForCheckPathNeedToAttachCognitoInfo.some(regex =>
-        regex.test(request.url || ''),
-      )
-    )
-      return request;
+
+    return request;
   },
   error => {
     return Promise.reject(error);
@@ -58,6 +44,7 @@ APIService.interceptors.response.use(
     return response;
   },
   async function (error) {
+    console.log({ error });
     const originalRequest = error.config;
     const { message, statusCode } = error?.response?.data || {};
     if (statusCode === 401) {

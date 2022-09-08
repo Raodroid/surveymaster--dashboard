@@ -43,7 +43,6 @@ const SignInForm = () => {
   const myRef = useRef<FormikProps<SignInPayload>>(null);
   const location = useLocation();
   const search = location.search;
-  const navigate = useNavigate();
   const pathname = location.pathname;
   useEffect(() => {
     if (search) {
@@ -53,7 +52,7 @@ const SignInForm = () => {
         myRef.current?.setFieldValue!('email', String(emailAddress));
       }
     }
-  }, [search, pathname, navigate]);
+  }, [search, pathname]);
 
   useEffect(() => {
     if (!!myRef && !!myRef.current) {

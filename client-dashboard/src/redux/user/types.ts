@@ -1,8 +1,11 @@
+import { IndexesType } from "enums";
+
 export interface UserState {
   isFetching: boolean;
   users: Record<string, UserPayload>;
   error?: null | string;
   isChangePassword: boolean;
+  indexes: IndexesType;
 }
 export enum ScopeEntity {
   users = 'users',

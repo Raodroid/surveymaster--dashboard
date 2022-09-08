@@ -14,7 +14,7 @@ export interface ConfirmResetPasswordParams {
 }
 export class CognitoService {
   static resendCode(username: string): Promise<any> {
-    const clientId = process.env.REACT_APP_AWS_USER_POOL_ID as string;
+    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
     cognitoIdentityServiceProvider.config.region = process.env
       .REACT_APP_AWS_COGNITO_REGION as string;
     let params = {
@@ -27,7 +27,7 @@ export class CognitoService {
   }
 
   static signInByCognito(username: string, password: string): Promise<any> {
-    const clientId = process.env.REACT_APP_AWS_USER_POOL_ID as string;
+    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
     cognitoIdentityServiceProvider.config.region = process.env
       .REACT_APP_AWS_COGNITO_REGION as string;
     let params = {
@@ -47,7 +47,7 @@ export class CognitoService {
     confirmationCode: string;
     userName: string;
   }): Promise<any> => {
-    const clientId = process.env.REACT_APP_AWS_USER_POOL_ID as string;
+    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
     cognitoIdentityServiceProvider.config.region = process.env
       .REACT_APP_AWS_COGNITO_REGION as string;
     let parameters = {
@@ -62,7 +62,7 @@ export class CognitoService {
   };
 
   static confirmForgotPassword = (params: { email: string }): Promise<any> => {
-    const clientId = process.env.REACT_APP_AWS_USER_POOL_ID as string;
+    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
     cognitoIdentityServiceProvider.config.region = process.env
       .REACT_APP_AWS_COGNITO_REGION as string;
     let parameters = {
@@ -95,7 +95,7 @@ export class CognitoService {
     session: string,
     type: string,
   ): Promise<any> {
-    const clientId = process.env.REACT_APP_AWS_USER_POOL_ID as string;
+    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
     cognitoIdentityServiceProvider.config.region = process.env
       .REACT_APP_AWS_COGNITO_REGION as string;
     let challengeResponse = {
@@ -120,7 +120,7 @@ export class CognitoService {
   }
 
   static async refreshToken(): Promise<any> {
-    let clientId = process.env.REACT_APP_AWS_USER_POOL_ID as string;
+    let clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
     cognitoIdentityServiceProvider.config.region = process.env
       .REACT_APP_AWS_COGNITO_REGION as string;
     const state = store.getState();
