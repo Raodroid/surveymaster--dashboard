@@ -18,7 +18,7 @@ const items: MenuProps['items'] = [
         Profile
       </AvatarMenuWrapper>
     ),
-    key: FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE,
+    key: FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME,
   },
 ];
 

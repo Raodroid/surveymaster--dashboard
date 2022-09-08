@@ -31,7 +31,11 @@ const AppRoutes = () => {
             <Route index element={<Home />} />
             <Route path={'/app/project'} element={<Project />} />
             <Route
-              path={FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE}
+              path={ROUTE_PATH.DASHBOARD_PATHS.PROJECT}
+              element={<Project />}
+            />
+            <Route
+              path={ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME + '/*'}
               element={<Profile />}
             />
             <Route
