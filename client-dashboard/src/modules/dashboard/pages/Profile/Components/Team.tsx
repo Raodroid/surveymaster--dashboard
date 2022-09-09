@@ -1,5 +1,5 @@
 import { Button, Radio } from 'antd';
-import { FULL_ROUTE_PATH } from 'enums';
+import { ROUTE_PATH } from 'enums';
 import { CustomImageUpload } from 'modules/common/input/inputs';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
@@ -12,15 +12,15 @@ const Team = () => {
   const path = useLocation();
 
   const [tab, setTab] = useState(
-    path.pathname === FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME
+    path.pathname === ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME
       ? 'user'
       : 'team',
   );
 
   const handleTabChange = e => {
     setTab(e.target.value);
-    if (tab === 'user') navigate(FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM);
-    else navigate(FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME);
+    if (tab === 'user') navigate(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM);
+    else navigate(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME);
   };
 
   return (
