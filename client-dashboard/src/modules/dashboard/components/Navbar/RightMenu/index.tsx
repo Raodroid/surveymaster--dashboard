@@ -1,6 +1,6 @@
 import React from 'react';
 import { MenuProps } from 'antd';
-import { FULL_ROUTE_PATH } from '../../../../../enums';
+import { ROUTE_PATH } from '../../../../../enums';
 import BaseMenu from '../BaseMenu';
 import CharacterAvatar from '../../../../common/commonComponent/CharacterAvatar';
 import styled from 'styled-components';
@@ -18,7 +18,7 @@ export const rightNavbarMenu: MenuProps['items'] = [
         Profile
       </AvatarMenuWrapper>
     ),
-    key: FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE,
+    key: ROUTE_PATH.DASHBOARD_PATHS.PROFILE,
   },
 ];
 

@@ -36,6 +36,7 @@ import './app/index.sass';
 import { ScrollbarProvider } from './scrollbarContext/useScrollBar';
 import { CloseIcon } from './icons/CloseIcon';
 import { BrowserRouter } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
 
 // const appConfig = configureAppStore();
 
@@ -43,7 +44,9 @@ import { BrowserRouter } from 'react-router-dom';
 // export const persistor = appConfig.persistor;
 const MOUNT_NODE =
   (document.getElementById('root') as HTMLElement) ||
-  document.createElement('div'); // for testing purposes;
+  document.createElement('div'); // for testing purposes;\
+
+const root = createRoot(MOUNT_NODE);
 
 const CloseIconWrap = styled.div`
   height: inherit;
@@ -67,7 +70,7 @@ notification.config({
 });
 
 const queryClient = new QueryClient();
-ReactDOM.render(
+root.render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
       <HelmetProvider>
@@ -84,7 +87,6 @@ ReactDOM.render(
     </Provider>
     <ReactQueryDevtools initialIsOpen />
   </QueryClientProvider>,
-  MOUNT_NODE || document.createElement('div'), // for testing purposes,
 );
 
 // Hot reloadable translation json files

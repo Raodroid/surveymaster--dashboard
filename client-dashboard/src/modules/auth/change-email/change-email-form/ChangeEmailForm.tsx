@@ -127,7 +127,7 @@ const ChangeEmailForm: React.FC<Props> = props => {
         initialValues={initialValues}
         validationSchema={changeEmailSchema}
         render={({ handleSubmit, values }) => (
-          <FormWrapper style={{ width: '100%' }}>
+          <FormWrapper>
             <Form
               id="changeEmailForm"
               layout={'vertical'}

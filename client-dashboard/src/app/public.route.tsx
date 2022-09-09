@@ -9,8 +9,7 @@ import {
   RequiredChangePasswordPage,
 } from 'modules/auth';
 import { NotFoundPage } from 'modules/common-pages';
-import { FULL_ROUTE_PATH, ROUTE_PATH } from 'enums';
-import AuthLayout from 'modules/common/auth-layout/AuthLayout';
+import { ROUTE_PATH } from 'enums';
 import { CustomSpinSuspense } from 'modules/common/styles';
 
 const SignInUpPage = lazy(
@@ -18,29 +17,24 @@ const SignInUpPage = lazy(
 );
 
 export const NoAuthenticationRoutes = () => (
-  <AuthLayout>
-    <Suspense fallback={<CustomSpinSuspense />}>
-      <Routes>
-        <Route path={ROUTE_PATH.LOGIN} element={<SignInUpPage />} />
+  <Suspense fallback={<CustomSpinSuspense />}>
+    <Routes>
+      <Route path={ROUTE_PATH.LOGIN} element={<SignInUpPage />} />
 
-        <Route path={ROUTE_PATH.VERIFY} element={<VerifyPage />} />
-        <Route path={ROUTE_PATH.CONFIRM_SMS} element={<ConfirmSMS />} />
-        <Route
-          path={ROUTE_PATH.CHANGE_PASSWORD_CHALLENGE}
-          element={<RequiredChangePasswordPage />}
-        />
-        <Route path={ROUTE_PATH.VERIFY_SUCCESS} element={<VerifySuccess />} />
-        <Route
-          path={ROUTE_PATH.RESET_PASSWORD}
-          element={<ConfirmResetPasswordPage />}
-        />
+      <Route path={ROUTE_PATH.VERIFY} element={<VerifyPage />} />
+      <Route path={ROUTE_PATH.CONFIRM_SMS} element={<ConfirmSMS />} />
+      <Route
+        path={ROUTE_PATH.CHANGE_PASSWORD_CHALLENGE}
+        element={<RequiredChangePasswordPage />}
+      />
+      <Route path={ROUTE_PATH.VERIFY_SUCCESS} element={<VerifySuccess />} />
+      <Route
+        path={ROUTE_PATH.RESET_PASSWORD}
+        element={<ConfirmResetPasswordPage />}
+      />
 
-        <Route path={ROUTE_PATH.NOTFOUND} element={<NotFoundPage />} />
-        <Route
-          path="*"
-          element={<Navigate to={FULL_ROUTE_PATH.LOGIN} replace />}
-        />
-      </Routes>
-    </Suspense>
-  </AuthLayout>
+      <Route path={ROUTE_PATH.NOTFOUND} element={<NotFoundPage />} />
+      <Route path="*" element={<Navigate to={ROUTE_PATH.LOGIN} replace />} />
+    </Routes>
+  </Suspense>
 );

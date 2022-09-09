@@ -1,4 +1,4 @@
-import { FULL_ROUTE_PATH } from 'enums';
+import { ROUTE_PATH } from 'enums';
 import React, { lazy } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -21,11 +21,11 @@ export const ProtectedRoutes = () => {
       </BodyAppWrapper>
     </Layout>
   ) : (
-    <Navigate to={FULL_ROUTE_PATH.LOGIN} />
+    <Navigate to={ROUTE_PATH.LOGIN} />
   );
 };
 
-const BodyAppWrapper = styled(Content)`
+export const BodyAppWrapper = styled(Content)`
   @media only screen and (max-width: 1440px) {
     margin: 0 2rem;
   }

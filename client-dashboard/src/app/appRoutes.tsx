@@ -4,8 +4,9 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { useScrollbarContext } from '../scrollbarContext/useScrollBar';
 import { ProtectedRoutes } from './protected.route';
 import { NoAuthenticationRoutes } from './public.route';
-import { FULL_ROUTE_PATH, ROUTE_PATH } from '../enums';
+import { ROUTE_PATH } from '../enums';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import { UnProtectedRoutes } from './unProtected.route';
 
 const Home = lazy(() => import('modules/dashboard/pages/Home'));
 const Project = lazy(() => import('modules/dashboard/pages/Project'));
@@ -31,16 +32,18 @@ const AppRoutes = () => {
             <Route index element={<Home />} />
             <Route path={'/app/project'} element={<Project />} />
             <Route
-              path={FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE}
+              path={ROUTE_PATH.DASHBOARD_PATHS.PROFILE}
               element={<Profile />}
             />
             <Route
-              path={FULL_ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK}
+              path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK}
               element={<QuestionBank />}
             />
             <Route path="*" element={<Navigate to={'/app'} replace />} />
           </Route>
-          <Route path="*" element={<NoAuthenticationRoutes />} />
+          <Route path="*" element={<UnProtectedRoutes />}>
+            <Route path="*" element={<NoAuthenticationRoutes />} />
+          </Route>
         </Routes>
       </Suspense>
     </ScrollToTop>

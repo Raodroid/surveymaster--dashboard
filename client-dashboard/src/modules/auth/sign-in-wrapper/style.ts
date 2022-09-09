@@ -6,10 +6,5 @@ export const SignInWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
-  margin-left: 0%;
-
-  @media screen and (max-width: 1024px) {
-    margin-top: 0;
-    margin-left: auto;
-  }
+  height: 100vh;
 `;

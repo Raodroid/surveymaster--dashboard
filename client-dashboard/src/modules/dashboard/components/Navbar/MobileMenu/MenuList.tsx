@@ -2,13 +2,13 @@ import React, { FC } from 'react';
 import BaseMenu from '../BaseMenu';
 import { mainMenuItem } from '../MainMenu';
 import { MenuProps } from 'antd';
-import { FULL_ROUTE_PATH } from '../../../../../enums';
+import { ROUTE_PATH } from '../../../../../enums';
 
 const allMenuItems: MenuProps['items'] = [
   ...mainMenuItem,
   {
     label: 'Profile',
-    key: FULL_ROUTE_PATH.DASHBOARD_PATHS.PROFILE,
+    key: ROUTE_PATH.DASHBOARD_PATHS.PROFILE,
   },
 ];
 

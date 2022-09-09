@@ -4,13 +4,13 @@ import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthAction, AuthSelectors } from 'redux/auth';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { useTranslation } from 'react-i18next';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { emailYup, passwordYup } from 'modules/common/validate/validate';
-import { SignInUpFormWrapper, PlaceholderCenter } from './style';
+import { SignInUpFormWrapper } from './style';
 import requireAuthentication from 'modules/common/hoc/requireAuthentication';
 import { FormWrapper } from 'modules/common/styles';
 
@@ -68,8 +68,8 @@ const SignInForm = () => {
   );
 
   return (
-    <SignInUpFormWrapper>
-      <div className="row-1 border">
+    <SignInUpFormWrapper className={'border'}>
+      <div className="sign-in-form__row sign-in-form__body">
         <div className="header-contain">
           <p className="header-title">{t(`common.welcomeHere`)}</p>
         </div>
@@ -79,21 +79,23 @@ const SignInForm = () => {
           initialValues={initialSignUpPayload}
           validationSchema={formSchema}
           render={({ handleSubmit }) => (
-            <FormWrapper style={{ width: '100%' }}>
-              <Form layout={'vertical'} onFinish={handleSubmit}>
-                <PlaceholderCenter>
-                  <ControlledInput
-                    inputType={INPUT_TYPES.INPUT}
-                    name="email"
-                    label={t('common.email')}
-                  />
+            <FormWrapper>
+              <Form
+                layout={'vertical'}
+                onFinish={handleSubmit}
+                className={'sign-in-form'}
+              >
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  name="email"
+                  label={t('common.email')}
+                />
 
-                  <ControlledInput
-                    inputType={INPUT_TYPES.PASSWORD}
-                    name="password"
-                    label={t(`common.password`)}
-                  />
-                </PlaceholderCenter>
+                <ControlledInput
+                  inputType={INPUT_TYPES.PASSWORD}
+                  name="password"
+                  label={t(`common.password`)}
+                />
                 <Button
                   type={'primary'}
                   className="secondary-btn"
@@ -103,6 +105,7 @@ const SignInForm = () => {
                   {t('common.logIn')}
                 </Button>
                 <Link
+                  className={'ant-link'}
                   to={ROUTE_PATH.RESET_PASSWORD}
                   aria-label="Forgot Password"
                 >
@@ -112,6 +115,11 @@ const SignInForm = () => {
             </FormWrapper>
           )}
         />
+      </div>
+      <div className={'sign-in-form__row sign-in-form__footer'}>
+        <Button type={'primary'} className={'info-btn'} disabled>
+          {t('direction.continueWithGoogle')}
+        </Button>
       </div>
     </SignInUpFormWrapper>
   );

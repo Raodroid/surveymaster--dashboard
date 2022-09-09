@@ -126,7 +126,7 @@ const ResetPasswordForm: React.FC<Props> = props => {
         initialValues={initialValues}
         validationSchema={ResetPasswordSchema}
         render={({ handleSubmit, values, errors }) => (
-          <FormWrapper style={{ width: '100%' }}>
+          <FormWrapper>
             <Form
               // autoComplete="off"
               {...layout}

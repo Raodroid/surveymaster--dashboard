@@ -9,39 +9,7 @@ export const BaseSectionWrapper = styled.section`
 `;
 
 export const FormWrapper = styled.div`
-  .ant-form {
-    label {
-      font-weight: 600;
-    }
-    span {
-      .ant-row {
-        margin-top: 7px;
-        margin-bottom: 15px;
-      }
-    }
-    > .ant-row {
-      margin-top: 7px;
-      :last-child {
-        margin-bottom: 0;
-      }
-    }
-    .ant-upload-list {
-      display: flex;
-      .ant-upload-list-picture-card-container,
-      .ant-upload {
-        margin: 0 auto 24px auto;
-        width: 150px;
-        height: 150px;
-        button {
-          border-color: transparent !important;
-          background: transparent;
-        }
-      }
-    }
-    .ant-form-item-label {
-      padding: 0;
-    }
-  }
+  width: 100%;
 `;
 
 export const CustomSpinSuspense = styled(Spin)`

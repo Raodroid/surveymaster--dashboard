@@ -1,15 +1,15 @@
 import React from 'react';
-import { FULL_ROUTE_PATH } from '../../../../../enums';
+import { ROUTE_PATH } from '../../../../../enums';
 import BaseMenu from '../BaseMenu';
 
 export const mainMenuItem = [
   {
     label: 'Projects',
-    key: FULL_ROUTE_PATH.DASHBOARD_PATHS.PROJECT,
+    key: ROUTE_PATH.DASHBOARD_PATHS.PROJECT,
   },
   {
     label: 'Questions Bank',
-    key: FULL_ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK,
+    key: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK,
   },
 ];
 

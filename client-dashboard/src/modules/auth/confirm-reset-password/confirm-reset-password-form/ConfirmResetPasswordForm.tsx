@@ -50,7 +50,7 @@ const ConfirmResetPasswordForm = () => {
         initialValues={initialValues}
         validationSchema={ConfirmResetPasswordSchema}
         render={({ handleSubmit }) => (
-          <FormWrapper style={{ width: '100%' }}>
+          <FormWrapper>
             <Form
               {...layout}
               onFinish={handleSubmit}
