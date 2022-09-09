@@ -12,3 +12,4 @@ export * from './Menu';
 export * from './ArrowRight';
 export * from './ColorOutlined';
 export * from './BoxIconOutlined';
+export * from './HamburgerAnimation';

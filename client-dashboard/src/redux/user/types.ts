@@ -1,4 +1,4 @@
-import { IndexesType } from "enums";
+import { IndexesType } from 'enums';
 
 export interface UserState {
   isFetching: boolean;

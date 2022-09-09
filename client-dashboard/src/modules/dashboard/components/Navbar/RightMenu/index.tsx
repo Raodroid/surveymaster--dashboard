@@ -10,7 +10,7 @@ const AvatarMenuWrapper = styled.div`
   align-items: center;
 `;
 
-const items: MenuProps['items'] = [
+export const rightNavbarMenu: MenuProps['items'] = [
   {
     label: (
       <AvatarMenuWrapper>
@@ -23,7 +23,7 @@ const items: MenuProps['items'] = [
 ];
 
 const MainMenu = () => {
-  return <BaseMenu items={items} className="right-menu-root" />;
+  return <BaseMenu items={rightNavbarMenu} className="right-menu-root" />;
 };
 
 export default MainMenu;

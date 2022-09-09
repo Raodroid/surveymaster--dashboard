@@ -2,7 +2,14 @@ import { Role, Scope } from 'redux/user';
 import { useLocation } from 'react-router-dom';
 import { getI18n } from 'react-i18next';
 import notification from 'customize-components/CustomNotification';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import useWindowSize from 'modules/common/hoc/useWindowSize';
 import { mobileSize } from '../enums';
 
@@ -128,7 +135,9 @@ export const useMobile = (mobileWidth: number = mobileSize) => {
   return { isMobile };
 };
 
-export const useToggle = (initValue: boolean = false) => {
+export const useToggle = (
+  initValue: boolean = false,
+): [boolean, () => void, Dispatch<SetStateAction<boolean>>] => {
   const [open, setOpen] = useState(initValue);
   const toggle = useCallback(() => {
     setOpen(s => !s);

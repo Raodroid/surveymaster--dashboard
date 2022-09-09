@@ -5,19 +5,28 @@ import { LogoBiomeIcon } from 'icons';
 import { Link } from 'react-router-dom';
 import MainMenu from './MainMenu';
 import RightMenu from './RightMenu';
+import { useMobile } from '../../../../utils';
+import MobileMenu from './MobileMenu';
 
 const NavBar = () => {
+  const { isMobile } = useMobile();
   return (
     <NavBarWrapper>
-      <Link
-        to={ROUTE_PATH.DASHBOARD_PATHS.HOME}
-        className="logo"
-        aria-label="Logo app"
-      >
-        <LogoBiomeIcon />
-      </Link>
-      <MainMenu />
-      <RightMenu />
+      {isMobile ? (
+        <MobileMenu />
+      ) : (
+        <>
+          <Link
+            to={ROUTE_PATH.DASHBOARD_PATHS.HOME}
+            className="logo"
+            aria-label="Logo app"
+          >
+            <LogoBiomeIcon />
+          </Link>
+          <MainMenu />
+          <RightMenu />
+        </>
+      )}
     </NavBarWrapper>
   );
 };
