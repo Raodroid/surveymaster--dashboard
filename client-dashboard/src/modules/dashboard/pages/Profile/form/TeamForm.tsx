@@ -6,14 +6,27 @@ import React from 'react';
 
 function TeamForm() {
   return (
-    <>
-      <ControlledInput
-        inputType={INPUT_TYPES.INPUT}
-        type={'text'}
-        name="teamName"
-        label="Team Name"
-      />
-    </>
+    <Formik initialValues={{ teamName: 'Amili' }} onSubmit={() => {}}>
+      {({
+        values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        isSubmitting,
+      }) => (
+        <Form layout="vertical" onFinish={handleSubmit}>
+          <ControlledInput
+            inputType={INPUT_TYPES.INPUT}
+            type={'text'}
+            name="teamName"
+            label="Team Name"
+          />
+          <Button className="submit-btn">Save Edits</Button>
+        </Form>
+      )}
+    </Formik>
   );
 }
 

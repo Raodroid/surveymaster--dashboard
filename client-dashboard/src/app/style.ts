@@ -7,7 +7,7 @@ export const AppContainer = styled(Layout)`
   margin-left: auto;
   // margin-bottom: 1.5rem;
 
-  height: 100vh;
+  min-height: 100vh;
 
   > div.ant-spin-container {
     > div {

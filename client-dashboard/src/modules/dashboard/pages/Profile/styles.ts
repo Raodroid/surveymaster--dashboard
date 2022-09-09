@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 
 export const ProfileStyled = styled.div`
-  height: 100%;
+  padding-bottom: 20px;
 
   .flex {
     display: flex;
@@ -92,14 +92,14 @@ export const ProfileStyled = styled.div`
 
   .avatar {
     .ant-upload {
-      margin-top: 8px;
-      margin-bottom: 24px;
+      margin-bottom: 0;
     }
 
     .ant-upload.ant-upload-select-picture-card {
       border-radius: 40px;
       width: 120px;
       height: 120px;
+      overflow: hidden;
 
       .ant-upload {
         margin: 0;
@@ -121,6 +121,20 @@ export const ProfileStyled = styled.div`
       border-radius: 2px;
       background-color: #e0effc;
       color: #007ae7;
+      position: relative;
+      padding-top: 6px;
+    }
+    label {
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      justify-content: center;
+      padding-top: 2px;
     }
   }
 

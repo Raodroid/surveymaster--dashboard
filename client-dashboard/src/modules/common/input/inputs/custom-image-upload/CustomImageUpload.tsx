@@ -45,7 +45,7 @@ const customRequest = async options => {
 
 const CustomImageUpload = (props: CustomUploadProps) => {
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string>(props.value);
   const { t } = useTranslation();
 
   const uploadButton = (
@@ -55,7 +55,10 @@ const CustomImageUpload = (props: CustomUploadProps) => {
     </div>
   );
 
-  const image = imageUrl || props.value;
+  const image = React.useMemo(() => {
+    if (!props.value) return null;
+    return imageUrl || props.value;
+  }, [props.value, imageUrl]);
 
   const beforeUpload = (file: RcFile) => {
     const isJpgOrPng =

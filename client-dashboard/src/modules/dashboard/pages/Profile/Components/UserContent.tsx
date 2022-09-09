@@ -1,19 +1,26 @@
 import { Button, Divider, Switch } from 'antd';
 import { CustomSlider } from 'modules/common/input/inputs';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AuthAction } from 'redux/auth';
 import { UserContentStyled } from '../styles';
+import ChangePasswordModal from './modals/ChangePasswordModal';
 
 function UserContent() {
   const dispatch = useDispatch();
+  const [changePassword, setChangePassword] = useState(false);
+
   return (
     <UserContentStyled className="flex">
       <div className="part padding-24 name title">name</div>
       <div className="part  setting">
         <div className="password padding-24 flex-space-between">
           <span className="title">Password</span>
-          <Button type="primary" className="btn">
+          <Button
+            type="primary"
+            className="btn"
+            onClick={() => setChangePassword(!changePassword)}
+          >
             Change
           </Button>
         </div>
@@ -85,6 +92,11 @@ function UserContent() {
           style={{ flex: 1 }}
         ></div>
       </div>
+
+      <ChangePasswordModal
+        showModal={changePassword}
+        setShowModal={setChangePassword}
+      />
     </UserContentStyled>
   );
 }

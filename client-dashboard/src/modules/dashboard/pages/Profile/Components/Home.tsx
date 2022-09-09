@@ -3,7 +3,6 @@ import { FULL_ROUTE_PATH } from 'enums';
 import { CustomImageUpload } from 'modules/common/input/inputs';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import SharedForm from '../form/SharedForm';
 import UserForm from '../form/UserForm';
 import { ProfileStyled } from '../styles';
 import UserContent from './UserContent';
@@ -38,18 +37,9 @@ const Home = () => {
               </Radio.Button>
             </Radio.Group>
           </div>
-          <div className="avatar">
-            <strong>Photo</strong>
-            <CustomImageUpload value="" />
-          </div>
-
-          <div className="buttons flex">
-            <Button>Upload New Photo</Button>
-            <Button>Remove Photo</Button>
-          </div>
 
           <div className="inputs">
-            <SharedForm Inputs={UserForm} />
+            <UserForm />
           </div>
         </div>
         <UserContent />

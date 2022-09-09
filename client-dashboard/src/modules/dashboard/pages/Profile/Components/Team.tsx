@@ -3,7 +3,6 @@ import { FULL_ROUTE_PATH } from 'enums';
 import { CustomImageUpload } from 'modules/common/input/inputs';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import SharedForm from '../form/SharedForm';
 import TeamForm from '../form/TeamForm';
 import { ProfileStyled } from '../styles';
 import UserContent from './UserContent';
@@ -49,7 +48,7 @@ const Team = () => {
           </div>
 
           <div className="inputs">
-            <SharedForm Inputs={TeamForm} />
+            <TeamForm />
           </div>
         </div>
         <UserContent />
