@@ -1,3 +1,4 @@
+import { NotificationType } from 'aws-sdk/clients/budgets';
 import { UserUpdatedDto } from 'modules/dashboard/pages/Profile/form/UserForm';
 import APIService from './base.service';
 
@@ -7,5 +8,17 @@ export default class UserService {
   }
   static updateProfile(payload: UserUpdatedDto): Promise<any> {
     return APIService.put('/user/me', payload);
+  }
+  static setEmailNoti(payload: {
+    id: string;
+    isDisableEmailNotification?: boolean;
+    disabledNotificationTypes?: NotificationType[];
+  }): Promise<any> {
+    const { id, disabledNotificationTypes, isDisableEmailNotification } =
+      payload;
+    return APIService.patch(`users/${id}/email-notification`, {
+      disabledNotificationTypes,
+      isDisableEmailNotification,
+    });
   }
 }

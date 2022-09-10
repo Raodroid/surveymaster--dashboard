@@ -20,22 +20,6 @@ function TeamContent() {
 
         <Divider style={{ margin: 0 }} />
 
-        <div className="email padding-24 flex-space-between">
-          <div className="wrapper">
-            <span className="title">Email Address</span>
-            <p>
-              Your email address is <strong>email@gmail.com</strong>
-            </p>
-          </div>
-          <div className="wrapper flex-end">
-            <Button type="primary" className="btn">
-              Change
-            </Button>
-          </div>
-        </div>
-
-        <Divider style={{ margin: 0 }} />
-
         <div className="notifications padding-24 flex-space-between">
           <div className="wrapper">
             <span className="title">Notifications</span>

@@ -27,6 +27,9 @@ export const ModalStyled = styled(Modal)`
       flex: 1;
     }
   }
+`;
+
+export const ChangePasswordModalStyled = styled(ModalStyled)`
   .ant-modal-close {
     top: 10px;
 
@@ -41,6 +44,21 @@ export const ModalStyled = styled(Modal)`
   }
   .submit-btn {
     width: 100%;
+    height: 36px;
     margin-top: 40px;
+    font-weight: bold;
+    background: #25216a;
+  }
+`;
+
+export const SetUpPreferencesModalStyled = styled(ModalStyled)`
+  .submit-btn {
+    width: 100%;
+    height: 36px;
+    background: #25216a;
+    span {
+      font-weight: bold;
+      font-size: 14px;
+    }
   }
 `;

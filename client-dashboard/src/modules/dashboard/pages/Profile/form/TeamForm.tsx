@@ -23,7 +23,9 @@ function TeamForm() {
             name="teamName"
             label="Team Name"
           />
-          <Button className="submit-btn">Save Edits</Button>
+          <Button className="submit-btn" htmlType="submit">
+            Save Edits
+          </Button>
         </Form>
       )}
     </Formik>

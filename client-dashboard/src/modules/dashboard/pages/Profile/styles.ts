@@ -2,6 +2,8 @@ import styled from 'styled-components/macro';
 
 export const ProfileStyled = styled.div`
   padding-bottom: 20px;
+  min-height: 100%;
+  width: 100%;
 
   .flex {
     display: flex;
@@ -122,7 +124,7 @@ export const ProfileStyled = styled.div`
       background-color: #e0effc;
       color: #007ae7;
       position: relative;
-      padding-top: 6px;
+      font-weight: bold;
     }
     label {
       cursor: pointer;
@@ -206,6 +208,9 @@ export const UserContentStyled = styled.div`
   }
 
   .notifications {
+    .wrapper.flex-end {
+      color: gray;
+    }
     .ant-switch {
       height: 36px;
       width: 60px;
@@ -225,6 +230,15 @@ export const UserContentStyled = styled.div`
       &::before {
         border-radius: 50%;
       }
+    }
+  }
+  .preferences {
+    color: #007ae7;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    :hover {
+      color: #015398;
     }
   }
 `;

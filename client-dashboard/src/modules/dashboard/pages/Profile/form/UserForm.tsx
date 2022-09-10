@@ -3,9 +3,10 @@ import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import React from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { UserService } from 'services';
 import styled from 'styled-components';
+import { onError } from 'utils';
 
 export interface UserUpdatedDto {
   // roles: number[]; Don't allow user update their role by this api
@@ -20,16 +21,19 @@ export interface UserUpdatedDto {
 }
 
 function UserForm() {
+  const queryClient = useQueryClient();
   const mutationUpdateProfile = useMutation(
     (payload: UserUpdatedDto) => {
       return UserService.updateProfile(payload);
     },
     {
       onSuccess: res => {
+        queryClient.invalidateQueries('getUser');
         notification.success({
           message: 'Success',
         });
       },
+      onError: onError,
     },
   );
 
@@ -110,7 +114,9 @@ function UserForm() {
               name="phone"
               label="Phone Number"
             />
-            <Button className="submit-btn">Save Edits</Button>
+            <Button className="submit-btn" htmlType="submit">
+              Save Edits
+            </Button>
           </Form>
         );
       }}

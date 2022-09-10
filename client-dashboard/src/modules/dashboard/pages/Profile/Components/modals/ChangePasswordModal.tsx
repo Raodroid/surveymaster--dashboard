@@ -4,14 +4,12 @@ import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { FORGOT_PASSWORD_FIELD } from 'modules/common/validate/validate';
-import React, { Dispatch, SetStateAction, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
+import { Dispatch, SetStateAction, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { ChangePasswordPayload, UserAction } from 'redux/user';
-import { UserService } from 'services';
 import * as Yup from 'yup';
-import { ModalStyled } from './styles';
+import { ChangePasswordModalStyled } from './styles';
 
 interface Modal {
   showModal: boolean;
@@ -44,7 +42,7 @@ function ChangePasswordModal(props: Modal) {
   );
 
   return (
-    <ModalStyled
+    <ChangePasswordModalStyled
       open={showModal}
       destroyOnClose
       footer={false}
@@ -81,6 +79,7 @@ function ChangePasswordModal(props: Modal) {
             />
             <Button
               type="primary"
+              htmlType="submit"
               className="submit-btn"
               loading={isResettingPasswordForm}
             >
@@ -89,7 +88,7 @@ function ChangePasswordModal(props: Modal) {
           </Form>
         )}
       </Formik>
-    </ModalStyled>
+    </ChangePasswordModalStyled>
   );
 }
 

@@ -178,6 +178,7 @@
     "currentPassword": "Current Password",
     "notification": "Notification",
     "userReferences": "User Preferences",
+    "setUpNotificationPreferences": "Set up notification Preferences",
     "amiliUser": "Amili User",
     "view": "View",
     "profiles": "Profiles",
@@ -249,6 +250,7 @@
     "createAt": "Create At",
     "items": "Items",
     "saveChanges": "SAVE CHANGES",
+    "saveChange": "Save Change",
     "partner": "Partner",
     "sortBy": "Sort by",
     "creationDate": "Creation Date",
@@ -369,5 +371,13 @@
   },
   "direction": {
     "continueWithGoogle": "Continue with Google"
+  },
+  "notification": {
+    "notificationType": {
+      "BOOKING_HEALTH_COACH": "Notify me when a new booking is created",
+      "CANCEL_SINGLE_HEALTH_COACH_SESSION": "Notify me when a consultation is canceled",
+      "RESCHEDULE_COACH_SESSION": "Notify me when a consultation is reschedule",
+      "REMINDER_BOOKING_SESSION": "Notify me of upcoming consultations in the next 24h"
+    }
   }
 }
