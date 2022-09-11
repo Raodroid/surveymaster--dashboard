@@ -1,7 +1,11 @@
 import styled from 'styled-components/macro';
 
 export const ProfileStyled = styled.div`
-  padding-bottom: 20px;
+  .custom-ant-hover {
+    --ant-primary-color-hover: #40a9ff;
+  }
+
+  padding: 0 20px 20px;
   min-height: 100%;
   width: 100%;
 
@@ -114,18 +118,30 @@ export const ProfileStyled = styled.div`
   }
 
   .buttons {
+    --ant-primary-color-deprecated-f-12: rgba(24, 144, 255, 0.12);
+    --ant-primary-color-deprecated-l-35: #cbe6ff;
+
     gap: 10px;
     margin-bottom: 40px;
+
     button {
       flex: 1;
       height: 28px;
       width: 143px;
       border-radius: 2px;
-      background-color: #e0effc;
       color: #007ae7;
       position: relative;
       font-weight: bold;
     }
+
+    .ant-btn:active {
+      background: #cbe6ff;
+    }
+
+    .ant-btn:focus {
+      background: rgba(24, 144, 255, 0.12);
+    }
+
     label {
       cursor: pointer;
       font-size: 12px;
@@ -158,6 +174,10 @@ export const ProfileStyled = styled.div`
       filter: brightness(95%);
     }
   }
+
+  .ant-input {
+    font-weight: 500;
+  }
 `;
 
 export const UserContentStyled = styled.div`
@@ -183,6 +203,7 @@ export const UserContentStyled = styled.div`
     strong {
       font-size: 12px;
     }
+
     p {
       margin: 0;
       line-height: 20px;
@@ -202,28 +223,38 @@ export const UserContentStyled = styled.div`
   }
 
   .password {
-    button {
-      background: #007ae7;
+    --ant-primary-color: #007ae7;
+    --ant-primary-color-active: #096dd9;
+
+    .ant-btn {
+      padding-top: 5px;
     }
   }
 
   .notifications {
+    --ant-primary-color: #1890ff;
+    --ant-primary-1: #e6f7ff;
+
     .wrapper.flex-end {
-      color: gray;
+      color: #aba9c5;
     }
+
     .ant-switch {
       height: 36px;
       width: 60px;
     }
+
     .ant-switch-checked {
       background: #e0effc;
       .ant-switch-handle::before {
         background: #007ae7;
       }
+
       .ant-switch-handle {
         left: calc(100% - 32px - 2px);
       }
     }
+
     .ant-switch-handle {
       width: 32px;
       height: 32px;
@@ -232,6 +263,7 @@ export const UserContentStyled = styled.div`
       }
     }
   }
+
   .preferences {
     color: #007ae7;
     font-size: 12px;

@@ -5,6 +5,7 @@ import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { FORGOT_PASSWORD_FIELD } from 'modules/common/validate/validate';
 import { Dispatch, SetStateAction, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { ChangePasswordPayload, UserAction } from 'redux/user';
@@ -25,6 +26,7 @@ const initialValues = {
 function ChangePasswordModal(props: Modal) {
   const { showModal, setShowModal } = props;
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const ResetPasswordSchema = Yup.object().shape(FORGOT_PASSWORD_FIELD);
   const isResettingPasswordForm = useSelector(
@@ -83,7 +85,7 @@ function ChangePasswordModal(props: Modal) {
               className="submit-btn"
               loading={isResettingPasswordForm}
             >
-              Send Confirmation
+              {t('common.sendConfirmation')}
             </Button>
           </Form>
         )}

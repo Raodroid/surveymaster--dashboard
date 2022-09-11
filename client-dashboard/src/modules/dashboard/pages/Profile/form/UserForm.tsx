@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { UserService } from 'services';
 import styled from 'styled-components';
@@ -21,6 +22,7 @@ export interface UserUpdatedDto {
 }
 
 function UserForm() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const mutationUpdateProfile = useMutation(
     (payload: UserUpdatedDto) => {
@@ -67,19 +69,19 @@ function UserForm() {
               <ControlledInput
                 inputType={INPUT_TYPES.IMAGE_UPLOAD}
                 name="avatar"
-                label={'Photo'}
+                label={t('common.photo')}
                 className="custom-upload"
                 id="custom-upload-avatar"
               />
             </div>
-            <div className="buttons flex">
+            <div className="buttons flex custom-ant-hover">
               <Button>
                 <label htmlFor="custom-upload-avatar" className="flex-center">
-                  Upload New Photo
+                  {t('common.uploadNewPhoto')}
                 </label>
               </Button>
               <Button onClick={() => setFieldValue('avatar', null)}>
-                Remove Photo
+                {t('common.removePhoto')}
               </Button>
             </div>
             <div className="flex-space-between" style={{ gap: 10 }}>
@@ -87,35 +89,35 @@ function UserForm() {
                 inputType={INPUT_TYPES.INPUT}
                 type={'text'}
                 name="firstName"
-                label="First Name"
+                label={t('common.firstName')}
               />
               <ControlledInput
                 inputType={INPUT_TYPES.INPUT}
                 type={'text'}
                 name="lastName"
-                label="Last Name"
+                label={t('common.lastName')}
               />
             </div>
             <ControlledInput
               inputType={INPUT_TYPES.INPUT}
               type={'text'}
               name="displayName"
-              label="Display Name"
+              label={t('common.displayName')}
             />
             <ControlledInput
               inputType={INPUT_TYPES.INPUT}
               type={'text'}
               name="scientificDegree"
-              label="Scientific Degree"
+              label={t('common.scientificDegree')}
             />
             <ControlledInput
               inputType={INPUT_TYPES.INPUT}
               type={'tel'}
               name="phone"
-              label="Phone Number"
+              label={t('common.phoneNumber')}
             />
-            <Button className="submit-btn" htmlType="submit">
-              Save Edits
+            <Button className="submit-btn custom-ant-hover" htmlType="submit">
+              {t('common.saveEdits')}
             </Button>
           </Form>
         );
