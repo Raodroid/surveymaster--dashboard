@@ -1,13 +1,13 @@
 import { Button, Form, Modal, notification, Spin } from 'antd';
 import { Formik } from 'formik';
-import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { UserService } from 'services';
-import { ModalStyled, SetUpPreferencesModalStyled } from './styles';
+import { onError } from '../../../../../../utils/funcs';
+import { SetUpPreferencesModalStyled } from './styles';
 
 interface Modal {
   showModal: boolean;
@@ -73,37 +73,37 @@ function SetUpPreferencesModal(props: Modal) {
     // [myProfile.disabledNotificationTypes],
   );
 
-  const mutationSetupEmailNoti = { isLoading: false };
-  // const mutationSetupEmailNoti = useMutation(
-  //   (value: NotificationType[]) =>
-  //     UserService.setEmailNoti({
-  //       id: myProfile.id as string,
-  //       disabledNotificationTypes: value,
-  //     }),
-  //   {
-  //     onSuccess: () => {
-  //       notification.success({
-  //         message: 'Update Success',
-  //       });
-  //       setShowModal(false);
-  //       queryClient.invalidateQueries('getMe');
-  //     },
-  //     onError,
-  //   },
-  // );
+  // const mutationSetupEmailNoti = { isLoading: false };
+  const mutationSetupEmailNoti = useMutation(
+    (value: NotificationType[]) =>
+      UserService.setEmailNoti({
+        // id: myProfile.id as string,
+        id: '',
+        disabledNotificationTypes: value,
+      }),
+    {
+      onSuccess: () => {
+        notification.success({
+          message: 'Update Success',
+        });
+        setShowModal(false);
+        queryClient.invalidateQueries('getMe');
+      },
+      onError,
+    },
+  );
 
   const handleSubmit = useCallback(
     async value => {
-      // const reverseValue = reverseNotificationTypeValue(
-      //   value.disabledNotificationTypes,
-      // );
+      const reverseValue = reverseNotificationTypeValue(
+        value.disabledNotificationTypes,
+      );
       // if (!isValueSame(reverseValue, myProfile.disabledNotificationTypes)) {
       //   await mutationSetupEmailNoti.mutateAsync(reverseValue);
       // } else {
       //   notification.success({
       //     message: t('common.updateSuccess'),
       //   });
-      //   history.push(ROUTE_PATH.USER_DASHBOARD_PATHS.PROFILE.ROOT);
       // }
     },
     [],

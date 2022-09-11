@@ -1,20 +1,19 @@
-import { Button, Radio } from 'antd';
+import { Radio } from 'antd';
 import { ROUTE_PATH } from 'enums';
-import { CustomImageUpload } from 'modules/common/input/inputs';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import TeamForm from '../form/TeamForm';
 import { ProfileStyled } from '../styles';
-import UserContent from './UserContent';
+import TeamContent from './TeamContent';
 
 const Team = () => {
   const navigate = useNavigate();
   const path = useLocation();
+  const { t } = useTranslation();
 
   const [tab, setTab] = useState(
-    path.pathname === ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME
-      ? 'user'
-      : 'team',
+    path.pathname === ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME ? 'user' : 'team',
   );
 
   const handleTabChange = e => {
@@ -30,28 +29,19 @@ const Team = () => {
           <div className="tabs flex">
             <Radio.Group value={tab} onChange={handleTabChange}>
               <Radio.Button className="flex-center" value="user">
-                User
+                {t('titles.user')}
               </Radio.Button>
               <Radio.Button className="flex-center" value="team">
-                Team
+                {t('titles.team')}
               </Radio.Button>
             </Radio.Group>
-          </div>
-          <div className="avatar">
-            <strong>Photo</strong>
-            <CustomImageUpload value="" />
-          </div>
-
-          <div className="buttons flex">
-            <Button>Upload New Photo</Button>
-            <Button>Remove Photo</Button>
           </div>
 
           <div className="inputs">
             <TeamForm />
           </div>
         </div>
-        <UserContent />
+        <TeamContent />
       </div>
     </ProfileStyled>
   );

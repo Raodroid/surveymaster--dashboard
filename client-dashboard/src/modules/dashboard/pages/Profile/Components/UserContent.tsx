@@ -1,6 +1,7 @@
 import { Button, Divider, Switch } from 'antd';
 import { CustomSlider } from 'modules/common/input/inputs';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AuthAction } from 'redux/auth';
@@ -10,41 +11,42 @@ import SetUpPreferencesModal from './modals/SetUpPreferencesModal';
 
 function UserContent() {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [changePassword, setChangePassword] = useState(false);
   const [changePreferences, setChangePreferences] = useState(false);
 
   return (
     <UserContentStyled className="flex">
-      <div className="part padding-24 name title">name</div>
-      <div className="part  setting">
-        <div className="password padding-24 flex-space-between">
-          <span className="title">Password</span>
+      <div className="part padding-24 name title">{t('common.name')}</div>
+      <div className="part setting">
+        <div className="password padding-24 flex-space-between custom-ant-hover">
+          <span className="title">{t('common.password')}</span>
           <Button
             type="primary"
             className="btn"
             onClick={() => setChangePassword(!changePassword)}
           >
-            Change
+            {t('common.change')}
           </Button>
         </div>
 
         <Divider style={{ margin: 0 }} />
 
-        <div className="notifications padding-24 flex-space-between">
+        <div className="notifications padding-24 flex-space-between custom-ant-hover">
           <div className="wrapper">
-            <span className="title">Notifications</span>
+            <span className="title">{t('common.Notifications')}</span>
             <p>
-              Send notifications to your email.{' '}
+              {t('common.sendNotifications')}{' '}
               <span
                 className="preferences"
                 onClick={() => setChangePreferences(true)}
               >
-                Set Up Preferences
+                {t('common.setUpPreferences')}
               </span>
             </p>
           </div>
           <div className="wrapper flex-end">
-            <span style={{ marginRight: 8 }}>Turned on</span>
+            <span style={{ marginRight: 8 }}>{t('common.turnedOn')}</span>
             <Switch />
           </div>
         </div>
@@ -53,7 +55,7 @@ function UserContent() {
       <div className="part others" style={{ flex: 1 }}>
         <div className="padding-24 flex-space-between">
           <div className="wrapper">
-            <span className="title">Sign Out All Other Sessions</span>
+            <span className="title">{t('common.signOutAllOtherSessions')}</span>
             <p>
               Lost your phone? Left yourself logged in on a public computer?
               Need a way to sign out everywhere except your current browser?
@@ -66,7 +68,7 @@ function UserContent() {
               className="btn"
               onClick={() => dispatch(AuthAction.userSignOut(true))}
             >
-              Sign out all other sessions
+              {t('common.signOutAllOtherSessions')}
             </Button>
           </div>
         </div>
@@ -74,9 +76,9 @@ function UserContent() {
         <Divider style={{ margin: 0 }} />
 
         <div className="padding-24 flex-space-between">
-          <div className="title">Deactivate Account</div>
+          <div className="title">{t('common.deactivateAccount')}</div>
           <Button type="primary" className="btn">
-            Deactivate
+            {t('common.deactivate')}
           </Button>
         </div>
 

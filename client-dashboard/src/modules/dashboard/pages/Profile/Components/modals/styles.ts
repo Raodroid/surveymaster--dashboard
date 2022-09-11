@@ -20,8 +20,7 @@ export const ModalStyled = styled(Modal)`
     display: flex;
     flex-direction: column;
 
-    padding: 55px;
-    padding-top: 44px;
+    padding: 36px 40px;
 
     form {
       flex: 1;
@@ -52,13 +51,43 @@ export const ChangePasswordModalStyled = styled(ModalStyled)`
 `;
 
 export const SetUpPreferencesModalStyled = styled(ModalStyled)`
+  --ant-primary-color: #b78c69;
+
+  .ant-modal-title,
+  .ant-checkbox-wrapper span {
+    color: #292929;
+  }
+
+  .ant-checkbox-wrapper span {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
   .submit-btn {
+    --ant-primary-color-hover: rgba(51, 85, 108, 0.8);
+    --ant-primary-color-active: #096dd9;
+
     width: 100%;
     height: 36px;
-    background: #25216a;
+    background: #33556c;
     span {
       font-weight: bold;
       font-size: 14px;
     }
+  }
+
+  .ant-checkbox-group {
+    gap: 12px;
+
+    .ant-checkbox-inner {
+      border: 2px solid #292929;
+    }
+    .ant-checkbox-checked .ant-checkbox-inner {
+      border: 2px solid transparent;
+    }
+  }
+
+  .ant-modal-close-x path {
+    fill: rgb(201, 67, 151);
   }
 `;

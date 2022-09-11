@@ -1,6 +1,7 @@
 import { Radio } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import UserForm from '../form/UserForm';
 import { ProfileStyled } from '../styles';
@@ -8,12 +9,11 @@ import UserContent from './UserContent';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const path = useLocation();
 
   const [tab, setTab] = useState(
-    path.pathname === ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME
-      ? 'user'
-      : 'team',
+    path.pathname === ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME ? 'user' : 'team',
   );
 
   const handleTabChange = e => {
@@ -29,10 +29,10 @@ const Home = () => {
           <div className="tabs flex">
             <Radio.Group value={tab} onChange={handleTabChange}>
               <Radio.Button className="flex-center" value="user">
-                User
+                {t('titles.user')}
               </Radio.Button>
               <Radio.Button className="flex-center" value="team">
-                Team
+                {t('titles.team')}
               </Radio.Button>
             </Radio.Group>
           </div>
