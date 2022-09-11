@@ -43,7 +43,7 @@ function UserForm() {
         firstName: 'Van',
         lastName: 'Bui',
         displayName: 'VanBuiLeader',
-        scientificDegree: 'Leader | Jungler',
+        scientificDegree: 'Jungler god',
         phone: '3570817',
         avatar: initImage,
       }}
