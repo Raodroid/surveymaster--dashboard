@@ -26,6 +26,7 @@ export const ProtectedRoutes = () => {
 };
 
 export const BodyAppWrapper = styled(Content)`
+  display: flex;
   @media only screen and (max-width: 1440px) {
     margin: 0 2rem;
   }
