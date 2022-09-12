@@ -1,25 +1,12 @@
 import { Button, Form, notification } from 'antd';
 import { Formik } from 'formik';
+import { UserUpdatedDto } from 'interfaces';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { UserService } from 'services';
-import styled from 'styled-components';
 import { onError } from 'utils';
-
-export interface UserUpdatedDto {
-  // roles: number[]; Don't allow user update their role by this api
-  firstName: string;
-  lastName: string;
-  description?: string;
-  phonePrefix?: string;
-  phone: string;
-  avatar: string;
-  displayName: string; // new field
-  scientificDegree: string; // new field
-}
 
 function UserForm() {
   const { t } = useTranslation();

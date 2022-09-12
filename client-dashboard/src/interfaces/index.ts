@@ -1,3 +1,16 @@
 export interface Test {
   a: string;
 }
+
+
+export interface UserUpdatedDto {
+  // roles: number[]; Don't allow user update their role by this api
+  firstName: string;
+  lastName: string;
+  description?: string;
+  phonePrefix?: string;
+  phone: string;
+  avatar: string;
+  displayName: string; // new field
+  scientificDegree: string; // new field
+}

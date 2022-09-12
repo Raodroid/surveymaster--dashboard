@@ -34,7 +34,7 @@ function UserContent() {
 
         <div className="notifications padding-24 flex-space-between custom-ant-hover">
           <div className="wrapper">
-            <span className="title">{t('common.Notifications')}</span>
+            <span className="title">{t('common.notifications')}</span>
             <p>
               {t('common.sendNotifications')}{' '}
               <span

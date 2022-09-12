@@ -1,5 +1,5 @@
 import { NotificationType } from 'aws-sdk/clients/budgets';
-import { UserUpdatedDto } from 'modules/dashboard/pages/Profile/form/UserForm';
+import { UserUpdatedDto } from 'interfaces';
 import APIService from './base.service';
 
 export default class UserService {
