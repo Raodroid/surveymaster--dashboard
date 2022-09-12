@@ -19,12 +19,22 @@ export const ModalStyled = styled(Modal)`
   .ant-modal-body {
     display: flex;
     flex-direction: column;
-
     padding: 36px 40px;
 
     form {
       flex: 1;
     }
+
+    label {
+      padding-left: 4px;
+    }
+  }
+
+  .submit-btn {
+    width: 100%;
+    height: 36px;
+    margin-top: 40px;
+    background: #25216a;
   }
 `;
 
@@ -40,13 +50,6 @@ export const ChangePasswordModalStyled = styled(ModalStyled)`
     path {
       fill: var(--ant-primary-color);
     }
-  }
-  .submit-btn {
-    width: 100%;
-    height: 36px;
-    margin-top: 40px;
-    font-weight: bold;
-    background: #25216a;
   }
 `;
 
@@ -67,8 +70,6 @@ export const SetUpPreferencesModalStyled = styled(ModalStyled)`
     --ant-primary-color-hover: rgba(51, 85, 108, 0.8);
     --ant-primary-color-active: #096dd9;
 
-    width: 100%;
-    height: 36px;
     background: #33556c;
     span {
       font-weight: bold;
@@ -89,5 +90,33 @@ export const SetUpPreferencesModalStyled = styled(ModalStyled)`
 
   .ant-modal-close-x path {
     fill: rgb(201, 67, 151);
+  }
+`;
+
+export const InviteMemberModalStyled = styled(ModalStyled)`
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+  .ant-modal-body {
+    padding: 40px 55px;
+  }
+  .ant-modal-footer {
+    padding: 40px 55px 55px;
+
+    .ant-btn {
+      height: 36px;
+    }
+  }
+  .ant-modal-close {
+    top: 10px;
+
+    svg {
+      width: 10px;
+      height: 10px;
+    }
+
+    path {
+      fill: var(--ant-primary-color);
+    }
   }
 `;

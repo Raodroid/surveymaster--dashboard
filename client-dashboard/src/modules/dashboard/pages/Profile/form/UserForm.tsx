@@ -4,13 +4,18 @@ import { UserUpdatedDto } from 'interfaces';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { UserService } from 'services';
 import { onError } from 'utils';
+import { useEffect, useState, useMemo } from 'react';
+import { CustomSpinSuspense } from 'modules/common/styles';
 
 function UserForm() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const { data, isLoading } = useQuery('me', UserService.getProfile);
+  const profile = useMemo(() => data?.data, [data]);
+
   const mutationUpdateProfile = useMutation(
     (payload: UserUpdatedDto) => {
       return UserService.updateProfile(payload);
@@ -27,89 +32,99 @@ function UserForm() {
   );
 
   return (
-    <Formik
-      initialValues={{
-        firstName: 'Van',
-        lastName: 'Bui',
-        displayName: 'VanBuiLeader',
-        scientificDegree: 'Jungler god',
-        phone: '3570817',
-        avatar: initImage,
-      }}
-      onSubmit={(userFormValues: UserUpdatedDto) =>
-        mutationUpdateProfile.mutateAsync({ ...userFormValues })
-      }
-    >
-      {({
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        isSubmitting,
-        setFieldValue,
-      }) => {
-        return (
-          <Form layout="vertical" onFinish={handleSubmit}>
-            <div className="avatar">
-              <ControlledInput
-                inputType={INPUT_TYPES.IMAGE_UPLOAD}
-                name="avatar"
-                label={t('common.photo')}
-                className="custom-upload"
-                id="custom-upload-avatar"
-              />
-            </div>
-            <div className="buttons flex custom-ant-hover">
-              <Button>
-                <label htmlFor="custom-upload-avatar" className="flex-center">
-                  {t('common.uploadNewPhoto')}
-                </label>
-              </Button>
-              <Button onClick={() => setFieldValue('avatar', null)}>
-                {t('common.removePhoto')}
-              </Button>
-            </div>
-            <div className="flex-space-between" style={{ gap: 10 }}>
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'text'}
-                name="firstName"
-                label={t('common.firstName')}
-              />
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'text'}
-                name="lastName"
-                label={t('common.lastName')}
-              />
-            </div>
-            <ControlledInput
-              inputType={INPUT_TYPES.INPUT}
-              type={'text'}
-              name="displayName"
-              label={t('common.displayName')}
-            />
-            <ControlledInput
-              inputType={INPUT_TYPES.INPUT}
-              type={'text'}
-              name="scientificDegree"
-              label={t('common.scientificDegree')}
-            />
-            <ControlledInput
-              inputType={INPUT_TYPES.INPUT}
-              type={'tel'}
-              name="phone"
-              label={t('common.phoneNumber')}
-            />
-            <Button className="submit-btn custom-ant-hover" htmlType="submit">
-              {t('common.saveEdits')}
-            </Button>
-          </Form>
-        );
-      }}
-    </Formik>
+    <CustomSpinSuspense spinning={isLoading}>
+      {profile && (
+        <Formik
+          initialValues={{
+            firstName: profile.firstName || '',
+            lastName: profile.lastName || '',
+            displayName: profile.displayName || '',
+            scientificDegree: '',
+            phone: profile.phone || '',
+            avatar: initImage,
+          }}
+          onSubmit={(userFormValues: UserUpdatedDto) =>
+            mutationUpdateProfile.mutateAsync({ ...userFormValues })
+          }
+        >
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting,
+            setFieldValue,
+          }) => {
+            return (
+              <Form layout="vertical" onFinish={handleSubmit}>
+                <div className="avatar">
+                  <ControlledInput
+                    inputType={INPUT_TYPES.IMAGE_UPLOAD}
+                    name="avatar"
+                    label={t('common.photo')}
+                    className="custom-upload"
+                    id="custom-upload-avatar"
+                  />
+                </div>
+                <div className="buttons flex custom-ant-hover">
+                  <Button>
+                    <label
+                      htmlFor="custom-upload-avatar"
+                      className="flex-center"
+                    >
+                      {t('common.uploadNewPhoto')}
+                    </label>
+                  </Button>
+                  <Button onClick={() => setFieldValue('avatar', null)}>
+                    {t('common.removePhoto')}
+                  </Button>
+                </div>
+                <div className="flex-space-between" style={{ gap: 10 }}>
+                  <ControlledInput
+                    inputType={INPUT_TYPES.INPUT}
+                    type={'text'}
+                    name="firstName"
+                    label={t('common.firstName')}
+                  />
+                  <ControlledInput
+                    inputType={INPUT_TYPES.INPUT}
+                    type={'text'}
+                    name="lastName"
+                    label={t('common.lastName')}
+                  />
+                </div>
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  type={'text'}
+                  name="displayName"
+                  label={t('common.displayName')}
+                />
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  type={'text'}
+                  name="scientificDegree"
+                  label={t('common.scientificDegree')}
+                />
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  type={'tel'}
+                  name="phone"
+                  label={t('common.phoneNumber')}
+                />
+                <Button
+                  className="submit-btn custom-ant-hover"
+                  htmlType="submit"
+                >
+                  {t('common.saveEdits')}
+                </Button>
+              </Form>
+            );
+          }}
+        </Formik>
+      )}
+    </CustomSpinSuspense>
   );
 }
 

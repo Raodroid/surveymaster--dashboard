@@ -29,7 +29,7 @@ function TeamForm() {
               id="custom-upload-avatar"
             />
           </div>
-          <div className="buttons flex">
+          <div className="buttons flex custom-ant-hover">
             <Button>
               <label htmlFor="custom-upload-avatar" className="flex-center">
                 {t('common.uploadNewPhoto')}

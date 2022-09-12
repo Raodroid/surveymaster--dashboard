@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { Upload } from 'antd';
 import notification from 'customize-components/CustomNotification';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/lib/upload';
@@ -60,6 +60,13 @@ const CustomImageUpload = (props: CustomUploadProps) => {
     return imageUrl || props.value;
   }, [props.value, imageUrl]);
 
+  // const image = imageUrl || props.value;
+  // useEffect(() => {
+  //   if (!props.value) {
+  //     setImageUrl('');
+  //   }
+  // }, [props.value]);
+
   const beforeUpload = (file: RcFile) => {
     const isJpgOrPng =
       file.type === 'image/jpeg' ||
@@ -86,6 +93,7 @@ const CustomImageUpload = (props: CustomUploadProps) => {
       getBase64(info.file.originFileObj, imgUrl => {
         setLoading(false);
         setImageUrl(imgUrl);
+        console.log(imgUrl);
       });
     }
 

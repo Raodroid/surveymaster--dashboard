@@ -1,18 +1,15 @@
-import { Button, Form, Modal, notification, Spin } from 'antd';
+import { Button, Form, notification, Spin } from 'antd';
 import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { UserService } from 'services';
+import { ProfileModal } from '.';
 import { onError } from '../../../../../../utils/funcs';
 import { SetUpPreferencesModalStyled } from './styles';
-
-interface Modal {
-  showModal: boolean;
-  setShowModal: Dispatch<SetStateAction<boolean>>;
-}
+import { useEffect, useState } from 'react';
 
 interface IInitialValues {
   disabledNotificationTypes?: NotificationType[];
@@ -57,28 +54,26 @@ const reverseNotificationTypeValue = (
   );
 };
 
-function SetUpPreferencesModal(props: Modal) {
+function SetUpPreferencesModal(props: ProfileModal) {
   const { showModal, setShowModal } = props;
   const queryClient = useQueryClient();
   const { t } = useTranslation();
+  const { data } = useQuery('me', UserService.getProfile);
+  const myProfile = useMemo(() => data?.data, [data]);
 
   const initialValues = useMemo<IInitialValues>(
     () => ({
       disabledNotificationTypes: reverseNotificationTypeValue(
-        // myProfile.disabledNotificationTypes || [],
-        [],
+        myProfile?.disabledNotificationTypes || [],
       ),
     }),
-    [],
-    // [myProfile.disabledNotificationTypes],
+    [myProfile?.disabledNotificationTypes],
   );
 
-  // const mutationSetupEmailNoti = { isLoading: false };
   const mutationSetupEmailNoti = useMutation(
     (value: NotificationType[]) =>
       UserService.setEmailNoti({
-        // id: myProfile.id as string,
-        id: '',
+        id: myProfile?.id as string,
         disabledNotificationTypes: value,
       }),
     {
@@ -98,16 +93,16 @@ function SetUpPreferencesModal(props: Modal) {
       const reverseValue = reverseNotificationTypeValue(
         value.disabledNotificationTypes,
       );
-      // if (!isValueSame(reverseValue, myProfile.disabledNotificationTypes)) {
-      //   await mutationSetupEmailNoti.mutateAsync(reverseValue);
-      // } else {
-      //   notification.success({
-      //     message: t('common.updateSuccess'),
-      //   });
-      // }
+      if (!isValueSame(reverseValue, myProfile?.disabledNotificationTypes)) {
+        await mutationSetupEmailNoti.mutateAsync(reverseValue);
+      } else {
+        notification.success({
+          message: t('common.updateSuccess'),
+        });
+        setShowModal(false);
+      }
     },
-    [],
-    // [mutationSetupEmailNoti, myProfile.disabledNotificationTypes],
+    [mutationSetupEmailNoti, myProfile?.disabledNotificationTypes],
   );
 
   return (
@@ -130,15 +125,12 @@ function SetUpPreferencesModal(props: Modal) {
                 inputType={INPUT_TYPES.CHECKBOX_GROUP}
                 name={'disabledNotificationTypes'}
                 className="custom-group-checkbox"
-                options={Object.keys(NotificationType)
-                  .filter(
-                    item =>
-                      item !== NotificationType.CANCEL_BOOKING_HEALTH_COACH,
-                  )
-                  .map(key => ({
-                    value: key,
-                    label: t(`notification.notificationType.${key}`),
-                  }))}
+                options={[
+                  {
+                    value: 1,
+                    label: 'test',
+                  },
+                ]}
               />
               <Button type="primary" htmlType="submit" className="submit-btn">
                 {t('common.saveChange')}

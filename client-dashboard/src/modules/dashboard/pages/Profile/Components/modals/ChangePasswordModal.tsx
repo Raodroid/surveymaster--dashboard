@@ -1,21 +1,17 @@
-import { Button, Form, Modal } from 'antd';
+import { Button, Form } from 'antd';
 import { Formik } from 'formik';
 import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { FORGOT_PASSWORD_FIELD } from 'modules/common/validate/validate';
-import { Dispatch, SetStateAction, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { ChangePasswordPayload, UserAction } from 'redux/user';
 import * as Yup from 'yup';
+import { ProfileModal } from '.';
 import { ChangePasswordModalStyled } from './styles';
-
-interface Modal {
-  showModal: boolean;
-  setShowModal: Dispatch<SetStateAction<boolean>>;
-}
 
 const initialValues = {
   currentPassword: '',
@@ -23,7 +19,7 @@ const initialValues = {
   passwordConfirm: '',
 };
 
-function ChangePasswordModal(props: Modal) {
+function ChangePasswordModal(props: ProfileModal) {
   const { showModal, setShowModal } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();

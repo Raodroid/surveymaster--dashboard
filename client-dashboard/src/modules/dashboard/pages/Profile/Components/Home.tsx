@@ -3,8 +3,10 @@ import { ROUTE_PATH } from 'enums';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
+import TeamForm from '../form/TeamForm';
 import UserForm from '../form/UserForm';
 import { ProfileStyled } from '../styles';
+import TeamContent from './TeamContent';
 import UserContent from './UserContent';
 
 const Home = () => {
@@ -38,10 +40,10 @@ const Home = () => {
           </div>
 
           <div className="inputs">
-            <UserForm />
+            {tab === 'user' ? <UserForm /> : <TeamForm />}
           </div>
         </div>
-        <UserContent />
+        {tab === 'user' ? <UserContent /> : <TeamContent />}
       </div>
     </ProfileStyled>
   );

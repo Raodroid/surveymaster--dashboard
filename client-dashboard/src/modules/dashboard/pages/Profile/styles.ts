@@ -1,6 +1,26 @@
 import styled from 'styled-components';
 
-export const ProfileStyled = styled.div`
+export const FlexBox = styled.div`
+  .flex {
+    display: flex;
+  }
+  .flex-center {
+    display: flex;
+    align-items: center;
+  }
+  .flex-space-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .flex-end {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+`;
+
+export const ProfileStyled = styled(FlexBox)`
   .custom-ant-hover {
     --ant-primary-color-hover: #40a9ff;
   }
@@ -8,34 +28,11 @@ export const ProfileStyled = styled.div`
   padding: 0 20px 20px;
   min-height: 100%;
   width: 100%;
-
-  .flex {
-    display: flex;
-  }
-
-  .flex-center {
-    display: flex;
-    align-items: center;
-  }
-
-  .flex-space-between {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .flex-end {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
   .layout {
     width: 100%;
     min-height: 100%;
     gap: 20px;
   }
-
   .sider {
     background: white;
     padding: 18px 24px 24px;
@@ -50,7 +47,6 @@ export const ProfileStyled = styled.div`
       flex-direction: column;
     }
   }
-
   .tabs {
     width: 100%;
     border-radius: 6px;
@@ -95,7 +91,6 @@ export const ProfileStyled = styled.div`
       }
     }
   }
-
   .avatar {
     .ant-upload {
       margin-bottom: 0;
@@ -116,7 +111,6 @@ export const ProfileStyled = styled.div`
       font-size: 12px;
     }
   }
-
   .buttons {
     --ant-primary-color-deprecated-f-12: rgba(24, 144, 255, 0.12);
     --ant-primary-color-deprecated-l-35: #cbe6ff;
@@ -155,14 +149,12 @@ export const ProfileStyled = styled.div`
       padding-top: 2px;
     }
   }
-
   .inputs,
   .ant-form {
     flex: 1;
     display: flex;
     flex-direction: column;
   }
-
   .submit-btn {
     margin-top: auto;
     width: 100%;
@@ -174,11 +166,9 @@ export const ProfileStyled = styled.div`
       filter: brightness(95%);
     }
   }
-
   .ant-input {
     font-weight: 500;
   }
-
   .ant-divider {
     margin: 0;
   }
@@ -189,18 +179,15 @@ export const ContentStyled = styled.div`
   gap: 20px;
   justify-content: flex-start;
   flex: 1;
-
   .part {
     min-height: 76px;
     width: 100%;
     background: white;
     border-radius: 8px;
   }
-
   .padding-24 {
     padding: 24px;
   }
-
   .wrapper {
     flex: 1;
     p,
@@ -213,7 +200,6 @@ export const ContentStyled = styled.div`
       line-height: 20px;
     }
   }
-
   .title {
     font-size: 16px;
     font-weight: bold;
@@ -227,7 +213,6 @@ export const UserContentStyled = styled(ContentStyled)`
     min-height: 36px;
     padding: 4px;
   }
-
   .password {
     --ant-primary-color: #007ae7;
     --ant-primary-color-active: #096dd9;
@@ -236,7 +221,6 @@ export const UserContentStyled = styled(ContentStyled)`
       padding-top: 5px;
     }
   }
-
   .notifications {
     --ant-primary-color: #1890ff;
     --ant-primary-1: #e6f7ff;
@@ -269,7 +253,6 @@ export const UserContentStyled = styled(ContentStyled)`
       }
     }
   }
-
   .preferences {
     color: #007ae7;
     font-size: 12px;
@@ -282,7 +265,69 @@ export const UserContentStyled = styled(ContentStyled)`
 `;
 
 export const TeamContentStyled = styled(ContentStyled)`
+  .search {
+    .ant-input {
+      border: none;
+      border-radius: 0;
+      font-size: 16px;
+    }
+    .ant-input:focus {
+      box-shadow: none;
+    }
+    .search-btn {
+      position: relative;
+      z-index: 1;
+      min-width: 32px;
+      padding: 0;
+      background: transparent;
+      color: var(--ant-primary-color);
+    }
+  }
   .table {
     padding: 12px;
+  }
+  .ant-table-row,
+  .ant-table-thead {
+    height: 72px;
+  }
+  .avatar-cell {
+    width: 50px;
+  }
+  .ant-table-cell {
+    font-weight: 600;
+    &::before {
+      display: none;
+    }
+  }
+  .ant-table-tbody > tr:nth-child(n) {
+    background: #f5fafe;
+  }
+  .ant-table-tbody > tr:nth-child(2n) {
+    background: white;
+  }
+  .ant-table-thead {
+    .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+      transform: translate(-50%, -50%) scale(1) !important;
+      background-image: none !important;
+    }
+    .ant-table-cell {
+      border: none;
+    }
+  }
+  .three-dots {
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    margin-left: auto;
+    border-radius: 4px;
+    color: var(--ant-primary-color);
+
+    &:hover {
+      color: var(--ant-primary-color);
+      background: var(--ant-primary-2);
+    }
+  }
+  .ant-dropdown-open {
+    background: var(--ant-primary-2);
   }
 `;

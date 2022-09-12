@@ -19,11 +19,7 @@ APIService.interceptors.request.use(
       request.params = {};
     }
     if (!request.headers) request.headers = {};
-    if (request.url?.includes('countrystatecity')) {
-      request.headers['X-CSCAPI-KEY'] = process.env
-        .REACT_APP_X_CSCAPI_KEY as string;
-      request.headers.Authorization = delete request.headers.Authorization;
-    } else if (token) {
+    if (token) {
       request.headers.Authorization = `Bearer ${token}`;
     } else {
       delete request.headers.Authorization;
