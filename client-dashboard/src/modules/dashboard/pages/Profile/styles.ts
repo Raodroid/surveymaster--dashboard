@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 export const ProfileStyled = styled.div`
   .custom-ant-hover {
@@ -178,9 +178,13 @@ export const ProfileStyled = styled.div`
   .ant-input {
     font-weight: 500;
   }
+
+  .ant-divider {
+    margin: 0;
+  }
 `;
 
-export const UserContentStyled = styled.div`
+export const ContentStyled = styled.div`
   flex-direction: column;
   gap: 20px;
   justify-content: flex-start;
@@ -215,7 +219,9 @@ export const UserContentStyled = styled.div`
     font-weight: bold;
     margin-bottom: 4px;
   }
+`;
 
+export const UserContentStyled = styled(ContentStyled)`
   .btn {
     min-width: 180px;
     min-height: 36px;
@@ -272,5 +278,11 @@ export const UserContentStyled = styled.div`
     :hover {
       color: #015398;
     }
+  }
+`;
+
+export const TeamContentStyled = styled(ContentStyled)`
+  .table {
+    padding: 12px;
   }
 `;
