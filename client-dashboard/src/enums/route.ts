@@ -12,7 +12,7 @@ export const ROUTE_PATH = {
     PROJECT: '/app/project',
     PROFILE: {
       HOME: '/app/profile',
-      TEAM: '/app/profile/manage-users',
+      TEAM: 'manage-users',
     },
     QUESTION_BANK: '/app/question-bank',
   },

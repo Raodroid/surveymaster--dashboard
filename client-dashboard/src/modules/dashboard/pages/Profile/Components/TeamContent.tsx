@@ -1,14 +1,17 @@
-import { Button, Divider, Input, InputRef, Menu, Table } from 'antd';
+import { Button, Divider, Image, Input, InputRef, Menu, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
-import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
-import { useRef, useState } from 'react';
+import { CustomSpinSuspense } from 'modules/common/styles';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
+import APIService from 'services/bioandme-service/base.service';
 import { initImage } from '../form/UserForm';
 import { TeamContentStyled } from '../styles';
 import InviteMemberModal from './modals/InviteMemberModal';
+import ResetUserPassword from './modals/ResetUserPassword';
 
 interface DataType {
   key: React.Key;
@@ -16,39 +19,7 @@ interface DataType {
   name: string;
   email: string;
   authentication: string;
-  threeDots: any;
 }
-
-const columns: ColumnsType<DataType> = [
-  {
-    title: '',
-    dataIndex: 'avatar',
-    render: (src: string) => (
-      <img src={src} style={{ width: 40, height: 40, borderRadius: 12 }}></img>
-    ),
-    className: 'avatar-cell',
-  },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-  },
-
-  {
-    title: 'Email',
-    dataIndex: 'email',
-  },
-  {
-    title: 'Authentication',
-    dataIndex: 'authentication',
-  },
-  {
-    title: '',
-    dataIndex: 'threeDots',
-    render: (menu: any) => (
-      <ThreeDotsDropdown overlay={menu} trigger={['click']} />
-    ),
-  },
-];
 
 const rowSelection = {
   onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
@@ -66,72 +37,105 @@ const rowSelection = {
 
 function TeamContent() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const [search, setSearch] = useState('');
   const searchRef = useRef<InputRef>(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showEditPreferencesModal, setShowEditPreferencesModal] =
     useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [userId, setUserId] = useState('');
 
-  const menu = (
-    <Menu
-      items={[
-        {
-          key: '1',
-          label: (
-            <a onClick={() => setShowEditPreferencesModal(true)}>
-              {t('common.editPreferences')}
-            </a>
-          ),
-        },
-        {
-          key: '2',
-          label: (
-            <a onClick={() => setShowResetPasswordModal(true)}>
-              {/* {t('common.editPreferences')} */}
-              Reset Password
-            </a>
-          ),
-        },
-      ]}
-    />
+  const handleEditPreferences = (id: string) => {
+    setUserId(id);
+    setShowEditPreferencesModal(true);
+  };
+
+  const handleResetPassword = (id: string) => {
+    setUserId(id);
+    setShowResetPasswordModal(true);
+  };
+
+  const baseParams = useMemo(
+    () => ({
+      page: 1,
+      take: 10,
+      roles: [1, 2, 3, 4, 7, 10],
+    }),
+    [],
   );
 
-  const data: DataType[] = [
+  function getStaffs(params: any): Promise<any> {
+    return APIService.get(`/users`, { params });
+  }
+
+  const { data: dataStaff, isLoading } = useQuery(['getStaffs'], () =>
+    getStaffs(baseParams),
+  );
+
+  const columns: ColumnsType<DataType> = [
     {
-      key: '1',
-      avatar: initImage,
-      name: 'John Brown',
-      email: '@gmail.com',
-      authentication: 'New York No. 1 Lake Park',
-      threeDots: menu,
+      title: '',
+      dataIndex: 'avatar',
+      render: (src: string) => (
+        <Image src={src} width={40} height={40} style={{ borderRadius: 12 }} />
+      ),
+      className: 'avatar-cell',
     },
     {
-      key: '2',
-      avatar: initImage,
-      name: 'Jim Green',
-      email: '@gmail.com',
-      authentication: 'London No. 1 Lake Park',
-      threeDots: menu,
+      title: 'Name',
+      dataIndex: 'name',
+    },
+
+    {
+      title: 'Email',
+      dataIndex: 'email',
     },
     {
-      key: '3',
-      avatar: initImage,
-      name: 'Joe Black',
-      email: '@gmail.com',
-      authentication: 'Sidney No. 1 Lake Park',
-      threeDots: menu,
+      title: 'Authentication',
+      dataIndex: 'authentication',
     },
     {
-      key: '4',
-      avatar: initImage,
-      name: 'Disabled User',
-      email: '@gmail.com',
-      authentication: 'Sidney No. 1 Lake Park',
-      threeDots: menu,
+      title: '',
+      dataIndex: 'threeDots',
+      render: (_, record: any) => (
+        <ThreeDotsDropdown
+          overlay={
+            <Menu>
+              <Menu.Item
+                key="editPreferences"
+                onClick={() => {
+                  handleEditPreferences(record.key);
+                }}
+              >
+                Edit Preferences
+              </Menu.Item>
+              <Menu.Item
+                key="resetUserPassword"
+                onClick={() => {
+                  handleResetPassword(record.key);
+                }}
+              >
+                Reset Password
+              </Menu.Item>
+            </Menu>
+          }
+          trigger={['click']}
+        />
+      ),
     },
   ];
+
+  const data: DataType[] = dataStaff
+    ? dataStaff.data.data.map(user => {
+        return {
+          key: user.id,
+          avatar: initImage,
+          name: user.firstName + ' ' + user.lastName,
+          email: user.email,
+          authentication: 'auth',
+        };
+      })
+    : [];
 
   return (
     <TeamContentStyled className="flex">
@@ -165,26 +169,40 @@ function TeamContent() {
         <Divider />
 
         <div className="table">
-          <Table
-            rowSelection={{
-              type: 'checkbox',
-              ...rowSelection,
-            }}
-            columns={columns}
-            dataSource={data}
-          />
+          <CustomSpinSuspense spinning={isLoading}>
+            <Table
+              rowSelection={{
+                type: 'checkbox',
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={data}
+            />
+          </CustomSpinSuspense>
         </div>
       </div>
 
-      <InviteMemberModal
-        showModal={showInviteModal}
-        setShowModal={setShowInviteModal}
-      />
-      <InviteMemberModal
-        showModal={showEditPreferencesModal}
-        setShowModal={setShowEditPreferencesModal}
-        edit
-      />
+      {showInviteModal && (
+        <InviteMemberModal
+          showModal={showInviteModal}
+          setShowModal={setShowInviteModal}
+        />
+      )}
+      {showEditPreferencesModal && (
+        <InviteMemberModal
+          userId={userId}
+          showModal={showEditPreferencesModal}
+          setShowModal={setShowEditPreferencesModal}
+          edit
+        />
+      )}
+      {showResetPasswordModal && (
+        <ResetUserPassword
+          userId={userId}
+          showModal={showResetPasswordModal}
+          setShowModal={setShowResetPasswordModal}
+        />
+      )}
     </TeamContentStyled>
   );
 }

@@ -5,6 +5,9 @@ import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
 import { Layout } from 'antd';
 import styled from 'styled-components';
+import { useQuery } from 'react-query';
+import { UserService } from 'services';
+import { useParams } from 'react-router';
 const { Content } = Layout;
 
 const LayoutNavbar = lazy(() => import('modules/dashboard/components/Navbar'));
@@ -12,6 +15,19 @@ const LayoutNavbar = lazy(() => import('modules/dashboard/components/Navbar'));
 export const ProtectedRoutes = () => {
   const idToken = useSelector(AuthSelectors.getIdToken);
   const isLogged = !!idToken;
+  const params = useParams();
+
+  const userRoles = useSelector(AuthSelectors.getAllRoles);
+  const userRolesList = Object.keys(userRoles);
+  if (
+    !userRolesList.includes('1') &&
+    params.path ===
+      ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME +
+        '/' +
+        ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM
+  ) {
+    return <Navigate to="/app" />;
+  }
 
   return isLogged ? (
     <Layout>

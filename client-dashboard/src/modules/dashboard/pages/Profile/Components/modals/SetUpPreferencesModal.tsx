@@ -9,7 +9,6 @@ import { UserService } from 'services';
 import { ProfileModal } from '.';
 import { onError } from '../../../../../../utils/funcs';
 import { SetUpPreferencesModalStyled } from './styles';
-import { useEffect, useState } from 'react';
 
 interface IInitialValues {
   disabledNotificationTypes?: NotificationType[];
@@ -79,7 +78,7 @@ function SetUpPreferencesModal(props: ProfileModal) {
     {
       onSuccess: () => {
         notification.success({
-          message: 'Update Success',
+          message: t('updateSuccess'),
         });
         setShowModal(false);
         queryClient.invalidateQueries('getMe');

@@ -58,3 +58,17 @@ export interface ChangePasswordPayload {
   currentPassword: string;
   password: string;
 }
+
+export interface ChangeUserPasswordPayload {
+  userId: string;
+  password: string;
+}
+
+export interface InviteMemberPayload {
+  userId?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  department: string;
+  authentication: string;
+}
