@@ -9,6 +9,8 @@ export const ProjectWrapper = styled(Content)`
   gap: ${templateVariable.section_spacing};
   background: none;
 
+  height: 100%;
+
   @media only screen and (${screenSize.medium}) {
     flex-direction: column;
   }
