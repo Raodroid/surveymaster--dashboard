@@ -13,7 +13,8 @@ export default class AdminService {
     firstName: string;
     lastName: string;
     email: string;
-    department: string;
+    displayName: string;
+    scientificDegree: string;
     authentication: string;
   }): Promise<any> {
     return APIService.post(`users/create`, payload);
@@ -24,7 +25,8 @@ export default class AdminService {
     firstName: string;
     lastName: string;
     email: string;
-    department: string;
+    displayName: string;
+    scientificDegree: string;
     authentication: string;
   }): Promise<any> {
     const { userId } = payload;

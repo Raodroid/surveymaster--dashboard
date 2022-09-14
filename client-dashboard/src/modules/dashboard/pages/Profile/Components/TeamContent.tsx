@@ -1,13 +1,23 @@
-import { Button, Divider, Image, Input, InputRef, Menu, Table } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Image,
+  Input,
+  InputRef,
+  Menu,
+  Table,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { SearchIcon } from 'icons/SearchIcon';
+import { CustomCheckbox } from 'modules/common/input/inputs';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
 import APIService from 'services/bioandme-service/base.service';
+import { useDebounce } from 'utils';
 import { initImage } from '../form/UserForm';
 import { TeamContentStyled } from '../styles';
 import InviteMemberModal from './modals/InviteMemberModal';
@@ -39,11 +49,13 @@ function TeamContent() {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const searchRef = useRef<InputRef>(null);
+  const debounceSearch = useDebounce(search);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showEditPreferencesModal, setShowEditPreferencesModal] =
     useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [userId, setUserId] = useState('');
+  const [showInactivateUser, setShowInactivateUser] = useState(false);
 
   const handleEditPreferences = (id: string) => {
     setUserId(id);
@@ -59,71 +71,107 @@ function TeamContent() {
     () => ({
       page: 1,
       take: 10,
-      roles: [1, 2, 3, 4, 7, 10],
+      roles: [1, 2, 3, 4, 5, 7, 10],
+      activated: showInactivateUser,
+      firstName: debounceSearch,
+      lastName: debounceSearch,
+      email: debounceSearch,
+      authentication: debounceSearch,
     }),
-    [],
+    [showInactivateUser, debounceSearch],
   );
 
   function getStaffs(params: any): Promise<any> {
     return APIService.get(`/users`, { params });
   }
 
-  const { data: dataStaff, isLoading } = useQuery(['getStaffs'], () =>
-    getStaffs(baseParams),
+  const { data: dataStaff, isLoading } = useQuery(
+    ['getStaffs', showInactivateUser, debounceSearch],
+    () => getStaffs(baseParams),
   );
 
-  const columns: ColumnsType<DataType> = [
-    {
-      title: '',
-      dataIndex: 'avatar',
-      render: (src: string) => (
-        <Image src={src} width={40} height={40} style={{ borderRadius: 12 }} />
-      ),
-      className: 'avatar-cell',
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-    },
+  console.log(dataStaff?.data);
 
-    {
-      title: 'Email',
-      dataIndex: 'email',
-    },
-    {
-      title: 'Authentication',
-      dataIndex: 'authentication',
-    },
-    {
-      title: '',
-      dataIndex: 'threeDots',
-      render: (_, record: any) => (
-        <ThreeDotsDropdown
-          overlay={
-            <Menu>
-              <Menu.Item
-                key="editPreferences"
-                onClick={() => {
-                  handleEditPreferences(record.key);
-                }}
-              >
-                Edit Preferences
-              </Menu.Item>
-              <Menu.Item
-                key="resetUserPassword"
-                onClick={() => {
-                  handleResetPassword(record.key);
-                }}
-              >
-                Reset Password
-              </Menu.Item>
-            </Menu>
-          }
-          trigger={['click']}
-        />
-      ),
-    },
-  ];
+  const columns: ColumnsType<DataType> = useMemo(
+    () => [
+      {
+        title: '',
+        dataIndex: 'avatar',
+        render: (src: string) => (
+          <Image
+            src={src}
+            width={40}
+            height={40}
+            style={{ borderRadius: 12 }}
+          />
+        ),
+        className: 'avatar-cell',
+      },
+      {
+        title: 'Name',
+        dataIndex: 'name',
+      },
+
+      {
+        title: 'Email',
+        dataIndex: 'email',
+      },
+      {
+        title: 'Authentication',
+        dataIndex: 'authentication',
+      },
+      {
+        title: '',
+        dataIndex: 'threeDots',
+        render: (_, record: any) => (
+          <ThreeDotsDropdown
+            overlay={
+              <Menu>
+                <Menu.Item
+                  key="editPreferences"
+                  onClick={() => {
+                    handleEditPreferences(record.key);
+                  }}
+                >
+                  Edit Preferences
+                </Menu.Item>
+                <Menu.Item
+                  key="resetUserPassword"
+                  onClick={() => {
+                    handleResetPassword(record.key);
+                  }}
+                >
+                  Reset Password
+                </Menu.Item>
+                {(!showInactivateUser || !record.deleteAt) && (
+                  <Menu.Item
+                    key="deactivateUser"
+                    onClick={() => {
+                      handleResetPassword(record.key);
+                    }}
+                  >
+                    Deactivate User
+                  </Menu.Item>
+                )}
+                {record.deleteAt && (
+                  <Menu.Item
+                    key="restore"
+                    onClick={() => {
+                      handleResetPassword(record.key);
+                    }}
+                  >
+                    Restore
+                  </Menu.Item>
+                )}
+              </Menu>
+            }
+            trigger={['click']}
+          />
+        ),
+      },
+    ],
+    [showInactivateUser],
+  );
 
   const data: DataType[] = dataStaff
     ? dataStaff.data.data.map(user => {
@@ -161,6 +209,12 @@ function TeamContent() {
             onChange={e => setSearch(e.target.value)}
             placeholder="Search Team Member..."
           />
+          <Checkbox
+            checked={showInactivateUser}
+            onChange={() => setShowInactivateUser(!showInactivateUser)}
+          >
+            Show inactivate users
+          </Checkbox>
           <Button type="primary" onClick={() => setShowInviteModal(true)}>
             Invite Member
           </Button>

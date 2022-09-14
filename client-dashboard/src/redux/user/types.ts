@@ -69,6 +69,7 @@ export interface InviteMemberPayload {
   firstName: string;
   lastName: string;
   email: string;
-  department: string;
+  displayName: string;
+  scientificDegree: string;
   authentication: string;
 }

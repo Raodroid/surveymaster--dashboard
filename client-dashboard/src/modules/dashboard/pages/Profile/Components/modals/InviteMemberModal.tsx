@@ -9,16 +9,17 @@ import { useDispatch } from 'react-redux';
 import { InviteMemberPayload } from 'redux/user';
 import { AdminService } from 'services';
 import * as Yup from 'yup';
-import { ProfileModal } from '.';
-import { InviteMemberModalStyled } from './styles';
 import { useCallback, useMemo } from 'react';
 import { onError } from '../../../../../../utils/funcs';
+import { InviteMemberModalStyled } from './styles';
+import { ProfileModal } from '.';
 
 const initialValues = {
   firstName: '',
   lastName: '',
   email: '',
-  department: '',
+  displayName: '',
+  scientificDegree: '',
   authentication: '',
 };
 
@@ -29,17 +30,17 @@ interface InviteModal extends ProfileModal {
 
 function InviteMemberModal(props: InviteModal) {
   const { showModal, setShowModal, edit = false, userId = '' } = props;
-  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const InviteMemberSchema = Yup.object({
     firstName: Yup.string().required('Required!').trim(),
     lastName: Yup.string().required('Required!').trim(),
+    displayName: Yup.string().required('Required!').trim(),
     email: Yup.string()
       .required('Required!')
       .email('Wrong email format!')
       .trim(),
-    department: Yup.string().required('Required!').trim(),
+    scientificDegree: Yup.string().required('Required!').trim(),
     authentication: Yup.string().required('Required!').trim(),
   });
 
@@ -126,12 +127,18 @@ function InviteMemberModal(props: InviteModal) {
                 type={'text'}
                 name="firstName"
                 label={t('common.firstName')}
-              />{' '}
+              />
               <ControlledInput
                 inputType={INPUT_TYPES.INPUT}
                 type={'text'}
                 name="lastName"
                 label={t('common.lastName')}
+              />
+              <ControlledInput
+                inputType={INPUT_TYPES.INPUT}
+                type={'text'}
+                name="displayName"
+                label={t('common.displayName')}
               />
               <ControlledInput
                 inputType={INPUT_TYPES.INPUT}
@@ -142,9 +149,9 @@ function InviteMemberModal(props: InviteModal) {
               <ControlledInput
                 inputType={INPUT_TYPES.INPUT}
                 type={'text'}
-                name="department"
-                label={t('common.department')}
-              />{' '}
+                name="scientificDegree"
+                label={t('common.scientificDegree')}
+              />
               <ControlledInput
                 inputType={INPUT_TYPES.INPUT}
                 type={'text'}
