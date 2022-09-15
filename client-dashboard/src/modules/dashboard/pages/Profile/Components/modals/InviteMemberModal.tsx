@@ -15,6 +15,7 @@ import { InviteMemberModalStyled } from './styles';
 import { ProfileModal } from '.';
 
 const initialValues = {
+  id: '',
   firstName: '',
   lastName: '',
   email: '',
@@ -62,23 +63,26 @@ function InviteMemberModal(props: InviteModal) {
 
   const mutationInviteMember = useMutation(
     (payload: InviteMemberPayload) => AdminService.inviteMember(payload),
-    createHandleStatus('inviteSuccess'),
+    createHandleStatus('common.inviteSuccess'),
   );
 
   const mutationEditMember = useMutation(
     (payload: InviteMemberPayload) =>
-      AdminService.editMemberPreferences({ ...payload, id: userData.id }),
-    createHandleStatus('updateSuccess'),
+      AdminService.editMemberPreferences({
+        ...payload,
+        id: payload.id,
+      }),
+    createHandleStatus('common.updateSuccess'),
   );
 
   const mutationRemoveFromTeam = useMutation(
     () => AdminService.removeMemberPreferences({ userId: userData.id }),
-    createHandleStatus('removeSuccess'),
+    createHandleStatus('common.removeSuccess'),
   );
 
   const onFinish = (payload: InviteMemberPayload) => {
     if (edit) {
-      mutationEditMember.mutateAsync({ ...payload, userId: userData.id });
+      mutationEditMember.mutateAsync({ ...payload, id: userData.id });
     } else {
       mutationInviteMember.mutateAsync(payload);
     }
@@ -116,6 +120,7 @@ function InviteMemberModal(props: InviteModal) {
           initialValues={
             edit
               ? {
+                  id: userData.id,
                   firstName: userData.firstName,
                   lastName: userData.lastName,
                   email: userData.email,

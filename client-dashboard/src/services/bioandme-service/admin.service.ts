@@ -19,11 +19,17 @@ export default class AdminService {
     description?: string;
     roles?: number[] | string[];
   }): Promise<any> {
-    return APIService.post(`users`, {
-      ...payload,
-      description: '',
-      roles: [1, 2],
-    });
+    const params: { tenantId?: any } = {};
+    params.tenantId = 'd8faa031-4e95-4d1a-a9c2-7048bac20453';
+    return APIService.post(
+      `users`,
+      {
+        ...payload,
+        description: '',
+        roles: [4],
+      },
+      { params },
+    );
   }
 
   static editMemberPreferences(payload: {
@@ -37,19 +43,15 @@ export default class AdminService {
     description?: string;
     roles?: number[] | string[];
   }): Promise<any> {
-    const { id } = payload;
     const params: { tenantId?: any } = {};
     params.tenantId = 'd8faa031-4e95-4d1a-a9c2-7048bac20453';
-    return APIService.put(
-      `users/${id}`,
-      {
-        ...payload,
-        description: '',
-        roles: [4],
-        phonePrefix: '',
-      },
-      { params },
-    );
+    Object.assign(payload, {
+      phone: '',
+      phonePrefix: '',
+      roles: [4],
+      description: '',
+    });
+    return APIService.put(`/users/${payload.id}`, payload);
   }
 
   static removeMemberPreferences(payload: { userId: string }): Promise<any> {

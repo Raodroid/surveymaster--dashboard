@@ -65,6 +65,7 @@ export interface ChangeUserPasswordPayload {
 }
 
 export interface InviteMemberPayload {
+  id: string;
   userId?: string;
   firstName: string;
   lastName: string;
