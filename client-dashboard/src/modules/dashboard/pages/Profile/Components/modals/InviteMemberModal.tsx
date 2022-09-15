@@ -67,7 +67,7 @@ function InviteMemberModal(props: InviteModal) {
 
   const mutationEditMember = useMutation(
     (payload: InviteMemberPayload) =>
-      AdminService.editMemberPreferences({ ...payload, userId: userData.id }),
+      AdminService.editMemberPreferences({ ...payload, id: userData.id }),
     createHandleStatus('updateSuccess'),
   );
 

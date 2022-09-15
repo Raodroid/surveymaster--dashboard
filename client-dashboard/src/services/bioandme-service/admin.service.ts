@@ -27,7 +27,7 @@ export default class AdminService {
   }
 
   static editMemberPreferences(payload: {
-    userId: string;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -37,12 +37,19 @@ export default class AdminService {
     description?: string;
     roles?: number[] | string[];
   }): Promise<any> {
-    const { userId } = payload;
-    return APIService.put(`users/${userId}`, {
-      ...payload,
-      description: '',
-      roles: [1, 2],
-    });
+    const { id } = payload;
+    const params: { tenantId?: any } = {};
+    params.tenantId = 'd8faa031-4e95-4d1a-a9c2-7048bac20453';
+    return APIService.put(
+      `users/${id}`,
+      {
+        ...payload,
+        description: '',
+        roles: [4],
+        phonePrefix: '',
+      },
+      { params },
+    );
   }
 
   static removeMemberPreferences(payload: { userId: string }): Promise<any> {

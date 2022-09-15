@@ -16,8 +16,6 @@ function UserForm() {
   const { data, isLoading } = useQuery('me', UserService.getProfile);
   const profile = useMemo(() => data?.data, [data]);
 
-  console.log(data);
-
   const mutationUpdateProfile = useMutation(
     (payload: UserUpdatedDto) => {
       return UserService.updateProfile(payload);
@@ -38,10 +36,12 @@ function UserForm() {
       {profile && (
         <Formik
           initialValues={{
+            id: profile.id || '',
             firstName: profile.firstName || '',
             lastName: profile.lastName || '',
-            displayName: profile.displayName || '',
-            scientificDegree: '',
+            // displayName: profile.displayName || '',
+            email: profile.email || '',
+            // scientificDegree: '',
             phone: profile.phone || '',
             avatar: initImage,
           }}
@@ -118,6 +118,7 @@ function UserForm() {
                 <Button
                   className="submit-btn custom-ant-hover"
                   htmlType="submit"
+                  loading={mutationUpdateProfile.isLoading}
                 >
                   {t('common.saveEdits')}
                 </Button>
