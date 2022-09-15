@@ -6,6 +6,7 @@ import {
   Input,
   InputRef,
   Menu,
+  notification,
   Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -13,11 +14,13 @@ import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { SearchIcon } from 'icons/SearchIcon';
 import { CustomCheckbox } from 'modules/common/input/inputs';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
+import { Navigate, useNavigate } from 'react-router';
+import { AdminService, UserService } from 'services';
 import APIService from 'services/bioandme-service/base.service';
-import { useDebounce } from 'utils';
+import { onError, useDebounce } from 'utils';
 import { initImage } from '../form/UserForm';
 import { TeamContentStyled } from '../styles';
 import InviteMemberModal from './modals/InviteMemberModal';
@@ -48,6 +51,7 @@ const rowSelection = {
 function TeamContent() {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
   const searchRef = useRef<InputRef>(null);
   const debounceSearch = useDebounce(search);
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -56,16 +60,6 @@ function TeamContent() {
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [userId, setUserId] = useState('');
   const [showInactivateUser, setShowInactivateUser] = useState(false);
-
-  const handleEditPreferences = (id: string) => {
-    setUserId(id);
-    setShowEditPreferencesModal(true);
-  };
-
-  const handleResetPassword = (id: string) => {
-    setUserId(id);
-    setShowResetPasswordModal(true);
-  };
 
   const baseParams = useMemo(
     () => ({
@@ -90,7 +84,53 @@ function TeamContent() {
     () => getStaffs(baseParams),
   );
 
-  console.log(dataStaff?.data);
+  const { data: profile } = useQuery('me', UserService.getProfile);
+
+  useEffect(() => {
+    if (profile && !profile.data.roles.find(e => e === 1)) navigate('/app');
+  }, [profile, navigate]);
+
+  const mutationDeactivateUser = useMutation(
+    () => {
+      return AdminService.deactivateUser({
+        userId,
+      });
+    },
+    {
+      onSuccess: () => notification.success(t('common.updateSuccess')),
+      onError,
+    },
+  );
+
+  const mutationRestoreUser = useMutation(
+    () => {
+      return AdminService.restoreUser({
+        userId,
+      });
+    },
+    {
+      onSuccess: () => notification.success(t('common.updateSuccess')),
+      onError,
+    },
+  );
+
+  const handleDeactivateUser = useCallback(() => {
+    mutationDeactivateUser.mutateAsync();
+  }, [mutationDeactivateUser]);
+
+  const handleRestoreUser = useCallback(() => {
+    mutationRestoreUser.mutateAsync();
+  }, [mutationRestoreUser]);
+
+  const handleEditPreferences = (id: string) => {
+    setUserId(id);
+    setShowEditPreferencesModal(true);
+  };
+
+  const handleResetPassword = (id: string) => {
+    setUserId(id);
+    setShowResetPasswordModal(true);
+  };
 
   const columns: ColumnsType<DataType> = useMemo(
     () => [
@@ -135,42 +175,49 @@ function TeamContent() {
                 >
                   Edit Preferences
                 </Menu.Item>
-                <Menu.Item
-                  key="resetUserPassword"
-                  onClick={() => {
-                    handleResetPassword(record.key);
-                  }}
-                >
-                  Reset Password
-                </Menu.Item>
-                {(!showInactivateUser || !record.deleteAt) && (
+                {profile && record.key !== profile.data.id && (
                   <Menu.Item
-                    key="deactivateUser"
+                    key="resetUserPassword"
                     onClick={() => {
                       handleResetPassword(record.key);
                     }}
                   >
-                    Deactivate User
+                    Reset Password
                   </Menu.Item>
                 )}
+                {(!showInactivateUser || !record.deleteAt) &&
+                  profile &&
+                  profile.data.id !== record.key && (
+                    <Menu.Item
+                      key="deactivateUser"
+                      onClick={handleDeactivateUser}
+                    >
+                      Deactivate User
+                    </Menu.Item>
+                  )}
                 {record.deleteAt && (
-                  <Menu.Item
-                    key="restore"
-                    onClick={() => {
-                      handleResetPassword(record.key);
-                    }}
-                  >
+                  <Menu.Item key="restore" onClick={handleRestoreUser}>
                     Restore
                   </Menu.Item>
                 )}
               </Menu>
             }
             trigger={['click']}
+            onOpenChange={() => {
+              setUserId(record.key);
+              console.log(userId, profile.data.id);
+            }}
           />
         ),
       },
     ],
-    [showInactivateUser],
+    [
+      userId,
+      profile,
+      handleRestoreUser,
+      showInactivateUser,
+      handleDeactivateUser,
+    ],
   );
 
   const data: DataType[] = dataStaff
@@ -244,7 +291,11 @@ function TeamContent() {
       )}
       {showEditPreferencesModal && (
         <InviteMemberModal
-          userId={userId}
+          userData={
+            dataStaff
+              ? dataStaff.data.data.find(user => user.id === userId)
+              : {}
+          }
           showModal={showEditPreferencesModal}
           setShowModal={setShowEditPreferencesModal}
           edit

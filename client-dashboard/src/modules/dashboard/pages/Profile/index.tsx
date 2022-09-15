@@ -2,9 +2,11 @@ import { Radio } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
+import { UserService } from 'services';
 import TeamContent from './Components/TeamContent';
 import UserContent from './Components/UserContent';
 import TeamForm from './form/TeamForm';
@@ -15,11 +17,8 @@ const Profile = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const path = useLocation();
-  const userRoles = useSelector(AuthSelectors.getAllRoles);
-  const userRolesList = Object.keys(userRoles);
-  console.log(userRoles);
-  const auth = useSelector(AuthSelectors.getAuth);
-  console.log(auth);
+
+  const { data: profile } = useQuery('me', UserService.getProfile);
 
   const [tab, setTab] = useState(
     path.pathname === ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME ? 'user' : 'team',
@@ -35,7 +34,7 @@ const Profile = () => {
     <ProfileStyled>
       <div className="layout flex">
         <div className="sider flex">
-          {userRolesList.includes('1') && (
+          {profile && profile.data.roles.find(e => e === 1) && (
             <div className="tabs flex">
               <Radio.Group value={tab} onChange={handleTabChange}>
                 <Radio.Button className="flex-center" value="user">

@@ -36,7 +36,7 @@ function ChangePasswordModal(props: ProfileModal) {
         }),
       );
     },
-    [dispatch],
+    [dispatch, setShowModal],
   );
 
   return (

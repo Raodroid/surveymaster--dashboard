@@ -25,23 +25,26 @@ const initialValues = {
 
 interface InviteModal extends ProfileModal {
   edit?: boolean;
-  userId?: string;
+  userData?: any;
 }
 
 function InviteMemberModal(props: InviteModal) {
-  const { showModal, setShowModal, edit = false, userId = '' } = props;
+  const { showModal, setShowModal, edit = false, userData = {} } = props;
   const { t } = useTranslation();
 
   const InviteMemberSchema = Yup.object({
     firstName: Yup.string().required('Required!').trim(),
     lastName: Yup.string().required('Required!').trim(),
-    displayName: Yup.string().required('Required!').trim(),
+    displayName: Yup.string().trim(),
+    // displayName: Yup.string().required('Required!').trim(),
     email: Yup.string()
       .required('Required!')
       .email('Wrong email format!')
       .trim(),
-    scientificDegree: Yup.string().required('Required!').trim(),
-    authentication: Yup.string().required('Required!').trim(),
+    scientificDegree: Yup.string().trim(),
+    authentication: Yup.string().trim(),
+    // scientificDegree: Yup.string().required('Required!').trim(),
+    // authentication: Yup.string().required('Required!').trim(),
   });
 
   const createHandleStatus = useCallback(
@@ -52,12 +55,6 @@ function InviteMemberModal(props: InviteModal) {
           notification.success({ message: t(`common.${successMessage}`) });
         },
         onError,
-        // onError: (err: any) => {
-        //   setShowModal(false);
-        //   notification.warn({
-        //     message: t(`common.${errorMessage}`) + ' ' + err,
-        //   });
-        // },
       };
     },
     [setShowModal, t],
@@ -70,18 +67,18 @@ function InviteMemberModal(props: InviteModal) {
 
   const mutationEditMember = useMutation(
     (payload: InviteMemberPayload) =>
-      AdminService.editMemberPreferences({ ...payload, userId }),
+      AdminService.editMemberPreferences({ ...payload, userId: userData.id }),
     createHandleStatus('updateSuccess'),
   );
 
   const mutationRemoveFromTeam = useMutation(
-    () => AdminService.removeMemberPreferences({ userId }),
+    () => AdminService.removeMemberPreferences({ userId: userData.id }),
     createHandleStatus('removeSuccess'),
   );
 
   const onFinish = (payload: InviteMemberPayload) => {
     if (edit) {
-      mutationEditMember.mutateAsync({ ...payload, userId });
+      mutationEditMember.mutateAsync({ ...payload, userId: userData.id });
     } else {
       mutationInviteMember.mutateAsync(payload);
     }
@@ -116,7 +113,18 @@ function InviteMemberModal(props: InviteModal) {
     >
       <>
         <Formik
-          initialValues={initialValues}
+          initialValues={
+            edit
+              ? {
+                  firstName: userData.firstName,
+                  lastName: userData.lastName,
+                  email: userData.email,
+                  displayName: '',
+                  scientificDegree: '',
+                  authentication: '',
+                }
+              : initialValues
+          }
           onSubmit={onFinish}
           validationSchema={InviteMemberSchema}
         >

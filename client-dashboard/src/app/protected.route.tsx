@@ -1,13 +1,11 @@
-import { ROUTE_PATH } from 'enums';
-import React, { lazy } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { AuthSelectors } from '../redux/auth';
 import { Layout } from 'antd';
-import styled from 'styled-components';
-import { useQuery } from 'react-query';
-import { UserService } from 'services';
+import { ROUTE_PATH } from 'enums';
+import { lazy } from 'react';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
+import { Navigate, Outlet } from 'react-router-dom';
+import styled from 'styled-components';
+import { AuthSelectors } from '../redux/auth';
 const { Content } = Layout;
 
 const LayoutNavbar = lazy(() => import('modules/dashboard/components/Navbar'));
@@ -16,18 +14,6 @@ export const ProtectedRoutes = () => {
   const idToken = useSelector(AuthSelectors.getIdToken);
   const isLogged = !!idToken;
   const params = useParams();
-
-  const userRoles = useSelector(AuthSelectors.getAllRoles);
-  const userRolesList = Object.keys(userRoles);
-  if (
-    !userRolesList.includes('1') &&
-    params.path ===
-      ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME +
-        '/' +
-        ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM
-  ) {
-    return <Navigate to="/app" />;
-  }
 
   return isLogged ? (
     <Layout>

@@ -16,6 +16,8 @@ function UserForm() {
   const { data, isLoading } = useQuery('me', UserService.getProfile);
   const profile = useMemo(() => data?.data, [data]);
 
+  console.log(data);
+
   const mutationUpdateProfile = useMutation(
     (payload: UserUpdatedDto) => {
       return UserService.updateProfile(payload);

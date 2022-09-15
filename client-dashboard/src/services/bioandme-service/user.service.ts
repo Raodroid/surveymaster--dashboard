@@ -6,9 +6,11 @@ export default class UserService {
   static getProfile(): Promise<any> {
     return APIService.get('/auth/me');
   }
+
   static updateProfile(payload: UserUpdatedDto): Promise<any> {
     return APIService.put('/user/me', payload);
   }
+
   static setEmailNoti(payload: {
     id: string;
     isDisableEmailNotification?: boolean;
