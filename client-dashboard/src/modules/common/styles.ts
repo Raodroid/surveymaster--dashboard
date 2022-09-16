@@ -13,7 +13,8 @@ export const FormWrapper = styled.div`
 `;
 
 export const CustomSpinSuspense = styled(Spin)`
-  height: calc(100vh - 70px);
+  // height: calc(100vh - 70px);
+  height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;

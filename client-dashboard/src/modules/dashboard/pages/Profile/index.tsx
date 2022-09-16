@@ -18,7 +18,9 @@ const Profile = () => {
   const { t } = useTranslation();
   const path = useLocation();
 
-  const { data: profile } = useQuery('me', UserService.getProfile);
+  const { data: profile } = useQuery('me', UserService.getProfile, {
+    refetchOnWindowFocus: false,
+  });
 
   const [tab, setTab] = useState(
     path.pathname === ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME ? 'user' : 'team',

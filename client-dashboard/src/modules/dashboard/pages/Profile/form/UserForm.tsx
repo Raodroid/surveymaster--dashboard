@@ -22,7 +22,7 @@ function UserForm() {
     },
     {
       onSuccess: res => {
-        queryClient.invalidateQueries('getUser');
+        queryClient.invalidateQueries('me');
         notification.success({
           message: 'Success',
         });

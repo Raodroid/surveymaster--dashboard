@@ -131,6 +131,7 @@ export const numberYup = Yup.number().min(1).required(INVALID_FIELDS.REQUIRED);
 export const userIdYup = yupString.min(1);
 
 export const FORGOT_PASSWORD_FIELD = {
+  currentPassword: Yup.string().required(INVALID_FIELDS.REQUIRED),
   password: passwordYup,
   verifyPassword: verifyPasswordYup,
 };

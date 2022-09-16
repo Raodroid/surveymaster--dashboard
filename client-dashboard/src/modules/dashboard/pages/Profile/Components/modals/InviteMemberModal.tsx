@@ -4,7 +4,7 @@ import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from 'react-query';
+import { QueryClient, useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { InviteMemberPayload } from 'redux/user';
 import { AdminService } from 'services';
@@ -32,6 +32,7 @@ interface InviteModal extends ProfileModal {
 function InviteMemberModal(props: InviteModal) {
   const { showModal, setShowModal, edit = false, userData = {} } = props;
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const InviteMemberSchema = Yup.object({
     firstName: Yup.string().required('Required!').trim(),
@@ -54,6 +55,7 @@ function InviteMemberModal(props: InviteModal) {
         onSuccess: () => {
           setShowModal(false);
           notification.success({ message: t(`common.${successMessage}`) });
+          queryClient.invalidateQueries('getStaffs');
         },
         onError,
       };
@@ -63,7 +65,7 @@ function InviteMemberModal(props: InviteModal) {
 
   const mutationInviteMember = useMutation(
     (payload: InviteMemberPayload) => AdminService.inviteMember(payload),
-    createHandleStatus('common.inviteSuccess'),
+    createHandleStatus('inviteSuccess'),
   );
 
   const mutationEditMember = useMutation(
@@ -72,12 +74,12 @@ function InviteMemberModal(props: InviteModal) {
         ...payload,
         id: payload.id,
       }),
-    createHandleStatus('common.updateSuccess'),
+    createHandleStatus('updateSuccess'),
   );
 
   const mutationRemoveFromTeam = useMutation(
     () => AdminService.removeMemberPreferences({ userId: userData.id }),
-    createHandleStatus('common.removeSuccess'),
+    createHandleStatus('removeSuccess'),
   );
 
   const onFinish = (payload: InviteMemberPayload) => {

@@ -39,6 +39,8 @@ export const ProfileStyled = styled(FlexBox)`
     border-radius: 8px;
     width: 345px;
     flex-direction: column;
+    min-height: 100%;
+    overflow-y: auto;
 
     .ant-layout-sider-children {
       width: 100%;
@@ -179,6 +181,9 @@ export const ContentStyled = styled.div`
   gap: 20px;
   justify-content: flex-start;
   flex: 1;
+  min-height: 100%;
+  overflow-y: auto;
+
   .part {
     min-height: 76px;
     width: 100%;

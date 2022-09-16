@@ -16,7 +16,7 @@ import { ChangePasswordModalStyled } from './styles';
 const initialValues = {
   currentPassword: '',
   password: '',
-  passwordConfirm: '',
+  verifyPassword: '',
 };
 
 function ChangePasswordModal(props: ProfileModal) {
@@ -28,16 +28,14 @@ function ChangePasswordModal(props: ProfileModal) {
   const isResettingPasswordForm = useSelector(
     AuthSelectors.getIsResettingPassword,
   );
-  const onFinish = useCallback(
-    (values: ChangePasswordPayload) => {
-      dispatch(
-        UserAction.changePassword(values, () => {
-          setShowModal(false);
-        }),
-      );
-    },
-    [dispatch, setShowModal],
-  );
+  const onFinish = (values: ChangePasswordPayload) => {
+    console.log(values);
+    dispatch(
+      UserAction.changePassword(values, () => {
+        setShowModal(false);
+      }),
+    );
+  };
 
   return (
     <ChangePasswordModalStyled
@@ -55,36 +53,39 @@ function ChangePasswordModal(props: ProfileModal) {
         validationSchema={ResetPasswordSchema}
         onSubmit={onFinish}
       >
-        {({ handleSubmit }) => (
-          <Form layout="vertical" onFinish={handleSubmit}>
-            <ControlledInput
-              inputType={INPUT_TYPES.PASSWORD}
-              type={'password'}
-              name="password"
-              label="Old Password"
-            />
-            <ControlledInput
-              inputType={INPUT_TYPES.PASSWORD}
-              type={'password'}
-              name="newPassword"
-              label="New Password"
-            />
-            <ControlledInput
-              inputType={INPUT_TYPES.PASSWORD}
-              type={'password'}
-              name="confirmPassword"
-              label="Confirm New Password"
-            />
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="submit-btn"
-              loading={isResettingPasswordForm}
-            >
-              {t('common.sendConfirmation')}
-            </Button>
-          </Form>
-        )}
+        {({ handleSubmit, errors }) => {
+          console.log(errors);
+          return (
+            <Form layout="vertical" onFinish={handleSubmit}>
+              <ControlledInput
+                inputType={INPUT_TYPES.PASSWORD}
+                type={'password'}
+                name="currentPassword"
+                label="Old Password"
+              />
+              <ControlledInput
+                inputType={INPUT_TYPES.PASSWORD}
+                type={'password'}
+                name="password"
+                label="New Password"
+              />
+              <ControlledInput
+                inputType={INPUT_TYPES.PASSWORD}
+                type={'password'}
+                name="verifyPassword"
+                label="Confirm New Password"
+              />
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="submit-btn"
+                loading={isResettingPasswordForm}
+              >
+                {t('common.sendConfirmation')}
+              </Button>
+            </Form>
+          );
+        }}
       </Formik>
     </ChangePasswordModalStyled>
   );

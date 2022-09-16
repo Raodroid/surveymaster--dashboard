@@ -82,9 +82,14 @@ function TeamContent() {
   const { data: dataStaff, isLoading } = useQuery(
     ['getStaffs', showInactivateUser, debounceSearch],
     () => getStaffs(baseParams),
+    {
+      refetchOnWindowFocus: false,
+    },
   );
 
-  const { data: profile } = useQuery('me', UserService.getProfile);
+  const { data: profile } = useQuery('me', UserService.getProfile, {
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     if (profile && !profile.data.roles.find(e => e === 1)) navigate('/app');
