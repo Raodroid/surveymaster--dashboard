@@ -2,6 +2,7 @@ import {
   Button,
   Checkbox,
   Divider,
+  Form,
   Image,
   Input,
   InputRef,
@@ -11,17 +12,18 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
+import { Formik } from 'formik';
+import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
-import { CustomCheckbox } from 'modules/common/input/inputs';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { useMemo, useRef, useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import { Navigate, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { AdminService, UserService } from 'services';
 import APIService from 'services/bioandme-service/base.service';
 import { onError, useDebounce } from 'utils';
-import { initImage } from '../form/UserForm';
+import { initImage } from '../sider/form/UserForm';
 import { TeamContentStyled } from '../styles';
 import InviteMemberModal from './modals/InviteMemberModal';
 import ResetUserPassword from './modals/ResetUserPassword';
@@ -51,9 +53,9 @@ const rowSelection = {
 function TeamContent() {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('');
   const navigate = useNavigate();
   const searchRef = useRef<InputRef>(null);
-  const debounceSearch = useDebounce(search);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showEditPreferencesModal, setShowEditPreferencesModal] =
     useState(false);
@@ -67,9 +69,9 @@ function TeamContent() {
       take: 10,
       roles: [1, 2, 3, 4, 5, 7, 10],
       activated: showInactivateUser,
-      q: debounceSearch,
+      q: filter,
     }),
-    [showInactivateUser, debounceSearch],
+    [showInactivateUser, filter],
   );
 
   function getStaffs(params: any): Promise<any> {
@@ -77,7 +79,7 @@ function TeamContent() {
   }
 
   const { data: dataStaff, isLoading } = useQuery(
-    ['getStaffs', showInactivateUser, debounceSearch],
+    ['getStaffs', showInactivateUser, filter],
     () => getStaffs(baseParams),
     {
       refetchOnWindowFocus: false,
@@ -90,7 +92,7 @@ function TeamContent() {
 
   useEffect(() => {
     if (profile && !profile.data.roles.find(e => e === 1))
-    // if (profile && !profile.data.userRoles.find(e => e.roleId === 1))
+      // if (profile && !profile.data.userRoles.find(e => e.roleId === 1))
       navigate('/app');
   }, [profile, navigate]);
 
@@ -236,17 +238,21 @@ function TeamContent() {
       })
     : [];
 
+  const handleSearch = () => {
+    setFilter(search);
+  };
+
   return (
     <TeamContentStyled className="flex">
       <div className="part padding-24 name title">AMiLi</div>
 
-      <div className="part" style={{ flex: 1 }}>
+      <div className="part flex-column" style={{ flex: 1 }}>
         <div className="search padding-24 flex-center">
           <Button
             className="search-btn"
             onClick={() => {
               if (search.trim()) {
-                //filter
+                handleSearch();
               } else {
                 searchRef.current?.focus();
               }
@@ -254,12 +260,25 @@ function TeamContent() {
           >
             <SearchIcon />
           </Button>
-          <Input
-            value={search}
-            ref={searchRef}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search Team Member..."
-          />
+          <Form onFinish={handleSearch} className="search-form flex-center">
+            <Input
+              value={search}
+              ref={searchRef}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search Team Member..."
+            />
+            {search && (
+              <Button
+                className="clear-btn"
+                onClick={() => {
+                  setSearch('');
+                  console.log(search);
+                }}
+              >
+                <CloseIcon />
+              </Button>
+            )}
+          </Form>
           <Checkbox
             className="showInactivateUsersCheckbox"
             checked={showInactivateUser}

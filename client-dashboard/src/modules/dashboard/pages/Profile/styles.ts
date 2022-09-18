@@ -18,6 +18,12 @@ export const FlexBox = styled.div`
     align-items: center;
     justify-content: flex-end;
   }
+  .flex-column {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+  }
 `;
 
 export const ProfileStyled = styled(FlexBox)`
@@ -27,15 +33,16 @@ export const ProfileStyled = styled(FlexBox)`
 
   padding: 0 20px 20px;
   min-height: 100%;
+  max-height: calc(100vh - 70px);
   width: 100%;
   .layout {
     width: 100%;
-    min-height: 100%;
+    height: 100%;
     gap: 20px;
   }
   .sider {
     background: white;
-    padding: 18px 24px 24px;
+    padding: 18px 0 24px;
     border-radius: 8px;
     width: 345px;
     flex-direction: column;
@@ -50,11 +57,11 @@ export const ProfileStyled = styled(FlexBox)`
     }
   }
   .tabs {
-    width: 100%;
     border-radius: 6px;
     background: #f6f6f9;
     padding: 2px;
     height: 40px;
+    margin: 0 24px;
     margin-bottom: 24px;
 
     .ant-radio-group {
@@ -92,6 +99,16 @@ export const ProfileStyled = styled(FlexBox)`
         color: white;
       }
     }
+  }
+  .form {
+    overflow-y: auto;
+    padding: 0 24px;
+  }
+  .form,
+  .ant-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
   .avatar {
     .ant-upload {
@@ -151,12 +168,6 @@ export const ProfileStyled = styled(FlexBox)`
       padding-top: 2px;
     }
   }
-  .inputs,
-  .ant-form {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
   .submit-btn {
     margin-top: auto;
     width: 100%;
@@ -173,6 +184,12 @@ export const ProfileStyled = styled(FlexBox)`
   }
   .ant-divider {
     margin: 0;
+  }
+  .ant-spin-nested-loading {
+    flex: 1;
+  }
+  .ant-spin-container {
+    height: 100%;
   }
 `;
 
@@ -271,6 +288,7 @@ export const UserContentStyled = styled(ContentStyled)`
 
 export const TeamContentStyled = styled(ContentStyled)`
   .search {
+    width: 100%;
     .ant-input {
       border: none;
       border-radius: 0;
@@ -288,8 +306,29 @@ export const TeamContentStyled = styled(ContentStyled)`
       color: var(--ant-primary-color);
     }
   }
+  .search-form {
+    flex-direction: row;
+    margin-right: 10px;
+    flex: 1;
+  }
+  .clear-btn {
+    padding: 0 4px;
+    background: transparent;
+    svg {
+      padding: 3px;
+      width: 16px;
+      height: 16px;
+      path {
+        fill: var(--ant-primary-color);
+      }
+    }
+  }
   .table {
-    padding: 12px;
+    padding: 12px 12px 0;
+    margin-bottom: 12px;
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
   }
   .ant-table-row,
   .ant-table-thead {

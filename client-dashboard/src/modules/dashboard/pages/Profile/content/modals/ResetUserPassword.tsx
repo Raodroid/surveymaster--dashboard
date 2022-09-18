@@ -2,22 +2,17 @@ import { Button, Form, notification } from 'antd';
 import { Formik } from 'formik';
 import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { ProfileModal } from '.';
-import {
-  FORGOT_PASSWORD_FIELD,
-  passwordYup,
-  userIdYup,
-  verifyPasswordYup,
-} from 'modules/common/validate/validate';
-import { ChangePasswordModalStyled } from './styles';
-import * as Yup from 'yup';
 import { INPUT_TYPES } from 'modules/common/input/type';
+import {
+  passwordYup, verifyPasswordYup
+} from 'modules/common/validate/validate';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { AdminService } from 'services';
 import { ChangeUserPasswordPayload } from 'redux/user';
+import { AdminService } from 'services';
+import * as Yup from 'yup';
+import { ProfileModal } from '.';
+import { ChangePasswordModalStyled } from './styles';
 
 interface ResetUserPasswordProps extends ProfileModal {
   userId: string;

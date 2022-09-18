@@ -3,14 +3,14 @@ import { Formik } from 'formik';
 import { UserUpdatedDto } from 'interfaces';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
+import { CustomSpinSuspense } from 'modules/common/styles';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
 import { onError } from 'utils';
-import { useEffect, useState, useMemo } from 'react';
-import { CustomSpinSuspense } from 'modules/common/styles';
-import { AuthSelectors } from 'redux/auth';
-import { useSelector } from 'react-redux';
 
 function UserForm() {
   const { t } = useTranslation();

@@ -4,7 +4,6 @@ import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { FORGOT_PASSWORD_FIELD } from 'modules/common/validate/validate';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
