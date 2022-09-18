@@ -29,6 +29,7 @@ export const BodyAppWrapper = styled(Content)`
   display: flex;
   flex-direction: column;
   padding-bottom: 20px;
+  max-height: calc(100vh - 70px);
 
   @media only screen and (max-width: 1440px) {
     margin: 0 2rem;
