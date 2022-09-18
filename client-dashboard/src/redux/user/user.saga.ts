@@ -34,7 +34,7 @@ function* changePassword(action: StandardAction<ChangePasswordPayload>) {
         password,
       );
       notification.success({ message: 'Change password Successfully!' });
-      yield put(userSignIn(email, password));
+      yield put(userSignIn(email, password, () => {}));
       yield put(changePasswordSuccess(payload));
       if (callback) callback();
     } catch (error: any) {

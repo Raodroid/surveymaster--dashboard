@@ -2,6 +2,7 @@ import { Button, Divider, Switch } from 'antd';
 import { CustomSlider } from 'modules/common/input/inputs';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AuthAction } from 'redux/auth';

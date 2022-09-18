@@ -61,7 +61,8 @@ export default class AdminService {
 
   static deactivateUser(payload: { userId: string }): Promise<any> {
     const { userId } = payload;
-    return APIService.patch(`users/${userId}/deactivate`);
+    // return APIService.patch(`users/${userId}/deactivate`);
+    return APIService.delete(`users/${userId}`);
   }
 
   static restoreUser(payload: { userId: string }): Promise<any> {

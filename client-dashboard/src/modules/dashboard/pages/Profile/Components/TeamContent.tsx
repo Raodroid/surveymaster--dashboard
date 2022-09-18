@@ -67,10 +67,7 @@ function TeamContent() {
       take: 10,
       roles: [1, 2, 3, 4, 5, 7, 10],
       activated: showInactivateUser,
-      firstName: debounceSearch,
-      lastName: debounceSearch,
-      email: debounceSearch,
-      authentication: debounceSearch,
+      q: debounceSearch,
     }),
     [showInactivateUser, debounceSearch],
   );
@@ -92,7 +89,9 @@ function TeamContent() {
   });
 
   useEffect(() => {
-    if (profile && !profile.data.roles.find(e => e === 1)) navigate('/app');
+    if (profile && !profile.data.roles.find(e => e === 1))
+    // if (profile && !profile.data.userRoles.find(e => e.roleId === 1))
+      navigate('/app');
   }, [profile, navigate]);
 
   const mutationDeactivateUser = useMutation(
@@ -262,6 +261,7 @@ function TeamContent() {
             placeholder="Search Team Member..."
           />
           <Checkbox
+            className="showInactivateUsersCheckbox"
             checked={showInactivateUser}
             onChange={() => setShowInactivateUser(!showInactivateUser)}
           >

@@ -159,6 +159,7 @@ function InviteMemberModal(props: InviteModal) {
                 inputType={INPUT_TYPES.INPUT}
                 type={'email'}
                 name="email"
+                disabled={edit}
                 label={t('common.email')}
               />
               <ControlledInput

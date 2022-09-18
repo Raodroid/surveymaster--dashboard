@@ -9,11 +9,16 @@ import { UserService } from 'services';
 import { onError } from 'utils';
 import { useEffect, useState, useMemo } from 'react';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import { AuthSelectors } from 'redux/auth';
+import { useSelector } from 'react-redux';
 
 function UserForm() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const { data, isLoading } = useQuery('me', UserService.getProfile);
+  const authId = useSelector(AuthSelectors.getCurrentUserId);
+  const { data, isLoading } = useQuery(`me-${authId}`, UserService.getProfile, {
+    refetchOnWindowFocus: true,
+  });
   const profile = useMemo(() => data?.data, [data]);
 
   const mutationUpdateProfile = useMutation(
@@ -31,20 +36,24 @@ function UserForm() {
     },
   );
 
+  const initialValues = useMemo(() => {
+    return {
+      id: profile?.id || '',
+      firstName: profile?.firstName || '',
+      lastName: profile?.lastName || '',
+      // displayName: profile.displayName,
+      email: profile?.email || '',
+      // scientificDegree: '',
+      phone: profile?.phone || '',
+      avatar: '',
+    };
+  }, [profile]);
+
   return (
     <CustomSpinSuspense spinning={isLoading}>
       {profile && (
         <Formik
-          initialValues={{
-            id: profile.id || '',
-            firstName: profile.firstName || '',
-            lastName: profile.lastName || '',
-            // displayName: profile.displayName || '',
-            email: profile.email || '',
-            // scientificDegree: '',
-            phone: profile.phone || '',
-            avatar: initImage,
-          }}
+          initialValues={profile}
           onSubmit={(userFormValues: UserUpdatedDto) =>
             mutationUpdateProfile.mutateAsync({ ...userFormValues })
           }

@@ -335,4 +335,15 @@ export const TeamContentStyled = styled(ContentStyled)`
   .ant-dropdown-open {
     background: var(--ant-primary-2);
   }
+  .showInactivateUsersCheckbox {
+    align-items: center;
+    min-width: 160px;
+
+    .ant-checkbox {
+      top: 0;
+    }
+    span:last-child {
+      text-align: center;
+    }
+  }
 `;

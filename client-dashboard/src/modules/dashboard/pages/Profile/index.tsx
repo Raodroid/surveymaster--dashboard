@@ -3,9 +3,7 @@ import { ROUTE_PATH } from 'enums';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
-import { AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
 import TeamContent from './Components/TeamContent';
 import UserContent from './Components/UserContent';
@@ -36,6 +34,7 @@ const Profile = () => {
     <ProfileStyled>
       <div className="layout flex">
         <div className="sider flex">
+          {/* {profile && profile.data.userRoles.find(e => e.roleId === 1) && ( */}
           {profile && profile.data.roles.find(e => e === 1) && (
             <div className="tabs flex">
               <Radio.Group value={tab} onChange={handleTabChange}>

@@ -79,7 +79,7 @@ export function* signInUserWithEmailPassword(
   action: StandardAction<SignInPayload>,
 ) {
   const { payload } = action;
-  const { email, password } = payload as SignInPayload;
+  const { email, password, callback } = payload as SignInPayload;
   const i18n = getI18n();
   try {
     const data = yield call(CognitoService.signInByCognito, email, password);
@@ -102,11 +102,14 @@ export function* signInUserWithEmailPassword(
           id: ChallengeParameters.USER_ID_FOR_SRP,
           session: Session,
         }).toString();
-        history.push(
-          ChallengeName === AUTH_CHALLENGE.SMS_MFA
-            ? ROUTE_PATH.CONFIRM_SMS + '?' + params
-            : ROUTE_PATH.CHANGE_PASSWORD_CHALLENGE + '?' + params,
-        );
+        if (callback) {
+          callback(ChallengeParameters.USER_ID_FOR_SRP, Session);
+        }
+        // history.push(
+        //   ChallengeName === AUTH_CHALLENGE.SMS_MFA
+        //     ? ROUTE_PATH.CONFIRM_SMS + '?' + params
+        //     : ROUTE_PATH.CHANGE_PASSWORD_CHALLENGE + '?' + params,
+        // );
         break;
       }
       default: {

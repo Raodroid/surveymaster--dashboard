@@ -108,8 +108,13 @@ export default class AuthAction {
   static userSignIn = (
     email: string,
     password: string,
+    callback: (id: any, session: any) => void,
   ): StandardAction<SignInPayload> =>
-    createPayloadAction(AuthAction.TYPES.SIGNIN.START, { email, password });
+    createPayloadAction(AuthAction.TYPES.SIGNIN.START, {
+      email,
+      password,
+      callback,
+    });
 
   static userSignInSuccess = (payload: Object): StandardAction =>
     createPayloadAction(AuthAction.TYPES.SIGNIN.SUCCESS, payload);

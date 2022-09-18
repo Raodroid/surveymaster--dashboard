@@ -4,7 +4,7 @@ import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthAction, AuthSelectors } from 'redux/auth';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { useTranslation } from 'react-i18next';
 import { ControlledInput } from 'modules/common';
@@ -17,6 +17,7 @@ import { FormWrapper } from 'modules/common/styles';
 interface SignInPayload {
   email: string;
   password: string;
+  callback?: () => void;
 }
 
 const initialSignUpPayload = {
@@ -28,6 +29,7 @@ const SignInForm = () => {
   const isSigningIn = useSelector(AuthSelectors.getIsSigningIn);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const newInitValues = useMemo<SignInPayload>(() => {
     return {
@@ -62,9 +64,18 @@ const SignInForm = () => {
 
   const onFinish = useCallback(
     (values: SignInPayload) => {
-      dispatch(AuthAction.userSignIn(values.email, values.password));
+      dispatch(
+        AuthAction.userSignIn(
+          values.email,
+          values.password,
+          (id: string, session: string) => {
+            console.log('hello', id, session);
+            navigate(`/change-password?id=${id}&session=${session}`);
+          },
+        ),
+      );
     },
-    [dispatch],
+    [dispatch, navigate],
   );
 
   return (

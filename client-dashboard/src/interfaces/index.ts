@@ -4,7 +4,7 @@ export interface Test {
 
 export interface UserUpdatedDto {
   // roles: number[]; Don't allow user update their role by this api
-  id: string;
+  id?: string;
   firstName: string;
   lastName: string;
   description?: string;
