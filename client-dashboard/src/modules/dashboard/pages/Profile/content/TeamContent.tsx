@@ -59,13 +59,32 @@ function TeamContent() {
     useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [userId, setUserId] = useState('');
-  const [showInactivateUser, setShowInactivateUser] = useState(false);
+  const [showInactivateUser, setShowInactivateUser] = useState(true);
+
+  // const baseParams = useMemo(
+  //   () => ({
+  //     page: 1,
+  //     take: 10,
+  //     roles: [1, 2, 3, 4, 5, 7, 10],
+  //     activated: showInactivateUser,
+  //     q: filter,
+  //   }),
+  //   [showInactivateUser, filter],
+  // );
 
   const baseParams = useMemo(
     () => ({
       page: 1,
       take: 10,
-      roles: [1, 2, 3, 4, 5, 7, 10],
+      userRoles: [
+        { roleId: 1 },
+        { roleId: 2 },
+        { roleId: 3 },
+        { roleId: 4 },
+        { roleId: 5 },
+        { roleId: 7 },
+        { roleId: 10 },
+      ],
       activated: showInactivateUser,
       q: filter,
     }),

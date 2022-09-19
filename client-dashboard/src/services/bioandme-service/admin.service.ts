@@ -9,6 +9,29 @@ export default class AdminService {
     return APIService.patch(`users/${userId}/setPassword`, payload);
   }
 
+  // static inviteMember(payload: {
+  //   firstName: string;
+  //   lastName: string;
+  //   email: string;
+  //   displayName: string;
+  //   scientificDegree: string;
+  //   authentication: string;
+  //   description?: string;
+  //   roles?: number[] | string[];
+  // }): Promise<any> {
+  //   const params: { tenantId?: any } = {};
+  //   params.tenantId = 'd8faa031-4e95-4d1a-a9c2-7048bac20453';
+  //   return APIService.post(
+  //     `users`,
+  //     {
+  //       ...payload,
+  //       description: '',
+  //       roles: [4],
+  //     },
+  //     { params },
+  //   );
+  // }
+
   static inviteMember(payload: {
     firstName: string;
     lastName: string;
@@ -19,18 +42,35 @@ export default class AdminService {
     description?: string;
     roles?: number[] | string[];
   }): Promise<any> {
-    const params: { tenantId?: any } = {};
-    params.tenantId = 'd8faa031-4e95-4d1a-a9c2-7048bac20453';
-    return APIService.post(
-      `users`,
-      {
-        ...payload,
-        description: '',
-        roles: [4],
-      },
-      { params },
-    );
+    return APIService.post(`users/adminCreateUser`, {
+      ...payload,
+      description: '',
+      phonePrefix: '',
+      userRoles: [{ roleId: 4 }],
+    });
   }
+
+  // static editMemberPreferences(payload: {
+  //   id: string;
+  //   firstName: string;
+  //   lastName: string;
+  //   email: string;
+  //   displayName: string;
+  //   scientificDegree: string;
+  //   authentication: string;
+  //   description?: string;
+  //   roles?: number[] | string[];
+  // }): Promise<any> {
+  //   const params: { tenantId?: any } = {};
+  //   params.tenantId = 'd8faa031-4e95-4d1a-a9c2-7048bac20453';
+  //   Object.assign(payload, {
+  //     phone: '',
+  //     phonePrefix: '',
+  //     roles: [4],
+  //     description: '',
+  //   });
+  //   return APIService.put(`/users/${payload.id}`, payload);
+  // }
 
   static editMemberPreferences(payload: {
     id: string;
@@ -43,12 +83,10 @@ export default class AdminService {
     description?: string;
     roles?: number[] | string[];
   }): Promise<any> {
-    const params: { tenantId?: any } = {};
-    params.tenantId = 'd8faa031-4e95-4d1a-a9c2-7048bac20453';
     Object.assign(payload, {
       phone: '',
       phonePrefix: '',
-      roles: [4],
+      userRoles: [{ roleId: 4 }],
       description: '',
     });
     return APIService.put(`/users/${payload.id}`, payload);
