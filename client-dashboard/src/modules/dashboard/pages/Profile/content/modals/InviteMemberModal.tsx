@@ -59,7 +59,7 @@ function InviteMemberModal(props: InviteModal) {
         onError,
       };
     },
-    [setShowModal, t],
+    [setShowModal, t, queryClient],
   );
 
   const mutationInviteMember = useMutation(

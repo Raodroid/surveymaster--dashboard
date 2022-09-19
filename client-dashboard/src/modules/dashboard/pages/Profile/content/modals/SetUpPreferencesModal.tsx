@@ -101,7 +101,12 @@ function SetUpPreferencesModal(props: ProfileModal) {
         setShowModal(false);
       }
     },
-    [mutationSetupEmailNoti, myProfile?.disabledNotificationTypes],
+    [
+      mutationSetupEmailNoti,
+      myProfile?.disabledNotificationTypes,
+      setShowModal,
+      t,
+    ],
   );
 
   return (

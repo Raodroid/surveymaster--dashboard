@@ -12,7 +12,6 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
-import { Formik } from 'formik';
 import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import { CustomSpinSuspense } from 'modules/common/styles';
@@ -22,11 +21,10 @@ import { useMutation, useQuery } from 'react-query';
 import { useNavigate } from 'react-router';
 import { AdminService, UserService } from 'services';
 import APIService from 'services/bioandme-service/base.service';
-import { onError, useDebounce } from 'utils';
+import { onError } from 'utils';
 import { initImage } from '../sider/form/UserForm';
-import { TeamContentStyled } from '../styles';
-import InviteMemberModal from './modals/InviteMemberModal';
-import ResetUserPassword from './modals/ResetUserPassword';
+import { TableWrapperStyled, TeamContentStyled } from '../styles';
+import { InviteMemberModal, ResetUserPasswordModal } from './modals';
 
 interface DataType {
   key: React.Key;
@@ -244,9 +242,9 @@ function TeamContent() {
 
   return (
     <TeamContentStyled className="flex">
-      <div className="part padding-24 name title">AMiLi</div>
+      <div className="cell padding-24 name title">AMiLi</div>
 
-      <div className="part flex-column" style={{ flex: 1 }}>
+      <div className="cell flex-column" style={{ flex: 1 }}>
         <div className="search padding-24 flex-center">
           <Button
             className="search-btn"
@@ -280,7 +278,7 @@ function TeamContent() {
             )}
           </Form>
           <Checkbox
-            className="showInactivateUsersCheckbox"
+            className="show-inactivate-users-checkbox"
             checked={showInactivateUser}
             onChange={() => setShowInactivateUser(!showInactivateUser)}
           >
@@ -293,18 +291,19 @@ function TeamContent() {
 
         <Divider />
 
-        <div className="table">
+        <TableWrapperStyled>
           <CustomSpinSuspense spinning={isLoading}>
             <Table
               rowSelection={{
                 type: 'checkbox',
                 ...rowSelection,
               }}
+              scroll={{ y: 'calc(100vh - 420px)' }}
               columns={columns}
               dataSource={data}
             />
           </CustomSpinSuspense>
-        </div>
+        </TableWrapperStyled>
       </div>
 
       {showInviteModal && (
@@ -326,7 +325,7 @@ function TeamContent() {
         />
       )}
       {showResetPasswordModal && (
-        <ResetUserPassword
+        <ResetUserPasswordModal
           userId={userId}
           showModal={showResetPasswordModal}
           setShowModal={setShowResetPasswordModal}

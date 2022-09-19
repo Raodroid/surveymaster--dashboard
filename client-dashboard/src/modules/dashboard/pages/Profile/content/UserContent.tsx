@@ -4,8 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { AuthAction } from 'redux/auth';
 import { UserContentStyled } from '../styles';
-import ChangePasswordModal from './modals/ChangePasswordModal';
-import SetUpPreferencesModal from './modals/SetUpPreferencesModal';
+import { ChangePasswordModal, SetUpPreferencesModal } from './modals';
 
 function UserContent() {
   const dispatch = useDispatch();
@@ -15,8 +14,8 @@ function UserContent() {
 
   return (
     <UserContentStyled className="flex">
-      <div className="part padding-24 name title">{t('common.name')}</div>
-      <div className="part setting">
+      <div className="cell padding-24 name title">{t('common.name')}</div>
+      <div className="cell setting">
         <div className="password padding-24 flex-space-between custom-ant-hover">
           <span className="title">{t('common.password')}</span>
           <Button
@@ -50,7 +49,7 @@ function UserContent() {
         </div>
       </div>
 
-      <div className="part others" style={{ flex: 1 }}>
+      <div className="cell others" style={{ flex: 1 }}>
         <div className="padding-24 flex-space-between">
           <div className="wrapper">
             <span className="title">{t('common.signOutAllOtherSessions')}</span>

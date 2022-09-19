@@ -1,8 +1,7 @@
 import { ROUTE_PATH } from 'enums';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
-import TeamContent from './content/TeamContent';
-import UserContent from './content/UserContent';
+import { TeamContent, UserContent } from './content';
 import Sider from './sider';
 import { ProfileStyled } from './styles';
 

@@ -1,3 +1,4 @@
+import { screenSize } from './../../../../enums/screenSize';
 import styled from 'styled-components';
 
 export const FlexBox = styled.div`
@@ -35,6 +36,21 @@ export const ProfileStyled = styled(FlexBox)`
   min-height: 100%;
   max-height: calc(100vh - 70px);
   width: 100%;
+
+  @media only screen and (${screenSize.medium}) {
+    max-height: unset;
+    height: fit-content;
+    .layout {
+      flex-direction: column;
+      height: fit-content;
+      .sider {
+        width: 100%;
+      }
+      .form {
+        overflow-y: unset;
+      }
+    }
+  }
   .layout {
     width: 100%;
     height: 100%;
@@ -57,6 +73,7 @@ export const ProfileStyled = styled(FlexBox)`
     }
   }
   .tabs {
+    --ant-primary-color-deprecated-f-12: transparent;
     border-radius: 6px;
     background: #f6f6f9;
     padding: 2px;
@@ -168,6 +185,12 @@ export const ProfileStyled = styled(FlexBox)`
       padding-top: 2px;
     }
   }
+  .name-wrapper {
+    gap: 10px;
+    .form-item-contatiner {
+      flex: 1;
+    }
+  }
   .submit-btn {
     margin-top: auto;
     width: 100%;
@@ -201,7 +224,7 @@ export const ContentStyled = styled.div`
   min-height: 100%;
   overflow-y: auto;
 
-  .part {
+  .cell {
     min-height: 76px;
     width: 100%;
     background: white;
@@ -225,7 +248,6 @@ export const ContentStyled = styled.div`
   .title {
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 4px;
   }
 `;
 
@@ -252,6 +274,7 @@ export const UserContentStyled = styled(ContentStyled)`
     }
 
     .ant-switch {
+      --antd-wave-shadow-color: #1890ff;
       height: 36px;
       width: 60px;
     }
@@ -323,13 +346,24 @@ export const TeamContentStyled = styled(ContentStyled)`
       }
     }
   }
-  .table {
-    padding: 12px 12px 0;
-    margin-bottom: 12px;
-    flex: 1;
-    overflow-y: auto;
-    width: 100%;
+  .show-inactivate-users-checkbox {
+    align-items: center;
+    min-width: 160px;
+
+    .ant-checkbox {
+      top: 0;
+    }
+    span:last-child {
+      padding-top: 4px;
+      text-align: center;
+    }
   }
+`;
+
+export const TableWrapperStyled = styled.div`
+  padding: 12px 12px 0;
+  flex: 1;
+  width: 100%;
   .ant-table-row,
   .ant-table-thead {
     height: 72px;
@@ -373,16 +407,5 @@ export const TeamContentStyled = styled(ContentStyled)`
   }
   .ant-dropdown-open {
     background: var(--ant-primary-2);
-  }
-  .showInactivateUsersCheckbox {
-    align-items: center;
-    min-width: 160px;
-
-    .ant-checkbox {
-      top: 0;
-    }
-    span:last-child {
-      text-align: center;
-    }
   }
 `;

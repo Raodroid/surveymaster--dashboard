@@ -92,7 +92,7 @@ function UserForm() {
                     {t('common.removePhoto')}
                   </Button>
                 </div>
-                <div className="flex-space-between" style={{ gap: 10 }}>
+                <div className="flex-space-between name-wrapper">
                   <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
                     type={'text'}
