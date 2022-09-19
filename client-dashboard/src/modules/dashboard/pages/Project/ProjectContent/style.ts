@@ -32,3 +32,5 @@ export const HeaderStyled = styled.div`
     border-top: none;
   }
 `;
+
+export const ProjectTableWrapper = styled.div``;

@@ -9,26 +9,31 @@ const ProjectSider = () => {
   const list = [
     {
       title: 'Microbiome Donor Programme (AMD)',
-      routePath: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.MICROBIOME_DONOR_PROGRAMME,
+      routePath: 'Microbiome-Donor-Programme',
     },
     {
       title: 'NCCS Elegance',
-      routePath: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.NCCS_ELEGANCE,
+      routePath: 'NCCS-Elegance',
     },
     {
       title: 'AMILI-Monash Gut Microbiome (1000MY)',
-      routePath: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.AMILI_MONASH_GUT_MICROBIOME,
+      routePath: 'AMILI-Monash-Gut-Microbiome',
     },
     {
       title: 'Colon T2',
-      routePath: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.COLON_T2,
+      routePath: 'Colon-T2',
     },
   ];
   return (
     <ProjectSiderWrapper>
       <div className="list">
         {list.map(e => (
-          <Title title={e.title} routePath={e.routePath} />
+          <Title
+            title={e.title}
+            routePath={
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME + '/' + e.routePath
+            }
+          />
         ))}
       </div>
       <div className="add-new-project-btn-wrapper">

@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import { ROUTE_PATH } from 'enums';
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import { useNavigate } from 'react-router';
 import { TitleStyled } from './style';
 import { useState } from 'react';
@@ -11,28 +11,30 @@ import { ListIcon } from 'icons/ListIcon';
 
 interface TitleProps {
   title: string;
-  routePath: Record<string, string>;
+  routePath: string;
 }
 
 function Title(props: TitleProps) {
   const { title, routePath } = props;
   const navigate = useNavigate();
-  const [active, setActive] = useState(false);
   const { pathname } = useLocation();
+  const [active, setActive] = useState(
+    pathname && pathname.includes(routePath),
+  );
 
   const handleTitleClick = () => {
-    if (!active) {
-      setActive(true);
-      navigate(routePath.HOME);
-    } else {
+    if (pathname.includes(routePath)) {
       setActive(false);
       navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME);
+    } else {
+      setActive(true);
+      navigate(routePath);
     }
   };
 
   useEffect(() => {
-    if (!pathname.includes(routePath.HOME)) setActive(false);
-  }, [pathname, routePath]);
+    if (pathname && !pathname.includes(routePath)) setActive(false);
+  }, [pathname, routePath, setActive]);
 
   return (
     <TitleStyled>
@@ -46,13 +48,15 @@ function Title(props: TitleProps) {
         <Button
           className="flex-center primary"
           type="primary"
-          onClick={() => navigate(routePath.ADD_NEW_SURVEY)}
+          onClick={() => {
+            navigate(`${routePath}/add-survey`);
+          }}
         >
           <PlusIcon className="plus-icon" /> Add New Survey
         </Button>
         <Button
           className="flex-center"
-          onClick={() => navigate(routePath.SURVEY_LIST)}
+          onClick={() => navigate(`${routePath}/survey-list`)}
         >
           <ListIcon /> Survey List
         </Button>
@@ -61,4 +65,4 @@ function Title(props: TitleProps) {
   );
 }
 
-export default Title;
+export default memo(Title);
