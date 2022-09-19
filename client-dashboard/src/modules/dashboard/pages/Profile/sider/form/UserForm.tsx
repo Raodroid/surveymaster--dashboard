@@ -23,6 +23,7 @@ function UserForm() {
 
   const mutationUpdateProfile = useMutation(
     (payload: UserUpdatedDto) => {
+      console.log(payload);
       return UserService.updateProfile(payload);
     },
     {
@@ -35,19 +36,6 @@ function UserForm() {
       onError: onError,
     },
   );
-
-  const initialValues = useMemo(() => {
-    return {
-      id: profile?.id || '',
-      firstName: profile?.firstName || '',
-      lastName: profile?.lastName || '',
-      // displayName: profile.displayName,
-      email: profile?.email || '',
-      // scientificDegree: '',
-      phone: profile?.phone || '',
-      avatar: '',
-    };
-  }, [profile]);
 
   return (
     <CustomSpinSuspense spinning={isLoading}>

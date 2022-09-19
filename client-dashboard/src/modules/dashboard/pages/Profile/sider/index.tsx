@@ -28,8 +28,8 @@ function Sider(props: SiderProps) {
   };
   return (
     <div className="sider flex">
-      {/* {profile && profile.data.userRoles.find(e => e.roleId === 1) && ( */}
-      {profile && profile.data.roles.find(e => e === 1) && (
+      {profile && profile.data.userRoles.find(e => e.roleId === 1) && (
+      // {profile && profile.data.roles.find(e => e === 1) && (
         <div className="tabs flex">
           <Radio.Group value={tab} onChange={handleTabChange}>
             <Radio.Button className="flex-center" value="user">

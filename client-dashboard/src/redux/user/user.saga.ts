@@ -23,9 +23,7 @@ function* changePassword(action: StandardAction<ChangePasswordPayload>) {
   const email = yield select(AuthSelectors.getEmail);
   const accessToken = yield select(AuthSelectors.getAccessToken);
   if (payload) {
-    console.log(email);
     const { currentPassword, password } = payload;
-    console.log(currentPassword, password);
     try {
       yield call(
         CognitoService.changePassword,

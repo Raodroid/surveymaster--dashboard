@@ -225,7 +225,6 @@ export const ContentStyled = styled.div`
   overflow-y: auto;
 
   .cell {
-    min-height: 76px;
     width: 100%;
     background: white;
     border-radius: 8px;
@@ -248,6 +247,7 @@ export const ContentStyled = styled.div`
   .title {
     font-size: 16px;
     font-weight: bold;
+    height: 76px;
   }
 `;
 

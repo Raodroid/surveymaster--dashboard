@@ -69,7 +69,6 @@ const SignInForm = () => {
           values.email,
           values.password,
           (id: string, session: string) => {
-            console.log('hello', id, session);
             navigate(`/change-password?id=${id}&session=${session}`);
           },
         ),

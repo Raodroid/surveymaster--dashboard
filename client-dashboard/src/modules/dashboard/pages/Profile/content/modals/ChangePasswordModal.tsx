@@ -28,7 +28,6 @@ function ChangePasswordModal(props: ProfileModal) {
     AuthSelectors.getIsResettingPassword,
   );
   const onFinish = (values: ChangePasswordPayload) => {
-    console.log(values);
     dispatch(
       UserAction.changePassword(values, () => {
         setShowModal(false);
@@ -53,7 +52,6 @@ function ChangePasswordModal(props: ProfileModal) {
         onSubmit={onFinish}
       >
         {({ handleSubmit, errors }) => {
-          console.log(errors);
           return (
             <Form layout="vertical" onFinish={handleSubmit}>
               <ControlledInput

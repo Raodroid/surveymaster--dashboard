@@ -89,8 +89,8 @@ function TeamContent() {
   });
 
   useEffect(() => {
-    if (profile && !profile.data.roles.find(e => e === 1))
-      // if (profile && !profile.data.userRoles.find(e => e.roleId === 1))
+    // if (profile && !profile.data.roles.find(e => e === 1))
+    if (profile && !profile.data.userRoles.find(e => e.roleId === 1))
       navigate('/app');
   }, [profile, navigate]);
 
@@ -209,7 +209,6 @@ function TeamContent() {
             trigger={['click']}
             onOpenChange={() => {
               setUserId(record.key);
-              console.log(userId, profile.data.id);
             }}
           />
         ),
@@ -270,7 +269,6 @@ function TeamContent() {
                 className="clear-btn"
                 onClick={() => {
                   setSearch('');
-                  console.log(search);
                 }}
               >
                 <CloseIcon />
