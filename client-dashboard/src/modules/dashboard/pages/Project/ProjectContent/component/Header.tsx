@@ -6,7 +6,7 @@ import { HeaderStyled } from '../style';
 
 function ProjectHeader() {
   return (
-    <HeaderStyled>
+    <HeaderStyled className="flex-start">
       <StyledBreadcrumb
         routes={[
           {
