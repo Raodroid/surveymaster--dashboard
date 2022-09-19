@@ -23,8 +23,7 @@ function UserForm() {
 
   const mutationUpdateProfile = useMutation(
     (payload: UserUpdatedDto) => {
-      console.log(payload);
-      return UserService.updateProfile(payload);
+      return UserService.updateProfile({ ...payload, avatar: '' });
     },
     {
       onSuccess: res => {

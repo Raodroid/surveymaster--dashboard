@@ -191,6 +191,9 @@ export const ProfileStyled = styled(FlexBox)`
       flex: 1;
     }
   }
+  .name {
+    height: 76px;
+  }
   .submit-btn {
     margin-top: auto;
     width: 100%;
@@ -247,7 +250,6 @@ export const ContentStyled = styled.div`
   .title {
     font-size: 16px;
     font-weight: bold;
-    height: 76px;
   }
 `;
 
