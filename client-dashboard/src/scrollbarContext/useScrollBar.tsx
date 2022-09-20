@@ -46,8 +46,12 @@ const useScrollbarContext = () => {
     (positionY: number) => {
       if (!ref || !ref.current) return;
       const x = ref.current as any;
-      if (x?.view) {
-        if (x.view?.scrollTop) x.view.scrollTop = positionY;
+      if (x.view?.scrollTop) {
+        x.view?.scroll({
+          top: positionY,
+          left: 0,
+          behavior: 'smooth',
+        });
       }
     },
     [ref],

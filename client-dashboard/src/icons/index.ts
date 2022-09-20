@@ -8,7 +8,6 @@ export * from './PlusIcon';
 export * from './ThreeDotsIcon';
 export * from './CheckIcon';
 export * from './ArrowLeft';
-export * from './Menu';
 export * from './ArrowRight';
 export * from './ColorOutlined';
 export * from './BoxIconOutlined';

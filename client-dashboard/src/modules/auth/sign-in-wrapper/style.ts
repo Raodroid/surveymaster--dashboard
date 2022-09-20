@@ -6,5 +6,4 @@ export const SignInWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
-  height: 100vh;
 `;

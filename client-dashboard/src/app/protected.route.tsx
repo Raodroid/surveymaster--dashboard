@@ -14,19 +14,23 @@ export const ProtectedRoutes = () => {
   const isLogged = !!idToken;
 
   return isLogged ? (
-    <Layout>
+    <ProtectedRouteWrapper>
       <LayoutNavbar />
       <BodyAppWrapper>
         <Outlet />
       </BodyAppWrapper>
-    </Layout>
+    </ProtectedRouteWrapper>
   ) : (
     <Navigate to={ROUTE_PATH.LOGIN} />
   );
 };
 
+const ProtectedRouteWrapper = styled(Layout)`
+  width: min(1440px, 100%);
+  margin: 0 auto;
+`;
 export const BodyAppWrapper = styled(Content)`
   @media only screen and (max-width: 1440px) {
-    margin: 0 2rem;
+    padding: 0 2rem;
   }
 `;

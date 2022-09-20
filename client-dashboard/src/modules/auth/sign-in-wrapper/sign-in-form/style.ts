@@ -3,8 +3,7 @@ import templateVariable from '../../../../app/template-variables.module.scss';
 
 export const SignInUpFormWrapper = styled.div<{ isSignIn?: boolean }>`
   color: ${templateVariable.text_primary_color};
-  width: 100%;
-  max-width: 350px;
+  width: min(360px, 100%);
   border-radius: ${templateVariable.border_radius};
 
   .sign-in-form__row {
@@ -14,7 +13,6 @@ export const SignInUpFormWrapper = styled.div<{ isSignIn?: boolean }>`
     align-items: center;
 
     background-color: #fff;
-    padding: 3.179rem;
     border-top: 1px solid ${templateVariable.border_color};
 
     &:first-child {
@@ -30,14 +28,20 @@ export const SignInUpFormWrapper = styled.div<{ isSignIn?: boolean }>`
   .sign-in-form {
     &__body {
       .header-contain {
-        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 6rem 3rem;
+
         .header-title {
-          font-size: 1.429rem;
-          margin-top: 1.786rem;
+          margin-right: 10px;
+          font-size: 16px;
           margin-bottom: 0;
         }
       }
       .sign-in-form {
+        padding: 3rem 3.9rem;
+        padding-top: 0;
         display: flex;
         align-items: center;
         flex-direction: column;
@@ -45,13 +49,13 @@ export const SignInUpFormWrapper = styled.div<{ isSignIn?: boolean }>`
         .form-item-contatiner {
           width: 100%;
         }
-        .ant-link {
-          margin-top: 1.5rem;
-          font-size: 12px;
+        .forgot-password-btn {
+          margin-top: ${templateVariable.element_spacing};
         }
       }
     }
     &__footer {
+      padding: 3rem 3.9rem;
     }
   }
 

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { MobileMenuWrapper } from './style';
 import { useToggle } from '../../../../../utils';
 import HamburgerAnimation from '../../../../../icons/HamburgerAnimation';
-import { LogoBiomeIcon } from '../../../../../icons';
+import { LogoIcon } from '../../../../../icons';
 import MenuList from './MenuList';
 
 const MobileMenu = () => {
@@ -20,7 +20,7 @@ const MobileMenu = () => {
           open={openMobileMenu}
           className={'hamburger-menu'}
         />
-        <LogoBiomeIcon className={'app_logo'} />
+        <LogoIcon className={'app_logo'} />
       </div>
       <div className={`mobile-nav__content ${openMobileMenu ? 'open' : ''}`}>
         {/*<MenuList mode={'vertical'} onClickMenuItem={handleOpenMobileMenu} />*/}

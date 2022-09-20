@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavBarWrapper } from './styles';
 import { ROUTE_PATH } from 'enums';
-import { LogoBiomeIcon } from 'icons';
+import { LogoIcon } from 'icons';
 import { Link } from 'react-router-dom';
 import MainMenu from './MainMenu';
 import RightMenu from './RightMenu';
@@ -21,7 +21,7 @@ const NavBar = () => {
             className="logo"
             aria-label="Logo app"
           >
-            <LogoBiomeIcon />
+            <LogoIcon />
           </Link>
           <MainMenu />
           <RightMenu />
