@@ -49,16 +49,12 @@ export interface FetchParamsSelect {
   deleted?: boolean;
 }
 
-export interface MetaPaging {
-  page: number;
-  take: number;
+export interface PaginationResponse<T> {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
   itemCount: number;
   pageCount: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
-}
-
-export interface PaginationResponse<T> {
+  take: number;
+  page: number;
   data: T[];
-  meta: MetaPaging;
 }

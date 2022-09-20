@@ -5,6 +5,7 @@ import { screenSize } from '../../../../enums';
 const { Content } = Layout;
 
 export const QuestionBankWrapper = styled(Content)`
+  height: 100%;
   display: flex;
   gap: ${templateVariable.section_spacing};
   background: none;

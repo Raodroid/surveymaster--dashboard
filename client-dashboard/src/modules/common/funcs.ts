@@ -49,7 +49,6 @@ export const setSecondaryColor = (hexColorValue: string) => {
   //hexColorValue must be formatted hex "#______"
   const styleVar = r?.['style'];
   const hsl = hexToHSL(hexColorValue);
-  console.log(hsl);
   if (styleVar && hsl) {
     styleVar.setProperty('--secondary-color-hsl', hsl);
   }

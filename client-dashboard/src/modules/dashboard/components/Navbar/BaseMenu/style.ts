@@ -3,7 +3,7 @@ import { Menu } from 'antd';
 
 export const BaseMenuWrapper = styled(Menu)`
   .ant-menu-title-content {
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
   }
 `;

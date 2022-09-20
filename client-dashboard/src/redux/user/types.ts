@@ -34,15 +34,16 @@ export interface Role {
 
 export interface UserPayload {
   id?: string;
-  email: string;
+  email?: string;
   firstName: string;
   lastName: string;
+  fullName?: string;
   userName?: string;
-  phone: string;
-  description: string;
-  roles: Array<number>;
+  phone?: string;
+  description?: string;
+  roles?: Array<number>;
   password?: string;
-  phonePrefix: string;
+  phonePrefix?: string;
   roleData?: Role[];
   tenantId?: string;
   smsVerified?: boolean;

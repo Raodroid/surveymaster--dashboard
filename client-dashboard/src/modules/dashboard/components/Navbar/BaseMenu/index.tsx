@@ -15,7 +15,7 @@ const BaseMenu: FC<MenuProps & { callback?: () => void }> = props => {
       matchPath(location.pathname, item?.key as string),
     );
 
-    return key ? [key.key as string] : undefined;
+    return key ? [key.key as string] : [];
   }, [items, location.pathname]);
 
   const onChange: MenuProps['onClick'] = e => {
@@ -24,19 +24,6 @@ const BaseMenu: FC<MenuProps & { callback?: () => void }> = props => {
     }
     navigate(e.key);
   };
-
-  useEffect(() => {
-    ConfigProvider.config({
-      theme: {
-        errorColor: DEFAULT_THEME_COLOR.ERROR,
-        successColor: DEFAULT_THEME_COLOR.SUCCESS,
-        warningColor: DEFAULT_THEME_COLOR.WARNING,
-        primaryColor: DEFAULT_THEME_COLOR.PRIMARY,
-      },
-    });
-
-    setSecondaryColor(DEFAULT_THEME_COLOR.SECONDARY);
-  }, []);
 
   return (
     <BaseMenuWrapper
