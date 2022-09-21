@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { AuthSelectors } from 'redux/auth/index';
 import { Component, HigherOrderComType } from '../../../type';
-import qs from 'qs';
+import useParseQueryString from '../../../hooks/useParseQueryString';
 
 const requireAuthentication: HigherOrderComType = (Com: Component) => {
   return props => {
@@ -12,7 +12,8 @@ const requireAuthentication: HigherOrderComType = (Com: Component) => {
     const navigator = useNavigate();
     const location = useLocation();
     const currentPath = location.pathname;
-    const { nextUrl } = qs.parse(location.search, { ignoreQueryPrefix: true });
+    const { nextUrl } = useParseQueryString<{ nextUrl?: string }>();
+
     useEffect(() => {
       if (isLogged) {
         if (currentPath === '/login' && nextUrl) {

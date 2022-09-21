@@ -11,7 +11,19 @@ import { UnProtectedRoutes } from './unProtected.route';
 const Home = lazy(() => import('modules/dashboard/pages/Home'));
 const Project = lazy(() => import('modules/dashboard/pages/Project'));
 const Profile = lazy(() => import('modules/dashboard/pages/Profile'));
-const QuestionBank = lazy(() => import('modules/dashboard/pages/QuestionBack'));
+const QuestionBank = lazy(() => import('modules/dashboard/pages/QuestionBank'));
+const ViewQuestion = lazy(
+  () => import('modules/dashboard/pages/QuestionBank/ViewQuestion'),
+);
+const EditQuestion = lazy(
+  () => import('modules/dashboard/pages/QuestionBank/EditQuestion'),
+);
+const CategoryDetail = lazy(
+  () => import('modules/dashboard/pages/QuestionBank/CategoryDetail'),
+);
+const AddQuestion = lazy(
+  () => import('modules/dashboard/pages/QuestionBank/AddQuestion'),
+);
 
 export const ScrollToTop = props => {
   const { scrollToTop } = useScrollbarContext();
@@ -36,9 +48,23 @@ const AppRoutes = () => {
               element={<Profile />}
             />
             <Route
-              path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK}
+              path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}
               element={<QuestionBank />}
-            />
+            >
+              <Route index element={<CategoryDetail />} />
+              <Route
+                path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.EDIT_QUESTION}
+                element={<EditQuestion />}
+              />
+              <Route
+                path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION}
+                element={<ViewQuestion />}
+              />
+              <Route
+                path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION}
+                element={<AddQuestion />}
+              />
+            </Route>
             <Route path="*" element={<Navigate to={'/app'} replace />} />
           </Route>
           <Route path="*" element={<UnProtectedRoutes />}>

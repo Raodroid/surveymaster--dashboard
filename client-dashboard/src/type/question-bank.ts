@@ -1,8 +1,23 @@
 import { UserPayload } from 'redux/user';
-import { ISurveyQuestion } from './survey';
 import { PaginationResponse } from './general';
 
-interface IQuestion {
+export interface ISurveyQuestion {
+  isMaskQuestion?: boolean;
+  id: string;
+  title?: string;
+  description?: string;
+  defaultKeyPath: string;
+  type: QuestionType;
+  isRequired: boolean;
+  isSingleChoice?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
+  hint?: string;
+  showTitleAsHTML?: boolean;
+}
+
+export interface IQuestion {
   id?: string;
   displayId: string;
   latestCompletedVersionId: string;
@@ -59,7 +74,7 @@ interface IQuestionVersionOption {
   text?: string;
 }
 
-enum QuestionType {
+export enum QuestionType {
   MULTIPLE_CHOICE = '',
   RADIO_BUTTONS = 'RADIO_BUTTONS',
   PHOTO = 'PHOTO',
@@ -193,7 +208,7 @@ export const mockCategories: PaginationResponse<IQuestionCategory> = {
   ],
 };
 
-const mockQuestionList: PaginationResponse<IQuestion> = {
+export const mockQuestionList: PaginationResponse<IQuestion> = {
   hasNextPage: false,
   hasPreviousPage: false,
   itemCount: 2,

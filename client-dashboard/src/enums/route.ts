@@ -11,6 +11,11 @@ export const ROUTE_PATH = {
     HOME: '/app',
     PROJECT: '/app/project',
     PROFILE: '/app/profile',
-    QUESTION_BANK: '/app/question-bank',
+    QUESTION_BANK: {
+      ROOT: '/app/question-bank',
+      EDIT_QUESTION: '/app/question-bank/question/:questionId/edit',
+      VIEW_QUESTION: '/app/question-bank/question/:questionId',
+      ADD_QUESTION: '/app/question-bank/question/add',
+    },
   },
 };

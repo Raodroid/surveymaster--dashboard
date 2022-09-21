@@ -9,7 +9,7 @@ export const mainMenuItem = [
   },
   {
     label: 'Questions Bank',
-    key: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK,
+    key: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT,
   },
 ];
 

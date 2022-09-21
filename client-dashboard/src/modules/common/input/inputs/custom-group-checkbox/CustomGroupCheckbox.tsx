@@ -3,9 +3,20 @@ import { Checkbox } from 'antd';
 import { RadioGroupProps } from 'antd/lib/radio';
 import { OnchangeType } from '../../type';
 import { CustomGroupCheckboxWrapper } from './style';
-import { ISurveyOption } from '../../../../../type';
+
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 
+export interface ISurveyOption {
+  id: string;
+  internal_question_id: string;
+  label: string;
+  value: string | number;
+  sort: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
+  isNoneOption?: boolean;
+}
 export type CustomRadioButtonGroupProps = RadioGroupProps &
   OnchangeType & {
     customOptions?: Array<{

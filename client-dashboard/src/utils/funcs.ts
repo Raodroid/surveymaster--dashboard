@@ -146,6 +146,22 @@ export const useToggle = (
   return [open, toggle, setOpen];
 };
 
+export const useDebouce = (value: string, time: number = 500) => {
+  const [text, setText] = useState<string>('');
+
+  useEffect(() => {
+    const x = setTimeout(() => {
+      setText(value);
+    }, time);
+
+    return () => {
+      clearTimeout(x);
+    };
+  }, [time, value]);
+
+  return text;
+};
+
 export const onError = (error: any) => {
   notification.error({ message: error.response?.data?.message });
 };
@@ -156,4 +172,14 @@ export const checkSpecialAddressCase = address => {
     address?.city === 'SG' &&
     address?.country === 'SG'
   );
+};
+
+export const transformEnumToOption = (
+  T: object,
+  translatePathKey?: (key) => string,
+): Array<{ label: string; value: string }> => {
+  return Object.keys(T).map(key => ({
+    value: key,
+    label: translatePathKey ? translatePathKey(key) : key,
+  }));
 };

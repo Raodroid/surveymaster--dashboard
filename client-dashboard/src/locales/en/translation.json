@@ -6,11 +6,11 @@
     "survey": "Survey"
   },
   "common": {
+    "question": "Question",
+    "questionBank": "Question Bank",
     "addNewQuestion": "Add New Question",
-    "fileIsNotAvailable": "File is not available!",
     "download": "Download",
     "guide": "Guide",
-    "surveyOverview": "Survey Overview",
     "next": "Next",
     "back": "Back",
     "addNewFamilyMember": "Add a new family member",
@@ -36,13 +36,7 @@
     "resendCodeFail": "Failed to resend code: {{ERROR_MESSAGE}}",
     "changePasswordFail": "Failed to change password: {{ERROR_MESSAGE}}",
     "programExistedInCart": "This program already existed in your cart",
-    "mother": "Mother",
-    "father": "Father",
-    "sibling": "Sibling",
-    "son": "Son",
-    "daughter": "Daughter",
     "others": "Others",
-    "spouse": "Spouse",
     "enterNewPassword": "Enter New Password",
     "verifying": "Verifying",
     "verifySuccessfully": "Verify Successfully",
@@ -52,8 +46,6 @@
     "thankYou": "Thank you",
     "savePassword": "Save Password",
     "I'mNewHere": "I'm new here",
-    "dontHaveAccount": "Don’t have an account?",
-    "haveAnAccount": "Have an account?",
     "newHere": "New here?",
     "confirmAccount": "Confirm Account",
     "continueWithGoogle": "Continue with Google",
@@ -240,7 +232,6 @@
     "start": "Start",
     "skip": "Skip",
     "defaultProfile": "Default Profile",
-    "whyThisIsDorYou": "Why is this for you?",
     "surveySummary": "Survey Summary",
     "allSessions": "All Sessions",
     "onlyThisSession": "Only This Session",
@@ -249,11 +240,16 @@
     "seeMore": "See More",
     "recommended": "Recommended",
     "default": "Default",
-    "contactInformation": "Contact Information",
     "scan": "Scan",
     "viewFile": "View File",
     "downloadFile": "Download File",
-    "pleaseLogInToYourAccount": "Please log in to your account again."
+    "pleaseLogInToYourAccount": "Please log in to your account again.",
+    "search": "Search",
+    "searchQuestion": "Search Question",
+    "category": "Category",
+    "subCategory": "Sub Category",
+    "variableName": "Variable Name",
+    "answerType": "Answer Type"
   },
   "validation": {
     "messages": {
@@ -306,5 +302,14 @@
   },
   "direction": {
     "continueWithGoogle": "Continue with Google"
+  },
+  "questionType": {
+    "MULTIPLE_CHOICE" : "Multiple Choice",
+    "RADIO_BUTTONS": "Radio Button",
+    "PHOTO": "Photo",
+    "DATE_PICKER": "Date Picker",
+    "TIME_PICKER": "Time Picker",
+    "SLIDER": "Slider",
+    "TEXT_ENTRY": "Text Entry"
   }
 }

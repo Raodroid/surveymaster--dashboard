@@ -11,6 +11,7 @@ const CustomCheckBox = (props: CustomCheckBoxProps) => {
   };
   const customProps: { onChange?: typeof customOnChange } = {};
   if (props.onChange) customProps.onChange = customOnChange;
+
   return <Checkbox {...props} {...customProps} checked={props.value} />;
 };
 export default memo(CustomCheckBox);

@@ -1,9 +1,7 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 
-import { ConfigProvider, MenuProps } from 'antd';
+import { MenuProps } from 'antd';
 import { useLocation, matchPath, useNavigate } from 'react-router-dom';
-import { DEFAULT_THEME_COLOR } from '../../../../../enums';
-import { setSecondaryColor } from '../../../../common/funcs';
 import { BaseMenuWrapper } from './style';
 
 const BaseMenu: FC<MenuProps & { callback?: () => void }> = props => {
@@ -12,7 +10,14 @@ const BaseMenu: FC<MenuProps & { callback?: () => void }> = props => {
   const navigate = useNavigate();
   const current = useMemo<string[] | undefined>(() => {
     const key = items?.find(item =>
-      matchPath(location.pathname, item?.key as string),
+      matchPath(
+        {
+          path: item?.key as string,
+          caseSensitive: false,
+          end: false,
+        },
+        location.pathname,
+      ),
     );
 
     return key ? [key.key as string] : [];
