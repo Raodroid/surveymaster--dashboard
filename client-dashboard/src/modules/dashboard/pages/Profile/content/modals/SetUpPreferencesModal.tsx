@@ -5,6 +5,8 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
 import { ProfileModal } from '.';
 import { onError } from '../../../../../../utils/funcs';
@@ -57,8 +59,7 @@ function SetUpPreferencesModal(props: ProfileModal) {
   const { showModal, setShowModal } = props;
   const queryClient = useQueryClient();
   const { t } = useTranslation();
-  const { data } = useQuery('me', UserService.getProfile);
-  const myProfile = useMemo(() => data?.data, [data]);
+  const myProfile = useSelector(AuthSelectors.getProfile);
 
   const initialValues = useMemo<IInitialValues>(
     () => ({

@@ -174,7 +174,6 @@ export function* signOut(action?: StandardAction<{ isChangeEmail?: boolean }>) {
     const idToken = yield select(AuthSelectors.getIdToken);
     if (idToken) {
       const loginAt = yield select(AuthSelectors.getLoginAt);
-      yield call(AuthService.logout, { loginTime: loginAt });
     }
     yield call(clearAxiosToken);
     yield put(userSignOutSuccess());
@@ -405,6 +404,10 @@ export function* userResendCode(action: StandardAction<string>) {
   }
 }
 
+export function* startStartupBackgroundTasks() {
+  yield all([put(AuthAction.fetchUserPool()), checkFetchProfile()]);
+}
+
 export default function* AuthSaga(): Generator {
   yield all([
     takeLatest(SIGNIN.START, signInUserWithEmailPassword),
@@ -417,5 +420,6 @@ export default function* AuthSaga(): Generator {
     takeLatest(GET_ALL_ROLES.START, getAllRole),
     takeLatest(CHALLENGE_REQUIRED_PASSWORD.START, userChangePassDefault),
     takeLatest(RESEND_CODE.START, userResendCode),
+    takeLatest(REHYDRATE, startStartupBackgroundTasks),
   ]);
 }

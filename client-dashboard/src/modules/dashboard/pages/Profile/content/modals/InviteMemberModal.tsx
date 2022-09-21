@@ -1,12 +1,12 @@
 import { Button, Form, notification } from 'antd';
 import { Formik } from 'formik';
 import { CloseIcon } from 'icons';
+import { InviteMember, UpdateMember } from 'interfaces';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
-import { InviteMemberPayload } from 'redux/user';
 import { AdminService } from 'services';
 import * as Yup from 'yup';
 import { ProfileModal } from '.';
@@ -54,7 +54,7 @@ function InviteMemberModal(props: InviteModal) {
         onSuccess: () => {
           setShowModal(false);
           notification.success({ message: t(`common.${successMessage}`) });
-          queryClient.invalidateQueries('getStaffs');
+          queryClient.invalidateQueries('getTeamMembers');
         },
         onError,
       };
@@ -63,16 +63,12 @@ function InviteMemberModal(props: InviteModal) {
   );
 
   const mutationInviteMember = useMutation(
-    (payload: InviteMemberPayload) => AdminService.inviteMember(payload),
+    (payload: InviteMember) => AdminService.inviteMember(payload),
     createHandleStatus('inviteSuccess'),
   );
 
-  const mutationEditMember = useMutation(
-    (payload: InviteMemberPayload) =>
-      AdminService.editMemberPreferences({
-        ...payload,
-        id: payload.id,
-      }),
+  const mutationUpdateMember = useMutation(
+    (payload: UpdateMember) => AdminService.updateMember(payload),
     createHandleStatus('updateSuccess'),
   );
 
@@ -81,9 +77,9 @@ function InviteMemberModal(props: InviteModal) {
     createHandleStatus('removeSuccess'),
   );
 
-  const onFinish = (payload: InviteMemberPayload) => {
+  const onFinish = (payload: InviteMember | UpdateMember) => {
     if (edit) {
-      mutationEditMember.mutateAsync({ ...payload, id: userData.id });
+      mutationUpdateMember.mutateAsync({ ...payload, id: userData.id });
     } else {
       mutationInviteMember.mutateAsync(payload);
     }
@@ -179,7 +175,7 @@ function InviteMemberModal(props: InviteModal) {
                 className="submit-btn"
                 loading={
                   edit
-                    ? mutationEditMember.isLoading
+                    ? mutationUpdateMember.isLoading
                     : mutationInviteMember.isLoading
                 }
               >

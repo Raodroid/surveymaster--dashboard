@@ -1,5 +1,7 @@
 import { screenSize } from './../../../../enums/screenSize';
 import styled from 'styled-components';
+import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
+import { Menu } from 'antd';
 
 export const FlexBox = styled.div`
   .flex {
@@ -118,8 +120,11 @@ export const ProfileStyled = styled(FlexBox)`
     }
   }
   .form {
-    overflow-y: auto;
+    overflow-y: hidden;
     padding: 0 24px;
+    .ant-spin-nested-loading {
+      height: 100%;
+    }
   }
   .form,
   .ant-form {
@@ -137,15 +142,17 @@ export const ProfileStyled = styled(FlexBox)`
       width: 120px;
       height: 120px;
       overflow: hidden;
-
       .ant-upload {
         margin: 0;
       }
     }
-
     span {
       font-size: 12px;
     }
+  }
+  .inputs-wrapper {
+    flex: 1;
+    overflow-y: auto;
   }
   .buttons {
     --ant-primary-color-deprecated-f-12: rgba(24, 144, 255, 0.12);
@@ -210,9 +217,6 @@ export const ProfileStyled = styled(FlexBox)`
   }
   .ant-divider {
     margin: 0;
-  }
-  .ant-spin-nested-loading {
-    flex: 1;
   }
   .ant-spin-container {
     height: 100%;
@@ -297,6 +301,7 @@ export const UserContentStyled = styled(ContentStyled)`
       height: 32px;
       &::before {
         border-radius: 50%;
+        top: 0.5px;
       }
     }
   }
@@ -379,6 +384,9 @@ export const TableWrapperStyled = styled.div`
       display: none;
     }
   }
+  .ant-table-body {
+    overflow-y: auto !important;
+  }
   .ant-table-tbody > tr:nth-child(n) {
     background: #f5fafe;
   }
@@ -409,5 +417,18 @@ export const TableWrapperStyled = styled.div`
   }
   .ant-dropdown-open {
     background: var(--ant-primary-2);
+  }
+`;
+
+export const DropDownMenuStyled = styled(Menu)`
+  .ant-dropdown-menu-title-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .dropdown-icon {
+    color: var(--ant-primary-color);
+    margin-bottom: 1px;
   }
 `;

@@ -17,18 +17,6 @@ export const ProtectedRoutes = () => {
   const idToken = useSelector(AuthSelectors.getIdToken);
   const isLogged = !!idToken;
 
-  // const { data: profile } = useQuery('me', UserService.getProfile, {
-    
-  // });
-  // const location = useLocation();
-
-  // if (
-  //   profile &&
-  //   !profile.data.roles.find(e => e === 1) &&
-  //   location.pathname === ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM
-  // )
-  //   return <Navigate to="/app" />;
-
   return isLogged ? (
     <Layout>
       <LayoutNavbar />

@@ -51,6 +51,13 @@ export default class AuthAction {
       SUCCESS: 'auth/GET_PROFILE_SUCCESS',
       FAILURE: 'auth/GET_PROFILE_FAILURE',
     },
+
+    FETCH_USERPOOL: {
+      START: 'auth/FETCH_USERPOOL_START',
+      SUCCESS: 'auth/FETCH_USERPOOL_SUCCESS',
+      FAILURE: 'auth/FETCH_USERPOOL_FAILURE',
+    },
+
     CONFIRM_TEXT_SMS: {
       START: 'auth/CONFIRM_TEXT_SMS_START',
       SUCCESS: 'auth/CONFIRM_TEXT_SMS_SUCCESS',
@@ -181,6 +188,12 @@ export default class AuthAction {
       undefined,
       error,
     );
+
+  static fetchUserPool = (
+    subdomain?: string,
+  ): StandardAction<{ subdomain?: string }> =>
+    createPayloadAction(AuthAction.TYPES.FETCH_USERPOOL.START, { subdomain });
+
   static ResetPassword = (
     password: string,
     verifyPassword: string,

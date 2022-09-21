@@ -2,7 +2,9 @@ import { Radio } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
 import TeamForm from './form/TeamForm';
 import UserForm from './form/UserForm';
@@ -16,10 +18,7 @@ function Sider(props: SiderProps) {
   const { tab, setTab } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
-
-  const { data: profile } = useQuery('me', UserService.getProfile, {
-    refetchOnWindowFocus: false,
-  });
+  const profile = useSelector(AuthSelectors.getProfile);
 
   const handleTabChange = e => {
     setTab(e.target.value);
@@ -28,8 +27,8 @@ function Sider(props: SiderProps) {
   };
   return (
     <div className="sider flex">
-      {profile && profile.data.userRoles.find(e => e.roleId === 1) && (
-      // {profile && profile.data.roles.find(e => e === 1) && (
+      {profile && profile?.userRoles?.find(e => e.roleId === 1) && (
+        // {profile && profile.roles.find(e => e === 1) && (
         <div className="tabs flex">
           <Radio.Group value={tab} onChange={handleTabChange}>
             <Radio.Button className="flex-center" value="user">

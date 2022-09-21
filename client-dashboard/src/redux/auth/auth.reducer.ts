@@ -113,19 +113,22 @@ export default class AuthReducer {
         //   : { username: '' };
         const idDecodeToken: {
           defaultProfileId: string | null;
-          userId: string | null;
+          sub: string | null;
         } = action.payload.idToken
           ? jwt_decode(action.payload.idToken)
-          : { defaultProfileId: null, userId: null };
+          : { defaultProfileId: null, sub: null };
 
-        return state
-          .set('isSigningIn', false)
-          .set('accessToken', action.payload.accessToken)
-          .set('refreshToken', action.payload.refreshToken)
-          .set('currentUserId', idDecodeToken.userId)
-          .set('currentEmailForChangePassword', action.payload.email)
-          .set('idToken', action.payload.idToken)
-          .set('loginAt', new Date());
+        return (
+          state
+            .set('isSigningIn', false)
+            .set('accessToken', action.payload.accessToken)
+            .set('refreshToken', action.payload.refreshToken)
+            // .set('currentUserId', idDecodeToken.userId)
+            .set('currentUserId', idDecodeToken.sub)
+            .set('currentEmailForChangePassword', action.payload.email)
+            .set('idToken', action.payload.idToken)
+            .set('loginAt', new Date())
+        );
 
       case AuthAction.TYPES.SIGNIN.FAILURE:
         return state.set('isSigningIn', false).set('error', action.error);

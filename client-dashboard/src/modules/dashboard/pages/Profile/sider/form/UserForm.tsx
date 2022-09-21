@@ -15,15 +15,35 @@ import { onError } from 'utils';
 function UserForm() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const authId = useSelector(AuthSelectors.getCurrentUserId);
-  const { data, isLoading } = useQuery(`me-${authId}`, UserService.getProfile, {
-    refetchOnWindowFocus: true,
-  });
-  const profile = useMemo(() => data?.data, [data]);
+  // const authId = useSelector(AuthSelectors.getCurrentUserId);
+  // const { data, isLoading } = useQuery(`me-${authId}`, UserService.getProfile, {
+  //   refetchOnWindowFocus: false,
+  // });
+  // const profile = useMemo(() => data?.data, [data]);
+
+  const data = useSelector(AuthSelectors.getProfile);
+  // console.log(test);
+  const profile: UserUpdatedDto = {
+    id: data?.id,
+    firstName: data?.firstName,
+    lastName: data?.lastName,
+    description: data?.description,
+    phonePrefix: data?.phonePrefix,
+    email: data?.email,
+    phone: data?.phone,
+    avatar: data?.avatar,
+    displayName: data?.displayName,
+    scientificDegree: data?.scientificDegree,
+  };
 
   const mutationUpdateProfile = useMutation(
     (payload: UserUpdatedDto) => {
-      return UserService.updateProfile({ ...payload, avatar: '' });
+      return UserService.updateProfile({
+        ...payload,
+        avatar: '',
+        displayName: '',
+        description: '',
+      });
     },
     {
       onSuccess: res => {
@@ -37,7 +57,8 @@ function UserForm() {
   );
 
   return (
-    <CustomSpinSuspense spinning={isLoading}>
+    // <CustomSpinSuspense spinning={isLoading}>
+    <div style={{ overflowY: 'hidden' }}>
       {profile && (
         <Formik
           initialValues={profile}
@@ -79,38 +100,40 @@ function UserForm() {
                     {t('common.removePhoto')}
                   </Button>
                 </div>
-                <div className="flex-space-between name-wrapper">
+                <div className="inputs-wrapper">
+                  <div className="flex-space-between name-wrapper">
+                    <ControlledInput
+                      inputType={INPUT_TYPES.INPUT}
+                      type={'text'}
+                      name="firstName"
+                      label={t('common.firstName')}
+                    />
+                    <ControlledInput
+                      inputType={INPUT_TYPES.INPUT}
+                      type={'text'}
+                      name="lastName"
+                      label={t('common.lastName')}
+                    />
+                  </div>
                   <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
                     type={'text'}
-                    name="firstName"
-                    label={t('common.firstName')}
+                    name="displayName"
+                    label={t('common.displayName')}
                   />
                   <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
                     type={'text'}
-                    name="lastName"
-                    label={t('common.lastName')}
+                    name="scientificDegree"
+                    label={t('common.scientificDegree')}
+                  />
+                  <ControlledInput
+                    inputType={INPUT_TYPES.INPUT}
+                    type={'tel'}
+                    name="phone"
+                    label={t('common.phoneNumber')}
                   />
                 </div>
-                <ControlledInput
-                  inputType={INPUT_TYPES.INPUT}
-                  type={'text'}
-                  name="displayName"
-                  label={t('common.displayName')}
-                />
-                <ControlledInput
-                  inputType={INPUT_TYPES.INPUT}
-                  type={'text'}
-                  name="scientificDegree"
-                  label={t('common.scientificDegree')}
-                />
-                <ControlledInput
-                  inputType={INPUT_TYPES.INPUT}
-                  type={'tel'}
-                  name="phone"
-                  label={t('common.phoneNumber')}
-                />
                 <Button
                   className="submit-btn custom-ant-hover"
                   htmlType="submit"
@@ -123,7 +146,8 @@ function UserForm() {
           }}
         </Formik>
       )}
-    </CustomSpinSuspense>
+    </div>
+    // </CustomSpinSuspense>
   );
 }
 

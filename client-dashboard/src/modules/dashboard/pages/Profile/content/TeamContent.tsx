@@ -1,4 +1,10 @@
 import {
+  DeleteFilled,
+  EyeOutlined,
+  SettingFilled,
+  UserDeleteOutlined,
+} from '@ant-design/icons';
+import {
   Button,
   Checkbox,
   Divider,
@@ -14,16 +20,23 @@ import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
+import { GetTeamMembers } from 'interfaces';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { AuthAction, AuthSelectors } from 'redux/auth';
 import { AdminService, UserService } from 'services';
 import APIService from 'services/bioandme-service/base.service';
 import { onError } from 'utils';
 import { initImage } from '../sider/form/UserForm';
-import { TableWrapperStyled, TeamContentStyled } from '../styles';
+import {
+  DropDownMenuStyled,
+  TableWrapperStyled,
+  TeamContentStyled,
+} from '../styles';
 import { InviteMemberModal, ResetUserPasswordModal } from './modals';
 
 interface DataType {
@@ -50,66 +63,46 @@ const rowSelection = {
 
 function TeamContent() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const profile = useSelector(AuthSelectors.getProfile);
+
+  const searchRef = useRef<InputRef>(null);
+  const [userId, setUserId] = useState('');
+
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('');
-  const navigate = useNavigate();
-  const searchRef = useRef<InputRef>(null);
+  const [page, setPage] = useState(1);
+  const [showInactivateUser, setShowInactivateUser] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [showEditPreferencesModal, setShowEditPreferencesModal] =
     useState(false);
-  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
-  const [userId, setUserId] = useState('');
-  const [showInactivateUser, setShowInactivateUser] = useState(true);
-
-  // const baseParams = useMemo(
-  //   () => ({
-  //     page: 1,
-  //     take: 10,
-  //     roles: [1, 2, 3, 4, 5, 7, 10],
-  //     activated: showInactivateUser,
-  //     q: filter,
-  //   }),
-  //   [showInactivateUser, filter],
-  // );
 
   const baseParams = useMemo(
     () => ({
-      page: 1,
+      page: page,
       take: 10,
-      userRoles: [
-        { roleId: 1 },
-        { roleId: 2 },
-        { roleId: 3 },
-        { roleId: 4 },
-        { roleId: 5 },
-        { roleId: 7 },
-        { roleId: 10 },
-      ],
-      activated: showInactivateUser,
+      roles: [1, 2, 3],
+      isActivated: showInactivateUser,
       q: filter,
     }),
-    [showInactivateUser, filter],
+    [showInactivateUser, filter, page],
   );
 
-  function getStaffs(params: any): Promise<any> {
-    return APIService.get(`/users`, { params });
+  function getTeamMembers(params: GetTeamMembers): Promise<any> {
+    return AdminService.getTeamMembers(params);
   }
 
-  const { data: dataStaff, isLoading } = useQuery(
-    ['getStaffs', showInactivateUser, filter],
-    () => getStaffs(baseParams),
+  const { data: teamMembers, isLoading } = useQuery(
+    ['getTeamMembers', showInactivateUser, filter],
+    () => getTeamMembers(baseParams),
     {
       refetchOnWindowFocus: false,
     },
   );
 
-  const { data: profile } = useQuery('me', UserService.getProfile, {
-    refetchOnWindowFocus: false,
-  });
-
   useEffect(() => {
-    // if (profile && !profile.data.roles.find(e => e === 1))
-    if (profile && !profile.data.userRoles.find(e => e.roleId === 1))
+    if (profile && !profile?.userRoles?.find(e => e.roleId === 1))
       navigate('/app');
   }, [profile, navigate]);
 
@@ -189,41 +182,45 @@ function TeamContent() {
         render: (_, record: any) => (
           <ThreeDotsDropdown
             overlay={
-              <Menu>
+              <DropDownMenuStyled>
                 <Menu.Item
                   key="editPreferences"
                   onClick={() => {
                     handleEditPreferences(record.key);
                   }}
                 >
-                  Edit Preferences
+                  <SettingFilled className="dropdown-icon" />{' '}
+                  {t('common.editPreferences')}
                 </Menu.Item>
-                {profile && record.key !== profile.data.id && (
+                {profile && record.key !== profile.id && (
                   <Menu.Item
                     key="resetUserPassword"
                     onClick={() => {
                       handleResetPassword(record.key);
                     }}
                   >
-                    Reset Password
+                    <EyeOutlined className="dropdown-icon" />{' '}
+                    {t('common.resetPassword')}
                   </Menu.Item>
                 )}
                 {(!showInactivateUser || !record.deleteAt) &&
                   profile &&
-                  profile.data.id !== record.key && (
+                  profile.id !== record.key && (
                     <Menu.Item
                       key="deactivateUser"
                       onClick={handleDeactivateUser}
                     >
-                      Deactivate User
+                      <UserDeleteOutlined className="dropdown-icon" />{' '}
+                      {t('common.deactivateUser')}
                     </Menu.Item>
                   )}
                 {record.deleteAt && (
                   <Menu.Item key="restore" onClick={handleRestoreUser}>
-                    Restore
+                    <DeleteFilled className="dropdown-icon" />{' '}
+                    {t('common.restore')}
                   </Menu.Item>
                 )}
-              </Menu>
+              </DropDownMenuStyled>
             }
             trigger={['click']}
             onOpenChange={() => {
@@ -233,17 +230,11 @@ function TeamContent() {
         ),
       },
     ],
-    [
-      userId,
-      profile,
-      handleRestoreUser,
-      showInactivateUser,
-      handleDeactivateUser,
-    ],
+    [profile, handleRestoreUser, showInactivateUser, handleDeactivateUser, t],
   );
 
-  const data: DataType[] = dataStaff
-    ? dataStaff.data.data.map(user => {
+  const data: DataType[] = teamMembers
+    ? teamMembers.data.data.map(user => {
         return {
           key: user.id,
           avatar: initImage,
@@ -253,10 +244,6 @@ function TeamContent() {
         };
       })
     : [];
-
-  const handleSearch = () => {
-    setFilter(search);
-  };
 
   return (
     <TeamContentStyled className="flex">
@@ -268,7 +255,7 @@ function TeamContent() {
             className="search-btn"
             onClick={() => {
               if (search.trim()) {
-                handleSearch();
+                setFilter(search);
               } else {
                 searchRef.current?.focus();
               }
@@ -276,7 +263,10 @@ function TeamContent() {
           >
             <SearchIcon />
           </Button>
-          <Form onFinish={handleSearch} className="search-form flex-center">
+          <Form
+            onFinish={() => setFilter(search)}
+            className="search-form flex-center"
+          >
             <Input
               value={search}
               ref={searchRef}
@@ -299,10 +289,10 @@ function TeamContent() {
             checked={showInactivateUser}
             onChange={() => setShowInactivateUser(!showInactivateUser)}
           >
-            Show inactivate users
+            {t('common.showInactivateUsers')}
           </Checkbox>
           <Button type="primary" onClick={() => setShowInviteModal(true)}>
-            Invite Member
+            {t('common.inviteMember')}
           </Button>
         </div>
 
@@ -332,8 +322,8 @@ function TeamContent() {
       {showEditPreferencesModal && (
         <InviteMemberModal
           userData={
-            dataStaff
-              ? dataStaff.data.data.find(user => user.id === userId)
+            teamMembers
+              ? teamMembers.data.data.find(user => user.id === userId)
               : {}
           }
           showModal={showEditPreferencesModal}

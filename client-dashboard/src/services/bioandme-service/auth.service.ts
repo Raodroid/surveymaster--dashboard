@@ -11,10 +11,7 @@ export default class AuthService {
       password,
     });
   }
-  static logout(payload: { loginTime: Date }): Promise<AxiosResponse> {
-    const { loginTime } = payload;
-    return APIService.post('/auth/logout', { loginTime });
-  }
+
   static verifyAccount(req: VerifyAccountPayload): Promise<AxiosResponse> {
     const url = '/auth/confirmByEmail';
     return APIService.post(url, {

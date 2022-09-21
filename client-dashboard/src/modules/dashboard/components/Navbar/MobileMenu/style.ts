@@ -8,7 +8,6 @@ export const MobileMenuWrapper = styled.div<IMobileMenuWrapper>`
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
   background: ${p => (p.isOpen ? 'white' : 'transparent')};
   transition: background 0.2s ease-in;
 
@@ -25,6 +24,7 @@ export const MobileMenuWrapper = styled.div<IMobileMenuWrapper>`
       opacity: 0;
       padding: 0 1rem;
       margin-left: 3.5rem;
+      overflow: hidden;
       transition: height 0.2s ease-in, opacity 0.3s ease-in;
       &.open {
         height: calc(100vh - 70px);
