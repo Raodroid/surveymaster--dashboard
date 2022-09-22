@@ -56,7 +56,7 @@ function Title(props: TitleProps) {
         </Button>
         <Button
           className="flex-center"
-          onClick={() => navigate(`${routePath}/survey-list`)}
+          onClick={() => navigate(`${routePath}`)}
         >
           <ListIcon /> Survey List
         </Button>

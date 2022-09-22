@@ -16,6 +16,10 @@ export const FlexBox = styled(BaseSectionWrapper)`
     align-items: center;
     justify-content: flex-start;
   }
+  .flex-column {
+    display: flex;
+    flex-direction: column;
+  }
 `;
 
 export const ProjectContentWrapper = styled(FlexBox)`
@@ -33,4 +37,13 @@ export const HeaderStyled = styled.div`
   }
 `;
 
-export const ProjectTableWrapper = styled.div``;
+export const ProjectTableWrapper = styled.div`
+  padding: 20px 12px 16px;
+  height: 100%;
+  overflow-y: auto;
+  .ant-table-tbody {
+    .ant-table-cell:last-child {
+      text-align: center;
+    }
+  }
+`;

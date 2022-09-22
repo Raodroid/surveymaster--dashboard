@@ -5,10 +5,10 @@ import { ProjectContentWrapper } from './style';
 
 const ProjectContent = () => {
   return (
-    <div>
+    <>
       <ProjectHeader />
       <ProjectTable />
-    </div>
+    </>
   );
 };
 

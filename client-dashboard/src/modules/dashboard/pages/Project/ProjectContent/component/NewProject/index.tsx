@@ -1,7 +1,10 @@
 import { Table } from 'antd';
+import { ROUTE_PATH } from 'enums';
 import { CloseIcon } from 'icons';
 import React from 'react';
-import { ProjectTableWrapper } from '../style';
+import { useParams } from 'react-router';
+import { ProjectTableWrapper } from '../../style';
+import ProjectHeader from '../Header';
 
 const dataSource = [
   {
@@ -34,11 +37,6 @@ const columns = [
     key: 'projectTitle',
   },
   {
-    title: 'N of Surveys',
-    dataIndex: 'nOfSurveys',
-    key: 'nOfSurveys',
-  },
-  {
     title: 'Person In Charge',
     dataIndex: 'personInCharge',
     key: 'personInCharge',
@@ -56,12 +54,23 @@ const columns = [
   },
 ];
 
-function ProjectTable() {
+function AddProject() {
+  const params = useParams();
+  const routes = [
+    {
+      name: 'Add New Project',
+      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME + params.id,
+    },
+  ];
+
   return (
-    <ProjectTableWrapper>
-      <Table pagination={false} dataSource={dataSource} columns={columns} />
-    </ProjectTableWrapper>
+    <div>
+      <ProjectHeader routes={routes} />
+      <ProjectTableWrapper>
+        <Table dataSource={dataSource} columns={columns} />
+      </ProjectTableWrapper>
+    </div>
   );
 }
 
-export default ProjectTable;
+export default AddProject;
