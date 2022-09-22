@@ -15,14 +15,8 @@ import { onError } from 'utils';
 function UserForm() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  // const authId = useSelector(AuthSelectors.getCurrentUserId);
-  // const { data, isLoading } = useQuery(`me-${authId}`, UserService.getProfile, {
-  //   refetchOnWindowFocus: false,
-  // });
-  // const profile = useMemo(() => data?.data, [data]);
 
   const data = useSelector(AuthSelectors.getProfile);
-  // console.log(test);
   const profile: UserUpdatedDto = {
     id: data?.id,
     firstName: data?.firstName,

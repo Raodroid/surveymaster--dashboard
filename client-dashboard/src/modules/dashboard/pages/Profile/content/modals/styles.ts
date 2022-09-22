@@ -94,11 +94,25 @@ export const SetUpPreferencesModalStyled = styled(ModalStyled)`
 `;
 
 export const InviteMemberModalStyled = styled(ModalStyled)`
-  .ant-form-item {
-    margin-bottom: 20px;
+  .ant-modal-content {
+    height: 100%;
+  }
+  .form-item-container:not(:last-child) {
+    .ant-form-item {
+      margin-bottom: 20px;
+    }
+  }
+  .form-item-container:last-child {
+    .ant-form-item {
+      margin-bottom: 2px;
+    }
   }
   .ant-modal-body {
     padding: 40px 55px;
+    flex: 1;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .ant-modal-footer {
     padding: 40px 55px 55px;
@@ -118,5 +132,9 @@ export const InviteMemberModalStyled = styled(ModalStyled)`
     path {
       fill: var(--ant-primary-color);
     }
+  }
+  .input-wrapper {
+    height: calc(90vh - 364px);
+    overflow-y: auto;
   }
 `;

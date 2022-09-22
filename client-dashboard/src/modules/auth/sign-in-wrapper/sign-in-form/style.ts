@@ -42,7 +42,7 @@ export const SignInUpFormWrapper = styled.div<{ isSignIn?: boolean }>`
         align-items: center;
         flex-direction: column;
         width: 100%;
-        .form-item-contatiner {
+        .form-item-container {
           width: 100%;
         }
         .ant-link {

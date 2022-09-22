@@ -77,7 +77,7 @@ function InviteMemberModal(props: InviteModal) {
     createHandleStatus('removeSuccess'),
   );
 
-  const onFinish = (payload: InviteMember | UpdateMember) => {
+  const handleFinish = (payload: InviteMember | UpdateMember) => {
     if (edit) {
       mutationUpdateMember.mutateAsync({ ...payload, id: userData.id });
     } else {
@@ -127,48 +127,50 @@ function InviteMemberModal(props: InviteModal) {
                 }
               : initialValues
           }
-          onSubmit={onFinish}
+          onSubmit={handleFinish}
           validationSchema={InviteMemberSchema}
         >
           {({ handleSubmit }) => (
             <Form layout="vertical" onFinish={handleSubmit}>
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'text'}
-                name="firstName"
-                label={t('common.firstName')}
-              />
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'text'}
-                name="lastName"
-                label={t('common.lastName')}
-              />
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'text'}
-                name="displayName"
-                label={t('common.displayName')}
-              />
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'email'}
-                name="email"
-                disabled={edit}
-                label={t('common.email')}
-              />
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'text'}
-                name="scientificDegree"
-                label={t('common.scientificDegree')}
-              />
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'text'}
-                name="authentication"
-                label={t('common.authentication')}
-              />
+              <div className="input-wrapper">
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  type={'text'}
+                  name="firstName"
+                  label={t('common.firstName')}
+                />
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  type={'text'}
+                  name="lastName"
+                  label={t('common.lastName')}
+                />
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  type={'text'}
+                  name="displayName"
+                  label={t('common.displayName')}
+                />
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  type={'email'}
+                  name="email"
+                  disabled={edit}
+                  label={t('common.email')}
+                />
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  type={'text'}
+                  name="scientificDegree"
+                  label={t('common.scientificDegree')}
+                />
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  type={'text'}
+                  name="authentication"
+                  label={t('common.authentication')}
+                />
+              </div>
               <Button
                 type="primary"
                 htmlType="submit"

@@ -14,6 +14,7 @@ import {
   InputRef,
   Menu,
   notification,
+  Pagination,
   Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -27,9 +28,8 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { AuthAction, AuthSelectors } from 'redux/auth';
-import { AdminService, UserService } from 'services';
-import APIService from 'services/bioandme-service/base.service';
+import { AuthSelectors } from 'redux/auth';
+import AdminService from 'services/bioandme-service/admin.service';
 import { onError } from 'utils';
 import { initImage } from '../sider/form/UserForm';
 import {
@@ -100,6 +100,8 @@ function TeamContent() {
       refetchOnWindowFocus: false,
     },
   );
+
+  console.log(teamMembers?.data);
 
   useEffect(() => {
     if (profile && !profile?.userRoles?.find(e => e.roleId === 1))
@@ -308,6 +310,12 @@ function TeamContent() {
               scroll={{ y: 'calc(100vh - 420px)' }}
               columns={columns}
               dataSource={data}
+              pagination={false}
+            />
+            <Pagination
+              showSizeChanger={false}
+              defaultCurrent={1}
+              total={teamMembers?.data?.pageCount * 10 + 200}
             />
           </CustomSpinSuspense>
         </TableWrapperStyled>

@@ -131,6 +131,7 @@ export const ProfileStyled = styled(FlexBox)`
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
   }
   .avatar {
     .ant-upload {
@@ -194,7 +195,7 @@ export const ProfileStyled = styled(FlexBox)`
   }
   .name-wrapper {
     gap: 10px;
-    .form-item-contatiner {
+    .form-item-container {
       flex: 1;
     }
   }
