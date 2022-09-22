@@ -1,27 +1,20 @@
-import { UserPayload } from 'redux/user';
-import { PaginationResponse } from './general';
+import { UserPayload } from '../redux/user';
 
-export interface ISurveyQuestion {
-  isMaskQuestion?: boolean;
-  id: string;
-  title?: string;
-  description?: string;
-  defaultKeyPath: string;
-  type: QuestionType;
-  isRequired: boolean;
-  isSingleChoice?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
-  hint?: string;
-  showTitleAsHTML?: boolean;
+export interface UserUpdatedDto {
+  // roles: number[]; Don't allow user update their role by this api
+  firstName: string;
+  lastName: string;
+  description: string;
+  phonePrefix: string;
+  phone: string;
+  avatar: string;
+  displayName: string; // new field
+  scientificDegree: string; // new field
 }
 
 export interface IQuestion {
   id?: string;
   displayId: string;
-  latestCompletedVersionId: string;
-  latestVersionId: string;
   latestCompletedVersion: IQuestionVersion;
   latestVersion: IQuestionVersion;
   versions: IQuestionVersion[];
@@ -40,11 +33,15 @@ export interface IQuestion {
   deletedAt?: Date | string | null;
 }
 
-interface IQuestionVersion {
+export interface IQuestionVersion {
   id?: string;
   displayId: string;
   questionId: string;
-  question?: ISurveyQuestion;
+  latestVersionOfQuestionId?: string;
+  latestCompletedVersionOfQuestionId?: string;
+  latestOfQuestion?: IQuestion;
+  latestCompletedOfQuestion?: IQuestion;
+  question?: IQuestion;
   title: string;
   type: QuestionType;
   status?: QuestionVersionStatus;
@@ -85,17 +82,17 @@ export enum QuestionType {
   // Will add more later
 }
 
-enum QuestionVersionStatus {
+export enum QuestionVersionStatus {
   DRAFT = 'DRAFT',
   COMPLETED = 'COMPLETED',
 }
 
-interface IQuestionCategory {
+export interface IQuestionCategory {
   id?: string;
   name: string;
   parentCategoryId?: string;
   parent?: IQuestionCategory;
-  childs?: IQuestionCategory[];
+  children?: IQuestionCategory[];
 
   createdBy: UserPayload;
   updatedBy?: UserPayload;
@@ -105,27 +102,29 @@ interface IQuestionCategory {
   deletedAt?: Date | string | null;
 }
 
-const mockUser: UserPayload = {
+export const mockUser: UserPayload = {
   firstName: 'Van',
   lastName: 'Bui',
   fullName: 'Van Bui',
 };
 
-const completedVersion: IQuestionVersion = {
+export const completedVersion: IQuestionVersion = {
   id: '1.1',
   displayId: '291',
   questionId: '1',
   title: 'What is your name?',
   type: QuestionType.TEXT_ENTRY,
+  latestCompletedVersionOfQuestionId: '1',
   status: QuestionVersionStatus.COMPLETED,
   createdBy: mockUser,
   createdAt: new Date(),
 };
 
-const draftVersion: IQuestionVersion = {
+export const draftVersion: IQuestionVersion = {
   id: '1.2',
   displayId: '296',
   questionId: '1',
+  latestVersionOfQuestionId: '1',
   title: 'What is your gender?',
   type: QuestionType.RADIO_BUTTONS,
   status: QuestionVersionStatus.COMPLETED,
@@ -153,7 +152,17 @@ const draftVersion: IQuestionVersion = {
   createdAt: new Date(),
 };
 
-export const mockCategories: PaginationResponse<IQuestionCategory> = {
+export interface IPaginationResponse<T> {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  itemCount: number;
+  pageCount: number;
+  take: number;
+  page: number;
+  data: T[];
+}
+
+export const mockCategories: IPaginationResponse<IQuestionCategory> = {
   hasNextPage: false,
   hasPreviousPage: false,
   itemCount: 2,
@@ -166,7 +175,7 @@ export const mockCategories: PaginationResponse<IQuestionCategory> = {
       name: 'Category A',
       createdBy: mockUser,
       createdAt: new Date(),
-      childs: [
+      children: [
         {
           id: '1.1',
           name: 'Category A - 1',
@@ -188,7 +197,7 @@ export const mockCategories: PaginationResponse<IQuestionCategory> = {
       name: 'Category B',
       createdBy: mockUser,
       createdAt: new Date(),
-      childs: [
+      children: [
         {
           id: '2.1',
           name: 'Category B - 1',
@@ -208,7 +217,7 @@ export const mockCategories: PaginationResponse<IQuestionCategory> = {
   ],
 };
 
-export const mockQuestionList: PaginationResponse<IQuestion> = {
+export const mockQuestionList: IPaginationResponse<IQuestion> = {
   hasNextPage: false,
   hasPreviousPage: false,
   itemCount: 2,
@@ -219,8 +228,6 @@ export const mockQuestionList: PaginationResponse<IQuestion> = {
     {
       id: '1',
       displayId: '113-2121',
-      latestCompletedVersionId: '1.1',
-      latestVersionId: '1.2',
       latestCompletedVersion: completedVersion,
       latestVersion: draftVersion,
       versions: [draftVersion, completedVersion],
@@ -230,8 +237,8 @@ export const mockQuestionList: PaginationResponse<IQuestion> = {
       masterSubCategory:
         mockCategories &&
         mockCategories.data[0] &&
-        mockCategories.data[0].childs &&
-        mockCategories.data[0].childs[0],
+        mockCategories.data[0].children &&
+        mockCategories.data[0].children[0],
       masterVariableName: 'name',
       masterCombineTokenString: 'name-1.1',
       createdBy: mockUser,
@@ -240,8 +247,6 @@ export const mockQuestionList: PaginationResponse<IQuestion> = {
     {
       id: '2',
       displayId: '113-2121',
-      latestCompletedVersionId: '1.1',
-      latestVersionId: '1.2',
       latestCompletedVersion: completedVersion,
       latestVersion: draftVersion,
       versions: [draftVersion, completedVersion],
@@ -251,8 +256,8 @@ export const mockQuestionList: PaginationResponse<IQuestion> = {
       masterSubCategory:
         mockCategories &&
         mockCategories.data[0] &&
-        mockCategories.data[0].childs &&
-        mockCategories.data[0].childs[0],
+        mockCategories.data[0].children &&
+        mockCategories.data[0].children[0],
       masterVariableName: 'name',
       masterCombineTokenString: 'name-1.1',
       createdBy: mockUser,
@@ -260,40 +265,37 @@ export const mockQuestionList: PaginationResponse<IQuestion> = {
     },
   ],
 };
-
 export const QuestionListDetail: IQuestion = {
   id: '1',
   displayId: '113-2121',
-  latestCompletedVersionId: '1.1',
-  latestVersionId: '1.2',
   latestCompletedVersion: completedVersion,
   latestVersion: draftVersion,
   versions: [draftVersion, completedVersion],
   masterCategoryId: '1',
-  masterCategory: mockCategories[0],
+  masterCategory: mockCategories.data[0],
   masterSubCategoryId: '1.1',
   masterSubCategory:
     mockCategories &&
-    mockCategories[0] &&
-    mockCategories[0].childs &&
-    mockCategories[0].childs[0],
+    mockCategories.data[0] &&
+    mockCategories.data[0].children &&
+    mockCategories.data[0].children[0],
   masterVariableName: 'name',
   masterCombineTokenString: 'name-1.1',
   createdBy: mockUser,
   createdAt: new Date(),
 };
 
-interface BaseParameterDto {
-  display: string;
+export interface BaseParameterDto {
+  displayId: string;
 }
 
-interface BaseQuestionVersionDto {
+export interface IBaseQuestionOptionsVersionDto {
   sort: number;
   imageUrl?: string;
   text?: string;
 }
 
-interface BaseQuestionVersionDto {
+export interface BaseQuestionVersionDto {
   type: QuestionType;
   title: string;
   status?: QuestionVersionStatus;
@@ -303,13 +305,50 @@ interface BaseQuestionVersionDto {
   textValidationMax?: number;
   textValidationMin?: number;
   textValidationRegex?: string;
-  options?: BaseQuestionVersionDto[];
+  options?: IBaseQuestionOptionsVersionDto[];
 }
 
-type QuestionParameter = BaseParameterDto & {
+export type QuestionParameter = BaseParameterDto & {
   masterCategoryId: string;
   masterSubCategoryId: string;
   masterVariableName: string;
   masterCombineTokenString: string;
   version: BaseQuestionVersionDto;
+};
+
+export type QuestionCreatePostDto = QuestionParameter;
+
+// We only use version object for put
+export interface IQuestionVersionPostNewDto {
+  quetionId: string;
+  version: BaseQuestionVersionDto;
+}
+
+export interface IQuestionVersionPutUpdateDto {
+  version: QuestionParameter;
+}
+
+// All fields on version field are optional
+export interface IQuestionVersionPatchUpdateDto {
+  version: Partial<QuestionParameter>;
+}
+export enum BooleanEnum {
+  TRUE = 'true',
+  FALSE = 'false',
+}
+
+export interface IGetParams {
+  q?: string;
+  take?: number;
+  page?: number;
+  ids?: number;
+  createdFrom?: string;
+  createdTo?: string;
+  isDeleted?: BooleanEnum;
+}
+
+export type GetListQuestionDto = IGetParams & {
+  categoryIds?: string[];
+  subCategoryIds?: string[];
+  type?: QuestionType[];
 };

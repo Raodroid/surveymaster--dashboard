@@ -13,8 +13,8 @@ export const ROUTE_PATH = {
     PROFILE: '/app/profile',
     QUESTION_BANK: {
       ROOT: '/app/question-bank',
-      EDIT_QUESTION: '/app/question-bank/question/:questionId/edit',
-      VIEW_QUESTION: '/app/question-bank/question/:questionId',
+      EDIT_QUESTION: '/app/question-bank/:questionId/edit',
+      VIEW_QUESTION: '/app/question-bank/:questionId',
       ADD_QUESTION: '/app/question-bank/question/add',
     },
   },

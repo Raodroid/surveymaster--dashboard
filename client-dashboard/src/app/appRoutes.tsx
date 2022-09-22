@@ -61,7 +61,7 @@ const AppRoutes = () => {
                 element={<ViewQuestion />}
               />
               <Route
-                path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION}
+                path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ADD_QUESTION}
                 element={<AddQuestion />}
               />
             </Route>

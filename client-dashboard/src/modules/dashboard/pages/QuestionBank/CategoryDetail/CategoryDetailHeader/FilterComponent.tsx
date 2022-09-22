@@ -47,7 +47,6 @@ const initialFilterFormValues = {
   filterByCreatedDate: '',
   filterByCategory: '',
   filterBySubCategory: '',
-  filterByVariableName: '',
   startDate: '',
   endDate: '',
   category: '',
@@ -162,26 +161,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                   />
                 </div>
               </div>
-              <div className={'FilerDropdown__body__row'}>
-                <div className={'FilerDropdown__body__row__first'}>
-                  <ControlledInput
-                    inputType={INPUT_TYPES.CHECKBOX_GROUP}
-                    name="filterByVariableName"
-                    options={[
-                      {
-                        label: t('common.variableName'),
-                        value: 1,
-                      },
-                    ]}
-                  />
-                </div>
-                <div className={'FilerDropdown__body__row__second'}>
-                  <ControlledInput
-                    inputType={INPUT_TYPES.SELECT}
-                    name="variableName"
-                  />
-                </div>
-              </div>
+
               <div className={'FilerDropdown__body__row'}>
                 <div className={'FilerDropdown__body__row__first'}>
                   <ControlledInput

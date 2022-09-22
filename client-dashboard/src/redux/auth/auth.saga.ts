@@ -29,7 +29,7 @@ import {
   AuthChallengePayload,
 } from './types';
 import { StandardAction } from '../types';
-import { clearAxiosToken } from '../../services/bioandme-service/base.service';
+import { clearAxiosToken } from '../../services/survey-master-service/base.service';
 import { AUTH_ERROR, AUTH_CHALLENGE } from 'enums';
 import { AuthSelectors } from '.';
 import { CognitoService } from 'services';
