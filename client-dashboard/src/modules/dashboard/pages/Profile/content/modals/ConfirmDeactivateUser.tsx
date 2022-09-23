@@ -25,7 +25,7 @@ function ConfirmDeactivateUserModal(props: ConfirmDeactivate) {
     },
     {
       onSuccess: () => {
-        notification.success(t('common.updateSuccess'));
+        notification.success({ message: t('common.updateSuccess') });
         queryClient.invalidateQueries('getTeamMembers');
         setShowModal(false);
       },

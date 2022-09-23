@@ -74,8 +74,8 @@ function TeamContent() {
   const [filter, setFilter] = useState('');
   const searchDebounce = useDebounce(search);
   const [page, setPage] = useState(1);
-  const [showIsDeleted, setShowIsDeleted] = useState(false);
-  const [showInactivateUser, setShowInactivateUser] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [inactivateUser, setInactivateUser] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
@@ -91,11 +91,11 @@ function TeamContent() {
       page: page,
       take: 10,
       roles: [1, 2, 3],
-      isActivated: !showInactivateUser,
-      isDeleted: showIsDeleted,
+      isActivated: !inactivateUser,
+      isDeleted: isDeleted,
       q: filter,
     }),
-    [showInactivateUser, filter, page, showIsDeleted],
+    [inactivateUser, filter, page, isDeleted],
   );
 
   function getTeamMembers(params: GetTeamMembers): Promise<any> {
@@ -103,7 +103,7 @@ function TeamContent() {
   }
 
   const { data: teamMembers, isLoading } = useQuery(
-    ['getTeamMembers', showInactivateUser, filter],
+    ['getTeamMembers', inactivateUser, filter, isDeleted, page],
     () => getTeamMembers(baseParams),
     {
       refetchOnWindowFocus: false,
@@ -197,7 +197,7 @@ function TeamContent() {
                     {t('common.resetPassword')}
                   </Menu.Item>
                 )}
-                {(!showInactivateUser || !record.deleteAt) &&
+                {(!inactivateUser || !record.deleteAt) &&
                   profile &&
                   profile.id !== record.key && (
                     <Menu.Item
@@ -224,7 +224,7 @@ function TeamContent() {
         ),
       },
     ],
-    [profile, handleRestoreUser, showInactivateUser, t],
+    [profile, handleRestoreUser, inactivateUser, t],
   );
 
   const data: DataType[] = teamMembers
@@ -280,8 +280,8 @@ function TeamContent() {
           </Form>
           <Checkbox
             className="show-inactivate-users-checkbox"
-            checked={showInactivateUser}
-            onChange={() => setShowInactivateUser(!showInactivateUser)}
+            checked={inactivateUser}
+            onChange={() => setInactivateUser(!inactivateUser)}
           >
             {t('common.showInactivateUsers')}
           </Checkbox>
@@ -306,9 +306,12 @@ function TeamContent() {
             />
             <Pagination
               className="flex-end"
+              style={{ marginTop: 10 }}
               showSizeChanger={false}
-              defaultCurrent={1}
+              defaultCurrent={page}
+              current={page}
               total={teamMembers?.data?.pageCount * 10}
+              onChange={e => setPage(e)}
             />
           </CustomSpinSuspense>
         </TableWrapperStyled>

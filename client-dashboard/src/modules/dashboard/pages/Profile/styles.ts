@@ -34,7 +34,7 @@ export const ProfileStyled = styled(FlexBox)`
     --ant-primary-color-hover: #40a9ff;
   }
 
-  padding: 0 20px 20px;
+  // padding: 0 20px 20px;
   min-height: 100%;
   max-height: calc(100vh - 70px);
   width: 100%;
