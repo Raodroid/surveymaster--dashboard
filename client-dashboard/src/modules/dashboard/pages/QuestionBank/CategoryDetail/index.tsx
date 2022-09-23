@@ -1,7 +1,7 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { CategoryDetailWrapper } from './style';
 import CategoryDetailHeader from './CategoryDetailHeader';
-import { Menu, notification, Table } from 'antd';
+import { Menu, notification, PaginationProps, Table } from 'antd';
 import { GetListQuestionDto, IQuestion } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,9 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { onError } from '../../../../../utils';
 import { QuestionBankService } from '../../../../../services';
 import _get from 'lodash/get';
+import { ROUTE_PATH } from '../../../../../enums';
+import { useNavigate } from 'react-router-dom';
+import StyledPagination from '../../../components/StyledPagination';
 
 enum ACTION_ENUM {
   DELETE = 'DELETE',
@@ -25,19 +28,24 @@ const CategoryDetail = () => {
     subCategory?: string;
   }>();
 
+  const [page, setPage] = useState(1);
+  const [take, setTake] = useState<number>(10);
+
+  const navigate = useNavigate();
+
   const { category, subCategory } = params;
 
   const baseParams: GetListQuestionDto = useMemo<GetListQuestionDto>(() => {
     return {
-      take: 10,
-      page: 1,
+      take,
+      page,
       subCategoryIds: subCategory ? [subCategory] : undefined,
       categoryIds: category ? [category] : undefined,
     };
-  }, [category, subCategory]);
+  }, [category, page, subCategory, take]);
 
   const getQuestionListQuery = useQuery(
-    ['getQuestionList'],
+    ['getQuestionList', page, take, subCategory, category],
     () => {
       return QuestionBankService.getQuestions(baseParams);
     },
@@ -45,6 +53,8 @@ const CategoryDetail = () => {
       onError,
     },
   );
+
+  const total: number = _get(getQuestionListQuery.data, 'data.itemCount', 0);
 
   const questionList = useMemo<IQuestion[]>(
     () => _get(getQuestionListQuery.data, 'data.data'),
@@ -82,17 +92,62 @@ const CategoryDetail = () => {
       {
         title: t('common.action'),
         dataIndex: 'id',
-        render: (value, _) => <DropDownMenu record={_} />,
+        render: (value, _) => (
+          <div
+            onClick={e => {
+              e.stopPropagation();
+            }}
+          >
+            <DropDownMenu record={_} />
+          </div>
+        ),
       },
     ],
     [t],
+  );
+
+  const handleClickRow = useCallback(
+    record => {
+      return {
+        onClick: event => {
+          navigate(
+            ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION.replace(
+              ':questionId',
+              record?.id as string,
+            ),
+          );
+        },
+      };
+    },
+    [navigate],
+  );
+
+  const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
+    (current, pageSize) => {
+      setTake(pageSize);
+    },
+    [],
   );
 
   return (
     <CategoryDetailWrapper>
       <CategoryDetailHeader />
       <div className={'CategoryDetail__body'}>
-        <Table dataSource={questionList} columns={columns} />
+        <Table
+          dataSource={questionList}
+          columns={columns}
+          onRow={handleClickRow}
+          pagination={false}
+        />
+        <StyledPagination
+          onChange={page => {
+            setPage(page);
+          }}
+          showSizeChanger
+          pageSize={take}
+          onShowSizeChange={onShowSizeChange}
+          total={total}
+        />
       </div>
     </CategoryDetailWrapper>
   );
@@ -116,7 +171,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     },
     {
       onSuccess: async () => {
-        // await queryClient.invalidateQueries('getProjects');
+        await queryClient.invalidateQueries('getQuestionList');
         notification.success({ message: t('common.deleteSuccess') });
       },
       onError,
@@ -129,7 +184,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     },
     {
       onSuccess: async () => {
-        // await queryClient.invalidateQueries('getProjects');
+        await queryClient.invalidateQueries('getQuestionList');
         notification.success({ message: t('common.restoreSuccess') });
       },
       onError,

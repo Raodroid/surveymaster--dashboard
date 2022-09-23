@@ -249,7 +249,12 @@
     "category": "Category",
     "subCategory": "Sub Category",
     "variableName": "Variable Name",
-    "answerType": "Answer Type"
+    "answerType": "Answer Type",
+    "questionParameters": "Question Parameters",
+    "masterQuestionCategory": "Master Question Category",
+    "masterQuestionSubCategory": "Master Question Sub Category",
+    "masterVariableName": "Master Variable Name",
+    "masterCombineToken": "Master Combined Token"
   },
   "validation": {
     "messages": {

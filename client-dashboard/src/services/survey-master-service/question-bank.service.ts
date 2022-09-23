@@ -34,7 +34,17 @@ export default class QuestionBankService {
   }
   static getQuestionById(props): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.get(`/question/${id}`);
+    // return APIService.get(`/question/${id}`);
+
+    return new Promise<AxiosResponse>(resolve => {
+      resolve({
+        data: mockQuestionList.data[0],
+        status: 200,
+        statusText: '',
+        headers: {},
+        config: {},
+      });
+    });
   }
   static deleteQuestionByQuestionId(props): Promise<AxiosResponse> {
     const { id } = props;
