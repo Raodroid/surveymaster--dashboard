@@ -39,9 +39,10 @@ export interface UserPayload {
   lastName: string;
   fullName?: string;
   userName?: string;
-  phone?: string;
-  description?: string;
-  roles?: Array<number>;
+  phone: string;
+  description: string;
+  displayName?: string;
+  roles: Array<number>;
   password?: string;
   phonePrefix?: string;
   roleData?: Role[];
@@ -53,9 +54,16 @@ export interface UserPayload {
   finishTourOnMyScore?: boolean;
   finishTourOnHomePage?: boolean;
   country?: string;
+  userRoles?: Record<string, number>[];
+  disabledNotificationTypes?: any;
 }
 
 export interface ChangePasswordPayload {
   currentPassword: string;
+  password: string;
+}
+
+export interface ChangeUserPasswordPayload {
+  userId: string;
   password: string;
 }

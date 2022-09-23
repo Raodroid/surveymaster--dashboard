@@ -64,6 +64,7 @@ const ResetPasswordForm: React.FC<Props> = props => {
     () => (email ? ProfileService.getPublicProfile(email) : null),
     {
       onError,
+      refetchOnWindowFocus: false,
     },
   );
 

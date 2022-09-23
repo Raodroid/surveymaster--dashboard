@@ -23,6 +23,8 @@ import './globle-varaiable.sass';
 import { useEffect } from 'react';
 import { DEFAULT_THEME_COLOR } from '../enums';
 import { setSecondaryColor } from '../modules/common/funcs';
+import { CustomRouter } from './CustomRoute';
+import customHistory from 'utils/history';
 
 export function App() {
   const { i18n } = useTranslation();
