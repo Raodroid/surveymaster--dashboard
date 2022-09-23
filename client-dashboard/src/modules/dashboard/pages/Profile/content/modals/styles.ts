@@ -138,3 +138,5 @@ export const InviteMemberModalStyled = styled(ModalStyled)`
     overflow-y: auto;
   }
 `;
+
+export const ConfirmDeactivateModalStyled = styled(ModalStyled)``;

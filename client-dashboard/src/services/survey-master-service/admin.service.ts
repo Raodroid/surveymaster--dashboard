@@ -33,11 +33,6 @@ export default class AdminService {
     return APIService.put(`/users/${payload.id}`, payload);
   }
 
-  static removeMemberPreferences(payload: { userId: string }): Promise<any> {
-    const { userId } = payload;
-    return APIService.delete(`users/${userId}`);
-  }
-
   static deactivateUser(payload: { userId: string }): Promise<any> {
     const { userId } = payload;
     return APIService.delete(`users/${userId}`);

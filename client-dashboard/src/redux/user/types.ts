@@ -39,10 +39,10 @@ export interface UserPayload {
   lastName: string;
   fullName?: string;
   userName?: string;
-  phone: string;
-  description: string;
+  phone?: string;
+  description?: string;
   displayName?: string;
-  roles: Array<number>;
+  roles?: Array<number>;
   password?: string;
   phonePrefix?: string;
   roleData?: Role[];

@@ -29,8 +29,8 @@ import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
-import AdminService from 'services/bioandme-service/admin.service';
-import { onError } from 'utils';
+import { AdminService } from 'services';
+import { onError, useDebounce } from 'utils';
 import { initImage } from '../sider/form/UserForm';
 import {
   DropDownMenuStyled,
@@ -38,6 +38,7 @@ import {
   TeamContentStyled,
 } from '../styles';
 import { InviteMemberModal, ResetUserPasswordModal } from './modals';
+import ConfirmDeactivateUserModal from './modals/ConfirmDeactivateUser';
 
 interface DataType {
   key: React.Key;
@@ -71,22 +72,30 @@ function TeamContent() {
 
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('');
+  const searchDebounce = useDebounce(search);
   const [page, setPage] = useState(1);
+  const [showIsDeleted, setShowIsDeleted] = useState(false);
   const [showInactivateUser, setShowInactivateUser] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [showEditPreferencesModal, setShowEditPreferencesModal] =
     useState(false);
+
+  useEffect(() => {
+    if (!searchDebounce) setFilter('');
+  }, [searchDebounce]);
 
   const baseParams = useMemo(
     () => ({
       page: page,
       take: 10,
       roles: [1, 2, 3],
-      isActivated: showInactivateUser,
+      isActivated: !showInactivateUser,
+      isDeleted: showIsDeleted,
       q: filter,
     }),
-    [showInactivateUser, filter, page],
+    [showInactivateUser, filter, page, showIsDeleted],
   );
 
   function getTeamMembers(params: GetTeamMembers): Promise<any> {
@@ -101,24 +110,10 @@ function TeamContent() {
     },
   );
 
-  console.log(teamMembers?.data);
-
   useEffect(() => {
     if (profile && !profile?.userRoles?.find(e => e.roleId === 1))
       navigate('/app');
   }, [profile, navigate]);
-
-  const mutationDeactivateUser = useMutation(
-    () => {
-      return AdminService.deactivateUser({
-        userId,
-      });
-    },
-    {
-      onSuccess: () => notification.success(t('common.updateSuccess')),
-      onError,
-    },
-  );
 
   const mutationRestoreUser = useMutation(
     () => {
@@ -131,10 +126,6 @@ function TeamContent() {
       onError,
     },
   );
-
-  const handleDeactivateUser = useCallback(() => {
-    mutationDeactivateUser.mutateAsync();
-  }, [mutationDeactivateUser]);
 
   const handleRestoreUser = useCallback(() => {
     mutationRestoreUser.mutateAsync();
@@ -164,6 +155,7 @@ function TeamContent() {
           />
         ),
         className: 'avatar-cell',
+        width: 68,
       },
       {
         title: 'Name',
@@ -210,7 +202,7 @@ function TeamContent() {
                   profile.id !== record.key && (
                     <Menu.Item
                       key="deactivateUser"
-                      onClick={handleDeactivateUser}
+                      onClick={() => setShowConfirmModal(true)}
                     >
                       <UserDeleteOutlined className="dropdown-icon" />{' '}
                       {t('common.deactivateUser')}
@@ -232,7 +224,7 @@ function TeamContent() {
         ),
       },
     ],
-    [profile, handleRestoreUser, showInactivateUser, handleDeactivateUser, t],
+    [profile, handleRestoreUser, showInactivateUser, t],
   );
 
   const data: DataType[] = teamMembers
@@ -313,9 +305,10 @@ function TeamContent() {
               pagination={false}
             />
             <Pagination
+              className="flex-end"
               showSizeChanger={false}
               defaultCurrent={1}
-              total={teamMembers?.data?.pageCount * 10 + 200}
+              total={teamMembers?.data?.pageCount * 10}
             />
           </CustomSpinSuspense>
         </TableWrapperStyled>
@@ -344,6 +337,13 @@ function TeamContent() {
           userId={userId}
           showModal={showResetPasswordModal}
           setShowModal={setShowResetPasswordModal}
+        />
+      )}
+      {showConfirmModal && (
+        <ConfirmDeactivateUserModal
+          userId={userId}
+          showModal={showConfirmModal}
+          setShowModal={setShowConfirmModal}
         />
       )}
     </TeamContentStyled>

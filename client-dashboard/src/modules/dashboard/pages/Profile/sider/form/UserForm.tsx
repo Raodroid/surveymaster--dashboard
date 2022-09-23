@@ -7,28 +7,17 @@ import { CustomSpinSuspense } from 'modules/common/styles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { AuthSelectors } from 'redux/auth';
+import { AuthAction, AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
 import { onError } from 'utils';
 
 function UserForm() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-
-  const data = useSelector(AuthSelectors.getProfile);
-  const profile: UserUpdatedDto = {
-    id: data?.id,
-    firstName: data?.firstName,
-    lastName: data?.lastName,
-    description: data?.description,
-    phonePrefix: data?.phonePrefix,
-    email: data?.email,
-    phone: data?.phone,
-    avatar: data?.avatar,
-    displayName: data?.displayName,
-    scientificDegree: data?.scientificDegree,
-  };
+  const dispatch = useDispatch();
+  const profile = useSelector(AuthSelectors.getProfile);
 
   const mutationUpdateProfile = useMutation(
     (payload: UserUpdatedDto) => {
@@ -41,6 +30,7 @@ function UserForm() {
     },
     {
       onSuccess: res => {
+        dispatch(AuthAction.getProfile());
         queryClient.invalidateQueries('me');
         notification.success({
           message: 'Success',

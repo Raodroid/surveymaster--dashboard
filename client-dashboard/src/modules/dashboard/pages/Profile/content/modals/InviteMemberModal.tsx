@@ -19,8 +19,6 @@ const initialValues = {
   lastName: '',
   email: '',
   displayName: '',
-  scientificDegree: '',
-  authentication: '',
 };
 
 interface InviteModal extends ProfileModal {
@@ -37,15 +35,10 @@ function InviteMemberModal(props: InviteModal) {
     firstName: Yup.string().required('Required!').trim(),
     lastName: Yup.string().required('Required!').trim(),
     displayName: Yup.string().trim(),
-    // displayName: Yup.string().required('Required!').trim(),
     email: Yup.string()
       .required('Required!')
       .email('Wrong email format!')
       .trim(),
-    scientificDegree: Yup.string().trim(),
-    authentication: Yup.string().trim(),
-    // scientificDegree: Yup.string().required('Required!').trim(),
-    // authentication: Yup.string().required('Required!').trim(),
   });
 
   const createHandleStatus = useCallback(
@@ -72,11 +65,6 @@ function InviteMemberModal(props: InviteModal) {
     createHandleStatus('updateSuccess'),
   );
 
-  const mutationRemoveFromTeam = useMutation(
-    () => AdminService.removeMemberPreferences({ userId: userData.id }),
-    createHandleStatus('removeSuccess'),
-  );
-
   const handleFinish = (payload: InviteMember | UpdateMember) => {
     if (edit) {
       mutationUpdateMember.mutateAsync({ ...payload, id: userData.id });
@@ -85,27 +73,11 @@ function InviteMemberModal(props: InviteModal) {
     }
   };
 
-  const handleRemoveMember = () => {
-    mutationRemoveFromTeam.mutateAsync();
-  };
-
   return (
     <InviteMemberModalStyled
       open={showModal}
       destroyOnClose
-      footer={
-        edit
-          ? [
-              <Button
-                type="primary"
-                onClick={handleRemoveMember}
-                loading={mutationRemoveFromTeam.isLoading}
-              >
-                Remove from Team
-              </Button>,
-            ]
-          : false
-      }
+      footer={false}
       onCancel={() => setShowModal(false)}
       width={360}
       centered
@@ -122,8 +94,6 @@ function InviteMemberModal(props: InviteModal) {
                   lastName: userData.lastName,
                   email: userData.email,
                   displayName: '',
-                  scientificDegree: '',
-                  authentication: '',
                 }
               : initialValues
           }
@@ -158,18 +128,12 @@ function InviteMemberModal(props: InviteModal) {
                   disabled={edit}
                   label={t('common.email')}
                 />
-                <ControlledInput
-                  inputType={INPUT_TYPES.INPUT}
-                  type={'text'}
-                  name="scientificDegree"
-                  label={t('common.scientificDegree')}
-                />
-                <ControlledInput
+                {/* <ControlledInput
                   inputType={INPUT_TYPES.INPUT}
                   type={'text'}
                   name="authentication"
                   label={t('common.authentication')}
-                />
+                /> */}
               </div>
               <Button
                 type="primary"

@@ -29,8 +29,6 @@ export interface InviteMember {
   lastName: string;
   email: string;
   displayName: string;
-  scientificDegree: string;
-  authentication: string;
   description?: string;
   roles?: number[];
 }
@@ -41,8 +39,6 @@ export interface UpdateMember {
   lastName: string;
   email: string;
   displayName: string;
-  scientificDegree: string;
-  authentication: string;
   description?: string;
   roles?: number[];
 }
