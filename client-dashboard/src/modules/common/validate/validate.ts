@@ -85,7 +85,7 @@ export const passwordYup = Yup.string()
   .matches(passReg, INVALID_FIELDS.PASS_VALID)
   .required(INVALID_FIELDS.REQUIRED);
 
-export const verifyPasswordYub = Yup.string()
+export const verifyPasswordYup = Yup.string()
   .trim(INVALID_FIELDS.NOT_INCLUDE_SPACE)
   .strict(true)
   .matches(passReg, INVALID_FIELDS.PASS_VALID)
@@ -128,9 +128,12 @@ export const phoneRequireYup = phoneYup.required(INVALID_FIELDS.REQUIRED);
 export const nameYup = Yup.string().required(INVALID_FIELDS.REQUIRED);
 export const numberYup = Yup.number().min(1).required(INVALID_FIELDS.REQUIRED);
 
+export const userIdYup = yupString.min(1);
+
 export const FORGOT_PASSWORD_FIELD = {
+  currentPassword: Yup.string().required(INVALID_FIELDS.REQUIRED),
   password: passwordYup,
-  verifyPassword: verifyPasswordYub,
+  verifyPassword: verifyPasswordYup,
 };
 
 export const CHALLENGE_PASSWORD_REQUIRED = {

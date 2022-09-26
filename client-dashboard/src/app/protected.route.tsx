@@ -1,10 +1,14 @@
-import { ROUTE_PATH } from 'enums';
-import React, { lazy } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { AuthSelectors } from '../redux/auth';
 import { Layout } from 'antd';
+import { ROUTE_PATH } from 'enums';
+import { lazy } from 'react';
+import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
+import { useParams } from 'react-router';
+import { Navigate, Outlet } from 'react-router-dom';
+import { UserService } from 'services';
 import styled from 'styled-components';
+import { AuthSelectors } from '../redux/auth';
 const { Content } = Layout;
 
 const LayoutNavbar = lazy(() => import('modules/dashboard/components/Navbar'));
@@ -33,6 +37,7 @@ export const BodyAppWrapper = styled(Content)`
   height: 100%;
   margin-bottom: 1.5rem;
 
+  display: flex;
   @media only screen and (max-width: 1440px) {
     padding: 0 2rem;
   }

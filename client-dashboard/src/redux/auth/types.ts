@@ -26,6 +26,7 @@ export interface AuthState {
 export interface SignInPayload {
   email: string;
   password: string;
+  callback?: (id?: string, session?: string) => void;
 }
 export interface VerifyAccountPayload {
   confirmationCode: string;
