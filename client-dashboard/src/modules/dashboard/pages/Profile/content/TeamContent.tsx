@@ -30,8 +30,8 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
+import APIService from 'services/survey-master-service/base.service';
 import { onError, useDebounce } from 'utils';
-import { initImage } from '../sider/form/UserForm';
 import {
   DropDownMenuStyled,
   TableWrapperStyled,
@@ -69,13 +69,16 @@ function TeamContent() {
 
   const searchRef = useRef<InputRef>(null);
   const [userId, setUserId] = useState('');
+  const allRoles = useSelector(AuthSelectors.getAllRoles);
+  const queryRoles = useMemo(() => {
+    return allRoles ? Object.values(allRoles).map(el => el.id) : [];
+  }, [allRoles]);
 
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('');
   const searchDebounce = useDebounce(search);
   const [page, setPage] = useState(1);
   const [isDeleted, setIsDeleted] = useState(false);
-  const [inactivateUser, setInactivateUser] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
@@ -90,12 +93,12 @@ function TeamContent() {
     () => ({
       page: page,
       take: 10,
-      roles: [1, 2, 3],
-      isActivated: !inactivateUser,
+      roles: queryRoles,
       isDeleted: isDeleted,
+      isActivated: true,
       q: filter,
     }),
-    [inactivateUser, filter, page, isDeleted],
+    [filter, page, isDeleted, queryRoles],
   );
 
   function getTeamMembers(params: GetTeamMembers): Promise<any> {
@@ -103,17 +106,12 @@ function TeamContent() {
   }
 
   const { data: teamMembers, isLoading } = useQuery(
-    ['getTeamMembers', inactivateUser, filter, isDeleted, page],
+    ['getTeamMembers', filter, isDeleted, page],
     () => getTeamMembers(baseParams),
     {
       refetchOnWindowFocus: false,
     },
   );
-
-  useEffect(() => {
-    if (profile && !profile?.userRoles?.find(e => e.roleId === 1))
-      navigate('/app');
-  }, [profile, navigate]);
 
   const mutationRestoreUser = useMutation(
     () => {
@@ -197,7 +195,7 @@ function TeamContent() {
                     {t('common.resetPassword')}
                   </Menu.Item>
                 )}
-                {(!inactivateUser || !record.deleteAt) &&
+                {(isDeleted || !record.deleteAt) &&
                   profile &&
                   profile.id !== record.key && (
                     <Menu.Item
@@ -224,14 +222,14 @@ function TeamContent() {
         ),
       },
     ],
-    [profile, handleRestoreUser, inactivateUser, t],
+    [profile, handleRestoreUser, t, isDeleted],
   );
 
   const data: DataType[] = teamMembers
     ? teamMembers.data.data.map(user => {
         return {
           key: user.id,
-          avatar: initImage,
+          avatar: '',
           name: user.firstName + ' ' + user.lastName,
           email: user.email,
           authentication: 'auth',
@@ -280,8 +278,8 @@ function TeamContent() {
           </Form>
           <Checkbox
             className="show-inactivate-users-checkbox"
-            checked={inactivateUser}
-            onChange={() => setInactivateUser(!inactivateUser)}
+            checked={isDeleted}
+            onChange={() => setIsDeleted(!isDeleted)}
           >
             {t('common.showInactivateUsers')}
           </Checkbox>
@@ -317,38 +315,30 @@ function TeamContent() {
         </TableWrapperStyled>
       </div>
 
-      {showInviteModal && (
-        <InviteMemberModal
-          showModal={showInviteModal}
-          setShowModal={setShowInviteModal}
-        />
-      )}
-      {showEditPreferencesModal && (
-        <InviteMemberModal
-          userData={
-            teamMembers
-              ? teamMembers.data.data.find(user => user.id === userId)
-              : {}
-          }
-          showModal={showEditPreferencesModal}
-          setShowModal={setShowEditPreferencesModal}
-          edit
-        />
-      )}
-      {showResetPasswordModal && (
-        <ResetUserPasswordModal
-          userId={userId}
-          showModal={showResetPasswordModal}
-          setShowModal={setShowResetPasswordModal}
-        />
-      )}
-      {showConfirmModal && (
-        <ConfirmDeactivateUserModal
-          userId={userId}
-          showModal={showConfirmModal}
-          setShowModal={setShowConfirmModal}
-        />
-      )}
+      <InviteMemberModal
+        showModal={showInviteModal}
+        setShowModal={setShowInviteModal}
+      />
+      <InviteMemberModal
+        userData={
+          teamMembers
+            ? teamMembers.data.data.find(user => user.id === userId)
+            : {}
+        }
+        showModal={showEditPreferencesModal}
+        setShowModal={setShowEditPreferencesModal}
+        edit
+      />
+      <ResetUserPasswordModal
+        userId={userId}
+        showModal={showResetPasswordModal}
+        setShowModal={setShowResetPasswordModal}
+      />
+      <ConfirmDeactivateUserModal
+        userId={userId}
+        showModal={showConfirmModal}
+        setShowModal={setShowConfirmModal}
+      />
     </TeamContentStyled>
   );
 }

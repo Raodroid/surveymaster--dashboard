@@ -18,7 +18,7 @@ export const ROUTE_PATH = {
     },
     PROFILE: {
       HOME: '/app/profile',
-      TEAM: 'manage-users',
+      TEAM: '/app/profile/manage-users',
     },
   },
 };

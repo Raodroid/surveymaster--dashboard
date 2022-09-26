@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
 import { ProfileModal } from '.';
-import { onError } from '../../../../../../utils/funcs';
+import { onError } from 'utils';
 import { SetUpPreferencesModalStyled } from './styles';
 
 interface IInitialValues {

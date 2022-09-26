@@ -16,18 +16,18 @@ function UserContent() {
     <UserContentStyled className="flex">
       <div className="cell padding-24 name title">{t('common.name')}</div>
       <div className="cell setting">
-        <div className="password padding-24 flex-space-between custom-ant-hover">
+        <div className="password padding-24 flex-space-between">
           <span className="title">{t('common.password')}</span>
           <Button
             type="primary"
-            className="btn"
+            className="btn info-btn"
             onClick={() => setChangePassword(!changePassword)}
           >
             {t('common.change')}
           </Button>
         </div>
 
-        <Divider style={{ margin: 0 }} />
+        <Divider />
 
         <div className="notifications padding-24 flex-space-between custom-ant-hover">
           <div className="wrapper">
@@ -44,7 +44,7 @@ function UserContent() {
           </div>
           <div className="wrapper flex-end">
             <span style={{ marginRight: 8 }}>{t('common.turnedOn')}</span>
-            <Switch />
+            <Switch className="info-btn" />
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@ function UserContent() {
           </div>
         </div>
 
-        <Divider style={{ margin: 0 }} />
+        <Divider />
 
         <div className="padding-24 flex-space-between">
           <div className="title">{t('common.deactivateAccount')}</div>
@@ -79,7 +79,7 @@ function UserContent() {
           </Button>
         </div>
 
-        <Divider style={{ margin: 0 }} />
+        <Divider />
 
         <div
           className="padding-24 flex-space-between"

@@ -4,12 +4,15 @@ import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import {
-  passwordYup, verifyPasswordYup
+  passwordYup,
+  verifyPasswordYup,
 } from 'modules/common/validate/validate';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { ChangeUserPasswordPayload } from 'redux/user';
 import { AdminService } from 'services';
+import { onError } from 'utils';
 import * as Yup from 'yup';
 import { ProfileModal } from '.';
 import { ChangePasswordModalStyled } from './styles';
@@ -41,7 +44,7 @@ function ResetUserPassword(props: ResetUserPasswordProps) {
       },
       onError: (err: any) => {
         setShowModal(false);
-        notification.warn({ message: t('common.updateFailed') + ' ' + err });
+        onError(err);
       },
     },
   );
@@ -49,6 +52,14 @@ function ResetUserPassword(props: ResetUserPasswordProps) {
   const onFinish = (payload: ChangeUserPasswordPayload) => {
     mutationChangeUserPassword.mutateAsync(payload);
   };
+
+  const initialValues = useMemo(() => {
+    return {
+      userId: userId,
+      password: '',
+      passwordConfirmation: '',
+    };
+  }, [userId]);
 
   return (
     <ChangePasswordModalStyled
@@ -62,11 +73,7 @@ function ResetUserPassword(props: ResetUserPasswordProps) {
       closeIcon={<CloseIcon />}
     >
       <Formik
-        initialValues={{
-          userId: userId,
-          password: '',
-          passwordConfirmation: '',
-        }}
+        initialValues={initialValues}
         validationSchema={ResetUserPasswordSchema}
         onSubmit={onFinish}
       >

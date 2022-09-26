@@ -25,6 +25,7 @@ export const initData: AuthState = {
   isResend: false,
   idToken: null,
   loginAt: null,
+  currentScopes: null,
 };
 
 const initialState = Record(initData)(initData);
@@ -114,10 +115,12 @@ export default class AuthReducer {
         const idDecodeToken: {
           defaultProfileId: string | null;
           sub: string | null;
+          scopes?: any;
         } = action.payload.idToken
           ? jwt_decode(action.payload.idToken)
           : { defaultProfileId: null, sub: null };
 
+        console.log(idDecodeToken);
         return (
           state
             .set('isSigningIn', false)
@@ -128,6 +131,7 @@ export default class AuthReducer {
             .set('currentEmailForChangePassword', action.payload.email)
             .set('idToken', action.payload.idToken)
             .set('loginAt', new Date())
+            .set('currentScopes', idDecodeToken.scopes)
         );
 
       case AuthAction.TYPES.SIGNIN.FAILURE:

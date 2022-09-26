@@ -20,7 +20,6 @@ export interface GetTeamMembers {
   page: number;
   take: number;
   roles: number[];
-  isActivated: boolean;
   isDeleted: boolean;
   q?: string;
 }

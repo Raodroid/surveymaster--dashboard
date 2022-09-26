@@ -29,13 +29,16 @@ function TeamForm() {
               id="custom-upload-avatar"
             />
           </div>
-          <div className="buttons flex custom-ant-hover">
-            <Button>
+          <div className="buttons flex">
+            <Button className="info-btn">
               <label htmlFor="custom-upload-avatar" className="flex-center">
                 {t('common.uploadNewPhoto')}
               </label>
             </Button>
-            <Button onClick={() => setFieldValue('avatar', null)}>
+            <Button
+              className="info-btn"
+              onClick={() => setFieldValue('avatar', null)}
+            >
               {t('common.removePhoto')}
             </Button>
           </div>
@@ -45,7 +48,11 @@ function TeamForm() {
             name="teamName"
             label="Team Name"
           />
-          <Button className="submit-btn" htmlType="submit">
+          <Button
+            type="primary"
+            className="submit-btn secondary-btn"
+            htmlType="submit"
+          >
             {t('common.saveEdits')}
           </Button>
         </Form>

@@ -30,6 +30,7 @@ export default class AuthService {
   static getAllRoles(): Promise<AxiosResponse> {
     return APIService.get('/roles');
   }
+
   static changeEmail(payload: changeEmailPayload): Promise<AxiosResponse> {
     const url = 'auth/change-email';
     return APIService.patch(url, payload);

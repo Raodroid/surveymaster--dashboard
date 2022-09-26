@@ -1,11 +1,12 @@
 import { Radio } from 'antd';
-import { ROUTE_PATH } from 'enums';
+import { PROFILE_TAB, ROUTE_PATH } from 'enums';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
+import { SiderWrapper } from '../styles';
 import TeamForm from './form/TeamForm';
 import UserForm from './form/UserForm';
 
@@ -20,13 +21,14 @@ function Sider(props: SiderProps) {
   const { t } = useTranslation();
   const profile = useSelector(AuthSelectors.getProfile);
 
-  const handleTabChange = e => {
+  const handleTabChange = (e: any) => {
     setTab(e.target.value);
-    if (tab === 'user') navigate(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM);
+    if (tab === PROFILE_TAB.USER)
+      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM);
     else navigate(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME);
   };
   return (
-    <div className="sider flex">
+    <SiderWrapper className="sider flex">
       {profile && profile?.userRoles?.find(e => e.roleId === 1) && (
         // {profile && profile.roles.find(e => e === 1) && (
         <div className="tabs flex">
@@ -42,7 +44,7 @@ function Sider(props: SiderProps) {
       )}
 
       <div className="form">{tab === 'user' ? <UserForm /> : <TeamForm />}</div>
-    </div>
+    </SiderWrapper>
   );
 }
 

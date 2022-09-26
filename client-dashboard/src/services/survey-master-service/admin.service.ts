@@ -15,21 +15,10 @@ export default class AdminService {
   }
 
   static inviteMember(payload: InviteMember): Promise<any> {
-    return APIService.post(`users`, {
-      ...payload,
-      description: '',
-      phonePrefix: '',
-      phone: '',
-      roles: [3],
-    });
+    return APIService.post(`users`, payload);
   }
 
   static updateMember(payload: UpdateMember): Promise<any> {
-    Object.assign(payload, {
-      phone: '',
-      phonePrefix: '',
-      avatar: '',
-    });
     return APIService.put(`/users/${payload.id}`, payload);
   }
 

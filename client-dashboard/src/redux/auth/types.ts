@@ -12,6 +12,7 @@ export interface AuthState {
   isConfirmingResetPassword: boolean;
   allRoles: Object;
   loginAt: null | Date;
+  currentScopes: any;
 
   currentUserId: string | null;
 

@@ -23,3 +23,8 @@ export enum DATE_PICKER_TYPES {
 export enum Entities {
   ADDRESS = 'ADDRESS',
 }
+
+export enum PROFILE_TAB {
+  USER = 'user',
+  TEAM = 'team',
+}
