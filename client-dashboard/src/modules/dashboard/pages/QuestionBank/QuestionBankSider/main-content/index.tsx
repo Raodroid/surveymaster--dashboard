@@ -34,7 +34,7 @@ const QuestionBankSiderMainContent = () => {
   const isViewCategory = useMatch({
     path: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT,
     caseSensitive: false,
-    end: false,
+    end: true,
   });
 
   const params = useParseQueryString<{

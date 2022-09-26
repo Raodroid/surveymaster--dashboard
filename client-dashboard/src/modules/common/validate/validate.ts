@@ -143,3 +143,11 @@ export const CHANGE_EMAIL_FIELD = {
   password: passwordYup,
   // verifyPassword: verifyPasswordYub,
 };
+
+export const ADD_QUESTION_FIELDS = Yup.object().shape({
+  question: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  questionType: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  masterCategoryId: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  masterSubCategoryId: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  masterVariableName: Yup.string().required(INVALID_FIELDS.REQUIRED),
+});

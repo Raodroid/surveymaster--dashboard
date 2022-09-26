@@ -1,10 +1,11 @@
 import { ROUTE_PATH } from 'enums';
-import React, { lazy } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
 import { Layout } from 'antd';
 import styled from 'styled-components';
+import { CustomSpinSuspense } from '../modules/common/styles';
 const { Content } = Layout;
 
 const LayoutNavbar = lazy(() => import('modules/dashboard/components/Navbar'));
@@ -15,9 +16,13 @@ export const ProtectedRoutes = () => {
 
   return isLogged ? (
     <ProtectedRouteWrapper>
-      <LayoutNavbar />
+      <Suspense fallback={<CustomSpinSuspense />}>
+        <LayoutNavbar />
+      </Suspense>
       <BodyAppWrapper>
-        <Outlet />
+        <Suspense fallback={<CustomSpinSuspense />}>
+          <Outlet />
+        </Suspense>
       </BodyAppWrapper>
     </ProtectedRouteWrapper>
   ) : (

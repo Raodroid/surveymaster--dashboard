@@ -6,9 +6,14 @@
     "survey": "Survey"
   },
   "common": {
+    "addNewQuestion": "Add New Question",
+    "editQuestion": "Edit Question",
+    "questionFieldType": "Question Field Type",
+    "answerList": "Answer List",
+    "questionDetails": "Question Details",
     "question": "Question",
     "questionBank": "Question Bank",
-    "addNewQuestion": "Add New Question",
+    "saveQuestion": "Save Question",
     "download": "Download",
     "guide": "Guide",
     "next": "Next",

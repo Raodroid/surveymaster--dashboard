@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { CategoryDetailHeaderWrapper } from './style';
 import { useTranslation } from 'react-i18next';
 import { Input } from 'antd';
-import { useDebouce } from 'utils';
+import { useDebounce } from 'utils';
 import { SearchOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { FilterComponent } from './FilterComponent';
@@ -13,7 +13,7 @@ const CategoryDetailHeader = () => {
   const [searchTxt, setSearchTxt] = useState<string>('');
   const { t } = useTranslation();
 
-  const debouceSearchText = useDebouce(searchTxt);
+  const debouceSearchText = useDebounce(searchTxt);
 
   const handleTyping = useCallback(e => {
     setSearchTxt(e.target.value);

@@ -146,7 +146,7 @@ export const useToggle = (
   return [open, toggle, setOpen];
 };
 
-export const useDebouce = (value: string, time: number = 500) => {
+export const useDebounce = (value: string, time: number = 500) => {
   const [text, setText] = useState<string>('');
 
   useEffect(() => {

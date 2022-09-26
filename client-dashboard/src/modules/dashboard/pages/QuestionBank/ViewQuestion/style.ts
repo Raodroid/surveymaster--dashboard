@@ -29,4 +29,26 @@ export const ViewQuestionWrapper = styled(BaseSectionWrapper)`
       }
     }
   }
+
+  .question-section {
+    display: flex;
+    gap: 2.5rem;
+    flex-direction: column;
+    &__row {
+      &__title {
+        color: #232567;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+      }
+
+      &__content {
+      }
+    }
+  }
+
+  .version-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 `;
