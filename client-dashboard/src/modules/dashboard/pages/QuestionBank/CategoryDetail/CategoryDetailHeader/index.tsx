@@ -1,23 +1,26 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { Dispatch, FC, useCallback, useEffect, useState } from 'react';
 import { CategoryDetailHeaderWrapper } from './style';
 import { useTranslation } from 'react-i18next';
 import { Input } from 'antd';
-import { useDebounce } from 'utils';
 import { SearchOutlined } from '@ant-design/icons';
-import styled from 'styled-components';
+
 import { FilterComponent } from './FilterComponent';
 
-const { Search } = Input;
+interface ICategoryDetailHeader {
+  searchTxt: string;
+  setSearchTxt: Dispatch<string>;
+}
 
-const CategoryDetailHeader = () => {
-  const [searchTxt, setSearchTxt] = useState<string>('');
+const CategoryDetailHeader: FC<ICategoryDetailHeader> = props => {
+  const { searchTxt, setSearchTxt } = props;
   const { t } = useTranslation();
 
-  const debouceSearchText = useDebounce(searchTxt);
-
-  const handleTyping = useCallback(e => {
-    setSearchTxt(e.target.value);
-  }, []);
+  const handleTyping = useCallback(
+    e => {
+      setSearchTxt(e.target.value);
+    },
+    [setSearchTxt],
+  );
 
   return (
     <CategoryDetailHeaderWrapper>

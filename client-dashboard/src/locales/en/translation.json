@@ -6,6 +6,13 @@
     "survey": "Survey"
   },
   "common": {
+    "order": "Order",
+    "answer": "Answer",
+    "addOneMoreAnswer": "Add one more answer",
+    "step": "Step",
+    "minValue": "Min Value",
+    "maxValue": "Max Value",
+    "saveNewQuestionVersion": "Save New Question Version",
     "addNewQuestion": "Add New Question",
     "editQuestion": "Edit Question",
     "questionFieldType": "Question Field Type",

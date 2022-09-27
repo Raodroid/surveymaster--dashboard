@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { AddQuestionWrapper } from './style';
 import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
 import { useTranslation } from 'react-i18next';
-import { Form, notification, Spin } from 'antd';
+import { Form, notification } from 'antd';
 import QuestionCategoryForm from '../ViewQuestion/QuestionCategoryForm';
 import { useNavigate } from 'react-router-dom';
 import AddQuestionDetailForm from './AddQuestionDetailForm';
@@ -16,28 +16,25 @@ import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import { Button } from 'antd';
 
 export interface IAddQuestionFormValue {
-  questionType: QuestionType;
+  questionType: QuestionType | string;
   question: string;
   masterCategoryId: string;
   masterSubCategoryId: string;
   masterVariableName: string;
 }
+const initValue = {
+  questionType: '',
+  question: '',
+  masterCategoryId: '',
+  masterSubCategoryId: '',
+  masterVariableName: '',
+};
 
 const AddQuestion = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const initValue = useMemo<IAddQuestionFormValue>(
-    () => ({
-      questionType: QuestionType.TEXT_ENTRY,
-      question: '',
-      masterCategoryId: '',
-      masterSubCategoryId: '',
-      masterVariableName: '',
-    }),
-    [],
-  );
   const addQuestionMutation = useMutation(
     (data: IAddQuestionFormValue) => {
       return QuestionBankService.addQuestion(data);
@@ -68,7 +65,7 @@ const AddQuestion = () => {
         onSubmit={onFinish}
         initialValues={initValue}
         validationSchema={ADD_QUESTION_FIELDS}
-        render={({ handleSubmit, isValid, isValidating, dirty }) => (
+        render={({ handleSubmit, isValid, dirty }) => (
           <>
             <Form
               id={'add-question-form'}

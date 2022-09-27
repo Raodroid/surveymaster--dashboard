@@ -6,6 +6,8 @@ import { FetchParamsSelect } from 'type';
 import useFetchFilterOption from '../../../hoc/useFetchFilterOptions';
 import { Entities } from '../../../../../enums';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import { ArrowDown } from '../../../../../icons';
+import templateVariable from '../../../../../app/template-variables.module.scss';
 
 export type CustomSelectProps = SelectProps<string | number> & {
   entity?: Entities;
@@ -83,6 +85,11 @@ const CustomSelect = (props: CustomSelectProps) => {
       onSearch={showSearch ? handleSearch : undefined}
       options={options || fetchedOptions || []}
       onClear={showSearch ? handleClear : undefined}
+      suffixIcon={
+        <ArrowDown
+          style={{ height: 5, color: templateVariable.primary_color }}
+        />
+      }
     />
   );
 };

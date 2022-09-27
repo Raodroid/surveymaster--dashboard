@@ -21,21 +21,15 @@ const QuestionCategoryForm = props => {
       )}
       <ControlledInput
         disabled={disabled}
-        inputType={INPUT_TYPES.SELECT}
+        inputType={INPUT_TYPES.INPUT}
         name="masterCategoryId"
         label={t('common.masterQuestionCategory')}
-        options={transformEnumToOption(QuestionType, questionType =>
-          t(`questionType.${questionType}`),
-        )}
       />
       <ControlledInput
         disabled={disabled}
-        inputType={INPUT_TYPES.SELECT}
+        inputType={INPUT_TYPES.INPUT}
         name="masterSubCategoryId"
         label={t('common.masterQuestionSubCategory')}
-        options={transformEnumToOption(QuestionType, questionType =>
-          t(`questionType.${questionType}`),
-        )}
       />
       <ControlledInput
         disabled={disabled}

@@ -6,7 +6,7 @@ export const QuestionDetailFormWrapper = styled(Form)`
     &__row {
       display: flex;
       gap: 2rem;
-      .form-item-contatiner {
+      .form-item-container {
         flex: 1;
       }
     }

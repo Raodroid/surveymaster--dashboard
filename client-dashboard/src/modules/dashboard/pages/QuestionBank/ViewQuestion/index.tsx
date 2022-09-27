@@ -1,10 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { FC, useCallback } from 'react';
 import { ViewQuestionWrapper } from './style';
 import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
 import { useParams } from 'react-router';
-import { EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../enums';
+import { ROUTE_PATH } from 'enums';
 import { useGetQuestionByQuestionId } from '../util';
 import { Button, Form, Spin } from 'antd';
 import QuestionCategoryForm from './QuestionCategoryForm';
@@ -12,25 +11,53 @@ import { useTranslation } from 'react-i18next';
 import QuestionDetailForm from './QuestionDetailForm';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import useParseQueryString from 'hooks/useParseQueryString';
+import { PenFilled } from 'icons';
+import templateVariable from 'app/template-variables.module.scss';
+import qs from 'qs';
+import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
 
 const formSchema = Yup.object();
 
 const ViewQuestion = () => {
   const { t } = useTranslation();
-  const params = useParams<{ questionId?: string }>();
   const navigate = useNavigate();
+  const queryString = useParseQueryString<{ version?: string }>();
+  const params = useParams<{ questionId?: string }>();
   const [questionData, isLoading] = useGetQuestionByQuestionId(
     params.questionId as string,
   );
 
+  const { versions } = questionData;
+
   const handleEdit = useCallback(() => {
+    const newQueryString = qs.stringify({
+      ...queryString,
+      version: queryString.version,
+    });
     navigate(
-      ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.EDIT_QUESTION.replace(
+      `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.EDIT_QUESTION.replace(
         ':questionId',
         params?.questionId as string,
-      ),
+      )}?${newQueryString}`,
     );
-  }, [navigate, params?.questionId]);
+  }, [navigate, params?.questionId, queryString]);
+
+  const handleChangeViewVersion = useCallback(
+    versionId => {
+      const newQueryString = qs.stringify({
+        ...queryString,
+        version: versionId,
+      });
+      navigate(
+        `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION.replace(
+          ':questionId',
+          params?.questionId as string,
+        )}?${newQueryString}`,
+      );
+    },
+    [navigate, params?.questionId, queryString],
+  );
 
   const onFinish = useCallback(values => {}, []);
 
@@ -39,7 +66,15 @@ const ViewQuestion = () => {
       <ViewQuestionWrapper className={'ViewQuestion'}>
         <GeneralSectionHeader
           title={'View Question'}
-          endingComponent={<EditOutlined onClick={handleEdit} />}
+          endingComponent={
+            <PenFilled
+              onClick={handleEdit}
+              style={{
+                color: templateVariable.primary_color,
+                cursor: 'pointer',
+              }}
+            />
+          }
         />
         <Formik
           onSubmit={onFinish}
@@ -55,19 +90,31 @@ const ViewQuestion = () => {
                 <div className={'ViewQuestion__body__section question-section'}>
                   <div className={'question-section__row'}>
                     <div className={'version-wrapper'}>
-                      <Button
-                        type={'primary'}
-                        className={'info-btn'}
-                        disabled={false}
-                      >
-                        Version 1
-                      </Button>
-                      <Button className={'info-btn'} disabled={false}>
-                        Version 1
-                      </Button>
-                      <Button className={'info-btn'} disabled={false}>
-                        Version 1
-                      </Button>
+                      {versions?.map(version => {
+                        const { displayId } = version;
+                        if (displayId === queryString.version) {
+                          return (
+                            <Button
+                              type={'primary'}
+                              className={'info-btn'}
+                              disabled={false}
+                            >
+                              {t('common.version')} {displayId}
+                            </Button>
+                          );
+                        }
+                        return (
+                          <Button
+                            onClick={() => {
+                              handleChangeViewVersion(displayId);
+                            }}
+                            className={'info-btn'}
+                            disabled={false}
+                          >
+                            {t('common.version')} {displayId}
+                          </Button>
+                        );
+                      }, [])}
                     </div>
                   </div>
                   <div className={'question-section__row'}>
@@ -87,7 +134,7 @@ const ViewQuestion = () => {
                         {t('common.answerList')}
                       </div>
                       <div className={'question-section__row__content'}>
-                        content
+                        <DisplayAnswerList />
                       </div>
                     </div>
                   </div>

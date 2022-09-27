@@ -5,8 +5,10 @@ import {
   IQuestion,
   mockCategories,
   mockQuestionList,
+  QuestionDetail,
 } from '../../type';
 import { IAddQuestionFormValue } from '../../modules/dashboard/pages/QuestionBank/AddQuestion';
+import { IEditQuestionFormValue } from '../../modules/dashboard/pages/QuestionBank/EditQuestion';
 
 export default class QuestionBankService {
   static getCategories(params): Promise<AxiosResponse> {
@@ -37,14 +39,12 @@ export default class QuestionBankService {
     const { id } = props;
     // return APIService.get(`/questions/${id}`);
 
-    return new Promise<AxiosResponse>(resolve => {
-      resolve({
-        data: mockQuestionList.data[0],
-        status: 200,
-        statusText: '',
-        headers: {},
-        config: {},
-      });
+    return Promise.resolve({
+      data: QuestionDetail,
+      status: 200,
+      statusText: '',
+      headers: {},
+      config: {},
     });
   }
   static deleteQuestionByQuestionId(props): Promise<AxiosResponse> {
@@ -59,11 +59,15 @@ export default class QuestionBankService {
     const { id } = props;
     return APIService.patch(`/questions/version/${id}`);
   }
-  static updateCompletedQuestion(props: IQuestion): Promise<AxiosResponse> {
+  static updateCompletedQuestion(
+    props: IEditQuestionFormValue,
+  ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
     return APIService.post(`/questions/version/${id}`, { data: rest });
   }
-  static updateDraftQuestion(props: IQuestion): Promise<AxiosResponse> {
+  static updateDraftQuestion(
+    props: IEditQuestionFormValue,
+  ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
     return APIService.put(`/questions/version/${id}`, { data: rest });
   }

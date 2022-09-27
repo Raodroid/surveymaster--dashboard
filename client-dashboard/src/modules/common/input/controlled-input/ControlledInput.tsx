@@ -83,7 +83,7 @@ const ControlledInput = (props: ControlledInputProps) => {
     </Form.Item>
   );
   return (
-    <div ref={inputRef} className="form-item-contatiner">
+    <div ref={inputRef} className="form-item-container">
       {isFastField ? (
         <FastField name={name}>{ABC}</FastField>
       ) : (

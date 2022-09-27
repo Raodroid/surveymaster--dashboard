@@ -14,7 +14,7 @@ export const ThreeDotsDropdownWrapper = styled.div`
     border-radius: 8px;
     color: ${templateVariable.text_primary_color};
     :hover {
-      background: rgba(35, 37, 103, 0.04);
+      background: ${templateVariable.primary_color_outline};
       color: #232f3e;
       .dots-container {
         .dot {

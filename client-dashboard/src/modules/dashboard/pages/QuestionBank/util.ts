@@ -13,9 +13,8 @@ export const useGetQuestionByQuestionId = (
     () => {
       return QuestionBankService.getQuestionById({ id: questionId });
     },
-    { onError, enabled: !questionId },
+    { onError, enabled: !!questionId },
   );
-
   const questionData = useMemo<IQuestion>(() => _get(data, 'data', {}), [data]);
 
   return [questionData, isLoading];

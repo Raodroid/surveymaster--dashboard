@@ -11,6 +11,8 @@ import { Menu, MenuProps, Spin } from 'antd';
 import { IQuestionCategory } from '../../../../../../type';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
+import { ArrowDown } from '../../../../../../icons';
+import templateVariable from '../../../../../../app/template-variables.module.scss';
 
 const getItem = (
   label: React.ReactNode,
@@ -88,7 +90,9 @@ const QuestionBankSiderMainContent = () => {
         getItem(
           i.name,
           i?.id as string,
-          undefined,
+          <ArrowDown
+            style={{ color: templateVariable.primary_color, height: 5 }}
+          />,
           i.children?.map(child => getItem(child.name, child?.id as string)),
         ),
       ),
@@ -98,6 +102,9 @@ const QuestionBankSiderMainContent = () => {
   return (
     <QuestionBankSiderMainContentWrapper>
       <div
+        onClick={() => {
+          navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
+        }}
         className={`${
           isViewCategory && 'active-status'
         } QuestionBankSiderMainContent__title`}
@@ -108,6 +115,7 @@ const QuestionBankSiderMainContent = () => {
         <div className={'QuestionBankSiderMainContent__body'}>
           <div className={'category-list'}>
             <Menu
+              expandIcon={() => null}
               mode="inline"
               openKeys={openKey}
               selectedKeys={selectedKey}

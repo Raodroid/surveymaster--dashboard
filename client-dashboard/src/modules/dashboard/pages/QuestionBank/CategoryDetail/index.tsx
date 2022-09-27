@@ -9,12 +9,14 @@ import ThreeDotsDropdown from '../../../../../customize-components/ThreeDotsDrop
 import useParseQueryString from '../../../../../hooks/useParseQueryString';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { onError } from '../../../../../utils';
+import { onError, useDebounce } from '../../../../../utils';
 import { QuestionBankService } from '../../../../../services';
 import _get from 'lodash/get';
 import { ROUTE_PATH } from '../../../../../enums';
 import { useNavigate } from 'react-router-dom';
 import StyledPagination from '../../../components/StyledPagination';
+import qs from 'qs';
+import { PenFilled, TrashOutlined } from '../../../../../icons';
 
 enum ACTION_ENUM {
   DELETE = 'DELETE',
@@ -23,7 +25,15 @@ enum ACTION_ENUM {
 
 const CategoryDetail = () => {
   const { t } = useTranslation();
+  const [searchTxt, setSearchTxt] = useState<string>('');
+
+  const debounceSearchText = useDebounce(searchTxt);
+
   const params = useParseQueryString<{
+    category?: string;
+    subCategory?: string;
+  }>();
+  const queryString = useParseQueryString<{
     category?: string;
     subCategory?: string;
   }>();
@@ -41,11 +51,12 @@ const CategoryDetail = () => {
       page,
       subCategoryIds: subCategory ? [subCategory] : undefined,
       categoryIds: category ? [category] : undefined,
+      q: debounceSearchText,
     };
-  }, [category, page, subCategory, take]);
+  }, [category, page, subCategory, take, debounceSearchText]);
 
   const getQuestionListQuery = useQuery(
-    ['getQuestionList', page, take, subCategory, category],
+    ['getQuestionList', page, take, subCategory, category, debounceSearchText],
     () => {
       return QuestionBankService.getQuestions(baseParams);
     },
@@ -107,14 +118,18 @@ const CategoryDetail = () => {
   );
 
   const handleClickRow = useCallback(
-    record => {
+    (record: IQuestion) => {
       return {
-        onClick: event => {
+        onClick: () => {
+          const newQueryString = qs.stringify({
+            ...queryString,
+            version: record.latestVersion.displayId,
+          });
           navigate(
-            ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION.replace(
+            `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION.replace(
               ':questionId',
               record?.id as string,
-            ),
+            )}?${newQueryString}`,
           );
         },
       };
@@ -131,7 +146,7 @@ const CategoryDetail = () => {
 
   return (
     <CategoryDetailWrapper>
-      <CategoryDetailHeader />
+      <CategoryDetailHeader searchTxt={searchTxt} setSearchTxt={setSearchTxt} />
       <div className={'CategoryDetail__body'}>
         <Table
           dataSource={questionList}
@@ -218,16 +233,16 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       overlay={
         <Menu
           onSelect={input => {
-            handleSelect({ ...input, record });
+            handleSelect({ ...input, record }).then();
           }}
         >
           {isDeleted && (
-            <Menu.Item key={ACTION_ENUM.RESTORE} icon={<EditOutlined />}>
+            <Menu.Item key={ACTION_ENUM.RESTORE} icon={<PenFilled />}>
               {t('common.restore')}
             </Menu.Item>
           )}
           {!isDeleted && (
-            <Menu.Item key={ACTION_ENUM.DELETE} icon={<DeleteOutlined />}>
+            <Menu.Item key={ACTION_ENUM.DELETE} icon={<TrashOutlined />}>
               {t('common.delete')}
             </Menu.Item>
           )}

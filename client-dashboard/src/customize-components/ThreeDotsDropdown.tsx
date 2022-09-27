@@ -15,7 +15,7 @@ const ThreeDotsIconStyled = (
 const ThreeDotsDropdown: React.FC<DropDownProps> = props => {
   return (
     <ThreeDotsDropdownWrapper>
-      <Dropdown {...props} placement="bottomRight" arrow>
+      <Dropdown {...props} placement="bottomRight">
         {ThreeDotsIconStyled}
       </Dropdown>
     </ThreeDotsDropdownWrapper>

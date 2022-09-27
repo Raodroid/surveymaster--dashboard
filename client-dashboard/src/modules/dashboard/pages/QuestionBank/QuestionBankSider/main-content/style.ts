@@ -8,6 +8,7 @@ export const QuestionBankSiderMainContentWrapper = styled.div`
   .QuestionBankSiderMainContent {
     &__title {
       margin-bottom: ${templateVariable.element_spacing};
+      cursor: pointer;
       h4 {
         font-size: 16px;
         font-weight: 600;
@@ -19,6 +20,10 @@ export const QuestionBankSiderMainContentWrapper = styled.div`
       .category-list {
         height: 100%;
         overflow-y: scroll;
+        .ant-menu-title-content {
+          font-size: 12px;
+          font-weight: 600;
+        }
       }
     }
   }

@@ -4,6 +4,7 @@ import { PlusIcon } from '../../../../../../icons';
 import { useTranslation } from 'react-i18next';
 import { useMatch, useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../enums';
+import templateVariable from '../../../../../../app/template-variables.module.scss';
 
 const QuestionBankSiderFooter = () => {
   const { t } = useTranslation();
@@ -24,7 +25,9 @@ const QuestionBankSiderFooter = () => {
       onClick={handleAddNewQuestion}
       className={isActive ? 'active-status' : undefined}
     >
-      <PlusIcon />
+      <PlusIcon
+        style={{ color: templateVariable.primary_color, marginRight: 14 }}
+      />
       <span>{t('common.addNewQuestion')}</span>
     </QuestionBankSiderFooterWrapper>
   );

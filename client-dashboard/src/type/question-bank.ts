@@ -46,6 +46,8 @@ export interface IQuestionVersion {
   type: QuestionType;
   status?: QuestionVersionStatus;
   numberStep?: number;
+  numberMin?: number;
+  numberMax?: number;
   numberValidationMax?: number;
   numberValidationMin?: number;
   textValidationMax?: number;
@@ -62,9 +64,9 @@ export interface IQuestionVersion {
   deletedAt?: Date | string | null;
 }
 
-interface IQuestionVersionOption {
+export interface IQuestionVersionOption {
   id?: string;
-  questionVersionId: string;
+  questionVersionId?: string;
   questionVersion?: IQuestionVersion;
   sort: number;
   imageUrl?: string;
@@ -72,7 +74,7 @@ interface IQuestionVersionOption {
 }
 
 export enum QuestionType {
-  MULTIPLE_CHOICE = '',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
   RADIO_BUTTONS = 'RADIO_BUTTONS',
   PHOTO = 'PHOTO',
   DATE_PICKER = 'DATE_PICKER',
@@ -265,7 +267,7 @@ export const mockQuestionList: IPaginationResponse<IQuestion> = {
     },
   ],
 };
-export const QuestionListDetail: IQuestion = {
+export const QuestionDetail: IQuestion = {
   id: '1',
   displayId: '113-2121',
   latestCompletedVersion: completedVersion,

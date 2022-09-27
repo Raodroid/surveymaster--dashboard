@@ -7,7 +7,6 @@ import React, {
   useState,
 } from 'react';
 
-import { FilterOutlined, RollbackOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { Button, Dropdown, Form } from 'antd';
 import templateVariable from 'app/template-variables.module.scss';
@@ -17,15 +16,17 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { transformEnumToOption } from 'utils';
 import { QuestionType } from '../../../../../../type';
+import { ArrowDown, FilterOutlined, RollbackOutlined } from 'icons';
 
 export const FilterComponent = () => {
   const [numOfFilter, setNumOfFilter] = useState(0);
   const { t } = useTranslation();
   return (
     <FilterComponentWrapper>
-      <FilterOutlined />
+      <FilterOutlined className={'filter-icon'} />
       <span>{t('common.filter')}</span>
       <Dropdown
+        trigger={['click']}
         placement="bottomRight"
         overlay={
           <FilerDropdown
@@ -35,7 +36,12 @@ export const FilterComponent = () => {
         }
       >
         <div className={'filter-main'}>
-          <span onClick={e => e.preventDefault()}>{numOfFilter}</span>
+          <span onClick={e => e.preventDefault()}>
+            {numOfFilter}{' '}
+            <ArrowDown
+              style={{ color: templateVariable.primary_color, height: 5 }}
+            />
+          </span>
         </div>
       </Dropdown>
     </FilterComponentWrapper>
@@ -72,23 +78,36 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
     [setNumOfFilter],
   );
 
+  const handleRollback = useCallback(
+    callback => {
+      callback();
+      setNumOfFilter(0);
+    },
+    [setNumOfFilter],
+  );
+
   return (
-    <FilerDropdownWrapper>
-      <div className={'FilerDropdown__header'}>
-        <div className={'FilerDropdown__header__main'}>
-          <span className={'form-title'}>{t('common.filter')}</span>
-          <span className={'filter-tag'}>{numOfFilter}</span>
-        </div>
-        <div className={'FilerDropdown__header__left-side'}>
-          <RollbackOutlined />
-        </div>
-      </div>
-      <div className={'FilerDropdown__body'}>
-        <Formik
-          onSubmit={onFinish}
-          initialValues={initialFilterFormValues}
-          validationSchema={formSchema}
-          render={({ handleSubmit }) => (
+    <Formik
+      onSubmit={onFinish}
+      initialValues={initialFilterFormValues}
+      validationSchema={formSchema}
+      render={({ handleSubmit, resetForm }) => (
+        <FilerDropdownWrapper>
+          <div className={'FilerDropdown__header'}>
+            <div className={'FilerDropdown__header__main'}>
+              <span className={'form-title'}>{t('common.filter')}</span>
+              <span className={'filter-tag'}>{numOfFilter}</span>
+            </div>
+            <div className={'FilerDropdown__header__left-side'}>
+              <RollbackOutlined
+                className={'rollback-icon'}
+                onClick={() => {
+                  handleRollback(resetForm);
+                }}
+              />
+            </div>
+          </div>
+          <div className={'FilerDropdown__body'}>
             <Form
               id={'filter-form'}
               layout={'vertical'}
@@ -186,20 +205,20 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                 </div>
               </div>
             </Form>
-          )}
-        />
-      </div>
-      <div className={'FilerDropdown__footer'}>
-        <Button
-          type={'primary'}
-          className={'secondary-btn'}
-          htmlType={'submit'}
-          form={'filter-form'}
-        >
-          {t('common.apply')}
-        </Button>
-      </div>
-    </FilerDropdownWrapper>
+          </div>
+          <div className={'FilerDropdown__footer'}>
+            <Button
+              type={'primary'}
+              className={'secondary-btn'}
+              htmlType={'submit'}
+              form={'filter-form'}
+            >
+              {t('common.apply')}
+            </Button>
+          </div>
+        </FilerDropdownWrapper>
+      )}
+    />
   );
 };
 
@@ -207,16 +226,23 @@ const FilterComponentWrapper = styled.div`
   display: flex;
   padding: 0 10px;
   align-items: center;
-  border-radius: 6px;
+  border-radius: 4px;
   background: ${templateVariable.primary_color};
   color: white;
+  .filter-icon {
+    margin: 0 6px;
+  }
   .filter-main {
-    border-radius: 4px;
+    border-radius: 2px;
     background: white;
     color: ${templateVariable.text_primary_color};
     padding: 3px 10px;
     margin: 2px;
     transform: translateX(10px);
+    span {
+      font-size: 12px;
+      font-weight: 600;
+    }
   }
 `;
 
@@ -236,9 +262,14 @@ const FilerDropdownWrapper = styled.div`
       display: flex;
       align-items: center;
       padding-bottom: 1rem;
+      .rollback-icon {
+        color: ${templateVariable.primary_color};
+        cursor: pointer;
+      }
       &__main {
         flex: 1;
         color: ${templateVariable.text_primary_color};
+
         .filter-tag {
           background: ${templateVariable.border_color};
           border-radius: 4px;
@@ -267,7 +298,7 @@ const FilerDropdownWrapper = styled.div`
           display: flex;
           align-items: center;
           gap: 1rem;
-          .form-item-contatiner {
+          .form-item-container {
             width: 100%;
           }
         }

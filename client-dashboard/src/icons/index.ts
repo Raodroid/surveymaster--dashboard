@@ -12,3 +12,8 @@ export * from './ArrowRight';
 export * from './ColorOutlined';
 export * from './BoxIconOutlined';
 export * from './HamburgerAnimation';
+export * from './PenFilled';
+export * from './FilterOutlined';
+export * from './RollbackOutlined';
+export * from './ArrowDown';
+export * from './TrashOutlined';
