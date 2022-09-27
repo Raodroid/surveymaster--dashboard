@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { AuthAction, AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
 import { onError } from 'utils';
+import { UserFormWrapper } from '../../styles';
 
 function UserForm() {
   const { t } = useTranslation();
@@ -42,7 +43,7 @@ function UserForm() {
 
   return (
     // <CustomSpinSuspense spinning={isLoading}>
-    <div style={{ overflowY: 'hidden' }}>
+    <UserFormWrapper>
       {profile && (
         <Formik
           initialValues={profile}
@@ -134,7 +135,7 @@ function UserForm() {
           }}
         </Formik>
       )}
-    </div>
+    </UserFormWrapper>
     // </CustomSpinSuspense>
   );
 }

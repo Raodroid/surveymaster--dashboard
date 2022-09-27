@@ -42,14 +42,14 @@ function UserContent() {
               </span>
             </p>
           </div>
-          <div className="wrapper flex-end">
-            <span style={{ marginRight: 8 }}>{t('common.turnedOn')}</span>
+          <div className="wrapper flex-end switch-wrapper">
+            <span>{t('common.turnedOn')}</span>
             <Switch className="info-btn" />
           </div>
         </div>
       </div>
 
-      <div className="cell others" style={{ flex: 1 }}>
+      <div className="cell others">
         <div className="padding-24 flex-space-between">
           <div className="wrapper">
             <span className="title">{t('common.signOutAllOtherSessions')}</span>

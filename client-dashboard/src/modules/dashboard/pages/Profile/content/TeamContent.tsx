@@ -241,7 +241,7 @@ function TeamContent() {
     <TeamContentStyled className="flex">
       <div className="cell padding-24 name title">AMiLi</div>
 
-      <div className="cell flex-column" style={{ flex: 1 }}>
+      <div className="cell flex-column table-wrapper">
         <div className="search padding-24 flex-center">
           <Button
             className="search-btn"
@@ -303,8 +303,7 @@ function TeamContent() {
               pagination={false}
             />
             <Pagination
-              className="flex-end"
-              style={{ marginTop: 10 }}
+              className="flex-end pagination"
               showSizeChanger={false}
               defaultCurrent={page}
               current={page}

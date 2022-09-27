@@ -226,6 +226,10 @@ export const SiderWrapper = styled.div`
   }
 `;
 
+export const UserFormWrapper = styled.div`
+  overflow: hidden;
+`;
+
 export const ContentStyled = styled.div`
   flex-direction: column;
   gap: 20px;
@@ -296,7 +300,6 @@ export const UserContentStyled = styled(ContentStyled)`
       height: 32px;
       &::before {
         border-radius: 50%;
-        bottom: 0.5px;
       }
     }
   }
@@ -308,6 +311,14 @@ export const UserContentStyled = styled(ContentStyled)`
     :hover {
       color: #015398;
     }
+  }
+  .switch-wrapper {
+    span {
+      margin-right: 8px;
+    }
+  }
+  .others {
+    flex: 1;
   }
 `;
 
@@ -359,6 +370,9 @@ export const TeamContentStyled = styled(ContentStyled)`
       padding-top: 4px;
       text-align: center;
     }
+  }
+  .table-wrapper {
+    flex: 1;
   }
 `;
 
@@ -412,6 +426,9 @@ export const TableWrapperStyled = styled.div`
   }
   .ant-dropdown-open {
     background: var(--ant-primary-2);
+  }
+  .pagination {
+    margin-top: 10px;
   }
 `;
 
