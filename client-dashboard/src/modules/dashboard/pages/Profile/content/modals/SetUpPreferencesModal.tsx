@@ -11,6 +11,7 @@ import { UserService } from 'services';
 import { ProfileModal } from '.';
 import { onError } from 'utils';
 import { SetUpPreferencesModalStyled } from './styles';
+import { MODAL_WIDTH } from 'enums';
 
 interface IInitialValues {
   disabledNotificationTypes?: NotificationType[];
@@ -115,7 +116,7 @@ function SetUpPreferencesModal(props: ProfileModal) {
       title={t('common.setUpNotificationPreferences')}
       destroyOnClose={true}
       visible={showModal}
-      width={500}
+      width={MODAL_WIDTH.LARGE}
       footer={null}
       onCancel={() => setShowModal(false)}
       centered

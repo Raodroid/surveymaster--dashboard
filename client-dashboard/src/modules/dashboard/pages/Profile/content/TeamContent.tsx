@@ -2,7 +2,7 @@ import {
   DeleteFilled,
   EyeOutlined,
   SettingFilled,
-  UserDeleteOutlined,
+  UserDeleteOutlined
 } from '@ant-design/icons';
 import {
   Button,
@@ -12,33 +12,31 @@ import {
   Image,
   Input,
   InputRef,
-  Menu,
-  notification,
-  Pagination,
-  Table,
+  Menu, Pagination,
+  Table
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
+import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import { GetTeamMembers } from 'interfaces';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
-import APIService from 'services/survey-master-service/base.service';
-import { onError, useDebounce } from 'utils';
+import { useDebounce } from 'utils';
 import {
   DropDownMenuStyled,
   TableWrapperStyled,
-  TeamContentStyled,
+  TeamContentStyled
 } from '../styles';
 import { InviteMemberModal, ResetUserPasswordModal } from './modals';
 import ConfirmDeactivateUserModal from './modals/ConfirmDeactivateUser';
+import ConfirmRestoreUserModal from './modals/ConfirmRestoreUser';
 
 interface DataType {
   key: React.Key;
@@ -64,26 +62,29 @@ const rowSelection = {
 
 function TeamContent() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const profile = useSelector(AuthSelectors.getProfile);
 
   const searchRef = useRef<InputRef>(null);
   const [userId, setUserId] = useState('');
   const allRoles = useSelector(AuthSelectors.getAllRoles);
-  const queryRoles = useMemo(() => {
-    return allRoles ? Object.values(allRoles).map(el => el.id) : [];
-  }, [allRoles]);
+  const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
 
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('');
   const searchDebounce = useDebounce(search);
   const [page, setPage] = useState(1);
   const [isDeleted, setIsDeleted] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showConfirmDeactivateModal, setShowConfirmDeactivateModal] =
+    useState(false);
+  const [showConfirmRestoreModal, setShowConfirmRestoreModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [showEditPreferencesModal, setShowEditPreferencesModal] =
     useState(false);
+
+  const isAdminRole = useMemo(() => {
+    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
+  }, [currentRoles]);
 
   useEffect(() => {
     if (!searchDebounce) setFilter('');
@@ -93,12 +94,12 @@ function TeamContent() {
     () => ({
       page: page,
       take: 10,
-      roles: queryRoles,
+      roles: Object.values(allRoles).map(elm => elm.id),
       isDeleted: isDeleted,
       isActivated: true,
       q: filter,
     }),
-    [filter, page, isDeleted, queryRoles],
+    [filter, page, isDeleted, allRoles],
   );
 
   function getTeamMembers(params: GetTeamMembers): Promise<any> {
@@ -112,22 +113,6 @@ function TeamContent() {
       refetchOnWindowFocus: false,
     },
   );
-
-  const mutationRestoreUser = useMutation(
-    () => {
-      return AdminService.restoreUser({
-        userId,
-      });
-    },
-    {
-      onSuccess: () => notification.success(t('common.updateSuccess')),
-      onError,
-    },
-  );
-
-  const handleRestoreUser = useCallback(() => {
-    mutationRestoreUser.mutateAsync();
-  }, [mutationRestoreUser]);
 
   const handleEditPreferences = (id: string) => {
     setUserId(id);
@@ -177,6 +162,7 @@ function TeamContent() {
               <DropDownMenuStyled>
                 <Menu.Item
                   key="editPreferences"
+                  disabled={!isAdminRole}
                   onClick={() => {
                     handleEditPreferences(record.key);
                   }}
@@ -187,6 +173,7 @@ function TeamContent() {
                 {profile && record.key !== profile.id && (
                   <Menu.Item
                     key="resetUserPassword"
+                    disabled={!isAdminRole}
                     onClick={() => {
                       handleResetPassword(record.key);
                     }}
@@ -200,14 +187,19 @@ function TeamContent() {
                   profile.id !== record.key && (
                     <Menu.Item
                       key="deactivateUser"
-                      onClick={() => setShowConfirmModal(true)}
+                      disabled={!isAdminRole}
+                      onClick={() => setShowConfirmDeactivateModal(true)}
                     >
                       <UserDeleteOutlined className="dropdown-icon" />{' '}
                       {t('common.deactivateUser')}
                     </Menu.Item>
                   )}
                 {record.deleteAt && (
-                  <Menu.Item key="restore" onClick={handleRestoreUser}>
+                  <Menu.Item
+                    key="restore"
+                    disabled={!isAdminRole}
+                    onClick={() => setShowConfirmRestoreModal(true)}
+                  >
                     <DeleteFilled className="dropdown-icon" />{' '}
                     {t('common.restore')}
                   </Menu.Item>
@@ -222,7 +214,7 @@ function TeamContent() {
         ),
       },
     ],
-    [profile, handleRestoreUser, t, isDeleted],
+    [profile, t, isDeleted, isAdminRole],
   );
 
   const data: DataType[] = teamMembers
@@ -283,7 +275,11 @@ function TeamContent() {
           >
             {t('common.showInactivateUsers')}
           </Checkbox>
-          <Button type="primary" onClick={() => setShowInviteModal(true)}>
+          <Button
+            type="primary"
+            disabled={!isAdminRole}
+            onClick={() => setShowInviteModal(true)}
+          >
             {t('common.inviteMember')}
           </Button>
         </div>
@@ -335,8 +331,13 @@ function TeamContent() {
       />
       <ConfirmDeactivateUserModal
         userId={userId}
-        showModal={showConfirmModal}
-        setShowModal={setShowConfirmModal}
+        showModal={showConfirmDeactivateModal}
+        setShowModal={setShowConfirmDeactivateModal}
+      />
+      <ConfirmRestoreUserModal
+        userId={userId}
+        showModal={showConfirmRestoreModal}
+        setShowModal={setShowConfirmRestoreModal}
       />
     </TeamContentStyled>
   );

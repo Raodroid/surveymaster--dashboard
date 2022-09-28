@@ -15,9 +15,6 @@ const Profile = () => {
     path.pathname === ROUTE_PATH.DASHBOARD_PATHS.PROFILE.HOME ? 'user' : 'team',
   );
 
-  const scopes = useSelector(state => state);
-  console.log(scopes);
-
   return (
     <ProfileStyled>
       <div className="layout flex">

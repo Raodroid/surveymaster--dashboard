@@ -28,3 +28,8 @@ export enum PROFILE_TAB {
   USER = 'user',
   TEAM = 'team',
 }
+
+export enum MODAL_WIDTH {
+  LARGE = 500,
+  SMALL = 360,
+}

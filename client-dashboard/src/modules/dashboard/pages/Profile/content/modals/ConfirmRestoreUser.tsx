@@ -13,14 +13,14 @@ interface ConfirmDeactivate extends ProfileModal {
   userId: string;
 }
 
-function ConfirmDeactivateUserModal(props: ConfirmDeactivate) {
+function ConfirmRestoreUserModal(props: ConfirmDeactivate) {
   const { showModal, setShowModal, userId } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const mutationDeactivateUser = useMutation(
+  const mutationRestoreUser = useMutation(
     () => {
-      return AdminService.deactivateUser({
+      return AdminService.restoreUser({
         userId,
       });
     },
@@ -37,13 +37,13 @@ function ConfirmDeactivateUserModal(props: ConfirmDeactivate) {
     },
   );
 
-  const handleDeactivateUser = () => mutationDeactivateUser.mutateAsync();
+  const handleRestoreUser = () => mutationRestoreUser.mutateAsync();
 
   return (
     <ConfirmDeactivateModalStyled
       open={showModal}
       footer={false}
-      title="Confirm deactivate user"
+      title="Confirm restore user"
       onCancel={() => setShowModal(false)}
       width={MODAL_WIDTH.SMALL}
       centered
@@ -53,7 +53,7 @@ function ConfirmDeactivateUserModal(props: ConfirmDeactivate) {
       <Button
         type="primary"
         className="secondary-btn"
-        onClick={handleDeactivateUser}
+        onClick={handleRestoreUser}
       >
         OK
       </Button>
@@ -61,4 +61,4 @@ function ConfirmDeactivateUserModal(props: ConfirmDeactivate) {
   );
 }
 
-export default ConfirmDeactivateUserModal;
+export default ConfirmRestoreUserModal;

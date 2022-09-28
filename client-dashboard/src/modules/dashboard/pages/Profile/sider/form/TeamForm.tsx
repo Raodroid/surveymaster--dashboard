@@ -1,12 +1,19 @@
 import { Button, Form } from 'antd';
+import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from 'redux/auth';
 
 function TeamForm() {
   const { t } = useTranslation();
+  const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
+  const isAdminRole = useMemo(() => {
+    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
+  }, [currentRoles]);
   return (
     <Formik initialValues={{ teamName: 'Amili' }} onSubmit={() => {}}>
       {({
@@ -19,7 +26,7 @@ function TeamForm() {
         isSubmitting,
         setFieldValue,
       }) => (
-        <Form layout="vertical" onFinish={handleSubmit}>
+        <Form layout="vertical" disabled={!isAdminRole} onFinish={handleSubmit}>
           <div className="avatar">
             <ControlledInput
               inputType={INPUT_TYPES.IMAGE_UPLOAD}
@@ -50,6 +57,7 @@ function TeamForm() {
           />
           <Button
             type="primary"
+            disabled={!isAdminRole}
             className="submit-btn secondary-btn"
             htmlType="submit"
           >

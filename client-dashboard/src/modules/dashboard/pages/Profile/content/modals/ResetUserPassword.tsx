@@ -1,4 +1,5 @@
 import { Button, Form, notification } from 'antd';
+import { MODAL_WIDTH } from 'enums';
 import { Formik } from 'formik';
 import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
@@ -67,7 +68,7 @@ function ResetUserPassword(props: ResetUserPasswordProps) {
       destroyOnClose
       footer={false}
       onCancel={() => setShowModal(false)}
-      width={360}
+      width={MODAL_WIDTH.SMALL}
       centered
       title="Change Password"
       closeIcon={<CloseIcon />}

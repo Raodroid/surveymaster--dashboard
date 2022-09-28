@@ -1,4 +1,5 @@
 import { Button, Form, notification } from 'antd';
+import { MODAL_WIDTH } from 'enums';
 import { Formik } from 'formik';
 import { CloseIcon } from 'icons';
 import { InviteMember, UpdateMember } from 'interfaces';
@@ -79,7 +80,7 @@ function InviteMemberModal(props: InviteModal) {
       destroyOnClose
       footer={false}
       onCancel={() => setShowModal(false)}
-      width={360}
+      width={MODAL_WIDTH.SMALL}
       centered
       title={edit ? t('common.editPreferences') : t('common.inviteMember')}
       closeIcon={<CloseIcon />}

@@ -54,7 +54,7 @@ export interface UserPayload {
   finishTourOnMyScore?: boolean;
   finishTourOnHomePage?: boolean;
   country?: string;
-  userRoles?: Record<string, number>[];
+  userRoles?: Record<string, any>[];
   disabledNotificationTypes?: any;
 }
 
