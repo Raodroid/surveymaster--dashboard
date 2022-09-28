@@ -17,7 +17,7 @@ export const ROUTE_PATH = {
       ADD_QUESTION: '/app/question-bank/question/add',
     },
     PROFILE: {
-      HOME: '/app/profile',
+      ROOT: '/app/profile',
       TEAM: '/app/profile/manage-users',
     },
   },

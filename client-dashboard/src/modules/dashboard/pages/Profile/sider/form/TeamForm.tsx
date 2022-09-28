@@ -3,7 +3,7 @@ import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';

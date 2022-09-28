@@ -1,7 +1,6 @@
 import { Button, notification } from 'antd';
 import { MODAL_WIDTH } from 'enums';
 import { CloseIcon } from 'icons';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { AdminService } from 'services';

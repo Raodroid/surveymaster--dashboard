@@ -12,7 +12,8 @@ import {
   Image,
   Input,
   InputRef,
-  Menu, Pagination,
+  Menu,
+  Pagination,
   Table
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -34,9 +35,11 @@ import {
   TableWrapperStyled,
   TeamContentStyled
 } from '../styles';
-import { InviteMemberModal, ResetUserPasswordModal } from './modals';
-import ConfirmDeactivateUserModal from './modals/ConfirmDeactivateUser';
-import ConfirmRestoreUserModal from './modals/ConfirmRestoreUser';
+import {
+  ConfirmDeactivateUserModal,
+  ConfirmRestoreUserModal, InviteMemberModal,
+  ResetUserPasswordModal
+} from './modals';
 
 interface DataType {
   key: React.Key;

@@ -30,6 +30,6 @@ export enum PROFILE_TAB {
 }
 
 export enum MODAL_WIDTH {
-  LARGE = 500,
+  MEDIUM = 500,
   SMALL = 360,
 }

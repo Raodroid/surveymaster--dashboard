@@ -1,17 +1,17 @@
 import { Button, Form, notification, Spin } from 'antd';
+import { MODAL_WIDTH } from 'enums';
 import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
-import { ProfileModal } from '.';
 import { onError } from 'utils';
+import { ProfileModal } from '.';
 import { SetUpPreferencesModalStyled } from './styles';
-import { MODAL_WIDTH } from 'enums';
 
 interface IInitialValues {
   disabledNotificationTypes?: NotificationType[];
@@ -116,7 +116,7 @@ function SetUpPreferencesModal(props: ProfileModal) {
       title={t('common.setUpNotificationPreferences')}
       destroyOnClose={true}
       visible={showModal}
-      width={MODAL_WIDTH.LARGE}
+      width={MODAL_WIDTH.MEDIUM}
       footer={null}
       onCancel={() => setShowModal(false)}
       centered
