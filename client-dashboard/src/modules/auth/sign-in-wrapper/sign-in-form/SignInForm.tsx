@@ -4,7 +4,7 @@ import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthAction, AuthSelectors } from 'redux/auth';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { useTranslation } from 'react-i18next';
 import { ControlledInput } from 'modules/common';
@@ -18,6 +18,7 @@ import { LogoIcon } from '../../../../icons';
 interface SignInPayload {
   email: string;
   password: string;
+  callback?: () => void;
 }
 
 const initialSignUpPayload = {
@@ -29,6 +30,7 @@ const SignInForm = () => {
   const isSigningIn = useSelector(AuthSelectors.getIsSigningIn);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const newInitValues = useMemo<SignInPayload>(() => {
     return {
@@ -64,9 +66,17 @@ const SignInForm = () => {
 
   const onFinish = useCallback(
     (values: SignInPayload) => {
-      dispatch(AuthAction.userSignIn(values.email, values.password));
+      dispatch(
+        AuthAction.userSignIn(
+          values.email,
+          values.password,
+          (id: string, session: string) => {
+            navigate(`/change-password?id=${id}&session=${session}`);
+          },
+        ),
+      );
     },
-    [dispatch],
+    [dispatch, navigate],
   );
 
   const handleForgotPassword = useCallback(() => {

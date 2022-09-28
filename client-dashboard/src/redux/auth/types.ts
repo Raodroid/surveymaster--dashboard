@@ -12,6 +12,7 @@ export interface AuthState {
   isConfirmingResetPassword: boolean;
   allRoles: Object;
   loginAt: null | Date;
+  currentScopes: any;
 
   currentUserId: string | null;
 
@@ -26,6 +27,7 @@ export interface AuthState {
 export interface SignInPayload {
   email: string;
   password: string;
+  callback?: (id?: string, session?: string) => void;
 }
 export interface VerifyAccountPayload {
   confirmationCode: string;

@@ -79,7 +79,7 @@ export function* signInUserWithEmailPassword(
   action: StandardAction<SignInPayload>,
 ) {
   const { payload } = action;
-  const { email, password } = payload as SignInPayload;
+  const { email, password, callback } = payload as SignInPayload;
   const i18n = getI18n();
   try {
     const data = yield call(CognitoService.signInByCognito, email, password);
@@ -102,11 +102,14 @@ export function* signInUserWithEmailPassword(
           id: ChallengeParameters.USER_ID_FOR_SRP,
           session: Session,
         }).toString();
-        history.push(
-          ChallengeName === AUTH_CHALLENGE.SMS_MFA
-            ? ROUTE_PATH.CONFIRM_SMS + '?' + params
-            : ROUTE_PATH.CHANGE_PASSWORD_CHALLENGE + '?' + params,
-        );
+        if (callback) {
+          callback(ChallengeParameters.USER_ID_FOR_SRP, Session);
+        }
+        // history.push(
+        //   ChallengeName === AUTH_CHALLENGE.SMS_MFA
+        //     ? ROUTE_PATH.CONFIRM_SMS + '?' + params
+        //     : ROUTE_PATH.CHANGE_PASSWORD_CHALLENGE + '?' + params,
+        // );
         break;
       }
       default: {
@@ -171,7 +174,6 @@ export function* signOut(action?: StandardAction<{ isChangeEmail?: boolean }>) {
     const idToken = yield select(AuthSelectors.getIdToken);
     if (idToken) {
       const loginAt = yield select(AuthSelectors.getLoginAt);
-      yield call(AuthService.logout, { loginTime: loginAt });
     }
     yield call(clearAxiosToken);
     yield put(userSignOutSuccess());
@@ -402,6 +404,10 @@ export function* userResendCode(action: StandardAction<string>) {
   }
 }
 
+export function* startStartupBackgroundTasks() {
+  yield all([put(AuthAction.fetchUserPool()), checkFetchProfile()]);
+}
+
 export default function* AuthSaga(): Generator {
   yield all([
     takeLatest(SIGNIN.START, signInUserWithEmailPassword),
@@ -414,5 +420,6 @@ export default function* AuthSaga(): Generator {
     takeLatest(GET_ALL_ROLES.START, getAllRole),
     takeLatest(CHALLENGE_REQUIRED_PASSWORD.START, userChangePassDefault),
     takeLatest(RESEND_CODE.START, userResendCode),
+    takeLatest(REHYDRATE, startStartupBackgroundTasks),
   ]);
 }

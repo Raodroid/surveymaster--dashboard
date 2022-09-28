@@ -55,8 +55,8 @@ export default class AuthSelectors {
 
   static getCurrentRoleIds = createSelector(AuthSelectors.getProfile, user => {
     if (!user) return [];
-    if (user && user.roles) {
-      return user.roles;
+    if (user && user.userRoles) {
+      return user.userRoles[0].roleId;
     }
     return [];
   });
