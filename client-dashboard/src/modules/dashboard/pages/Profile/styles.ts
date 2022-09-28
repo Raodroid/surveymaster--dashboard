@@ -1,7 +1,6 @@
-import { screenSize } from './../../../../enums/screenSize';
-import styled from 'styled-components';
-import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { Menu } from 'antd';
+import styled from 'styled-components';
+import { screenSize } from './../../../../enums/screenSize';
 
 export const FlexBox = styled.div`
   .flex {

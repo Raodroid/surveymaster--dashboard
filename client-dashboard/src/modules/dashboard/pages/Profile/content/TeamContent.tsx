@@ -2,7 +2,7 @@ import {
   DeleteFilled,
   EyeOutlined,
   SettingFilled,
-  UserDeleteOutlined
+  UserDeleteOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -14,7 +14,7 @@ import {
   InputRef,
   Menu,
   Pagination,
-  Table
+  Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
@@ -33,12 +33,13 @@ import { useDebounce } from 'utils';
 import {
   DropDownMenuStyled,
   TableWrapperStyled,
-  TeamContentStyled
+  TeamContentStyled,
 } from '../styles';
 import {
   ConfirmDeactivateUserModal,
-  ConfirmRestoreUserModal, InviteMemberModal,
-  ResetUserPasswordModal
+  ConfirmRestoreUserModal,
+  InviteMemberModal,
+  ResetUserPasswordModal,
 } from './modals';
 
 interface DataType {

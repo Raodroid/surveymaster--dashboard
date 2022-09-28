@@ -1,5 +1,10 @@
 import { Radio } from 'antd';
-import { PROFILE_TAB, ROUTE_PATH } from 'enums';
+import {
+  PROFILE_TAB,
+  ROUTE_PATH,
+  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
+} from 'enums';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
@@ -10,37 +15,44 @@ import UserForm from './form/UserForm';
 
 interface SiderProps {
   tab: string;
-  setTab: (e: any) => void;
 }
 
 function Sider(props: SiderProps) {
-  const { tab, setTab } = props;
+  const { tab } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const profile = useSelector(AuthSelectors.getProfile);
+  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROFILE;
+  const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
+  const isAdminRole = useMemo(() => {
+    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
+  }, [currentRoles]);
 
-  const handleTabChange = (e: any) => {
-    setTab(e.target.value);
-    if (tab === PROFILE_TAB.USER)
-      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM);
-    else navigate(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.ROOT);
-  };
   return (
     <SiderWrapper className="sider flex">
-      {profile && profile?.userRoles?.find(e => e.roleId === 1) && (
+      {isAdminRole && (
         <div className="tabs flex">
-          <Radio.Group value={tab} onChange={handleTabChange}>
-            <Radio.Button className="flex-center" value="user">
+          <Radio.Group value={tab}>
+            <Radio.Button
+              className="flex-center"
+              onChange={() => navigate(routePath.ROOT)}
+              value={PROFILE_TAB.USER}
+            >
               {t('titles.user')}
             </Radio.Button>
-            <Radio.Button className="flex-center" value="team">
+            <Radio.Button
+              className="flex-center"
+              onChange={() => navigate(routePath.TEAM)}
+              value={PROFILE_TAB.TEAM}
+            >
               {t('titles.team')}
             </Radio.Button>
           </Radio.Group>
         </div>
       )}
 
-      <div className="form">{tab === 'user' ? <UserForm /> : <TeamForm />}</div>
+      <div className="form">
+        {PROFILE_TAB.USER ? <UserForm /> : <TeamForm />}
+      </div>
     </SiderWrapper>
   );
 }
