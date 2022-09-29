@@ -54,6 +54,7 @@ function ConfirmRestoreUserModal(props: ConfirmDeactivate) {
         type="primary"
         className="secondary-btn"
         onClick={handleRestoreUser}
+        loading={mutationRestoreUser.isLoading}
       >
         OK
       </Button>

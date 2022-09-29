@@ -395,17 +395,8 @@ export const TableWrapperStyled = styled.div`
   .ant-table-body {
     overflow-y: auto !important;
   }
-  .ant-table-tbody > tr:nth-child(n) {
-    background: #f5fafe;
-  }
-  .ant-table-tbody > tr:nth-child(2n) {
-    background: white;
-  }
+
   .ant-table-thead {
-    .ant-checkbox-indeterminate .ant-checkbox-inner::after {
-      transform: translate(-50%, -50%) scale(1) !important;
-      background-image: none !important;
-    }
     .ant-table-cell {
       border: none;
     }

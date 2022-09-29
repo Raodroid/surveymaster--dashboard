@@ -53,6 +53,7 @@ function ConfirmDeactivateUserModal(props: ConfirmDeactivate) {
         type="primary"
         className="secondary-btn"
         onClick={handleDeactivateUser}
+        loading={mutationDeactivateUser.isLoading}
       >
         OK
       </Button>

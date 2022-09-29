@@ -138,7 +138,12 @@ function SetUpPreferencesModal(props: ProfileModal) {
                   },
                 ]}
               />
-              <Button type="primary" htmlType="submit" className="submit-btn">
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="submit-btn"
+                loading={mutationSetupEmailNoti.isLoading}
+              >
                 {t('common.saveChange')}
               </Button>
             </Form>
