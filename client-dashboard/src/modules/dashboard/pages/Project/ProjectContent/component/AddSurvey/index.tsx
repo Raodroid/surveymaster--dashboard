@@ -1,16 +1,17 @@
 import { Form } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
-import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
+import { useState } from 'react';
 import { useParams } from 'react-router';
 import ProjectHeader from '../Header';
-import DuplicateExisting from './DuplicateExisting';
 import { SurveyContentWrapper } from './styles';
+import SurveyCustomSelect from './SurveyCustomSelect';
 
 function AddSurvey() {
   const params = useParams();
+  const [newSurvey, setNewSurvey] = useState(false);
   const routes = [
     {
       name: params.id,
@@ -46,24 +47,23 @@ function AddSurvey() {
                 <div className="information-wrapper flex">
                   <div className="main-information">
                     <div className="title">Main information</div>
-                    <ControlledInput
-                      inputType={INPUT_TYPES.SELECT}
-                      type={'text'}
-                      name="surveyTemplate"
-                      label="Survey Template"
-                      options={[
-                        { label: 'New Survey', value: 'newSurvey' },
-                        {
-                          label: <DuplicateExisting />,
-                          value: 'duplicateExistingSurvey',
-                        },
-                        {
-                          label: 'Import from JSON file',
-                          value: 'importFromJSONFile',
-                        },
-                      ]}
-                      onSelect={e => e.preventDefault()}
-                    />
+                    <SurveyCustomSelect />
+                    {
+                      <>
+                        <ControlledInput
+                          type="text"
+                          inputType={INPUT_TYPES.INPUT}
+                          label="Survey Title"
+                          name="surveyTitile"
+                        />
+                        <ControlledInput
+                          type="text"
+                          inputType={INPUT_TYPES.INPUT}
+                          label="Survey Remarks"
+                          name="surveyRemarks"
+                        />
+                      </>
+                    }
                   </div>
                   <div className="survey-parameters">
                     <div className="title">Survey Parameters</div>
@@ -71,7 +71,6 @@ function AddSurvey() {
                       inputType={INPUT_TYPES.INPUT}
                       type={'text'}
                       name="id"
-                      // label={t('common.firstName')}
                       label="ID"
                     />
                   </div>
