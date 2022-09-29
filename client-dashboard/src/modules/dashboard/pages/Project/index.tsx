@@ -1,9 +1,10 @@
 import { ROUTE_PATH } from 'enums';
+import { useQuery } from 'react-query';
 import { Navigate, Route, Routes } from 'react-router';
+import APIService from 'services/survey-master-service/base.service';
 import ProjectContent from './ProjectContent';
 import AddSurvey from './ProjectContent/component/AddSurvey';
-import DonorV2 from './ProjectContent/component/DonorV2';
-import ProjectHeader from './ProjectContent/component/Header';
+import DetailSurvey from './ProjectContent/component/DetailSurvey';
 import AddProject from './ProjectContent/component/NewProject';
 import Survey from './ProjectContent/component/Survey';
 import { ProjectContentWrapper } from './ProjectContent/style';
@@ -12,7 +13,18 @@ import { ProjectWrapper } from './style';
 
 const Project = () => {
   const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
-  const subRoute = (route: string) => route.replace(routePath.HOME, '');
+  const subRoute = (route: string) => route.replace(routePath.ROOT, '');
+
+  const { data } = useQuery('data', () =>
+    APIService.get('/projects', {
+      params: {
+        page: 1,
+        take: 10,
+        q: '',
+        isDeleted: false,
+      },
+    }),
+  );
 
   return (
     <ProjectWrapper>
@@ -30,9 +42,12 @@ const Project = () => {
             path={subRoute(routePath.ADD_NEW_PROJECT)}
             element={<AddProject />}
           />
-          <Route path={subRoute(routePath.DONOR_V2)} element={<DonorV2 />} />
+          <Route
+            path={subRoute(routePath.DETAIL_SURVEY)}
+            element={<DetailSurvey />}
+          />
 
-          <Route path="*" element={<Navigate to={ROUTE_PATH.HOME} />} />
+          <Route path="*" element={<Navigate to={routePath.ROOT} />} />
         </Routes>
       </ProjectContentWrapper>
     </ProjectWrapper>

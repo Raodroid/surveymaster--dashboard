@@ -2,12 +2,14 @@ import { Button } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
 import React, { useState } from 'react';
+import { useLocation } from 'react-router';
 import { useNavigate } from 'react-router';
-import { ProjectSiderWrapper } from './style';
+import { AddNewProjectBtn, ProjectSiderWrapper } from './style';
 import Title from './Title';
 
 const ProjectSider = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const list = [
     {
       title: 'Microbiome Donor Programme (AMD)',
@@ -33,20 +35,25 @@ const ProjectSider = () => {
           <Title
             title={e.title}
             routePath={
-              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME + '/' + e.routePath
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/' + e.routePath
             }
           />
         ))}
       </div>
       <div className="add-new-project-btn-wrapper">
-        <Button
+        <AddNewProjectBtn
           onClick={() =>
             navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_PROJECT)
           }
+          type="default"
+          className="new-project-btn"
+          isAddNewProjectPage={pathname.includes(
+            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_PROJECT,
+          )}
         >
           <PlusIcon />
           Add New Project
-        </Button>
+        </AddNewProjectBtn>
       </div>
     </ProjectSiderWrapper>
   );

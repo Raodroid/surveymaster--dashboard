@@ -10,11 +10,11 @@ export const ROUTE_PATH = {
   DASHBOARD_PATHS: {
     HOME: '/app',
     PROJECT: {
-      HOME: '/app/project',
+      ROOT: '/app/project',
       SURVEY: '/app/project/:id',
       ADD_NEW_SURVEY: '/app/project/:id/add-survey',
       ADD_NEW_PROJECT: '/app/project/add-project',
-      DONOR_V2: '/app/project/:id/microbiome-donor-v2',
+      DETAIL_SURVEY: '/app/project/:id/:detailId',
     },
     PROFILE: '/app/profile',
     QUESTION_BANK: {

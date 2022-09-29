@@ -18,7 +18,7 @@ const dataSource = [
   {
     key: '2',
     id: '113-8392',
-    projectTitle: 'Microbiome Donor Programme (AMD)',
+    projectTitle: 'Donor V2',
     nOfSurveys: '56',
     personInCharge: 'Dorothy Hernandez',
     dateOfCreation: '13.08.2022',
@@ -54,15 +54,18 @@ const columns = [
   },
 ];
 
-function DonorV2() {
+function DetailSurvey() {
   const params = useParams();
   const routes = [
     {
       name: params.id,
-      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME + '/' + params.id,
+      href:
+        params &&
+        params.id &&
+        ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(':id', params.id),
     },
     {
-      name: 'Microbiome Donor Version 2',
+      name: params.detailId,
       href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY.replace(
         ':id',
         params.id || '',
@@ -71,13 +74,13 @@ function DonorV2() {
   ];
 
   return (
-    <div>
+    <>
       <ProjectHeader routes={routes} />
       <ProjectTableWrapper>
         <Table dataSource={dataSource} columns={columns} />
       </ProjectTableWrapper>
-    </div>
+    </>
   );
 }
 
-export default DonorV2;
+export default DetailSurvey;

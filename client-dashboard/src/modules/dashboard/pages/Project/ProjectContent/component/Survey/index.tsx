@@ -2,9 +2,10 @@ import { Table } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { CloseIcon } from 'icons';
 import React from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { ProjectTableWrapper } from '../../style';
 import ProjectHeader from '../Header';
+import { SurveyWrapper } from './style';
 
 const dataSource = [
   {
@@ -18,7 +19,7 @@ const dataSource = [
   {
     key: '2',
     id: '113-8392',
-    projectTitle: 'Microbiome Donor Programme (AMD)',
+    projectTitle: 'Donor V2',
     nOfSurveys: '56',
     personInCharge: 'Dorothy Hernandez',
     dateOfCreation: '13.08.2022',
@@ -56,20 +57,35 @@ const columns = [
 
 function Survey() {
   const params = useParams();
+  const navigate = useNavigate();
   const routes = [
     {
       name: params.id,
-      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME + params.id,
+      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + params.id,
     },
   ];
 
+  const onRow = (record, rowIndex) => {
+    return {
+      onClick: () =>
+        params &&
+        params.id &&
+        navigate(
+          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.replace(
+            ':id',
+            params.id,
+          ).replace(':detailId', record.projectTitle),
+        ),
+    };
+  };
+
   return (
-    <div>
+    <SurveyWrapper>
       <ProjectHeader routes={routes} />
       <ProjectTableWrapper>
-        <Table dataSource={dataSource} columns={columns} />
+        <Table dataSource={dataSource} columns={columns} onRow={onRow} />
       </ProjectTableWrapper>
-    </div>
+    </SurveyWrapper>
   );
 }
 

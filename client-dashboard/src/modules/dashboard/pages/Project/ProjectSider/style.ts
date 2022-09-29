@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { BaseSectionWrapper } from '../../../../common/styles';
 import { screenSize } from '../../../../../enums';
 import templateVariable from 'app/template-variables.module.scss';
+import { Button } from 'antd';
 
 export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
   width: 290px;
@@ -31,19 +32,9 @@ export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
         color: ${templateVariable.text_primary_color};
       }
     }
-    svg {
-      background: var(--ant-primary-color);
-      path {
-        fill: white;
-      }
-    }
   }
-  svg {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    padding: 3px;
-    margin-right: 12px;
+  .new-project-btn {
+    gap: 12px;
   }
 `;
 
@@ -107,13 +98,7 @@ export const TitleStyled = styled(FlexBox)`
     .ant-btn {
       width: 100%;
       min-height: 32px;
-
-      svg {
-        background: white;
-        path {
-          fill: var(--ant-primary-color);
-        }
-      }
+      gap: 12px;
 
       &:last-child {
         svg {
@@ -136,5 +121,14 @@ export const TitleStyled = styled(FlexBox)`
   }
   .primary span {
     color: white;
+  }
+`;
+
+export const AddNewProjectBtn = styled(Button)<{
+  isAddNewProjectPage: boolean;
+}>`
+  background: ${p => !p.isAddNewProjectPage && 'transparent'};
+  &:focus {
+    background: var(--ant-primary-color-deprecated-f-12);
   }
 `;

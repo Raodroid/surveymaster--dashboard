@@ -17,17 +17,20 @@ export const SurveyContentWrapper = styled.div`
     align-items: flex-start;
   }
 
-  .main-information {
-    flex: 2;
-  }
-  .survey-parameters {
-    flex: 1;
+  .title {
+    font-weight: bold;
+    margin-bottom: 20px;
   }
 
-  .separate {
-    width: 1px;
-    height: 100%;
-    background: #f3f3f3;
+  .main-information {
+    flex: 2;
+    padding-right: 40px;
+    border-right: 1px solid #f3eef3;
+  }
+
+  .survey-parameters {
+    flex: 1;
+    margin-left: 40px;
   }
 
   .footer {

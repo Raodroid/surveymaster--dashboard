@@ -1,13 +1,10 @@
 import { Button } from 'antd';
 import { ROUTE_PATH } from 'enums';
-import React, { useEffect, memo } from 'react';
-import { useNavigate } from 'react-router';
-import { TitleStyled } from './style';
-import { useState } from 'react';
-import { useLocation } from 'react-router';
-import { MenuIcon, PlusIcon } from 'icons';
-import HamburgerAnimation from 'icons/HamburgerAnimation';
+import { PlusIcon } from 'icons';
 import { ListIcon } from 'icons/ListIcon';
+import { memo, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { TitleStyled } from './style';
 
 interface TitleProps {
   title: string;
@@ -18,23 +15,18 @@ function Title(props: TitleProps) {
   const { title, routePath } = props;
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [active, setActive] = useState(
-    pathname && pathname.includes(routePath),
-  );
+
+  const active = useMemo(() => {
+    return pathname && pathname.includes(routePath);
+  }, [pathname, routePath]);
 
   const handleTitleClick = () => {
     if (pathname.includes(routePath)) {
-      setActive(false);
-      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME);
+      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
     } else {
-      setActive(true);
       navigate(routePath);
     }
   };
-
-  useEffect(() => {
-    if (pathname && !pathname.includes(routePath)) setActive(false);
-  }, [pathname, routePath, setActive]);
 
   return (
     <TitleStyled>

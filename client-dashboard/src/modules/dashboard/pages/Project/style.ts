@@ -34,18 +34,8 @@ export const ProjectWrapper = styled(Content)`
     overflow-y: auto !important;
   }
   .ant-table-thead {
-    .ant-checkbox-indeterminate .ant-checkbox-inner::after {
-      transform: translate(-50%, -50%) scale(1) !important;
-      background-image: none !important;
-    }
     .ant-table-cell {
       border: none;
     }
-  }
-  .ant-table-tbody > tr:nth-child(n) {
-    background: #f5fafe;
-  }
-  .ant-table-tbody > tr:nth-child(2n) {
-    background: white;
   }
 `;

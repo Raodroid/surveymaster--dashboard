@@ -59,17 +59,17 @@ function AddProject() {
   const routes = [
     {
       name: 'Add New Project',
-      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME + params.id,
+      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + params.id,
     },
   ];
 
   return (
-    <div>
+    <>
       <ProjectHeader routes={routes} />
       <ProjectTableWrapper>
         <Table dataSource={dataSource} columns={columns} />
       </ProjectTableWrapper>
-    </div>
+    </>
   );
 }
 

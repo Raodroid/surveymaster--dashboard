@@ -35,15 +35,22 @@ export const HeaderStyled = styled.div`
   .breadcrumb {
     border-top: none;
   }
+
+  .breadcrumb-item span {
+    color: var(--text-color);
+  }
+
+  svg {
+    color: var(--ant-primary-color);
+  }
 `;
 
 export const ProjectTableWrapper = styled.div`
   padding: 20px 12px 16px;
   height: 100%;
   overflow-y: auto;
-  .ant-table-tbody {
-    .ant-table-cell:last-child {
-      text-align: center;
-    }
+
+  .ant-table-cell:last-child {
+    text-align: center;
   }
 `;

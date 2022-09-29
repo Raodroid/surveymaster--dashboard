@@ -1,6 +1,8 @@
 import { Table } from 'antd';
+import { ROUTE_PATH } from 'enums';
 import { CloseIcon } from 'icons';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ProjectTableWrapper } from '../style';
 
 const dataSource = [
@@ -8,6 +10,7 @@ const dataSource = [
     key: '1',
     id: '113-8392',
     projectTitle: 'Microbiome Donor Programme (AMD)',
+    route: 'Microbiome-Donor-Programme (AMD)',
     nOfSurveys: '56',
     personInCharge: 'Dorothy Hernandez',
     dateOfCreation: '13.08.2022',
@@ -16,6 +19,7 @@ const dataSource = [
     key: '2',
     id: '113-8392',
     projectTitle: 'Microbiome Donor Programme (AMD)',
+    route: 'Microbiome-Donor-Programme-(AMD)',
     nOfSurveys: '56',
     personInCharge: 'Dorothy Hernandez',
     dateOfCreation: '13.08.2022',
@@ -32,6 +36,16 @@ const columns = [
     title: 'Project Title',
     dataIndex: 'projectTitle',
     key: 'projectTitle',
+    render: (text: string, record: any) => (
+      <Link
+        to={ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(
+          ':id',
+          record.route,
+        )}
+      >
+        {text}
+      </Link>
+    ),
   },
   {
     title: 'N of Surveys',
@@ -52,7 +66,7 @@ const columns = [
     title: 'Actions',
     dataIndex: 'actions',
     key: 'actions',
-    render: (_, record: any) => <CloseIcon />,
+    render: (_, record: any) => <div className="flex"></div>,
   },
 ];
 
