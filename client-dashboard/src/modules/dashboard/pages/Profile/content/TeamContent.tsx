@@ -21,7 +21,6 @@ import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
-import { GetTeamMembers } from 'interfaces';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +28,7 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
+import { BooleanEnum } from 'type';
 import { useDebounce } from 'utils';
 import {
   DropDownMenuStyled,
@@ -90,6 +90,8 @@ function TeamContent() {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
 
+  console.log(isDeleted);
+
   useEffect(() => {
     if (!searchDebounce) setFilter('');
   }, [searchDebounce]);
@@ -100,7 +102,6 @@ function TeamContent() {
       take: 10,
       roles: Object.values(allRoles).map(elm => elm.id),
       isDeleted: isDeleted,
-      isActivated: true,
       q: filter,
     }),
     [filter, page, isDeleted, allRoles],

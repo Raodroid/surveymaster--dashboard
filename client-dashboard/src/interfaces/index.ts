@@ -1,3 +1,5 @@
+import { BooleanEnum } from 'type';
+
 export interface Test {
   a: string;
 }
@@ -15,12 +17,15 @@ export interface UserUpdatedDto {
   displayName?: string; // new field
 }
 
-export interface GetTeamMembers {
-  page: number;
-  take: number;
-  roles: number[];
-  isDeleted: boolean;
+export interface IGetParams {
   q?: string;
+  take?: number;
+  page?: number;
+  ids?: number;
+  createdFrom?: string;
+  createdTo?: string;
+  isDeleted?: BooleanEnum | boolean;
+  selectAll?: BooleanEnum;
 }
 
 export interface InviteMember {

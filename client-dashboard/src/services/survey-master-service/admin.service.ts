@@ -1,8 +1,8 @@
-import { GetTeamMembers, InviteMember, UpdateMember } from 'interfaces';
+import { IGetParams, InviteMember, UpdateMember } from 'interfaces';
 import APIService from './base.service';
 
 export default class AdminService {
-  static getTeamMembers(params: GetTeamMembers): Promise<any> {
+  static getTeamMembers(params: IGetParams): Promise<any> {
     return APIService.get(`users`, { params: params });
   }
 
