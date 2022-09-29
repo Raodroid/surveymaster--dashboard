@@ -1,5 +1,5 @@
 import React, { lazy, useEffect, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 
 import { useScrollbarContext } from '../scrollbarContext/useScrollBar';
 import { ProtectedRoutes } from './protected.route';
@@ -42,7 +42,10 @@ const AppRoutes = () => {
         <Routes>
           <Route path={'/app'} element={<ProtectedRoutes />}>
             <Route index element={<Home />} />
-            <Route path={'/app/project'} element={<Project />} />
+            <Route
+              path={ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME + '/*'}
+              element={<Project />}
+            />
             <Route
               path={ROUTE_PATH.DASHBOARD_PATHS.PROFILE}
               element={<Profile />}

@@ -5,7 +5,7 @@ import BaseMenu from '../BaseMenu';
 export const mainMenuItem = [
   {
     label: 'Projects',
-    key: ROUTE_PATH.DASHBOARD_PATHS.PROJECT,
+    key: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.HOME,
   },
   {
     label: 'Questions Bank',

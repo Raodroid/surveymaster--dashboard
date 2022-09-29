@@ -9,7 +9,13 @@ export const ROUTE_PATH = {
   CHANGE_PASSWORD_CHALLENGE: '/change-password',
   DASHBOARD_PATHS: {
     HOME: '/app',
-    PROJECT: '/app/project',
+    PROJECT: {
+      HOME: '/app/project',
+      SURVEY: '/app/project/:id',
+      ADD_NEW_SURVEY: '/app/project/:id/add-survey',
+      ADD_NEW_PROJECT: '/app/project/add-project',
+      DONOR_V2: '/app/project/:id/microbiome-donor-v2',
+    },
     PROFILE: '/app/profile',
     QUESTION_BANK: {
       ROOT: '/app/question-bank',
