@@ -8,22 +8,6 @@ export default class UserService {
   }
 
   static updateProfile(payload: UserUpdatedDto): Promise<any> {
-    Object.assign(payload, {
-      phonePrefix: '',
-      roles: [1],
-      userRoles: [{ roleId: 1 }],
-      emailVerified: true,
-      smsVerified: true,
-    });
-    console.log({
-      ...payload,
-      phonePrefix: '',
-      roles: [1],
-      userRoles: [{ roleId: 1 }],
-      emailVerified: true,
-      smsVerified: true,
-    });
-    // return APIService.put(`/users/${payload.id}`, payload);
     return APIService.put(`/auth/me`, payload);
   }
 

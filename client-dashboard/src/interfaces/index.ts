@@ -13,7 +13,6 @@ export interface UserUpdatedDto {
   phone?: string;
   avatar?: string;
   displayName?: string; // new field
-  scientificDegree?: string; // new field
 }
 
 export interface GetTeamMembers {

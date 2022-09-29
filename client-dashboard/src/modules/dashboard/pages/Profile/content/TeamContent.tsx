@@ -106,13 +106,9 @@ function TeamContent() {
     [filter, page, isDeleted, allRoles],
   );
 
-  function getTeamMembers(params: GetTeamMembers): Promise<any> {
-    return AdminService.getTeamMembers(params);
-  }
-
   const { data: teamMembers, isLoading } = useQuery(
     ['getTeamMembers', filter, isDeleted, page],
-    () => getTeamMembers(baseParams),
+    () => AdminService.getTeamMembers(baseParams),
     {
       refetchOnWindowFocus: false,
     },

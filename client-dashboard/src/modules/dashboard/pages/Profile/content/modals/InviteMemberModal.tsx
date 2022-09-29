@@ -129,12 +129,6 @@ function InviteMemberModal(props: InviteModal) {
                   disabled={edit}
                   label={t('common.email')}
                 />
-                {/* <ControlledInput
-                  inputType={INPUT_TYPES.INPUT}
-                  type={'text'}
-                  name="authentication"
-                  label={t('common.authentication')}
-                /> */}
               </div>
               <Button
                 type="primary"
