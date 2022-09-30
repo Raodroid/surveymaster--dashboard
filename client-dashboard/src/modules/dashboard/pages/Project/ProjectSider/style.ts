@@ -38,20 +38,9 @@ export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
   }
 `;
 
-const FlexBox = styled.div`
-  .flex {
-    display: flex;
-    align-items: center;
-  }
 
-  .flex-center {
-    display: flex;
-    algin-items: center;
-    justify-content: center;
-  }
-`;
 
-export const TitleStyled = styled(FlexBox)`
+export const TitleStyled = styled.div`
   .ant-btn {
     justify-content: flex-start;
     box-shadow: none;
@@ -110,6 +99,16 @@ export const TitleStyled = styled(FlexBox)`
         &:focus {
           background: #fbf0f7;
         }
+      }
+    }
+    .ant-btn-default {
+      font-weight: 600;
+      span {
+        margin: 0;
+      }
+      svg {
+        width: 16px;
+        height: 16px;
       }
     }
   }

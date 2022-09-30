@@ -14,7 +14,10 @@ export const ROUTE_PATH = {
       SURVEY: '/app/project/:id',
       ADD_NEW_SURVEY: '/app/project/:id/add-survey',
       ADD_NEW_PROJECT: '/app/project/add-project',
-      DETAIL_SURVEY: '/app/project/:id/:detailId',
+      DETAIL_SURVEY: {
+        ROOT: '/app/project/:id/:detailId',
+        EDIT: '/app/project/:id/:detailId/edit',
+      },
     },
     PROFILE: '/app/profile',
     QUESTION_BANK: {

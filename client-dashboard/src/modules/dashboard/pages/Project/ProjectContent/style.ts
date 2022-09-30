@@ -20,11 +20,20 @@ export const FlexBox = styled(BaseSectionWrapper)`
     display: flex;
     flex-direction: column;
   }
+  .flex-aligns-start {
+    display: flex;
+    align-items: flex-start;
+  }
 `;
 
 export const ProjectContentWrapper = styled(FlexBox)`
   flex: 1;
   padding: 0;
+
+  .title {
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
 `;
 
 export const HeaderStyled = styled.div`

@@ -6,12 +6,15 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import { useState } from 'react';
 import { useParams } from 'react-router';
 import ProjectHeader from '../Header';
+import QuestionList from './QuestionList';
 import { SurveyContentWrapper } from './styles';
 import SurveyCustomSelect from './SurveyCustomSelect';
 
 function AddSurvey() {
   const params = useParams();
-  const [newSurvey, setNewSurvey] = useState(false);
+
+  const [templateValue, setTemplateValue] = useState('Select');
+
   const routes = [
     {
       name: params.id,
@@ -75,9 +78,7 @@ function AddSurvey() {
                     />
                   </div>
                 </div>
-                <div className="question-list">
-                  <div className="title"></div>
-                </div>
+                <QuestionList />
               </div>
               <div className="footer"></div>
             </Form>

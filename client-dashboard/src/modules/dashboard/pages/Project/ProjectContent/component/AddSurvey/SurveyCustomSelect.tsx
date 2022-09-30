@@ -3,6 +3,8 @@ import { useState } from 'react';
 import DuplicateExistingTable from './DuplicateExistingTable';
 import { CustomPopUp, SurveyCustomSelectWrapper } from './styles';
 
+export interface AddNewSurveySelect {}
+
 function SurveyCustomSelect() {
   const [show, setShow] = useState(false);
   const [checked, setChecked] = useState('');
@@ -30,6 +32,7 @@ function SurveyCustomSelect() {
 
   return (
     <SurveyCustomSelectWrapper>
+      <label>Survey Template</label>
       <Select
         popupClassName="custom-select-popup"
         onClick={() => {

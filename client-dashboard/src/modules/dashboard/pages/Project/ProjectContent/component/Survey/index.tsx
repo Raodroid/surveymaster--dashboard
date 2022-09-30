@@ -71,7 +71,7 @@ function Survey() {
         params &&
         params.id &&
         navigate(
-          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.replace(
+          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT.replace(
             ':id',
             params.id,
           ).replace(':detailId', record.projectTitle),

@@ -4,14 +4,18 @@ import styled from 'styled-components';
 
 export const SurveyContentWrapper = styled.div`
   flex: 1;
-  padding: 40px 40px 0;
+  overflow: hidden;
+  padding: 40px 0 0;
 
   .form {
     flex: 1;
+    overflow: hidden;
   }
 
   .body {
     flex: 1;
+    overflow-y: auto;
+    padding: 0 40px 20px;
   }
 
   .information-wrapper {
@@ -20,11 +24,6 @@ export const SurveyContentWrapper = styled.div`
     label {
       padding-left: 8px;
     }
-  }
-
-  .title {
-    font-weight: bold;
-    margin-bottom: 20px;
   }
 
   .main-information {
@@ -42,16 +41,21 @@ export const SurveyContentWrapper = styled.div`
     height: 76px;
     padding: 20px 0;
     border-top: 1px solid #f3eef3;
+    margin: 0 40px;
   }
 `;
 
 export const SurveyCustomSelectWrapper = styled.div`
   position: relative;
+  margin-bottom: 20px;
   .ant-select {
     width: 100%;
+    margin-top: 8px;
   }
 
-  .ant-radio-wrapper {
+  > label {
+    font-size: 12px;
+    font-weight: 600;
   }
 `;
 
@@ -77,6 +81,8 @@ export const CustomPopUp = styled.div`
   .ant-radio-wrapper {
     > span:last-child {
       width: 100%;
+      font-size: 12px;
+      font-weight: 600;
     }
   }
   .ant-table-wrapper {
@@ -88,5 +94,20 @@ export const CustomPopUp = styled.div`
   }
   .duplicate-selector {
     margin-top: 12px;
+  }
+`;
+
+export const QuestionListWrapper = styled.div`
+  margin-top: 28px;
+
+  .btn-wrapper {
+    gap: 20px;
+
+    .ant-btn {
+      flex: 1;
+    }
+    .ant-btn-default {
+      font-weight: 600;
+    }
   }
 `;

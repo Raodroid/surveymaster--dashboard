@@ -1,7 +1,7 @@
+import { UnorderedListOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
-import { ListIcon } from 'icons/ListIcon';
 import { memo, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { TitleStyled } from './style';
@@ -50,7 +50,7 @@ function Title(props: TitleProps) {
           className="flex-center"
           onClick={() => navigate(`${routePath}`)}
         >
-          <ListIcon /> Survey List
+          <UnorderedListOutlined /> Survey List
         </Button>
       </div>
     </TitleStyled>

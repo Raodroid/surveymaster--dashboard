@@ -43,7 +43,7 @@ const Project = () => {
             element={<AddProject />}
           />
           <Route
-            path={subRoute(routePath.DETAIL_SURVEY)}
+            path={subRoute(routePath.DETAIL_SURVEY.ROOT + '/*')}
             element={<DetailSurvey />}
           />
 
