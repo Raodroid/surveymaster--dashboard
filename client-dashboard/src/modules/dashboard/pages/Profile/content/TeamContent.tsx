@@ -19,8 +19,12 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
+import { SCOPE_CONFIG } from 'enums/user';
 import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
+import useCheckScopeEntity, {
+  ScopeActionArray,
+} from 'modules/common/hoc/useCheckScopeEntity';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -90,7 +94,16 @@ function TeamContent() {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
 
-  console.log(isDeleted);
+  const productActionNeedToCheckedPermission: ScopeActionArray[] = [
+    { action: SCOPE_CONFIG.ACTION.CREATE },
+    { action: SCOPE_CONFIG.ACTION.UPDATE },
+    { action: SCOPE_CONFIG.ACTION.DELETE },
+    { action: SCOPE_CONFIG.ACTION.RESTORE },
+  ];
+  const [canCreate, canEdit, canDelete, canRestore] = useCheckScopeEntity(
+    SCOPE_CONFIG.ENTITY.USERS,
+    productActionNeedToCheckedPermission,
+  );
 
   useEffect(() => {
     if (!searchDebounce) setFilter('');
@@ -161,17 +174,19 @@ function TeamContent() {
           <ThreeDotsDropdown
             overlay={
               <DropDownMenuStyled>
-                <Menu.Item
-                  key="editPreferences"
-                  disabled={!isAdminRole}
-                  onClick={() => {
-                    handleEditPreferences(record.key);
-                  }}
-                >
-                  <SettingFilled className="dropdown-icon" />{' '}
-                  {t('common.editPreferences')}
-                </Menu.Item>
-                {profile && record.key !== profile.id && (
+                {!isAdminRole && canEdit && (
+                  <Menu.Item
+                    key="editPreferences"
+                    disabled={!isAdminRole}
+                    onClick={() => {
+                      handleEditPreferences(record.key);
+                    }}
+                  >
+                    <SettingFilled className="dropdown-icon" />{' '}
+                    {t('common.editPreferences')}
+                  </Menu.Item>
+                )}
+                {profile && record.key !== profile.id && canEdit && (
                   <Menu.Item
                     key="resetUserPassword"
                     disabled={!isAdminRole}
@@ -183,9 +198,10 @@ function TeamContent() {
                     {t('common.resetPassword')}
                   </Menu.Item>
                 )}
-                {(isDeleted || !record.deleteAt) &&
+                {!record.deleteAt &&
                   profile &&
-                  profile.id !== record.key && (
+                  profile.id !== record.key &&
+                  canDelete && (
                     <Menu.Item
                       key="deactivateUser"
                       disabled={!isAdminRole}
@@ -195,7 +211,7 @@ function TeamContent() {
                       {t('common.deactivateUser')}
                     </Menu.Item>
                   )}
-                {record.deleteAt && (
+                {record.deleteAt && canRestore && (
                   <Menu.Item
                     key="restore"
                     disabled={!isAdminRole}
@@ -215,7 +231,7 @@ function TeamContent() {
         ),
       },
     ],
-    [profile, t, isDeleted, isAdminRole],
+    [profile, t, isAdminRole, canEdit, canRestore, canDelete],
   );
 
   const data: DataType[] = teamMembers
@@ -276,13 +292,15 @@ function TeamContent() {
           >
             {t('common.showInactivateUsers')}
           </Checkbox>
-          <Button
-            type="primary"
-            disabled={!isAdminRole}
-            onClick={() => setShowInviteModal(true)}
-          >
-            {t('common.inviteMember')}
-          </Button>
+          {canCreate && (
+            <Button
+              type="primary"
+              disabled={!isAdminRole}
+              onClick={() => setShowInviteModal(true)}
+            >
+              {t('common.inviteMember')}
+            </Button>
+          )}
         </div>
 
         <Divider />

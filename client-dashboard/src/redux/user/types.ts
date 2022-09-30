@@ -30,6 +30,7 @@ export interface Role {
   id: number;
   name: string;
   scopes?: Scope[];
+  scope?: any;
 }
 
 export interface UserPayload {

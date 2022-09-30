@@ -375,12 +375,13 @@
     "continueWithGoogle": "Continue with Google"
   },
   "questionType": {
-    "MULTIPLE_CHOICE" : "Multiple Choice",
+    "MULTIPLE_CHOICE": "Multiple Choice",
     "RADIO_BUTTONS": "Radio Button",
     "PHOTO": "Photo",
     "DATE_PICKER": "Date Picker",
     "TIME_PICKER": "Time Picker",
     "SLIDER": "Slider",
     "TEXT_ENTRY": "Text Entry"
-  }
+  },
+  "sign": "Lost your phone? Left yourself logged in on a public computer? Need a way to sign out everywhere except your current browser? This is for you."
 }

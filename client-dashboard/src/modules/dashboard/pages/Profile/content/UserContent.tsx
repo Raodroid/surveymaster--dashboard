@@ -53,11 +53,7 @@ function UserContent() {
         <div className="padding-24 flex-space-between">
           <div className="wrapper">
             <span className="title">{t('common.signOutAllOtherSessions')}</span>
-            <p>
-              Lost your phone? Left yourself logged in on a public computer?
-              Need a way to sign out everywhere except your current browser?
-              This is for you.
-            </p>
+            <p>{t('sign')}</p>
           </div>
           <div className="wrapper flex-end">
             <Button
