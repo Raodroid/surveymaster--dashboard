@@ -4,6 +4,9 @@ import React, {
   FC,
   SetStateAction,
   useCallback,
+  useContext,
+  useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -14,9 +17,48 @@ import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '../../../../../common/input/type';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { transformEnumToOption } from 'utils';
-import { QuestionType } from '../../../../../../type';
+import {
+  GetListQuestionDto,
+  IQuestionCategory,
+  QuestionType,
+} from '../../../../../../type';
 import { ArrowDown, FilterOutlined, RollbackOutlined } from 'icons';
+import { CategoryDetailContext } from '../index';
+import { onError, transformEnumToOption } from '../../../../../../utils';
+import { useQuery } from 'react-query';
+import { QuestionBankService } from '../../../../../../services';
+import _get from 'lodash/get';
+import { useNavigate } from 'react-router-dom';
+import qs from 'qs';
+import { ROUTE_PATH } from '../../../../../../enums';
+
+const filterKeyPairArr: { checkKey: string; key: string }[] = [
+  {
+    checkKey: 'filterByCategory',
+    key: 'categoryIds',
+  },
+  {
+    checkKey: 'filterBySubCategory',
+    key: 'subCategoryIds',
+  },
+  {
+    checkKey: 'filterByCreatedDate',
+    key: 'createdFrom',
+  },
+  {
+    checkKey: 'filterByCreatedDate',
+    key: 'createdTo',
+  },
+  {
+    checkKey: 'filterByAnswerType',
+    key: 'type',
+  },
+];
+
+interface IOptionItem {
+  label: string;
+  value: string;
+}
 
 export const FilterComponent = () => {
   const [numOfFilter, setNumOfFilter] = useState(0);
@@ -37,7 +79,7 @@ export const FilterComponent = () => {
       >
         <div className={'filter-main'}>
           <span onClick={e => e.preventDefault()}>
-            {numOfFilter}{' '}
+            {numOfFilter}
             <ArrowDown
               style={{ color: templateVariable.primary_color, height: 5 }}
             />
@@ -48,16 +90,13 @@ export const FilterComponent = () => {
   );
 };
 
-const initialFilterFormValues = {
-  filterByAnswerType: '',
-  filterByCreatedDate: '',
-  filterByCategory: '',
-  filterBySubCategory: '',
-  startDate: '',
-  endDate: '',
-  category: '',
-  subCategory: '',
-  answerType: '',
+const initialFilterFormValues: IFormValue = {
+  filterByAnswerType: false,
+  filterByCreatedDate: false,
+  filterByCategory: false,
+  filterBySubCategory: false,
+  createdFrom: '',
+  createdTo: '',
 };
 
 interface IFilerDropdown {
@@ -66,16 +105,60 @@ interface IFilerDropdown {
 }
 const formSchema = Yup.object();
 
+interface IFormValue extends GetListQuestionDto {
+  filterByAnswerType: boolean;
+  filterByCreatedDate: boolean;
+  filterByCategory: boolean;
+  filterBySubCategory: boolean;
+}
+
 const FilerDropdown: FC<IFilerDropdown> = props => {
   const { numOfFilter, setNumOfFilter } = props;
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const getCategoryQuery = useQuery(
+    ['getCategoriesFilter'],
+    () => QuestionBankService.getCategories({ selectAll: true }),
+    {
+      onError,
+    },
+  );
+
+  const categories = useMemo<IQuestionCategory[]>(
+    () => _get(getCategoryQuery.data, 'data.data', []),
+    [getCategoryQuery.data],
+  );
+
+  const categoryOptions = useMemo<IOptionItem[]>(
+    () =>
+      (categories || []).map(category => ({
+        label: category.name as string,
+        value: category.id as string,
+      })),
+    [categories],
+  );
 
   const onFinish = useCallback(
-    values => {
+    (values: IFormValue) => {
       const filterCount = Object.values(values).filter(val => val?.[0] === 1);
       setNumOfFilter(filterCount.length);
+
+      const result = filterKeyPairArr.reduce((nextQueryObject: any, i) => {
+        const { checkKey, key } = i;
+        if (values[checkKey]) {
+          nextQueryObject[key] = values[key];
+        }
+        return nextQueryObject;
+      }, {});
+
+      const nextQueryString = qs.stringify(result);
+      navigate(
+        `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}?${nextQueryString}`,
+        // { replace: true },
+      );
     },
-    [setNumOfFilter],
+    [navigate, setNumOfFilter],
   );
 
   const handleRollback = useCallback(
@@ -88,10 +171,11 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
 
   return (
     <Formik
+      enableReinitialize={true}
       onSubmit={onFinish}
       initialValues={initialFilterFormValues}
       validationSchema={formSchema}
-      render={({ handleSubmit, resetForm }) => (
+      render={({ handleSubmit, resetForm, values }) => (
         <FilerDropdownWrapper>
           <div className={'FilerDropdown__header'}>
             <div className={'FilerDropdown__header__main'}>
@@ -117,25 +201,20 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
               <div className={'FilerDropdown__body__row'}>
                 <div className={'FilerDropdown__body__row__first'}>
                   <ControlledInput
-                    inputType={INPUT_TYPES.CHECKBOX_GROUP}
+                    inputType={INPUT_TYPES.CHECKBOX}
                     name="filterByCreatedDate"
-                    options={[
-                      {
-                        label: 'Data Creation Date',
-                        value: 1,
-                      },
-                    ]}
+                    children={'Data Creation Date'}
                   />
                 </div>
                 <div className={'FilerDropdown__body__row__second'}>
                   <ControlledInput
                     inputType={INPUT_TYPES.DAY_PICKER}
-                    name="startDate"
+                    name="createdFrom"
                     suffixIcon={false}
                   />
                   <ControlledInput
                     inputType={INPUT_TYPES.DAY_PICKER}
-                    name="endDate"
+                    name="createdTo"
                     suffixIcon={false}
                   />
                 </div>
@@ -143,61 +222,66 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
               <div className={'FilerDropdown__body__row'}>
                 <div className={'FilerDropdown__body__row__first'}>
                   <ControlledInput
-                    inputType={INPUT_TYPES.CHECKBOX_GROUP}
+                    inputType={INPUT_TYPES.CHECKBOX}
                     name="filterByCategory"
-                    options={[
-                      {
-                        label: t('common.category'),
-                        value: 1,
-                      },
-                    ]}
+                    children={t('common.category')}
                   />
                 </div>
                 <div className={'FilerDropdown__body__row__second'}>
                   <ControlledInput
                     inputType={INPUT_TYPES.SELECT}
-                    name="category"
+                    name="categoryIds"
+                    options={categoryOptions}
+                    mode={'multiple'}
+                    maxTagCount="responsive"
                   />
                 </div>
               </div>
               <div className={'FilerDropdown__body__row'}>
                 <div className={'FilerDropdown__body__row__first'}>
                   <ControlledInput
-                    inputType={INPUT_TYPES.CHECKBOX_GROUP}
+                    inputType={INPUT_TYPES.CHECKBOX}
                     name="filterBySubCategory"
-                    options={[
-                      {
-                        label: t('common.subCategory'),
-                        value: 1,
-                      },
-                    ]}
+                    children={t('common.subCategory')}
                   />
                 </div>
                 <div className={'FilerDropdown__body__row__second'}>
                   <ControlledInput
                     inputType={INPUT_TYPES.SELECT}
-                    name="subCategory"
+                    name="subCategoryIds"
+                    mode={'multiple'}
+                    maxTagCount="responsive"
+                    options={(values?.categoryIds || []).reduce(
+                      (res: IOptionItem[], id) => {
+                        const x = categories?.find(i => i.id === id);
+                        if (!x) return res;
+                        x.children?.forEach(child => {
+                          res.push({
+                            label: child.name as string,
+                            value: child.id as string,
+                          });
+                        });
+                        return res;
+                      },
+                      [],
+                    )}
                   />
                 </div>
               </div>
-
               <div className={'FilerDropdown__body__row'}>
                 <div className={'FilerDropdown__body__row__first'}>
                   <ControlledInput
-                    inputType={INPUT_TYPES.CHECKBOX_GROUP}
+                    inputType={INPUT_TYPES.CHECKBOX}
                     name="filterByAnswerType"
-                    options={[
-                      {
-                        label: t('common.answerType'),
-                        value: 1,
-                      },
-                    ]}
+                    children={t('common.answerType')}
                   />
                 </div>
                 <div className={'FilerDropdown__body__row__second'}>
                   <ControlledInput
                     inputType={INPUT_TYPES.SELECT}
-                    name="answerType"
+                    name="type"
+                    mode={'multiple'}
+                    maxTagCount="responsive"
                     options={transformEnumToOption(QuestionType, questionType =>
                       t(`questionType.${questionType}`),
                     )}

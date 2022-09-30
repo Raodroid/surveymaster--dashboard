@@ -1,7 +1,9 @@
 import APIService from './base.service';
 import { AxiosResponse } from 'axios';
 import {
+  BaseQuestionVersionDto,
   GetListQuestionDto,
+  IGetParams,
   IQuestion,
   mockCategories,
   mockQuestionList,
@@ -11,7 +13,7 @@ import { IAddQuestionFormValue } from '../../modules/dashboard/pages/QuestionBan
 import { IEditQuestionFormValue } from '../../modules/dashboard/pages/QuestionBank/EditQuestion';
 
 export default class QuestionBankService {
-  static getCategories(params): Promise<AxiosResponse> {
+  static getCategories(params: IGetParams): Promise<AxiosResponse> {
     // return APIService.get('/category', { params });
     return new Promise<AxiosResponse>(resolve => {
       resolve({
@@ -60,13 +62,13 @@ export default class QuestionBankService {
     return APIService.patch(`/questions/version/${id}`);
   }
   static updateCompletedQuestion(
-    props: IEditQuestionFormValue,
+    props: BaseQuestionVersionDto,
   ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
     return APIService.post(`/questions/version/${id}`, { data: rest });
   }
   static updateDraftQuestion(
-    props: IEditQuestionFormValue,
+    props: BaseQuestionVersionDto,
   ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
     return APIService.put(`/questions/version/${id}`, { data: rest });

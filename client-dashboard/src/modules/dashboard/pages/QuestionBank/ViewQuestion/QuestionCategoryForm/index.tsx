@@ -1,8 +1,6 @@
 import React from 'react';
 import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '../../../../../common/input/type';
-import { QuestionType } from '../../../../../../type';
-import { transformEnumToOption } from '../../../../../../utils';
 import { useTranslation } from 'react-i18next';
 
 const QuestionCategoryForm = props => {

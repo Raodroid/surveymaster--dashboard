@@ -10,7 +10,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from '../../../../../services';
 import { onError } from '../../../../../utils';
 import {
-  IQuestionVersionOption,
+  BaseQuestionVersionDto,
   QuestionType,
   QuestionVersionStatus,
 } from 'type';
@@ -22,21 +22,11 @@ import { useGetQuestionByQuestionId } from '../util';
 import useParseQueryString from '../../../../../hooks/useParseQueryString';
 import DisplayAnswerList from './DisplayAnswerList';
 
-export interface IEditQuestionFormValue {
-  id?: string;
-  questionType: QuestionType | string;
-  question: string;
+export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;
   masterSubCategoryId: string;
   masterVariableName: string;
-  options?: IQuestionVersionOption[];
-  version?: {
-    status: QuestionVersionStatus;
-  };
-  numberStep?: number;
-  numberMax?: number;
-  numberMin?: number;
-}
+};
 
 const EditQuestion = () => {
   const { t } = useTranslation();
@@ -62,17 +52,12 @@ const EditQuestion = () => {
 
     const value: IEditQuestionFormValue = {
       id: currentVersionQuestionData?.id,
-      questionType: currentVersionQuestionData?.type || '',
-      question: currentVersionQuestionData?.title || '',
+      type: currentVersionQuestionData?.type || QuestionType.TEXT_ENTRY,
+      title: currentVersionQuestionData?.title || '',
       masterCategoryId,
       masterSubCategoryId,
       masterVariableName,
-      options: currentVersionQuestionData?.options || [
-        {
-          sort: 1,
-          text: '',
-        },
-      ],
+      options: currentVersionQuestionData?.options || [],
       numberStep: currentVersionQuestionData?.numberStep || 1,
       numberMax: currentVersionQuestionData?.numberMax || 10,
       numberMin: currentVersionQuestionData?.numberMin || 1,
@@ -80,18 +65,16 @@ const EditQuestion = () => {
     if (
       currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED
     ) {
-      value.version = {
-        status: QuestionVersionStatus.DRAFT,
-      };
+      value.status = QuestionVersionStatus.DRAFT;
     }
     return value;
   }, [queryString.version, questionData]);
 
   const updateQuestionMutation = useMutation(
-    (data: IEditQuestionFormValue) => {
+    (data: BaseQuestionVersionDto) => {
       if (
         ![QuestionType.MULTIPLE_CHOICE, QuestionType.RADIO_BUTTONS].includes(
-          data.questionType as QuestionType,
+          data.type,
         )
       ) {
         delete data?.options;
@@ -114,7 +97,16 @@ const EditQuestion = () => {
   );
   const onFinish = useCallback(
     async (values: IEditQuestionFormValue) => {
-      await updateQuestionMutation.mutateAsync(values);
+      const newValues = {
+        ...values,
+        options: values?.options?.map(({ text, imageUrl }, idx) => ({
+          text,
+          imageUrl,
+          sort: idx + 1,
+        })),
+      };
+
+      await updateQuestionMutation.mutateAsync(newValues);
     },
     [updateQuestionMutation],
   );
@@ -123,6 +115,7 @@ const EditQuestion = () => {
     <EditQuestionWrapper>
       <GeneralSectionHeader title={t('common.editQuestion')} />
       <Formik
+        enableReinitialize={true}
         onSubmit={onFinish}
         initialValues={initValue}
         validationSchema={ADD_QUESTION_FIELDS}
@@ -162,7 +155,7 @@ const EditQuestion = () => {
                   <div className={'category-section__row__title'}>
                     {t('common.questionParameters')}
                   </div>
-                  <QuestionCategoryForm />
+                  <QuestionCategoryForm disabled />
                 </div>
               </div>
             </Form>

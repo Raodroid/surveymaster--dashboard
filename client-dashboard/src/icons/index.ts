@@ -17,3 +17,4 @@ export * from './FilterOutlined';
 export * from './RollbackOutlined';
 export * from './ArrowDown';
 export * from './TrashOutlined';
+export * from './DragIcon';

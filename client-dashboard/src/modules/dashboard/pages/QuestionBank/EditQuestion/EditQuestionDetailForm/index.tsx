@@ -16,12 +16,12 @@ const EditQuestionDetailForm = () => {
         options={transformEnumToOption(QuestionType, questionType =>
           t(`questionType.${questionType}`),
         )}
-        name="questionType"
+        name="type"
         label={t('common.questionFieldType')}
       />
       <ControlledInput
         inputType={INPUT_TYPES.TEXTAREA}
-        name="question"
+        name="title"
         label={t('common.question')}
       />
     </EditQuestionDetailFormWrapper>

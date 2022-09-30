@@ -7,7 +7,7 @@ import { ControlledInputProps } from '../type';
 
 const ControlledInput = (props: ControlledInputProps) => {
   const {
-    isFastField = true, //This has to be false if Question is a condition question
+    isFastField, //This has to be false if Question is a condition question
     name,
     customFormProps,
     inputType,
@@ -35,15 +35,28 @@ const ControlledInput = (props: ControlledInputProps) => {
     };
   });
 
-  const replaceOnChange = (
-    value: string | number,
-    option: { value: string | number; label: string },
-  ) => {
-    if (!isOptionValue) {
-      onChange && onChange(value);
-      setValue(value);
-    } else setValue(option);
-  };
+  const replaceOnChange = useCallback(
+    (
+      value: string | number,
+      option: { value: string | number; label: string },
+    ) => {
+      if (!isOptionValue) {
+        onChange && onChange(value);
+        setValue(value);
+      } else setValue(option);
+    },
+    [isOptionValue, onChange, setValue],
+  );
+
+  const onBlur = useCallback(
+    e => {
+      if (rest.onBlur) {
+        rest.onBlur(e);
+      }
+      field.onBlur(e);
+    },
+    [field, rest],
+  );
 
   const validateStatus = errorMessage
     ? 'error'
@@ -71,12 +84,7 @@ const ControlledInput = (props: ControlledInputProps) => {
         inputType={inputType}
         {...rest}
         {...field}
-        onBlur={e => {
-          if (rest.onBlur) {
-            rest.onBlur(e);
-          }
-          field.onBlur(e);
-        }}
+        onBlur={onBlur}
         onChange={replaceOnChange as any}
         // name={name}
       />
@@ -85,7 +93,14 @@ const ControlledInput = (props: ControlledInputProps) => {
   return (
     <div ref={inputRef} className="form-item-container">
       {isFastField ? (
-        <FastField name={name}>{ABC}</FastField>
+        <FastField
+          {...rest}
+          name={name}
+          onBlur={onBlur}
+          onChange={replaceOnChange as any}
+        >
+          {ABC}
+        </FastField>
       ) : (
         <Field name={name}>{ABC}</Field>
       )}
