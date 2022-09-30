@@ -58,3 +58,8 @@ export interface PaginationResponse<T> {
   page: number;
   data: T[];
 }
+
+export interface IOptionItem {
+  label: string;
+  value: string;
+}

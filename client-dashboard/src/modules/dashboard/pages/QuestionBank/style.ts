@@ -16,6 +16,6 @@ export const QuestionBankWrapper = styled(Content)`
   }
 `;
 
-export const QuestionBackContentWrapper = styled(BaseSectionWrapper)`
+export const QuestionBankContentWrapper = styled(BaseSectionWrapper)`
   flex: 1;
 `;

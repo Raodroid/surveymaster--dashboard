@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '../../../../../common/input/type';
 import { IQuestionVersionOption, QuestionType } from '../../../../../../type';
@@ -9,7 +9,12 @@ import { IEditQuestionFormValue } from '../index';
 import { Button } from 'antd';
 import DragAnswerList from './DragAnswerList';
 
-const DisplayAnswerList = () => {
+interface IDisplayAnswerList {
+  mode?: 'view' | 'edit';
+}
+
+const DisplayAnswerList: FC<IDisplayAnswerList> = props => {
+  const { mode = 'edit' } = props;
   const { values } = useFormikContext<IEditQuestionFormValue>();
   const { t } = useTranslation();
 
@@ -31,18 +36,20 @@ const DisplayAnswerList = () => {
                   options={values.options as IQuestionVersionOption[]}
                   arrayHelpers={arrayHelpers}
                 />
-                <Button
-                  style={{ width: '100%', marginTop: '1.5rem' }}
-                  type={'primary'}
-                  onClick={() =>
-                    arrayHelpers.push({
-                      text: '',
-                      id: Math.random(),
-                    })
-                  }
-                >
-                  {t('common.addOneMoreAnswer')}
-                </Button>
+                {mode === 'edit' && (
+                  <Button
+                    style={{ width: '100%', marginTop: '1.5rem' }}
+                    type={'primary'}
+                    onClick={() =>
+                      arrayHelpers.push({
+                        text: '',
+                        id: Math.random(),
+                      })
+                    }
+                  >
+                    {t('common.addOneMoreAnswer')}
+                  </Button>
+                )}
               </>
             )}
           />
@@ -64,7 +71,7 @@ const DisplayAnswerList = () => {
           <ControlledInput
             inputType={INPUT_TYPES.NUMBER}
             name="numberMin"
-            label={t('common.maxValue')}
+            label={t('common.minValue')}
           />
         </DisplayAnswerListWrapper>
       );

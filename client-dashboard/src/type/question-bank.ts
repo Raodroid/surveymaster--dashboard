@@ -356,5 +356,5 @@ export interface IGetParams {
 export type GetListQuestionDto = IGetParams & {
   categoryIds?: string[];
   subCategoryIds?: string[];
-  type?: QuestionType[];
+  types?: QuestionType[];
 };

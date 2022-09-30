@@ -11,6 +11,8 @@ import { QuestionBankService } from '../../../../../services';
 import { onError } from '../../../../../utils';
 import {
   BaseQuestionVersionDto,
+  IQuestionVersion,
+  IQuestionVersionPutUpdateDto,
   QuestionType,
   QuestionVersionStatus,
 } from 'type';
@@ -38,6 +40,10 @@ const EditQuestion = () => {
     params.questionId as string,
   );
 
+  const currentVersionQuestionData: IQuestionVersion | undefined = (
+    questionData?.versions || []
+  )?.find(version => version.displayId === queryString.version);
+
   const initValue = useMemo<IEditQuestionFormValue>(() => {
     const {
       versions,
@@ -45,10 +51,6 @@ const EditQuestion = () => {
       masterSubCategoryId = '',
       masterVariableName = '',
     } = questionData;
-
-    const currentVersionQuestionData = versions?.find(
-      version => version.displayId === queryString.version,
-    );
 
     const value: IEditQuestionFormValue = {
       id: currentVersionQuestionData?.id,
@@ -68,17 +70,10 @@ const EditQuestion = () => {
       value.status = QuestionVersionStatus.DRAFT;
     }
     return value;
-  }, [queryString.version, questionData]);
+  }, [currentVersionQuestionData, questionData]);
 
   const updateQuestionMutation = useMutation(
-    (data: BaseQuestionVersionDto) => {
-      if (
-        ![QuestionType.MULTIPLE_CHOICE, QuestionType.RADIO_BUTTONS].includes(
-          data.type,
-        )
-      ) {
-        delete data?.options;
-      }
+    (data: { id: string } & IQuestionVersionPutUpdateDto) => {
       if (
         questionData?.latestVersion?.status === QuestionVersionStatus.COMPLETED
       ) {
@@ -89,7 +84,7 @@ const EditQuestion = () => {
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getQuestionList');
-        notification.success({ message: t('common.deleteSuccess') });
+        notification.success({ message: t('common.updateSuccess') });
         navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
       },
       onError,
@@ -106,9 +101,44 @@ const EditQuestion = () => {
         })),
       };
 
-      await updateQuestionMutation.mutateAsync(newValues);
+      if (
+        ![QuestionType.MULTIPLE_CHOICE, QuestionType.RADIO_BUTTONS].includes(
+          newValues.type,
+        )
+      ) {
+        delete newValues?.options;
+      }
+
+      const {
+        id,
+        masterSubCategoryId,
+        masterVariableName,
+        masterCategoryId,
+        ...rest
+      } = newValues;
+
+      if (!id) return;
+
+      const x: { id: string } & IQuestionVersionPutUpdateDto = {
+        id: id as string,
+        version: {
+          displayId: currentVersionQuestionData?.displayId as string,
+          masterCombineTokenString: currentVersionQuestionData?.question
+            ?.masterCombineTokenString as string,
+          masterSubCategoryId,
+          masterVariableName,
+          masterCategoryId,
+          version: rest,
+        },
+      };
+
+      await updateQuestionMutation.mutateAsync(x);
     },
-    [updateQuestionMutation],
+    [
+      currentVersionQuestionData?.displayId,
+      currentVersionQuestionData?.question?.masterCombineTokenString,
+      updateQuestionMutation,
+    ],
   );
 
   return (

@@ -16,15 +16,15 @@ import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import { Button } from 'antd';
 
 export interface IAddQuestionFormValue {
-  questionType: QuestionType | string;
-  question: string;
+  type: QuestionType | string;
+  title: string;
   masterCategoryId: string;
   masterSubCategoryId: string;
   masterVariableName: string;
 }
 const initValue = {
-  questionType: '',
-  question: '',
+  type: '',
+  title: '',
   masterCategoryId: '',
   masterSubCategoryId: '',
   masterVariableName: '',
@@ -62,10 +62,11 @@ const AddQuestion = () => {
         title={t('common.addNewQuestion')}
       />
       <Formik
+        enableReinitialize={true}
         onSubmit={onFinish}
         initialValues={initValue}
         validationSchema={ADD_QUESTION_FIELDS}
-        render={({ handleSubmit, isValid, dirty }) => (
+        render={({ handleSubmit, isValid, dirty, errors }) => (
           <>
             <Form
               id={'add-question-form'}

@@ -51,6 +51,17 @@ const initParams: GetListQuestionDto = {
 export const CategoryDetailContext =
   React.createContext<ICategoryDetailContext | null>(null);
 
+const getQuestion = (params: GetListQuestionDto) => {
+  const newParams: GetListQuestionDto = {
+    ...params,
+  };
+  for (const key in newParams) {
+    if (!newParams[key] && typeof newParams[key] !== 'boolean') {
+      delete newParams[key];
+    }
+  }
+  return QuestionBankService.getQuestions(newParams);
+};
 const CategoryDetail = () => {
   const { t } = useTranslation();
   const [searchTxt, setSearchTxt] = useState<string>('');
@@ -65,7 +76,7 @@ const CategoryDetail = () => {
   const getQuestionListQuery = useQuery(
     ['getQuestionList', params, debounceSearchText],
     () => {
-      return QuestionBankService.getQuestions({
+      return getQuestion({
         ...params,
         q: debounceSearchText,
       });
@@ -90,16 +101,16 @@ const CategoryDetail = () => {
       },
       {
         title: t('common.question'),
-        dataIndex: ['latestVersion', 'question'],
+        dataIndex: ['latestVersion'],
         render: value => value?.title || '--',
       },
       {
         title: t('common.category'),
-        dataIndex: ['masterCategory', 'name'],
+        dataIndex: ['masterCategoryId'],
       },
       {
         title: t('common.subCategory'),
-        dataIndex: ['masterSubCategory', 'name'],
+        dataIndex: ['masterSubCategoryId'],
       },
       {
         title: t('common.variableName'),
@@ -107,8 +118,8 @@ const CategoryDetail = () => {
       },
       {
         title: t('common.answerType'),
-        dataIndex: ['latestVersion', 'question', 'type'],
-        render: value => value || '--',
+        dataIndex: ['latestVersion', 'type'],
+        render: value => (value ? t(`questionType.${value}`) : '--'),
       },
       {
         title: t('common.action'),
@@ -133,7 +144,7 @@ const CategoryDetail = () => {
         onClick: () => {
           const newQueryString = qs.stringify({
             ...queryString,
-            version: record.latestVersion.displayId,
+            version: record?.latestVersion?.displayId,
           });
           navigate(
             `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION.replace(

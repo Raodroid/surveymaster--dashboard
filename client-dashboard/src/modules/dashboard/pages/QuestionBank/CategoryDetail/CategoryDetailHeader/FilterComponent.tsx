@@ -4,9 +4,6 @@ import React, {
   FC,
   SetStateAction,
   useCallback,
-  useContext,
-  useEffect,
-  useMemo,
   useState,
 } from 'react';
 
@@ -19,20 +16,22 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import {
   GetListQuestionDto,
-  IQuestionCategory,
+  IOptionItem,
   QuestionType,
 } from '../../../../../../type';
 import { ArrowDown, FilterOutlined, RollbackOutlined } from 'icons';
-import { CategoryDetailContext } from '../index';
-import { onError, transformEnumToOption } from '../../../../../../utils';
-import { useQuery } from 'react-query';
-import { QuestionBankService } from '../../../../../../services';
-import _get from 'lodash/get';
+import { transformEnumToOption } from '../../../../../../utils';
 import { useNavigate } from 'react-router-dom';
 import qs from 'qs';
-import { ROUTE_PATH } from '../../../../../../enums';
+import { MOMENT_FORMAT, ROUTE_PATH } from '../../../../../../enums';
+import moment from 'moment';
+import { useGetAllCategories } from '../../util';
 
-const filterKeyPairArr: { checkKey: string; key: string }[] = [
+const filterKeyPairArr: {
+  checkKey: string;
+  key: string;
+  formatMoment?: string;
+}[] = [
   {
     checkKey: 'filterByCategory',
     key: 'categoryIds',
@@ -44,21 +43,18 @@ const filterKeyPairArr: { checkKey: string; key: string }[] = [
   {
     checkKey: 'filterByCreatedDate',
     key: 'createdFrom',
+    formatMoment: MOMENT_FORMAT.FULL_DATE_FORMAT,
   },
   {
     checkKey: 'filterByCreatedDate',
     key: 'createdTo',
+    formatMoment: MOMENT_FORMAT.FULL_DATE_FORMAT,
   },
   {
     checkKey: 'filterByAnswerType',
-    key: 'type',
+    key: 'types',
   },
 ];
-
-interface IOptionItem {
-  label: string;
-  value: string;
-}
 
 export const FilterComponent = () => {
   const [numOfFilter, setNumOfFilter] = useState(0);
@@ -81,7 +77,11 @@ export const FilterComponent = () => {
           <span onClick={e => e.preventDefault()}>
             {numOfFilter}
             <ArrowDown
-              style={{ color: templateVariable.primary_color, height: 5 }}
+              style={{
+                color: templateVariable.primary_color,
+                height: 5,
+                marginLeft: 6,
+              }}
             />
           </span>
         </div>
@@ -116,28 +116,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
   const { numOfFilter, setNumOfFilter } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  const getCategoryQuery = useQuery(
-    ['getCategoriesFilter'],
-    () => QuestionBankService.getCategories({ selectAll: true }),
-    {
-      onError,
-    },
-  );
-
-  const categories = useMemo<IQuestionCategory[]>(
-    () => _get(getCategoryQuery.data, 'data.data', []),
-    [getCategoryQuery.data],
-  );
-
-  const categoryOptions = useMemo<IOptionItem[]>(
-    () =>
-      (categories || []).map(category => ({
-        label: category.name as string,
-        value: category.id as string,
-      })),
-    [categories],
-  );
+  const { categories, categoryOptions, isLoading } = useGetAllCategories();
 
   const onFinish = useCallback(
     (values: IFormValue) => {
@@ -145,9 +124,11 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
       setNumOfFilter(filterCount.length);
 
       const result = filterKeyPairArr.reduce((nextQueryObject: any, i) => {
-        const { checkKey, key } = i;
+        const { checkKey, key, formatMoment } = i;
         if (values[checkKey]) {
-          nextQueryObject[key] = values[key];
+          nextQueryObject[key] = formatMoment
+            ? moment(values[key]).format(formatMoment)
+            : values[key];
         }
         return nextQueryObject;
       }, {});
@@ -155,7 +136,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
       const nextQueryString = qs.stringify(result);
       navigate(
         `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}?${nextQueryString}`,
-        // { replace: true },
+        { replace: true },
       );
     },
     [navigate, setNumOfFilter],
@@ -175,7 +156,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
       onSubmit={onFinish}
       initialValues={initialFilterFormValues}
       validationSchema={formSchema}
-      render={({ handleSubmit, resetForm, values }) => (
+      render={({ handleSubmit, resetForm, values, setFieldValue }) => (
         <FilerDropdownWrapper>
           <div className={'FilerDropdown__header'}>
             <div className={'FilerDropdown__header__main'}>
@@ -229,11 +210,15 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                 </div>
                 <div className={'FilerDropdown__body__row__second'}>
                   <ControlledInput
+                    loading={isLoading}
                     inputType={INPUT_TYPES.SELECT}
                     name="categoryIds"
                     options={categoryOptions}
                     mode={'multiple'}
                     maxTagCount="responsive"
+                    onChange={() => {
+                      setFieldValue('subCategoryIds', []);
+                    }}
                   />
                 </div>
               </div>
@@ -247,6 +232,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                 </div>
                 <div className={'FilerDropdown__body__row__second'}>
                   <ControlledInput
+                    loading={isLoading}
                     inputType={INPUT_TYPES.SELECT}
                     name="subCategoryIds"
                     mode={'multiple'}
@@ -279,7 +265,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                 <div className={'FilerDropdown__body__row__second'}>
                   <ControlledInput
                     inputType={INPUT_TYPES.SELECT}
-                    name="type"
+                    name="types"
                     mode={'multiple'}
                     maxTagCount="responsive"
                     options={transformEnumToOption(QuestionType, questionType =>
