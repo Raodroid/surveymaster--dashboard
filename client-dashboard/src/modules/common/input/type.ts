@@ -58,6 +58,7 @@ export type ControlledInputProps = UncontrolledInputProps & {
   customOptions?: JSX.Element[];
   ref: any;
   isFastField?: boolean;
+  className?: string;
 };
 
 export type OnchangeType = {

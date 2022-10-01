@@ -43,6 +43,10 @@ export const HeaderStyled = styled.div`
 
   .breadcrumb {
     border-top: none;
+    span,
+    a {
+      font-size: 16px;
+    }
   }
 
   .breadcrumb-item span {

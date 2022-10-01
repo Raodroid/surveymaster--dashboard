@@ -1,47 +1,67 @@
-import { ControlledInput } from 'modules/common';
-import { Select } from 'antd';
 import styled from 'styled-components';
 
-export const SurveyContentWrapper = styled.div`
+export const AddSurveyWrapper = styled.div`
   flex: 1;
   overflow: hidden;
-  padding: 40px 0 0;
+  position: relative;
 
-  .form {
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .body {
-    flex: 1;
+  .ant-form {
+    height: 100%;
     overflow-y: auto;
-    padding: 0 40px 20px;
-  }
-
-  .information-wrapper {
-    flex: 1;
-    align-items: flex-start;
-    label {
-      padding-left: 8px;
-    }
-  }
-
-  .main-information {
-    flex: 2;
-    padding-right: 40px;
-    border-right: 1px solid #f3eef3;
-  }
-
-  .survey-parameters {
-    flex: 1;
-    margin-left: 40px;
+    padding: 40px 40px 76px;
   }
 
   .footer {
-    height: 76px;
     padding: 20px 0;
     border-top: 1px solid #f3eef3;
-    margin: 0 40px;
+
+    position: absolute;
+    bottom: 0;
+    right: 40px;
+    left: 40px;
+    background: white;
+
+    .ant-btn {
+      width: 100%;
+      height: 36px;
+    }
+  }
+`;
+
+export const AddSurveyContentWrapper = styled.div`
+  border-bottom: 1px solid #f3eef3;
+  padding-bottom: 4px;
+
+  display: grid;
+  grid-template-columns: 2fr 1px 1fr;
+  column-gap: 40px;
+  grid-template-areas:
+    'mainInfo       divider params'
+    'custom-select  divider id'
+    'surveyTitle    divider none'
+    'remarks        divider none';
+
+  .mainInfo {
+    grid-area: mainInfo;
+  }
+  .params {
+    grid-area: params;
+  }
+  .divider {
+    grid-area: divider;
+    height: calc(100% - 24px);
+    width: 1px;
+    margin: auto;
+    margin-top: 0;
+  }
+  .surveyTitle {
+    grid-area: surveyTitle;
+  }
+  .id {
+    grid-area: id;
+  }
+  .remarks {
+    grid-area: remarks;
   }
 `;
 
@@ -70,7 +90,7 @@ export const CustomPopUp = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   gap: 12px;
 
-  padding: 16px 8px;
+  padding: 16px;
 
   .ant-radio-wrapper-checked {
     > span:last-child {

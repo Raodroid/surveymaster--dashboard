@@ -1,4 +1,4 @@
-import { Form } from 'antd';
+import { Button, Divider, Form } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
@@ -6,14 +6,18 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import { useState } from 'react';
 import { useParams } from 'react-router';
 import ProjectHeader from '../Header';
-import QuestionList from './QuestionList';
-import { SurveyContentWrapper } from './styles';
+import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
 import SurveyCustomSelect from './SurveyCustomSelect';
+
+const selectValues = {
+  newSurvey: 'newSurvey',
+  duplicateExistingSurvey: 'duplicate',
+  json: 'json',
+};
 
 function AddSurvey() {
   const params = useParams();
-
-  const [templateValue, setTemplateValue] = useState('Select');
+  const [templateValue, setTemplateValue] = useState('');
 
   const routes = [
     {
@@ -33,7 +37,7 @@ function AddSurvey() {
     <>
       <ProjectHeader routes={routes} />
 
-      <SurveyContentWrapper className="flex-column">
+      <AddSurveyWrapper>
         <Formik initialValues={{}} onSubmit={() => {}}>
           {({
             values,
@@ -45,46 +49,52 @@ function AddSurvey() {
             isSubmitting,
             setFieldValue,
           }) => (
-            <Form layout="vertical" className="form flex-column">
-              <div className="body">
-                <div className="information-wrapper flex">
-                  <div className="main-information">
-                    <div className="title">Main information</div>
-                    <SurveyCustomSelect />
-                    {
-                      <>
-                        <ControlledInput
-                          type="text"
-                          inputType={INPUT_TYPES.INPUT}
-                          label="Survey Title"
-                          name="surveyTitile"
-                        />
-                        <ControlledInput
-                          type="text"
-                          inputType={INPUT_TYPES.INPUT}
-                          label="Survey Remarks"
-                          name="surveyRemarks"
-                        />
-                      </>
-                    }
-                  </div>
-                  <div className="survey-parameters">
-                    <div className="title">Survey Parameters</div>
+            <Form layout="vertical">
+              <AddSurveyContentWrapper>
+                <div className="title mainInfo">Main Information:</div>
+
+                <SurveyCustomSelect
+                  className="custom-select"
+                  value={templateValue}
+                  setValue={setTemplateValue}
+                  values={selectValues}
+                />
+                {templateValue === selectValues.newSurvey && (
+                  <>
                     <ControlledInput
                       inputType={INPUT_TYPES.INPUT}
-                      type={'text'}
-                      name="id"
-                      label="ID"
+                      name="name"
+                      label="Survey Title"
+                      className="surveyTitle"
                     />
-                  </div>
-                </div>
-                <QuestionList />
+                    <ControlledInput
+                      inputType={INPUT_TYPES.TEXTAREA}
+                      name="remarks"
+                      label="Survey Remarks"
+                      className="remarks"
+                    />
+                  </>
+                )}
+
+                <Divider type="vertical" className="divider" />
+
+                <div className="title params">Survey Parameters:</div>
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  name="id"
+                  label="ID"
+                  className="id"
+                />
+              </AddSurveyContentWrapper>
+              <div className="footer">
+                <Button type="primary" className="info-btn" htmlType="submit">
+                  Save Survey
+                </Button>
               </div>
-              <div className="footer"></div>
             </Form>
           )}
         </Formik>
-      </SurveyContentWrapper>
+      </AddSurveyWrapper>
     </>
   );
 }

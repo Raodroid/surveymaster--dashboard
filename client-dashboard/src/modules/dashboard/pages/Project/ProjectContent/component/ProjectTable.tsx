@@ -1,8 +1,11 @@
 import { Table } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { CloseIcon } from 'icons';
-import React from 'react';
+import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
+import ProjectService from 'services/survey-master-service/project.service';
+import { BooleanEnum } from 'type';
 import { ProjectTableWrapper } from '../style';
 
 const dataSource = [
@@ -71,6 +74,24 @@ const columns = [
 ];
 
 function ProjectTable() {
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState('');
+  const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
+
+  const queryParams = {
+    q: query,
+    page: page,
+    take: 10,
+    isDeleted: isDeleted,
+  };
+  const { data: projects } = useQuery(
+    'projects',
+    () => ProjectService.getProjects(queryParams),
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
+
   return (
     <ProjectTableWrapper>
       <Table pagination={false} dataSource={dataSource} columns={columns} />

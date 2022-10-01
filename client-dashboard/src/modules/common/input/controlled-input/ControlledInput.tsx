@@ -15,6 +15,7 @@ const ControlledInput = (props: ControlledInputProps) => {
     isOptionValue,
     errorMessage,
     onChange,
+    className = '',
     ...rest
   } = props;
   const [t] = useTranslation();
@@ -83,7 +84,7 @@ const ControlledInput = (props: ControlledInputProps) => {
     </Form.Item>
   );
   return (
-    <div ref={inputRef} className="form-item-container">
+    <div ref={inputRef} className={`form-item-container ${className}`}>
       {isFastField ? (
         <FastField name={name}>{ABC}</FastField>
       ) : (
