@@ -1,22 +1,18 @@
-import { Button, Divider, Form, notification } from 'antd';
+import { Button, Form, notification, Spin } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
-import { CloseIcon } from 'icons';
-import { CreateProject } from 'interfaces';
-import { ControlledInput } from 'modules/common';
-import { INPUT_TYPES } from 'modules/common/input/type';
+import { UpdateProject } from 'interfaces';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from 'react-query';
-import { useParams } from 'react-router';
+import { useMutation, useQuery } from 'react-query';
+import { useLocation, useParams } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
-import ProjectHeader from '../Header';
-import { AddProjectContentWrapper, AddProjectWrapper } from './styles';
 import * as Yup from 'yup';
+import ProjectHeader from '../Header';
 import Inputs from './Inputs';
-import { useLocation } from 'react-router';
+import { AddProjectWrapper } from './styles';
 
-const initialValues: CreateProject = {
+const initialValues: UpdateProject = {
   name: '',
   id: '',
   description: '',
@@ -28,8 +24,12 @@ function EditProject() {
   const { search } = useLocation();
   const { t } = useTranslation();
 
+  const { data: project, isLoading } = useQuery(['project', params.id], () =>
+    ProjectService.getProjectById(params.id),
+  );
+
   const title = useMemo(
-    () => search.replace('?title=', '').replace('%20', ' '),
+    () => search.replace('?title=', '').replace(/%20/g, ' '),
     [search],
   );
 
@@ -37,67 +37,61 @@ function EditProject() {
     () => [
       {
         name: title,
-        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + params.id,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT,
       },
       {
-        name: 'Edit New Project',
-        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + params.id,
+        name: 'Edit Project',
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT,
       },
     ],
-    [title, params.id],
+    [title],
   );
 
-  const createProjectSchema = Yup.object().shape({
-    name: Yup.string().required('Required!'),
-    id: Yup.string(),
-    description: Yup.string().required('Required!'),
-    personInCharge: Yup.string().required('Required!'),
-  });
-
-  const mutationCreateProject = useMutation(ProjectService.createProject, {
+  const mutationEditProject = useMutation(ProjectService.updateProject, {
     onSuccess: () =>
-      notification.success({ message: t('common.createSuccess') }),
+      notification.success({ message: t('common.updateSuccess') }),
   });
 
-  const handleSubmit = (payload: CreateProject) => {
-    mutationCreateProject.mutateAsync(payload);
+  const handleSubmit = (payload: UpdateProject) => {
+    mutationEditProject.mutateAsync(payload);
   };
 
   return (
     <>
       <ProjectHeader routes={routes} />
-      <AddProjectWrapper>
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-          validationSchema={createProjectSchema}
-        >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit: handleFinish,
-            isSubmitting,
-            setFieldValue,
-          }) => (
-            <Form layout="vertical" onFinish={handleFinish}>
-              <Inputs />
-              <div className="footer">
-                <Button
-                  type="primary"
-                  className="info-btn"
-                  htmlType="submit"
-                  loading={mutationCreateProject.isLoading}
-                >
-                  Save Edits
-                </Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </AddProjectWrapper>
+      <Spin spinning={isLoading}>
+        <AddProjectWrapper>
+          <Formik
+            initialValues={project?.data || initialValues}
+            onSubmit={handleSubmit}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit: handleFinish,
+              isSubmitting,
+              setFieldValue,
+            }) => (
+              <Form layout="vertical" onFinish={handleFinish}>
+                <Inputs />
+                <div className="footer">
+                  <Button
+                    type="primary"
+                    className="info-btn"
+                    htmlType="submit"
+                    loading={mutationEditProject.isLoading}
+                  >
+                    Save Edits
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </AddProjectWrapper>
+      </Spin>
     </>
   );
 }

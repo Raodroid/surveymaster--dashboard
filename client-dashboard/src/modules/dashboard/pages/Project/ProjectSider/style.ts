@@ -26,6 +26,8 @@ export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
       border-radius: 6px;
       width: 100%;
       height: 40px;
+      box-shadow: none;
+
       span {
         font-size: 14px;
         font-weight: bold;
@@ -37,8 +39,6 @@ export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
     gap: 12px;
   }
 `;
-
-
 
 export const TitleStyled = styled.div`
   .ant-btn {
