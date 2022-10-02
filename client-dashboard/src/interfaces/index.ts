@@ -17,17 +17,6 @@ export interface UserUpdatedDto {
   displayName?: string; // new field
 }
 
-export interface IGetParams {
-  q?: string;
-  take?: number;
-  page?: number;
-  ids?: number;
-  createdFrom?: string;
-  createdTo?: string;
-  isDeleted?: BooleanEnum | boolean;
-  selectAll?: BooleanEnum;
-}
-
 export interface InviteMember {
   firstName: string;
   lastName: string;

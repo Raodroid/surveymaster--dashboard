@@ -1,4 +1,5 @@
-import { IGetParams, InviteMember, UpdateMember } from 'interfaces';
+import { InviteMember, UpdateMember } from 'interfaces';
+import { IGetParams } from 'type';
 import APIService from './base.service';
 
 export default class AdminService {

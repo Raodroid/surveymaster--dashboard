@@ -81,7 +81,7 @@ function TeamContent() {
   const [filter, setFilter] = useState('');
   const searchDebounce = useDebounce(search);
   const [page, setPage] = useState(1);
-  const [isDeleted, setIsDeleted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
   const [showConfirmDeactivateModal, setShowConfirmDeactivateModal] =
     useState(false);
   const [showConfirmRestoreModal, setShowConfirmRestoreModal] = useState(false);
@@ -287,8 +287,14 @@ function TeamContent() {
           </Form>
           <Checkbox
             className="show-inactivate-users-checkbox"
-            checked={isDeleted}
-            onChange={() => setIsDeleted(!isDeleted)}
+            checked={isDeleted === BooleanEnum.TRUE ? true : false}
+            onChange={() =>
+              setIsDeleted(
+                isDeleted === BooleanEnum.TRUE
+                  ? BooleanEnum.FALSE
+                  : BooleanEnum.TRUE,
+              )
+            }
           >
             {t('common.showInactivateUsers')}
           </Checkbox>
