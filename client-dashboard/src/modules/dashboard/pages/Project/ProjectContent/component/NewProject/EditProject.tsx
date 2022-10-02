@@ -14,6 +14,7 @@ import ProjectHeader from '../Header';
 import { AddProjectContentWrapper, AddProjectWrapper } from './styles';
 import * as Yup from 'yup';
 import Inputs from './Inputs';
+import { useLocation } from 'react-router';
 
 const initialValues: CreateProject = {
   name: '',
@@ -22,17 +23,28 @@ const initialValues: CreateProject = {
   personInCharge: '',
 };
 
-function AddProject() {
+function EditProject() {
   const params = useParams();
+  const { search } = useLocation();
   const { t } = useTranslation();
+
+  const title = useMemo(
+    () => search.replace('?title=', '').replace('%20', ' '),
+    [search],
+  );
+
   const routes = useMemo(
     () => [
       {
-        name: 'Add New Project',
+        name: title,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + params.id,
+      },
+      {
+        name: 'Edit New Project',
         href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + params.id,
       },
     ],
-    [params],
+    [title, params.id],
   );
 
   const createProjectSchema = Yup.object().shape({
@@ -79,7 +91,7 @@ function AddProject() {
                   htmlType="submit"
                   loading={mutationCreateProject.isLoading}
                 >
-                  Save Project
+                  Save Edits
                 </Button>
               </div>
             </Form>
@@ -90,4 +102,4 @@ function AddProject() {
   );
 }
 
-export default AddProject;
+export default EditProject;

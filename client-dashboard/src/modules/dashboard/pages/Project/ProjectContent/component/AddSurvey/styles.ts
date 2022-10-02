@@ -63,6 +63,10 @@ export const AddSurveyContentWrapper = styled.div`
   .remarks {
     grid-area: remarks;
   }
+
+  label {
+    padding-left: 4px;
+  }
 `;
 
 export const SurveyCustomSelectWrapper = styled.div`
@@ -122,6 +126,7 @@ export const QuestionListWrapper = styled.div`
 
   .btn-wrapper {
     gap: 20px;
+    margin-bottom: 20px;
 
     .ant-btn {
       flex: 1;
@@ -129,5 +134,13 @@ export const QuestionListWrapper = styled.div`
     .ant-btn-default {
       font-weight: 600;
     }
+  }
+`;
+
+export const TableWrapper = styled.div`
+  margin-bottom: 20px;
+
+  .ant-select {
+    min-width: 120px;
   }
 `;

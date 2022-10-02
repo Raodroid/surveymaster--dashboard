@@ -6,6 +6,7 @@ import ProjectContent from './ProjectContent';
 import AddSurvey from './ProjectContent/component/AddSurvey';
 import DetailSurvey from './ProjectContent/component/DetailSurvey';
 import AddProject from './ProjectContent/component/NewProject';
+import EditProject from './ProjectContent/component/NewProject/EditProject';
 import Survey from './ProjectContent/component/Survey';
 import { ProjectContentWrapper } from './ProjectContent/style';
 import ProjectSider from './ProjectSider';
@@ -39,8 +40,12 @@ const Project = () => {
             element={<AddSurvey />}
           />
           <Route
-            path={subRoute(routePath.ADD_NEW_PROJECT)}
+            path={subRoute(routePath.PROJECT.ADD)}
             element={<AddProject />}
+          />
+          <Route
+            path={subRoute(routePath.PROJECT.EDIT)}
+            element={<EditProject />}
           />
           <Route
             path={subRoute(routePath.DETAIL_SURVEY.ROOT + '/*')}

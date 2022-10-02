@@ -43,12 +43,12 @@ const ProjectSider = () => {
       <div className="add-new-project-btn-wrapper">
         <AddNewProjectBtn
           onClick={() =>
-            navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_PROJECT)
+            navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD)
           }
           type="default"
           className="new-project-btn"
           isAddNewProjectPage={pathname.includes(
-            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_PROJECT,
+            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD,
           )}
         >
           <PlusIcon />

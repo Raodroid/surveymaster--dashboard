@@ -6,6 +6,7 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import { useState } from 'react';
 import { useParams } from 'react-router';
 import ProjectHeader from '../Header';
+import QuestionList from './QuestionList';
 import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
 import SurveyCustomSelect from './SurveyCustomSelect';
 
@@ -68,7 +69,7 @@ function AddSurvey() {
                       className="surveyTitle"
                     />
                     <ControlledInput
-                      inputType={INPUT_TYPES.TEXTAREA}
+                      inputType={INPUT_TYPES.INPUT}
                       name="remarks"
                       label="Survey Remarks"
                       className="remarks"
@@ -86,6 +87,11 @@ function AddSurvey() {
                   className="id"
                 />
               </AddSurveyContentWrapper>
+
+              {templateValue && templateValue !== selectValues.json && (
+                <QuestionList setFieldValue={setFieldValue} values={values} />
+              )}
+
               <div className="footer">
                 <Button type="primary" className="info-btn" htmlType="submit">
                   Save Survey

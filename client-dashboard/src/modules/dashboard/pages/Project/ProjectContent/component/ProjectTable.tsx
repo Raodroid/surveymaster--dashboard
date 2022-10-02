@@ -1,9 +1,9 @@
 import { Table } from 'antd';
 import { ROUTE_PATH } from 'enums';
-import { CloseIcon } from 'icons';
-import React, { useState } from 'react';
+import { CloseIcon, PenFilled } from 'icons';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
 import { BooleanEnum } from 'type';
 import { ProjectTableWrapper } from '../style';
@@ -29,51 +29,8 @@ const dataSource = [
   },
 ];
 
-const columns = [
-  {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-  },
-  {
-    title: 'Project Title',
-    dataIndex: 'projectTitle',
-    key: 'projectTitle',
-    render: (text: string, record: any) => (
-      <Link
-        to={ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(
-          ':id',
-          record.route,
-        )}
-      >
-        {text}
-      </Link>
-    ),
-  },
-  {
-    title: 'N of Surveys',
-    dataIndex: 'nOfSurveys',
-    key: 'nOfSurveys',
-  },
-  {
-    title: 'Person In Charge',
-    dataIndex: 'personInCharge',
-    key: 'personInCharge',
-  },
-  {
-    title: 'Date of Creation',
-    dataIndex: 'dateOfCreation',
-    key: 'dateOfCreation',
-  },
-  {
-    title: 'Actions',
-    dataIndex: 'actions',
-    key: 'actions',
-    render: (_, record: any) => <div className="flex"></div>,
-  },
-];
-
 function ProjectTable() {
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
@@ -90,6 +47,66 @@ function ProjectTable() {
     {
       refetchOnWindowFocus: false,
     },
+  );
+
+  const columns = useMemo(
+    () => [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+      },
+      {
+        title: 'Project Title',
+        dataIndex: 'projectTitle',
+        key: 'projectTitle',
+        render: (text: string, record: any) => (
+          <Link
+            to={ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(
+              ':id',
+              record.route,
+            )}
+          >
+            {text}
+          </Link>
+        ),
+      },
+      {
+        title: 'N of Surveys',
+        dataIndex: 'nOfSurveys',
+        key: 'nOfSurveys',
+      },
+      {
+        title: 'Person In Charge',
+        dataIndex: 'personInCharge',
+        key: 'personInCharge',
+      },
+      {
+        title: 'Date of Creation',
+        dataIndex: 'dateOfCreation',
+        key: 'dateOfCreation',
+      },
+      {
+        title: 'Actions',
+        dataIndex: 'actions',
+        key: 'actions',
+        render: (_, record: any) => (
+          <div className="flex">
+            <PenFilled
+              onClick={() =>
+                navigate(
+                  ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT.replace(
+                    ':id',
+                    record.id,
+                  ) + `?title=${record.projectTitle}`,
+                )
+              }
+            />
+          </div>
+        ),
+      },
+    ],
+    [],
   );
 
   return (
