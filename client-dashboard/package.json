@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "start": "env-cmd -f .env.development craco start",
-    "build:development": "env-cmd -f .env.dev-server react-app-rewired build",
-    "build:dev-server": "env-cmd -f .env.staging react-app-rewired build",
-    "deploy:dev-server": "aws s3 sync build/ s3://eg-dev-server-survey-master-bucket-origin --cache-control no-cache",
+    "build:development": "env-cmd -f .env.development craco build",
+    "build:dev-server": "env-cmd -f .env.dev-server craco build",
+    "deploy:dev-server": "aws s3 sync build/ s3://eg-dev-server-survey-master-admin-origin --cache-control no-cache",
     "invalidate:dev-server": "aws configure set preview.cloudfront true && aws cloudfront create-invalidation --distribution-id E1FZTWZAHX0593 --paths '/*'",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
