@@ -1,51 +1,25 @@
 import APIService from './base.service';
 import { AxiosResponse } from 'axios';
 import {
+  BaseQuestionVersionDto,
   GetListQuestionDto,
-  IQuestion,
-  mockCategories,
-  mockQuestionList,
+  IGetParams,
+  IQuestionVersionPutUpdateDto,
   QuestionDetail,
+  QuestionVersionStatus,
 } from '../../type';
 import { IAddQuestionFormValue } from '../../modules/dashboard/pages/QuestionBank/AddQuestion';
-import { IEditQuestionFormValue } from '../../modules/dashboard/pages/QuestionBank/EditQuestion';
 
 export default class QuestionBankService {
-  static getCategories(params): Promise<AxiosResponse> {
-    // return APIService.get('/category', { params });
-    return new Promise<AxiosResponse>(resolve => {
-      resolve({
-        data: mockCategories,
-        status: 200,
-        statusText: '',
-        headers: {},
-        config: {},
-      });
-    });
+  static getCategories(params: IGetParams): Promise<AxiosResponse> {
+    return APIService.get('/categories', { params });
   }
-  static getQuestions(props: GetListQuestionDto): Promise<AxiosResponse> {
-    // return APIService.get(`/questions/`, { params: props });
-    return new Promise<AxiosResponse>(resolve => {
-      resolve({
-        data: mockQuestionList,
-        status: 200,
-        statusText: '',
-        headers: {},
-        config: {},
-      });
-    });
+  static getQuestions(params: GetListQuestionDto): Promise<AxiosResponse> {
+    return APIService.get(`/questions`, { params });
   }
   static getQuestionById(props): Promise<AxiosResponse> {
     const { id } = props;
-    // return APIService.get(`/questions/${id}`);
-
-    return Promise.resolve({
-      data: QuestionDetail,
-      status: 200,
-      statusText: '',
-      headers: {},
-      config: {},
-    });
+    return APIService.get(`/questions/${id}`);
   }
   static deleteQuestionByQuestionId(props): Promise<AxiosResponse> {
     const { id } = props;
@@ -55,21 +29,24 @@ export default class QuestionBankService {
     const { id } = props;
     return APIService.post(`/questions/${id}/restore`);
   }
-  static completeQuestion(props): Promise<AxiosResponse> {
+  static changeStatusQuestion(props: {
+    status: QuestionVersionStatus;
+    id: string;
+  }): Promise<AxiosResponse> {
     const { id } = props;
     return APIService.patch(`/questions/version/${id}`);
   }
   static updateCompletedQuestion(
-    props: IEditQuestionFormValue,
+    props: IQuestionVersionPutUpdateDto & { id: string },
   ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
-    return APIService.post(`/questions/version/${id}`, { data: rest });
+    return APIService.put(`/questions/version/${id}`, rest);
   }
   static updateDraftQuestion(
-    props: IEditQuestionFormValue,
+    props: IQuestionVersionPutUpdateDto & { id: string },
   ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
-    return APIService.put(`/questions/version/${id}`, { data: rest });
+    return APIService.patch(`/questions/version/${id}`, rest);
   }
   static addQuestion(props: IAddQuestionFormValue): Promise<AxiosResponse> {
     return APIService.post(`/questions`, { data: props });

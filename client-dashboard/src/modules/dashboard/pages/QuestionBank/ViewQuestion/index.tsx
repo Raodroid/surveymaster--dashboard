@@ -1,11 +1,11 @@
-import React, { FC, useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { ViewQuestionWrapper } from './style';
 import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { useGetQuestionByQuestionId } from '../util';
-import { Button, Form, Spin } from 'antd';
+import { Button, Form, notification, Spin } from 'antd';
 import QuestionCategoryForm from './QuestionCategoryForm';
 import { useTranslation } from 'react-i18next';
 import QuestionDetailForm from './QuestionDetailForm';
@@ -16,12 +16,18 @@ import { PenFilled } from 'icons';
 import templateVariable from 'app/template-variables.module.scss';
 import qs from 'qs';
 import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
+import { QuestionType, QuestionVersionStatus } from '../../../../../type';
+import { useMutation, useQueryClient } from 'react-query';
+import { QuestionBankService } from '../../../../../services';
+import { onError } from '../../../../../utils';
+import { IEditQuestionFormValue } from '../EditQuestion';
 
 const formSchema = Yup.object();
 
 const ViewQuestion = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const queryString = useParseQueryString<{ version?: string }>();
   const params = useParams<{ questionId?: string }>();
   const [questionData, isLoading] = useGetQuestionByQuestionId(
@@ -29,6 +35,47 @@ const ViewQuestion = () => {
   );
 
   const { versions } = questionData;
+
+  const selectedVerQuestionData = versions?.find(
+    ver => ver?.displayId === queryString?.version,
+  );
+
+  const isDraftVersion =
+    selectedVerQuestionData?.status === QuestionVersionStatus.DRAFT;
+
+  const initValue = useMemo<IEditQuestionFormValue>(
+    () => ({
+      ...selectedVerQuestionData,
+      title: selectedVerQuestionData?.title || '',
+      type: selectedVerQuestionData?.type as QuestionType,
+      masterCategoryId: questionData?.masterCategoryId,
+      masterSubCategoryId: questionData?.masterSubCategoryId || '',
+      masterVariableName: questionData?.masterVariableName,
+    }),
+    [
+      questionData.masterCategoryId,
+      questionData.masterSubCategoryId,
+      questionData.masterVariableName,
+      selectedVerQuestionData,
+    ],
+  );
+
+  const markAsCompleteQuestionMutation = useMutation(
+    (data: { id: string }) => {
+      return QuestionBankService.changeStatusQuestion({
+        ...data,
+        status: QuestionVersionStatus.COMPLETED,
+      });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getQuestionList');
+        await queryClient.invalidateQueries('getQuestionQuery');
+        notification.success({ message: t('common.updateSuccess') });
+      },
+      onError,
+    },
+  );
 
   const handleEdit = useCallback(() => {
     const newQueryString = qs.stringify({
@@ -59,6 +106,14 @@ const ViewQuestion = () => {
     [navigate, params?.questionId, queryString],
   );
 
+  const handleMaskAsCompleted = useCallback(async () => {
+    if (!selectedVerQuestionData?.id) return;
+
+    await markAsCompleteQuestionMutation.mutateAsync({
+      id: selectedVerQuestionData?.id as string,
+    });
+  }, [markAsCompleteQuestionMutation, selectedVerQuestionData]);
+
   const onFinish = useCallback(values => {}, []);
 
   return (
@@ -67,86 +122,107 @@ const ViewQuestion = () => {
         <GeneralSectionHeader
           title={'View Question'}
           endingComponent={
-            <PenFilled
-              onClick={handleEdit}
-              style={{
-                color: templateVariable.primary_color,
-                cursor: 'pointer',
-              }}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {selectedVerQuestionData && isDraftVersion && (
+                <Button type={'primary'} onClick={handleMaskAsCompleted}>
+                  {t('direction.maskAsCompleted')}
+                </Button>
+              )}
+              <PenFilled
+                onClick={handleEdit}
+                style={{
+                  color: templateVariable.primary_color,
+                  cursor: 'pointer',
+                }}
+              />
+            </div>
           }
         />
-        <Formik
-          onSubmit={onFinish}
-          initialValues={questionData}
-          validationSchema={formSchema}
-          render={({ handleSubmit }) => (
-            <Form
-              id={'filter-form'}
-              layout={'vertical'}
-              onFinish={handleSubmit}
-            >
-              <div className="ViewQuestion__body">
-                <div className={'ViewQuestion__body__section question-section'}>
-                  <div className={'question-section__row'}>
-                    <div className={'version-wrapper'}>
-                      {versions?.map(version => {
-                        const { displayId } = version;
-                        if (displayId === queryString.version) {
+        {selectedVerQuestionData && (
+          <Formik
+            enableReinitialize={true}
+            onSubmit={onFinish}
+            initialValues={initValue}
+            validationSchema={formSchema}
+            render={({ handleSubmit }) => (
+              <Form
+                id={'filter-form'}
+                layout={'vertical'}
+                onFinish={handleSubmit}
+                disabled
+              >
+                <div className="ViewQuestion__body">
+                  <div
+                    className={'ViewQuestion__body__section question-section'}
+                  >
+                    <div className={'question-section__row'}>
+                      <div className={'version-wrapper'}>
+                        {versions?.map(version => {
+                          const { displayId } = version;
+                          if (displayId === queryString?.version) {
+                            return (
+                              <span
+                                role={'button'}
+                                className={'ant-btn ant-btn-primary info-btn'}
+                              >
+                                <span>
+                                  {t('common.version')} {displayId}
+                                </span>
+                              </span>
+                            );
+                          }
                           return (
-                            <Button
-                              type={'primary'}
-                              className={'info-btn'}
-                              disabled={false}
+                            <span
+                              className={'ant-btn ant-btn-default info-btn'}
+                              role="button"
+                              onClick={() => {
+                                handleChangeViewVersion(displayId);
+                              }}
                             >
-                              {t('common.version')} {displayId}
-                            </Button>
+                              <span>
+                                {t('common.version')} {displayId}
+                              </span>
+                            </span>
                           );
-                        }
-                        return (
-                          <Button
-                            onClick={() => {
-                              handleChangeViewVersion(displayId);
-                            }}
-                            className={'info-btn'}
-                            disabled={false}
-                          >
-                            {t('common.version')} {displayId}
-                          </Button>
-                        );
-                      }, [])}
+                        }, [])}
+                      </div>
+                    </div>
+                    <div className={'question-section__row'}>
+                      <div className={'question-detail-wrapper'}>
+                        <div className={'question-section__row__title'}>
+                          {t('common.questionDetails')}
+                        </div>
+                        <div className={'question-section__row__content'}>
+                          <QuestionDetailForm />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className={'border'}
+                      style={{ borderWidth: 0.5 }}
+                    ></div>
+                    <div className={'question-section__row'}>
+                      <div className={'answer-list-wrapper'}>
+                        <div className={'question-section__row__title'}>
+                          {t('common.answerList')}
+                        </div>
+                        <div className={'question-section__row__content'}>
+                          <DisplayAnswerList mode={'view'} />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className={'question-section__row'}>
-                    <div className={'question-detail-wrapper'}>
-                      <div className={'question-section__row__title'}>
-                        {t('common.questionDetails')}
-                      </div>
-                      <div className={'question-section__row__content'}>
-                        <QuestionDetailForm disabled />
-                      </div>
-                    </div>
-                  </div>
-                  <div className={'border'} style={{ borderWidth: 0.5 }}></div>
-                  <div className={'question-section__row'}>
-                    <div className={'answer-list-wrapper'}>
-                      <div className={'question-section__row__title'}>
-                        {t('common.answerList')}
-                      </div>
-                      <div className={'question-section__row__content'}>
-                        <DisplayAnswerList />
-                      </div>
-                    </div>
+                  <div className={'divider'} />
+                  <div
+                    className={'ViewQuestion__body__section category-section'}
+                  >
+                    <QuestionCategoryForm />
                   </div>
                 </div>
-                <div className={'divider'} />
-                <div className={'ViewQuestion__body__section category-section'}>
-                  <QuestionCategoryForm disabled />
-                </div>
-              </div>
-            </Form>
-          )}
-        />
+              </Form>
+            )}
+          />
+        )}
       </ViewQuestionWrapper>
     </Spin>
   );

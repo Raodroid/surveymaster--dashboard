@@ -372,7 +372,8 @@
     }
   },
   "direction": {
-    "continueWithGoogle": "Continue with Google"
+    "continueWithGoogle": "Continue with Google",
+    "maskAsCompleted": "Mask as Completed"
   },
   "questionType": {
     "MULTIPLE_CHOICE": "Multiple Choice",

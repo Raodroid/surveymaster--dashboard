@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { QuestionBankSiderWrapper } from './style';
 import QuestionBankSiderMainContent from './main-content';
 import QuestionBankSiderFooter from './footer';
@@ -16,4 +16,4 @@ const QuestionBankSider = () => {
   );
 };
 
-export default QuestionBankSider;
+export default memo(QuestionBankSider);

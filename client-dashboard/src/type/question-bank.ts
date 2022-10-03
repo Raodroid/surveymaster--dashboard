@@ -298,6 +298,7 @@ export interface IBaseQuestionOptionsVersionDto {
 }
 
 export interface BaseQuestionVersionDto {
+  id?: string;
   type: QuestionType;
   title: string;
   status?: QuestionVersionStatus;
@@ -307,6 +308,8 @@ export interface BaseQuestionVersionDto {
   textValidationMax?: number;
   textValidationMin?: number;
   textValidationRegex?: string;
+  numberMin?: number;
+  numberMax?: number;
   options?: IBaseQuestionOptionsVersionDto[];
 }
 
@@ -347,10 +350,11 @@ export interface IGetParams {
   createdFrom?: string;
   createdTo?: string;
   isDeleted?: BooleanEnum;
+  selectAll?: boolean;
 }
 
 export type GetListQuestionDto = IGetParams & {
   categoryIds?: string[];
   subCategoryIds?: string[];
-  type?: QuestionType[];
+  types?: QuestionType[];
 };

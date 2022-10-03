@@ -1,13 +1,21 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { CategoryDetailWrapper } from './style';
 import CategoryDetailHeader from './CategoryDetailHeader';
-import { Menu, notification, PaginationProps, Table } from 'antd';
-import { GetListQuestionDto, IQuestion } from 'type';
+import { Menu, notification, PaginationProps, Spin, Table } from 'antd';
+import { BooleanEnum, GetListQuestionDto, IQuestion } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
 import ThreeDotsDropdown from '../../../../../customize-components/ThreeDotsDropdown';
 import useParseQueryString from '../../../../../hooks/useParseQueryString';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { onError, useDebounce } from '../../../../../utils';
 import { QuestionBankService } from '../../../../../services';
@@ -17,48 +25,61 @@ import { useNavigate } from 'react-router-dom';
 import StyledPagination from '../../../components/StyledPagination';
 import qs from 'qs';
 import { PenFilled, TrashOutlined } from '../../../../../icons';
+import { ItemType } from 'antd/es/menu/hooks/useItems';
 
 enum ACTION_ENUM {
   DELETE = 'DELETE',
   RESTORE = 'RESTORE',
 }
 
+interface ICategoryDetailContext {
+  params: GetListQuestionDto;
+  setParams: Dispatch<SetStateAction<GetListQuestionDto>>;
+  loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+}
+
+const initParams: GetListQuestionDto = {
+  q: '',
+  take: 10,
+  page: 1,
+  createdFrom: '',
+  createdTo: '',
+  isDeleted: BooleanEnum.FALSE,
+};
+
+export const CategoryDetailContext =
+  React.createContext<ICategoryDetailContext | null>(null);
+
+const getQuestion = (params: GetListQuestionDto) => {
+  const newParams: GetListQuestionDto = {
+    ...params,
+  };
+  for (const key in newParams) {
+    if (!newParams[key] && typeof newParams[key] !== 'boolean') {
+      delete newParams[key];
+    }
+  }
+  return QuestionBankService.getQuestions(newParams);
+};
 const CategoryDetail = () => {
   const { t } = useTranslation();
   const [searchTxt, setSearchTxt] = useState<string>('');
+  const queryString = useParseQueryString<GetListQuestionDto>();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const [params, setParams] = useState<GetListQuestionDto>(initParams);
 
   const debounceSearchText = useDebounce(searchTxt);
 
-  const params = useParseQueryString<{
-    category?: string;
-    subCategory?: string;
-  }>();
-  const queryString = useParseQueryString<{
-    category?: string;
-    subCategory?: string;
-  }>();
-
-  const [page, setPage] = useState(1);
-  const [take, setTake] = useState<number>(10);
-
-  const navigate = useNavigate();
-
-  const { category, subCategory } = params;
-
-  const baseParams: GetListQuestionDto = useMemo<GetListQuestionDto>(() => {
-    return {
-      take,
-      page,
-      subCategoryIds: subCategory ? [subCategory] : undefined,
-      categoryIds: category ? [category] : undefined,
-      q: debounceSearchText,
-    };
-  }, [category, page, subCategory, take, debounceSearchText]);
-
   const getQuestionListQuery = useQuery(
-    ['getQuestionList', page, take, subCategory, category, debounceSearchText],
+    ['getQuestionList', params, debounceSearchText],
     () => {
-      return QuestionBankService.getQuestions(baseParams);
+      return getQuestion({
+        ...params,
+        q: debounceSearchText,
+      });
     },
     {
       onError,
@@ -80,16 +101,16 @@ const CategoryDetail = () => {
       },
       {
         title: t('common.question'),
-        dataIndex: ['latestVersion', 'question'],
+        dataIndex: ['latestVersion'],
         render: value => value?.title || '--',
       },
       {
         title: t('common.category'),
-        dataIndex: ['masterCategory', 'name'],
+        dataIndex: ['masterCategoryId'],
       },
       {
         title: t('common.subCategory'),
-        dataIndex: ['masterSubCategory', 'name'],
+        dataIndex: ['masterSubCategoryId'],
       },
       {
         title: t('common.variableName'),
@@ -97,8 +118,8 @@ const CategoryDetail = () => {
       },
       {
         title: t('common.answerType'),
-        dataIndex: ['latestVersion', 'question', 'type'],
-        render: value => value || '--',
+        dataIndex: ['latestVersion', 'type'],
+        render: value => (value ? t(`questionType.${value}`) : '--'),
       },
       {
         title: t('common.action'),
@@ -123,7 +144,7 @@ const CategoryDetail = () => {
         onClick: () => {
           const newQueryString = qs.stringify({
             ...queryString,
-            version: record.latestVersion.displayId,
+            version: record?.latestVersion?.displayId,
           });
           navigate(
             `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION.replace(
@@ -134,37 +155,51 @@ const CategoryDetail = () => {
         },
       };
     },
-    [navigate],
+    [navigate, queryString],
   );
 
   const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
     (current, pageSize) => {
-      setTake(pageSize);
+      setParams(s => ({ ...s, take: pageSize }));
     },
     [],
   );
 
+  useEffect(() => {
+    setParams(s => ({ ...initParams, ...queryString }));
+  }, [queryString]);
+
   return (
-    <CategoryDetailWrapper>
-      <CategoryDetailHeader searchTxt={searchTxt} setSearchTxt={setSearchTxt} />
-      <div className={'CategoryDetail__body'}>
-        <Table
-          dataSource={questionList}
-          columns={columns}
-          onRow={handleClickRow}
-          pagination={false}
-        />
-        <StyledPagination
-          onChange={page => {
-            setPage(page);
-          }}
-          showSizeChanger
-          pageSize={take}
-          onShowSizeChange={onShowSizeChange}
-          total={total}
-        />
-      </div>
-    </CategoryDetailWrapper>
+    <CategoryDetailContext.Provider
+      value={{ params, setParams, loading, setLoading }}
+    >
+      <Spin spinning={loading || getQuestionListQuery.isLoading}>
+        <CategoryDetailWrapper>
+          <CategoryDetailHeader
+            searchTxt={searchTxt}
+            setSearchTxt={setSearchTxt}
+          />
+          <div className={'CategoryDetail__body'}>
+            <Table
+              rowKey={record => record?.id as string}
+              dataSource={questionList}
+              columns={columns}
+              onRow={handleClickRow}
+              pagination={false}
+            />
+            <StyledPagination
+              onChange={page => {
+                setParams(s => ({ ...s, page }));
+              }}
+              showSizeChanger
+              pageSize={params.take}
+              onShowSizeChange={onShowSizeChange}
+              total={total}
+            />
+          </div>
+        </CategoryDetailWrapper>
+      </Spin>
+    </CategoryDetailContext.Provider>
   );
 };
 
@@ -179,6 +214,8 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const isDeleted = record?.deletedAt;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const context = useContext(CategoryDetailContext);
+  const setLoading = context?.setLoading;
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -228,6 +265,37 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     },
     [deleteMutation, restoreMutation],
   );
+
+  const items = useMemo(() => {
+    const baseMenu: ItemType[] = [];
+    if (isDeleted) {
+      baseMenu.push({
+        icon: <PenFilled />,
+        label: t('common.restore'),
+        key: ACTION_ENUM.RESTORE,
+      });
+    } else {
+      baseMenu.push({
+        icon: <TrashOutlined />,
+        label: t('common.delete'),
+        key: ACTION_ENUM.DELETE,
+      });
+    }
+    return baseMenu;
+  }, [t, isDeleted]);
+
+  useEffect(() => {
+    if (setLoading) {
+      setLoading(deleteMutation.isLoading);
+    }
+  }, [deleteMutation.isLoading, setLoading]);
+
+  useEffect(() => {
+    if (setLoading) {
+      setLoading(restoreMutation.isLoading);
+    }
+  }, [restoreMutation.isLoading, setLoading]);
+
   return (
     <ThreeDotsDropdown
       overlay={
@@ -235,18 +303,8 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           onSelect={input => {
             handleSelect({ ...input, record }).then();
           }}
-        >
-          {isDeleted && (
-            <Menu.Item key={ACTION_ENUM.RESTORE} icon={<PenFilled />}>
-              {t('common.restore')}
-            </Menu.Item>
-          )}
-          {!isDeleted && (
-            <Menu.Item key={ACTION_ENUM.DELETE} icon={<TrashOutlined />}>
-              {t('common.delete')}
-            </Menu.Item>
-          )}
-        </Menu>
+          items={items}
+        />
       }
       placement="bottomLeft"
       trigger={'click' as any}

@@ -3,32 +3,33 @@ import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '../../../../../common/input/type';
 import { useTranslation } from 'react-i18next';
 import { QuestionDetailFormWrapper } from './style';
+import { QuestionType } from '../../../../../../type';
+import { transformEnumToOption } from '../../../../../../utils';
 
-const QuestionDetailForm = props => {
-  const { disabled } = props;
+const QuestionDetailForm = () => {
   const { t } = useTranslation();
 
   return (
     <QuestionDetailFormWrapper className={'QuestionDetailForm'}>
       <div className={'QuestionDetailForm__row'}>
         <ControlledInput
-          inputType={INPUT_TYPES.INPUT}
-          name="questionType"
+          inputType={INPUT_TYPES.SELECT}
+          name="type"
           label={t('common.questionFieldType')}
-          disabled={disabled}
+          options={transformEnumToOption(QuestionType, questionType =>
+            t(`questionType.${questionType}`),
+          )}
         />
         <ControlledInput
           inputType={INPUT_TYPES.INPUT}
           name="createdAt"
           label={t('common.dateCreated')}
-          disabled={disabled}
         />
       </div>
       <ControlledInput
         inputType={INPUT_TYPES.INPUT}
-        name="question"
+        name="title"
         label={t('common.question')}
-        disabled={disabled}
       />
     </QuestionDetailFormWrapper>
   );

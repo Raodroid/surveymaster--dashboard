@@ -1,18 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { QuestionBankSiderMainContentWrapper } from './style';
 import { useTranslation } from 'react-i18next';
 import { useMatch, useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../enums';
-import { useQuery } from 'react-query';
-import { QuestionBankService } from '../../../../../../services';
-import { onError } from '../../../../../../utils';
-import _get from 'lodash/get';
 import { Menu, MenuProps, Spin } from 'antd';
-import { IQuestionCategory } from '../../../../../../type';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import { ArrowDown } from '../../../../../../icons';
 import templateVariable from '../../../../../../app/template-variables.module.scss';
+import qs from 'qs';
+import { useGetAllCategories } from '../../util';
 
 const getItem = (
   label: React.ReactNode,
@@ -40,49 +37,40 @@ const QuestionBankSiderMainContent = () => {
   });
 
   const params = useParseQueryString<{
-    category?: string;
-    subCategory?: string;
+    categoryIds?: string[];
+    subCategoryIds?: string[];
   }>();
 
-  const { category, subCategory } = params;
+  const { categoryIds, subCategoryIds } = params;
 
-  const selectedKey = subCategory ? [subCategory] : undefined;
-  const openKey = category ? [category] : undefined;
+  const selectedKey = subCategoryIds;
+  const openKey = categoryIds;
 
-  const onOpenChange: MenuProps['onOpenChange'] = keys => {
-    const keyLength = keys.length;
-    if (keyLength) {
-      const lastKey = keys[keyLength - 1];
+  const onOpenChange: MenuProps['onOpenChange'] = useCallback(
+    keys => {
+      const nextQueryString = qs.stringify({
+        categoryIds: keys,
+      });
       navigate(
-        `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}?category=${lastKey}`,
+        `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}?${nextQueryString}`,
       );
-    }
-  };
-  const handleOnSelect = ({ key }) => {
-    navigate(
-      `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}?category=${openKey}&subCategory=${key}`,
-    );
-  };
-  const baseParams = useMemo(
-    () => ({
-      page: 1,
-      take: 10,
-    }),
-    [],
-  );
-
-  const getCategoryQuery = useQuery(
-    ['getCategories', baseParams],
-    () => QuestionBankService.getCategories(baseParams),
-    {
-      onError,
     },
+    [navigate],
+  );
+  const handleOnSelect = useCallback(
+    ({ key }) => {
+      const nextQueryString = qs.stringify({
+        categoryIds: openKey,
+        subCategoryIds: [key],
+      });
+      navigate(
+        `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}?${nextQueryString}`,
+      );
+    },
+    [navigate, openKey],
   );
 
-  const categories = useMemo<IQuestionCategory[]>(
-    () => _get(getCategoryQuery.data, 'data.data', []),
-    [getCategoryQuery.data],
-  );
+  const { categories, isLoading } = useGetAllCategories();
 
   const transformedCategories = useMemo<ItemType[]>(
     () =>
@@ -111,7 +99,7 @@ const QuestionBankSiderMainContent = () => {
       >
         <h4>{t('common.questionBank')}</h4>
       </div>
-      <Spin spinning={getCategoryQuery.isLoading}>
+      <Spin spinning={isLoading}>
         <div className={'QuestionBankSiderMainContent__body'}>
           <div className={'category-list'}>
             <Menu

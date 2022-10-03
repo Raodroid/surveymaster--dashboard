@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "env-cmd -f .env.staging craco start",
+    "start": "env-cmd -f .env.development craco start",
     "build:development": "env-cmd -f .env.development react-app-rewired build",
     "build:staging": "env-cmd -f .env.staging react-app-rewired build",
     "build:stg": "env-cmd -f .env.stg react-app-rewired build",

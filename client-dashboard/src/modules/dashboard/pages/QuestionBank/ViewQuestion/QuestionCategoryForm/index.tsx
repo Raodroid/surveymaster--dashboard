@@ -1,13 +1,16 @@
 import React from 'react';
 import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '../../../../../common/input/type';
-import { QuestionType } from '../../../../../../type';
-import { transformEnumToOption } from '../../../../../../utils';
 import { useTranslation } from 'react-i18next';
+import { useFormikContext } from 'formik';
+import { useGetAllCategories } from '../../util';
+import { IAddQuestionFormValue } from '../../AddQuestion';
 
 const QuestionCategoryForm = props => {
   const { disabled } = props;
   const { t } = useTranslation();
+  const { values, setFieldValue } = useFormikContext<IAddQuestionFormValue>();
+  const { categories, isLoading, categoryOptions } = useGetAllCategories();
 
   return (
     <>
@@ -21,16 +24,32 @@ const QuestionCategoryForm = props => {
       )}
       <ControlledInput
         disabled={disabled}
-        inputType={INPUT_TYPES.INPUT}
+        inputType={INPUT_TYPES.SELECT}
+        options={categoryOptions}
         name="masterCategoryId"
         label={t('common.masterQuestionCategory')}
+        onChange={() => {
+          setFieldValue('subCategoryIds', '');
+        }}
       />
+
       <ControlledInput
-        disabled={disabled}
-        inputType={INPUT_TYPES.INPUT}
-        name="masterSubCategoryId"
+        loading={isLoading}
+        disabled={disabled || !values.masterCategoryId}
         label={t('common.masterQuestionSubCategory')}
+        inputType={INPUT_TYPES.SELECT}
+        name="subCategoryIds"
+        maxTagCount="responsive"
+        options={(() => {
+          const x = categories?.find(i => i.id === values.masterCategoryId);
+          if (!x?.children) return [];
+          return x.children?.map(child => ({
+            label: child.name as string,
+            value: child.id as string,
+          }));
+        })()}
       />
+
       <ControlledInput
         disabled={disabled}
         label={t('common.masterVariableName')}

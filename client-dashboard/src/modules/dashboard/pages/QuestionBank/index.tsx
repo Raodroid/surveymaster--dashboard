@@ -1,5 +1,5 @@
 import React from 'react';
-import { QuestionBankWrapper, QuestionBackContentWrapper } from './style';
+import { QuestionBankWrapper, QuestionBankContentWrapper } from './style';
 import QuestionBankSider from './QuestionBankSider';
 import { Outlet } from 'react-router-dom';
 
@@ -8,9 +8,9 @@ const QuestionBank = () => {
     <QuestionBankWrapper>
       <QuestionBankSider />
 
-      <QuestionBackContentWrapper>
+      <QuestionBankContentWrapper>
         <Outlet />
-      </QuestionBackContentWrapper>
+      </QuestionBankContentWrapper>
     </QuestionBankWrapper>
   );
 };
