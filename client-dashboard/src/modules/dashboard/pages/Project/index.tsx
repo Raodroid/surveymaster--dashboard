@@ -5,8 +5,8 @@ import APIService from 'services/survey-master-service/base.service';
 import ProjectContent from './ProjectContent';
 import AddSurvey from './ProjectContent/component/AddSurvey';
 import DetailSurvey from './ProjectContent/component/DetailSurvey';
-import AddProject from './ProjectContent/component/NewProject';
-import EditProject from './ProjectContent/component/NewProject/EditProject';
+import AddProject from './ProjectContent/component/Project';
+import EditProject from './ProjectContent/component/Project/EditProject';
 import Survey from './ProjectContent/component/Survey';
 import { ProjectContentWrapper } from './ProjectContent/style';
 import ProjectSider from './ProjectSider';
@@ -26,6 +26,8 @@ const Project = () => {
       },
     }),
   );
+
+  console.log(data);
 
   return (
     <ProjectWrapper>

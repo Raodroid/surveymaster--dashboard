@@ -1,50 +1,54 @@
-import { Button, Form, notification, Spin } from 'antd';
+import { Button, Form, notification } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
-import { UpdateProject } from 'interfaces';
+import { UpdateProject } from 'interfaces/project';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import { useLocation, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
-import * as Yup from 'yup';
+import { mockSurveyList } from '../../../mockup';
 import ProjectHeader from '../Header';
 import Inputs from './Inputs';
 import { AddProjectWrapper } from './styles';
-
-const initialValues: UpdateProject = {
-  name: '',
-  id: '',
-  description: '',
-  personInCharge: '',
-};
 
 function EditProject() {
   const params = useParams();
   const { search } = useLocation();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const { data: project, isLoading } = useQuery(['project', params.id], () =>
+  const { data: queryData, isLoading } = useQuery(['project', params.id], () =>
     ProjectService.getProjectById(params.id),
   );
 
-  const title = useMemo(
-    () => search.replace('?title=', '').replace(/%20/g, ' '),
-    [search],
-  );
+  const { data } = mockSurveyList;
+  const project = data.find(elm => elm.project?.displayId === params.id);
+
+  const initialValues: UpdateProject = useMemo(() => {
+    return {
+      name: project?.name,
+      id: project?.project?.displayId,
+      description: project?.remark,
+      personInCharge: project?.createdBy.fullName,
+    };
+  }, [project]);
 
   const routes = useMemo(
     () => [
       {
-        name: title,
-        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT,
+        name: project?.name,
+        href:
+          params &&
+          params.id &&
+          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(':id', params.id),
       },
       {
         name: 'Edit Project',
-        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT,
+        href: '',
       },
     ],
-    [title],
+    [params, project],
   );
 
   const mutationEditProject = useMutation(ProjectService.updateProject, {
@@ -56,14 +60,20 @@ function EditProject() {
     mutationEditProject.mutateAsync(payload);
   };
 
+  const fakeHandleSubmit = (payload: UpdateProject) => {
+    notification.success({ message: t('common.updateSuccess') });
+    navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
+  };
+
   return (
     <>
       <ProjectHeader routes={routes} />
       {/* <Spin spinning={isLoading}> */}
       <AddProjectWrapper>
         <Formik
-          initialValues={project?.data || initialValues}
-          onSubmit={handleSubmit}
+          // initialValues={project?.data || initialValues}
+          initialValues={initialValues}
+          onSubmit={fakeHandleSubmit}
         >
           {({
             values,

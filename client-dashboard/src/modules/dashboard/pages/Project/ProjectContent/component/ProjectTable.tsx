@@ -1,4 +1,5 @@
-import { Table } from 'antd';
+import { Button, Menu, Table } from 'antd';
+import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { ROUTE_PATH } from 'enums';
 import { CloseIcon, PenFilled } from 'icons';
 import React, { useMemo, useState } from 'react';
@@ -52,15 +53,13 @@ function ProjectTable() {
 
   const { data } = mockSurveyList;
 
-  console.log(data);
-
   const columns = useMemo(
     () => [
       {
         title: 'ID',
         dataIndex: 'project',
         key: 'project',
-        render: (project: any) => <div>{project.displayId}</div>,
+        render: (_, record: any) => <div>{record?.project.displayId}</div>,
       },
       {
         title: 'Project Title',
@@ -103,22 +102,25 @@ function ProjectTable() {
         dataIndex: 'actions',
         key: 'actions',
         render: (_, record: any) => (
-          <div className="flex">
-            <PenFilled
+          <div className="flex-center actions">
+            <Button
               onClick={() =>
                 navigate(
                   ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT.replace(
                     ':id',
                     record.project.displayId,
-                  ) + `?title=${record.name}`,
+                  ),
                 )
               }
-            />
+            >
+              <PenFilled />
+            </Button>
+            <ThreeDotsDropdown overlay={<Menu />} trigger={['click']} />
           </div>
         ),
       },
     ],
-    [],
+    [navigate],
   );
 
   return (

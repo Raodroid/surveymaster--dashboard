@@ -104,7 +104,10 @@ const StyledBreadcrumb: FC<IBreadcrumb> = props => {
         {!isMobile &&
           routes.map((route, idx, array) => {
             return (
-              <div className={'breadcrumb-item'} key={route.href}>
+              <div
+                className={'breadcrumb-item'}
+                key={route.href + idx.toString()}
+              >
                 {idx === array.length - 1 ? (
                   <>
                     <span>{route.name}</span>

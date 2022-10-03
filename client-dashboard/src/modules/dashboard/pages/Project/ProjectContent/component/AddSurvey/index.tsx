@@ -5,6 +5,7 @@ import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useState } from 'react';
 import { useParams } from 'react-router';
+import { mockSurveyList } from '../../../mockup';
 import ProjectHeader from '../Header';
 import QuestionList from './QuestionList';
 import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
@@ -20,9 +21,12 @@ function AddSurvey() {
   const params = useParams();
   const [templateValue, setTemplateValue] = useState('');
 
+  const { data } = mockSurveyList;
+  const project = data.find(elm => elm.project?.displayId === params.id);
+
   const routes = [
     {
-      name: params.id,
+      name: project?.name,
       href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/' + params.id,
     },
     {

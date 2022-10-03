@@ -449,8 +449,8 @@ export const mockSurveyList: IPaginationResponse<ISurvey> = {
       remark:
         'Quisque malesuada placerat nisl. Nulla facilisi. Pellentesque auctor neque nec urna. Pellentesque dapibus hendrerit tortor. Donec vitae sapien ut libero venenatis faucibus.',
       project: {
-        id: 'p1',
-        displayId: '111-23',
+        id: 'p2',
+        displayId: '111-24',
         name: 'FFQ',
       },
       questions: [
@@ -479,7 +479,7 @@ export const mockSurveyList: IPaginationResponse<ISurvey> = {
   ],
 };
 
-const mockSurveyDetail: ISurvey = {
+export const mockSurveyDetail: ISurvey = {
   id: '1',
   displayId: '111-22',
   projectId: 'p1',

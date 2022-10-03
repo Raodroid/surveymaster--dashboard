@@ -1,5 +1,6 @@
 import { ROUTE_PATH } from 'enums';
 import { Route, Routes } from 'react-router';
+import EditSurvey from './Edit';
 import DetailSurveyHome from './Home';
 import { DetailSurveyWrapper } from './styles';
 
@@ -11,7 +12,7 @@ function DetailSurvey() {
     <DetailSurveyWrapper className="flex-column">
       <Routes>
         <Route path="/" element={<DetailSurveyHome />} />
-        <Route path={subRoute(routePath.EDIT)} element={<DetailSurveyHome />} />
+        <Route path={subRoute(routePath.EDIT)} element={<EditSurvey />} />
       </Routes>
     </DetailSurveyWrapper>
   );

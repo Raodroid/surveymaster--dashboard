@@ -2,6 +2,7 @@ import { Form } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
 import { mockSurveyList } from 'modules/dashboard/pages/Project/mockup';
+import { useMemo } from 'react';
 import { useParams } from 'react-router';
 import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
@@ -13,23 +14,24 @@ function DetailSurveyHome() {
 
   const { data } = mockSurveyList;
   const project = data.find(elm => elm.project?.displayId === params.id);
+  const survey = data.find(elm => elm.displayId === params.detailId);
 
-  const routes = [
-    {
-      name: project?.name,
-      href:
-        params &&
-        params.id &&
-        ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(':id', params.id),
-    },
-    {
-      name: params.detailId,
-      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY.replace(
-        ':id',
-        params.id || '',
-      ),
-    },
-  ];
+  const routes = useMemo(
+    () => [
+      {
+        name: project?.name,
+        href:
+          params &&
+          params.id &&
+          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(':id', params.id),
+      },
+      {
+        name: survey?.project?.name,
+        href: '',
+      },
+    ],
+    [params, project, survey],
+  );
 
   return (
     <DetailSurveyHomeWrapper className="flex-column">
@@ -37,10 +39,10 @@ function DetailSurveyHome() {
       <div className="body">
         <Formik
           initialValues={{
-            name: project?.name,
-            createdAt: project?.createdAt.toString().slice(0, 15),
-            id: project?.displayId,
-            surveyRemarks: project?.remark,
+            name: survey?.project?.name,
+            createdAt: survey?.createdAt.toString().slice(0, 15),
+            id: survey?.displayId,
+            surveyRemarks: survey?.remark,
           }}
           onSubmit={() => {}}
         >
@@ -55,8 +57,8 @@ function DetailSurveyHome() {
             setFieldValue,
           }) => (
             <Form layout="vertical">
-              <Inputs />
-              <QuestionList />
+              <Inputs disabled />
+              <QuestionList survey={project} />
             </Form>
           )}
         </Formik>

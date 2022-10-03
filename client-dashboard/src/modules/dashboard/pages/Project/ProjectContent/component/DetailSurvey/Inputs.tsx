@@ -4,7 +4,8 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import React from 'react';
 import { InputsWrapper } from './styles';
 
-function Inputs() {
+function Inputs(props: { disabled: boolean }) {
+  const { disabled } = props;
   return (
     <InputsWrapper className="flex-aligns-start">
       <div className="main-info">
@@ -13,17 +14,20 @@ function Inputs() {
           <ControlledInput
             name="name"
             label="Survey Title"
+            disabled={disabled}
             inputType={INPUT_TYPES.INPUT}
           />
           <ControlledInput
             name="createdAt"
             label="Date Created"
+            disabled={disabled}
             inputType={INPUT_TYPES.INPUT}
           />
         </div>
         <ControlledInput
           name="surveyRemarks"
           label="Survey Remarks"
+          disabled={disabled}
           inputType={INPUT_TYPES.TEXTAREA}
         />
       </div>
@@ -33,6 +37,7 @@ function Inputs() {
           name="id"
           label="ID"
           type="text"
+          disabled={disabled}
           inputType={INPUT_TYPES.INPUT}
         />
       </div>

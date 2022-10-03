@@ -1,19 +1,16 @@
-import { Button, Divider, Form, notification } from 'antd';
+import { Button, Form, notification } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
-import { CloseIcon } from 'icons';
-import { CreateProject } from 'interfaces';
-import { ControlledInput } from 'modules/common';
-import { INPUT_TYPES } from 'modules/common/input/type';
+import { CreateProject } from 'interfaces/project';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
-import ProjectHeader from '../Header';
-import { AddProjectContentWrapper, AddProjectWrapper } from './styles';
 import * as Yup from 'yup';
+import ProjectHeader from '../Header';
 import Inputs from './Inputs';
+import { AddProjectWrapper } from './styles';
 
 const initialValues: CreateProject = {
   name: '',
@@ -25,14 +22,15 @@ const initialValues: CreateProject = {
 function AddProject() {
   const params = useParams();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const routes = useMemo(
     () => [
       {
         name: 'Add New Project',
-        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + params.id,
+        href: '',
       },
     ],
-    [params],
+    [],
   );
 
   const createProjectSchema = Yup.object().shape({
@@ -51,13 +49,18 @@ function AddProject() {
     mutationCreateProject.mutateAsync(payload);
   };
 
+  const fakeHandleSubmit = (payload: CreateProject) => {
+    notification.success({ message: 'Create Success' });
+    navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
+  };
+
   return (
     <>
       <ProjectHeader routes={routes} />
       <AddProjectWrapper>
         <Formik
           initialValues={initialValues}
-          onSubmit={handleSubmit}
+          onSubmit={fakeHandleSubmit}
           validationSchema={createProjectSchema}
         >
           {({

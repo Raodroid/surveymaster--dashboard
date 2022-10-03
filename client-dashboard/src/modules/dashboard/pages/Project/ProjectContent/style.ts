@@ -37,7 +37,7 @@ export const ProjectContentWrapper = styled(FlexBox)`
 `;
 
 export const HeaderStyled = styled.div`
-  height: 76px;
+  min-height: 76px;
   padding: 0 32px;
   border-bottom: 1px solid #f3eef3;
 
@@ -65,6 +65,24 @@ export const ProjectTableWrapper = styled.div`
 
   .ant-table-cell:last-child {
     text-align: center;
+  }
+
+  .actions {
+    gap: 4px;
+
+    .three-dots,
+    .ant-btn {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      color: var(--ant-primary-color);
+    }
+  }
+
+  a {
+    color: var(--text-color);
   }
 
   a,

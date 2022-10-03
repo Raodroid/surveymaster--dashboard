@@ -1,3 +1,4 @@
+import { SearchOutlined } from '@ant-design/icons';
 import { ROUTE_PATH } from 'enums';
 import StyledBreadcrumb from 'modules/common/commonComponent/StyledBreadcrumb';
 import { HeaderStyled } from '../style';

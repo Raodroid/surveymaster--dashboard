@@ -7,7 +7,7 @@ export interface CreateProject {
 
 export interface UpdateProject {
   name?: string;
-  id: string;
+  id?: string;
   description?: string;
   personInCharge?: string;
 }
