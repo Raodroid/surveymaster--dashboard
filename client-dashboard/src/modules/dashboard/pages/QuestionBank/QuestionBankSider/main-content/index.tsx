@@ -99,9 +99,9 @@ const QuestionBankSiderMainContent = () => {
       >
         <h4>{t('common.questionBank')}</h4>
       </div>
-      <Spin spinning={isLoading}>
-        <div className={'QuestionBankSiderMainContent__body'}>
-          <div className={'category-list'}>
+      <div className={'QuestionBankSiderMainContent__body'}>
+        <div className={'category-list'}>
+          <Spin spinning={isLoading}>
             <Menu
               expandIcon={() => null}
               mode="inline"
@@ -112,9 +112,9 @@ const QuestionBankSiderMainContent = () => {
               items={transformedCategories}
               onSelect={handleOnSelect}
             />
-          </div>
+          </Spin>
         </div>
-      </Spin>
+      </div>
     </QuestionBankSiderMainContentWrapper>
   );
 };
