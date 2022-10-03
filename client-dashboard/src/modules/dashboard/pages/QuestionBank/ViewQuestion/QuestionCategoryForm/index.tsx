@@ -29,7 +29,8 @@ const QuestionCategoryForm = props => {
         name="masterCategoryId"
         label={t('common.masterQuestionCategory')}
         onChange={() => {
-          setFieldValue('subCategoryIds', '');
+          if (disabled) return;
+          setFieldValue('masterSubCategoryId', '');
         }}
       />
 
@@ -38,7 +39,7 @@ const QuestionCategoryForm = props => {
         disabled={disabled || !values.masterCategoryId}
         label={t('common.masterQuestionSubCategory')}
         inputType={INPUT_TYPES.SELECT}
-        name="subCategoryIds"
+        name="masterSubCategoryId"
         maxTagCount="responsive"
         options={(() => {
           const x = categories?.find(i => i.id === values.masterCategoryId);

@@ -5,10 +5,29 @@ import { QuestionType } from '../../../../../../type';
 import { useTranslation } from 'react-i18next';
 import { AddQuestionDetailFormWrapper } from './style';
 import { transformEnumToOption } from '../../../../../../utils';
+import { useFormikContext } from 'formik';
 
 const AddQuestionDetailForm = () => {
   const { t } = useTranslation();
 
+  const { setFieldValue, errors } = useFormikContext();
+  console.log(errors);
+
+  const handleTextFieldChange = value => {
+    switch (value) {
+      case QuestionType.SLIDER: {
+        setFieldValue('numberMax', 10);
+        setFieldValue('numberMin', 1);
+        setFieldValue('numberStep', 1);
+        break;
+      }
+      case QuestionType.MULTIPLE_CHOICE:
+      case QuestionType.RADIO_BUTTONS: {
+        setFieldValue('options', []);
+        break;
+      }
+    }
+  };
   return (
     <AddQuestionDetailFormWrapper className={'AddQuestionDetailForm'}>
       <ControlledInput
@@ -16,12 +35,13 @@ const AddQuestionDetailForm = () => {
         options={transformEnumToOption(QuestionType, questionType =>
           t(`questionType.${questionType}`),
         )}
-        name="questionType"
+        name="type"
         label={t('common.questionFieldType')}
+        onChange={handleTextFieldChange}
       />
       <ControlledInput
         inputType={INPUT_TYPES.TEXTAREA}
-        name="question"
+        name="title"
         label={t('common.question')}
       />
     </AddQuestionDetailFormWrapper>

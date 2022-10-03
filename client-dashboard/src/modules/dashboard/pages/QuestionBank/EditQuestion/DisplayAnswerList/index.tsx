@@ -1,11 +1,14 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '../../../../../common/input/type';
-import { IQuestionVersionOption, QuestionType } from '../../../../../../type';
+import {
+  BaseQuestionVersionDto,
+  IQuestionVersionOption,
+  QuestionType,
+} from '../../../../../../type';
 import { useTranslation } from 'react-i18next';
 import { DisplayAnswerListWrapper } from './style';
 import { FieldArray, useFormikContext } from 'formik';
-import { IEditQuestionFormValue } from '../index';
 import { Button } from 'antd';
 import DragAnswerList from './DragAnswerList';
 
@@ -15,7 +18,7 @@ interface IDisplayAnswerList {
 
 const DisplayAnswerList: FC<IDisplayAnswerList> = props => {
   const { mode = 'edit' } = props;
-  const { values } = useFormikContext<IEditQuestionFormValue>();
+  const { values } = useFormikContext<BaseQuestionVersionDto>();
   const { t } = useTranslation();
 
   switch (values.type) {
@@ -81,4 +84,4 @@ const DisplayAnswerList: FC<IDisplayAnswerList> = props => {
   }
 };
 
-export default DisplayAnswerList;
+export default memo(DisplayAnswerList);

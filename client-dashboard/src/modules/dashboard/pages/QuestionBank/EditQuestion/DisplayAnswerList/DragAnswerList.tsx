@@ -32,7 +32,7 @@ const DragOption: FC<{
 }> = props => {
   const { opt, index, arrayHelpers } = props;
   return (
-    <Draggable draggableId={`item${opt.id}`} index={index}>
+    <Draggable draggableId={`item${opt.id}`} index={index} key={opt.id}>
       {provided => (
         <div
           className={'DisplayAnswerListWrapper__row'}
@@ -54,7 +54,15 @@ const DragOption: FC<{
           </div>
           <Button
             className={'delete-icon'}
-            onClick={() => arrayHelpers.remove(index)}
+            onClick={() => {
+              arrayHelpers.remove(index);
+              if (index === 0) {
+                arrayHelpers.push({
+                  text: '',
+                  id: Math.random(),
+                });
+              }
+            }}
             icon={
               <span>
                 <TrashOutlined />
@@ -87,7 +95,7 @@ const OptionList = React.memo(function QuoteListA(props: {
         <DragOption
           opt={option}
           index={index}
-          key={option.sort}
+          key={option.id}
           arrayHelpers={arrayHelpers}
         />
       ))}

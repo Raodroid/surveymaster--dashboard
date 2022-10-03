@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import moment from 'moment';
+import { QuestionType } from '../../../type';
 
 export const INVALID_FIELDS = {
   MIN_USERNAME: 'validation.messages.minUserName',
@@ -150,4 +151,39 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
   masterCategoryId: Yup.string().required(INVALID_FIELDS.REQUIRED),
   masterSubCategoryId: Yup.string().required(INVALID_FIELDS.REQUIRED),
   masterVariableName: Yup.string().required(INVALID_FIELDS.REQUIRED),
+
+  numberMin: Yup.string().when('type', {
+    is: QuestionType.SLIDER,
+    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  }),
+  numberMax: Yup.string().when('type', {
+    is: QuestionType.SLIDER,
+    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  }),
+  numberStep: Yup.string().when('type', {
+    is: QuestionType.SLIDER,
+    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  }),
+
+  options: Yup.array()
+    .when('type', {
+      is: QuestionType.MULTIPLE_CHOICE,
+      then: Yup.array()
+        .of(
+          Yup.object().shape({
+            text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          }),
+        )
+        .min(1),
+    })
+    .when('type', {
+      is: QuestionType.RADIO_BUTTONS,
+      then: Yup.array()
+        .of(
+          Yup.object().shape({
+            text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          }),
+        )
+        .min(1),
+    }),
 });

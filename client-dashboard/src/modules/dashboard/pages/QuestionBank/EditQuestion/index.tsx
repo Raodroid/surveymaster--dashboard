@@ -11,8 +11,10 @@ import { QuestionBankService } from '../../../../../services';
 import { onError } from '../../../../../utils';
 import {
   BaseQuestionVersionDto,
+  IBaseQuestionOptionsVersionDto,
   IQuestionVersion,
-  IQuestionVersionPutUpdateDto,
+  IQuestionVersionPostNewDto,
+  IQuestionVersionPutUpdateDtoExtendId,
   QuestionType,
   QuestionVersionStatus,
 } from 'type';
@@ -23,12 +25,47 @@ import { useParams } from 'react-router';
 import { useGetQuestionByQuestionId } from '../util';
 import useParseQueryString from '../../../../../hooks/useParseQueryString';
 import DisplayAnswerList from './DisplayAnswerList';
+import { transformQuestionData } from '../AddQuestion';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;
   masterSubCategoryId: string;
   masterVariableName: string;
+  options?: IBaseQuestionOptionsVersionDto[];
 };
+
+type transformDataType =
+  | IQuestionVersionPostNewDto
+  | IQuestionVersionPutUpdateDtoExtendId;
+function transformData(
+  input: IEditQuestionFormValue,
+  questionData?: IQuestionVersion,
+): transformDataType | undefined {
+  if (!questionData) return undefined;
+  transformQuestionData(input);
+
+  const {
+    id,
+    masterSubCategoryId,
+    masterVariableName,
+    masterCategoryId,
+    ...rest
+  } = input;
+
+  if (!id) return undefined;
+
+  if (questionData.status === QuestionVersionStatus.COMPLETED) {
+    return {
+      version: rest,
+      questionId: questionData.questionId,
+    } as IQuestionVersionPostNewDto;
+  }
+
+  return {
+    id: id as string,
+    version: rest,
+  } as IQuestionVersionPutUpdateDtoExtendId;
+}
 
 const EditQuestion = () => {
   const { t } = useTranslation();
@@ -46,7 +83,6 @@ const EditQuestion = () => {
 
   const initValue = useMemo<IEditQuestionFormValue>(() => {
     const {
-      versions,
       masterCategoryId = '',
       masterSubCategoryId = '',
       masterVariableName = '',
@@ -59,7 +95,13 @@ const EditQuestion = () => {
       masterCategoryId,
       masterSubCategoryId,
       masterVariableName,
-      options: currentVersionQuestionData?.options || [],
+      options: currentVersionQuestionData?.options || [
+        {
+          id: Math.random(),
+          text: '',
+          sort: 1,
+        },
+      ],
       numberStep: currentVersionQuestionData?.numberStep || 1,
       numberMax: currentVersionQuestionData?.numberMax || 10,
       numberMin: currentVersionQuestionData?.numberMin || 1,
@@ -73,13 +115,17 @@ const EditQuestion = () => {
   }, [currentVersionQuestionData, questionData]);
 
   const updateQuestionMutation = useMutation(
-    (data: { id: string } & IQuestionVersionPutUpdateDto) => {
+    (data: transformDataType) => {
       if (
-        questionData?.latestVersion?.status === QuestionVersionStatus.COMPLETED
+        currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED
       ) {
-        return QuestionBankService.updateCompletedQuestion(data);
+        return QuestionBankService.createQuestionVersion(
+          data as IQuestionVersionPostNewDto,
+        );
       }
-      return QuestionBankService.updateDraftQuestion(data);
+      return QuestionBankService.updateDraftQuestion(
+        data as IQuestionVersionPutUpdateDtoExtendId,
+      );
     },
     {
       onSuccess: async () => {
@@ -102,43 +148,19 @@ const EditQuestion = () => {
       };
 
       if (
-        ![QuestionType.MULTIPLE_CHOICE, QuestionType.RADIO_BUTTONS].includes(
-          newValues.type,
-        )
+        currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED
       ) {
-        delete newValues?.options;
+        newValues.status = QuestionVersionStatus.DRAFT;
       }
 
-      const {
-        id,
-        masterSubCategoryId,
-        masterVariableName,
-        masterCategoryId,
-        ...rest
-      } = newValues;
+      const newVal = transformData(newValues, currentVersionQuestionData);
+      if (!newVal) return;
 
-      if (!id) return;
-
-      const x: { id: string } & IQuestionVersionPutUpdateDto = {
-        id: id as string,
-        version: {
-          displayId: currentVersionQuestionData?.displayId as string,
-          masterCombineTokenString: currentVersionQuestionData?.question
-            ?.masterCombineTokenString as string,
-          masterSubCategoryId,
-          masterVariableName,
-          masterCategoryId,
-          version: rest,
-        },
-      };
-
-      await updateQuestionMutation.mutateAsync(x);
+      await updateQuestionMutation.mutateAsync(
+        newVal as IQuestionVersionPutUpdateDtoExtendId,
+      );
     },
-    [
-      currentVersionQuestionData?.displayId,
-      currentVersionQuestionData?.question?.masterCombineTokenString,
-      updateQuestionMutation,
-    ],
+    [currentVersionQuestionData, updateQuestionMutation],
   );
 
   return (
@@ -152,7 +174,7 @@ const EditQuestion = () => {
         render={({ handleSubmit, isValid, dirty }) => (
           <>
             <Form
-              id={'add-question-form'}
+              id={'edit-question-form'}
               layout={'vertical'}
               onFinish={handleSubmit}
               className={'EditQuestion__body'}
@@ -192,7 +214,7 @@ const EditQuestion = () => {
             <div className={'EditQuestion__footer'}>
               <div className={'EditQuestion__footer__submit-btn-wrapper'}>
                 <Button
-                  form={'add-question-form'}
+                  form={'edit-question-form'}
                   htmlType={'submit'}
                   className={'info-btn'}
                   type={'primary'}

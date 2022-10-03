@@ -45,7 +45,7 @@ const initParams: GetListQuestionDto = {
   page: 1,
   createdFrom: '',
   createdTo: '',
-  isDeleted: BooleanEnum.FALSE,
+  // isDeleted: BooleanEnum.FALSE,
 };
 
 export const CategoryDetailContext =
@@ -219,7 +219,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
-      return QuestionBankService.deleteQuestionByQuestionId(data);
+      return QuestionBankService.deleteQuestion(data);
     },
     {
       onSuccess: async () => {
@@ -246,7 +246,6 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const handleSelect = useCallback(
     async (props: {
       record: IQuestion;
-      selectedKeys: string[];
       key: string;
       keyPath: string[];
       item: React.ReactInstance;
@@ -284,28 +283,30 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     return baseMenu;
   }, [t, isDeleted]);
 
+  const menu = (
+    <Menu
+      onClick={input => {
+        handleSelect({ ...input, record }).then();
+      }}
+      items={items}
+    />
+  );
+
   useEffect(() => {
     if (setLoading) {
       setLoading(deleteMutation.isLoading);
     }
-  }, [deleteMutation.isLoading, setLoading]);
+  }, [deleteMutation, setLoading]);
 
   useEffect(() => {
     if (setLoading) {
       setLoading(restoreMutation.isLoading);
     }
-  }, [restoreMutation.isLoading, setLoading]);
+  }, [restoreMutation, setLoading]);
 
   return (
     <ThreeDotsDropdown
-      overlay={
-        <Menu
-          onSelect={input => {
-            handleSelect({ ...input, record }).then();
-          }}
-          items={items}
-        />
-      }
+      overlay={menu}
       placement="bottomLeft"
       trigger={'click' as any}
     />

@@ -12,17 +12,31 @@ import QuestionDetailForm from './QuestionDetailForm';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import useParseQueryString from 'hooks/useParseQueryString';
-import { PenFilled } from 'icons';
+import { PenFilled, TrashOutlined } from 'icons';
 import templateVariable from 'app/template-variables.module.scss';
 import qs from 'qs';
 import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
-import { QuestionType, QuestionVersionStatus } from '../../../../../type';
+import {
+  BaseQuestionVersionDto,
+  IBaseQuestionOptionsVersionDto,
+  IQuestionVersion,
+  QuestionType,
+  QuestionVersionStatus,
+} from '../../../../../type';
 import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from '../../../../../services';
 import { onError } from '../../../../../utils';
-import { IEditQuestionFormValue } from '../EditQuestion';
+import moment, { Moment } from 'moment';
 
 const formSchema = Yup.object();
+
+type IViewQuestionFormValue = BaseQuestionVersionDto & {
+  masterCategoryId: string;
+  masterSubCategoryId: string;
+  masterVariableName: string;
+  options?: IBaseQuestionOptionsVersionDto[];
+  createdAt?: Moment;
+};
 
 const ViewQuestion = () => {
   const { t } = useTranslation();
@@ -36,16 +50,18 @@ const ViewQuestion = () => {
 
   const { versions } = questionData;
 
-  const selectedVerQuestionData = versions?.find(
-    ver => ver?.displayId === queryString?.version,
+  const selectedVerQuestionData = useMemo<IQuestionVersion | undefined>(
+    () => versions?.find(ver => ver?.displayId === queryString?.version),
+    [queryString?.version, versions],
   );
 
   const isDraftVersion =
     selectedVerQuestionData?.status === QuestionVersionStatus.DRAFT;
 
-  const initValue = useMemo<IEditQuestionFormValue>(
+  const initValue = useMemo<IViewQuestionFormValue>(
     () => ({
       ...selectedVerQuestionData,
+      createdAt: moment(selectedVerQuestionData?.createdAt),
       title: selectedVerQuestionData?.title || '',
       type: selectedVerQuestionData?.type as QuestionType,
       masterCategoryId: questionData?.masterCategoryId,
@@ -64,7 +80,7 @@ const ViewQuestion = () => {
     (data: { id: string }) => {
       return QuestionBankService.changeStatusQuestion({
         ...data,
-        status: QuestionVersionStatus.COMPLETED,
+        version: { status: QuestionVersionStatus.COMPLETED },
       });
     },
     {
@@ -72,6 +88,19 @@ const ViewQuestion = () => {
         await queryClient.invalidateQueries('getQuestionList');
         await queryClient.invalidateQueries('getQuestionQuery');
         notification.success({ message: t('common.updateSuccess') });
+      },
+      onError,
+    },
+  );
+  const deleteQuestionVersionMutation = useMutation(
+    (data: { id: string }) => {
+      return QuestionBankService.deleteQuestionVersion(data);
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getQuestionList');
+        await queryClient.invalidateQueries('getQuestionQuery');
+        notification.success({ message: t('common.deleteSuccess') });
       },
       onError,
     },
@@ -114,17 +143,43 @@ const ViewQuestion = () => {
     });
   }, [markAsCompleteQuestionMutation, selectedVerQuestionData]);
 
+  const handleDeleteQuestionVersion = useCallback(async () => {
+    if (!selectedVerQuestionData?.id) return;
+
+    await deleteQuestionVersionMutation.mutateAsync({
+      id: selectedVerQuestionData?.id as string,
+    });
+  }, [deleteQuestionVersionMutation, selectedVerQuestionData?.id]);
+
   const onFinish = useCallback(values => {}, []);
 
   return (
-    <Spin spinning={isLoading}>
+    <Spin
+      spinning={
+        isLoading ||
+        deleteQuestionVersionMutation.isLoading ||
+        markAsCompleteQuestionMutation.isLoading
+      }
+    >
       <ViewQuestionWrapper className={'ViewQuestion'}>
         <GeneralSectionHeader
           title={'View Question'}
           endingComponent={
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <Button
+                type={'primary'}
+                onClick={handleDeleteQuestionVersion}
+                loading={deleteQuestionVersionMutation.isLoading}
+              >
+                Delete this version
+              </Button>
               {selectedVerQuestionData && isDraftVersion && (
-                <Button type={'primary'} onClick={handleMaskAsCompleted}>
+                <Button
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={handleMaskAsCompleted}
+                  loading={markAsCompleteQuestionMutation.isLoading}
+                >
                   {t('direction.maskAsCompleted')}
                 </Button>
               )}

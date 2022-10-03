@@ -21,7 +21,7 @@ const QuestionDetailForm = () => {
           )}
         />
         <ControlledInput
-          inputType={INPUT_TYPES.INPUT}
+          inputType={INPUT_TYPES.DAY_PICKER}
           name="createdAt"
           label={t('common.dateCreated')}
         />

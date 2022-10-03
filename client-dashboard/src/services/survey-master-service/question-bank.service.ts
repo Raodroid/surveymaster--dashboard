@@ -1,14 +1,12 @@
 import APIService from './base.service';
 import { AxiosResponse } from 'axios';
 import {
-  BaseQuestionVersionDto,
   GetListQuestionDto,
   IGetParams,
-  IQuestionVersionPutUpdateDto,
-  QuestionDetail,
-  QuestionVersionStatus,
+  IQuestionCreatePostDto,
+  IQuestionVersionPatchUpdateDtoExtendId,
+  IQuestionVersionPostNewDto,
 } from '../../type';
-import { IAddQuestionFormValue } from '../../modules/dashboard/pages/QuestionBank/AddQuestion';
 
 export default class QuestionBankService {
   static getCategories(params: IGetParams): Promise<AxiosResponse> {
@@ -21,38 +19,36 @@ export default class QuestionBankService {
     const { id } = props;
     return APIService.get(`/questions/${id}`);
   }
-  static deleteQuestionByQuestionId(props): Promise<AxiosResponse> {
+  static deleteQuestion(props): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.delete(`/questions/version/${id}`);
+    return APIService.delete(`/questions/${id}`);
   }
   static restoreQuestionByQuestionId(props): Promise<AxiosResponse> {
     const { id } = props;
     return APIService.post(`/questions/${id}/restore`);
   }
-  static changeStatusQuestion(props: {
-    status: QuestionVersionStatus;
-    id: string;
-  }): Promise<AxiosResponse> {
-    const { id } = props;
-    return APIService.patch(`/questions/version/${id}`);
-  }
-  static updateCompletedQuestion(
-    props: IQuestionVersionPutUpdateDto & { id: string },
-  ): Promise<AxiosResponse> {
-    const { id, ...rest } = props;
-    return APIService.put(`/questions/version/${id}`, rest);
-  }
-  static updateDraftQuestion(
-    props: IQuestionVersionPutUpdateDto & { id: string },
+  static changeStatusQuestion(
+    props: IQuestionVersionPatchUpdateDtoExtendId,
   ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
     return APIService.patch(`/questions/version/${id}`, rest);
   }
-  static addQuestion(props: IAddQuestionFormValue): Promise<AxiosResponse> {
-    return APIService.post(`/questions`, { data: props });
+  static createQuestionVersion(
+    props: IQuestionVersionPostNewDto,
+  ): Promise<AxiosResponse> {
+    return APIService.post(`/questions/version/`, props);
+  }
+  static updateDraftQuestion(
+    props: IQuestionVersionPatchUpdateDtoExtendId,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = props;
+    return APIService.put(`/questions/version/${id}`, rest);
+  }
+  static addQuestion(props: IQuestionCreatePostDto): Promise<AxiosResponse> {
+    return APIService.post(`/questions`, props);
   }
 
-  static deleteQuestionByVersionId(props): Promise<AxiosResponse> {
+  static deleteQuestionVersion(props): Promise<AxiosResponse> {
     const { id } = props;
     return APIService.delete(`/questions/version/${id}`);
   }

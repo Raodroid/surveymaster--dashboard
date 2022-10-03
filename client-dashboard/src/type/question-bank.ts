@@ -295,6 +295,7 @@ export interface IBaseQuestionOptionsVersionDto {
   sort: number;
   imageUrl?: string;
   text?: string;
+  id?: number | string; //just useful in case for drag drop
 }
 
 export interface BaseQuestionVersionDto {
@@ -321,22 +322,33 @@ export type QuestionParameter = BaseParameterDto & {
   version: BaseQuestionVersionDto;
 };
 
-export type QuestionCreatePostDto = QuestionParameter;
+export type IQuestionCreatePostDto = QuestionParameter;
 
 // We only use version object for put
 export interface IQuestionVersionPostNewDto {
-  quetionId: string;
+  questionId: string;
   version: BaseQuestionVersionDto;
 }
 
 export interface IQuestionVersionPutUpdateDto {
-  version: QuestionParameter;
+  version: BaseQuestionVersionDto;
 }
 
 // All fields on version field are optional
 export interface IQuestionVersionPatchUpdateDto {
-  version: Partial<QuestionParameter>;
+  version: Partial<BaseQuestionVersionDto>;
 }
+
+export interface IQuestionVersionPatchUpdateDtoExtendId
+  extends IQuestionVersionPatchUpdateDto {
+  id: string;
+}
+
+export interface IQuestionVersionPutUpdateDtoExtendId
+  extends IQuestionVersionPutUpdateDto {
+  id: string;
+}
+
 export enum BooleanEnum {
   TRUE = 'true',
   FALSE = 'false',
