@@ -10,12 +10,15 @@ export const ROUTE_PATH = {
   DASHBOARD_PATHS: {
     HOME: '/app',
     PROJECT: '/app/project',
-    PROFILE: '/app/profile',
     QUESTION_BANK: {
       ROOT: '/app/question-bank',
       EDIT_QUESTION: '/app/question-bank/:questionId/edit',
       VIEW_QUESTION: '/app/question-bank/:questionId',
       ADD_QUESTION: '/app/question-bank/question/add',
+    },
+    PROFILE: {
+      ROOT: '/app/profile',
+      TEAM: '/app/profile/manage-users',
     },
   },
 };

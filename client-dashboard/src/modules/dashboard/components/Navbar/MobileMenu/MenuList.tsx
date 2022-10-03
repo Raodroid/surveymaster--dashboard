@@ -8,7 +8,7 @@ const allMenuItems: MenuProps['items'] = [
   ...mainMenuItem,
   {
     label: 'Profile',
-    key: ROUTE_PATH.DASHBOARD_PATHS.PROFILE,
+    key: ROUTE_PATH.DASHBOARD_PATHS.PROFILE.ROOT,
   },
 ];
 

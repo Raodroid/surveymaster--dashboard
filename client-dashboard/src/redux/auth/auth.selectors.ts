@@ -47,16 +47,16 @@ export default class AuthSelectors {
 
   static getCurrentScopes = createSelector(AuthSelectors.getProfile, user => {
     if (!user) return [];
-    if (user && user.roleData) {
-      return getAllScopes(user.roleData);
+    if (user && user.userRoles) {
+      return getAllScopes(user.userRoles[0].role.roleScopes);
     }
     return [];
   });
 
   static getCurrentRoleIds = createSelector(AuthSelectors.getProfile, user => {
     if (!user) return [];
-    if (user && user.roles) {
-      return user.roles;
+    if (user && user.userRoles) {
+      return user.userRoles[0].roleId;
     }
     return [];
   });

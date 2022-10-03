@@ -49,13 +49,11 @@ export const getAllScopes = (roleData: Role[]) => {
   const scopes: Record<string, boolean> = {};
   const scopesArr: Scope[] = [];
   roleData.forEach(role => {
-    const roleScopes = role.scopes as Scope[];
-    roleScopes.forEach(scope => {
-      if (!scopes[scope.id]) {
-        scopesArr.push(scope);
-        scopes[scope.id] = true;
-      }
-    });
+    const scope = role.scope;
+    if (!scopes[scope.id]) {
+      scopesArr.push(scope);
+      scopes[scope.id] = true;
+    }
   });
   return scopesArr;
 };

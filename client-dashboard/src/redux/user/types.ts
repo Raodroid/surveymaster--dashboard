@@ -30,6 +30,7 @@ export interface Role {
   id: number;
   name: string;
   scopes?: Scope[];
+  scope?: any;
 }
 
 export interface UserPayload {
@@ -41,6 +42,7 @@ export interface UserPayload {
   userName?: string;
   phone?: string;
   description?: string;
+  displayName?: string;
   roles?: Array<number>;
   password?: string;
   phonePrefix?: string;
@@ -53,9 +55,16 @@ export interface UserPayload {
   finishTourOnMyScore?: boolean;
   finishTourOnHomePage?: boolean;
   country?: string;
+  userRoles?: Record<string, any>[];
+  disabledNotificationTypes?: any;
 }
 
 export interface ChangePasswordPayload {
   currentPassword: string;
+  password: string;
+}
+
+export interface ChangeUserPasswordPayload {
+  userId: string;
   password: string;
 }

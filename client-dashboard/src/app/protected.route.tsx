@@ -38,6 +38,7 @@ export const BodyAppWrapper = styled(Content)`
   height: 100%;
   margin-bottom: 1.5rem;
 
+  display: flex;
   @media only screen and (max-width: 1440px) {
     padding: 0 2rem;
   }

@@ -37,6 +37,7 @@ import { ScrollbarProvider } from './scrollbarContext/useScrollBar';
 import { CloseIcon } from './icons/CloseIcon';
 import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
+import customHistory from 'utils/history';
 
 // const appConfig = configureAppStore();
 
