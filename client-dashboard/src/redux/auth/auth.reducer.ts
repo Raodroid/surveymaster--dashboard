@@ -25,6 +25,7 @@ export const initData: AuthState = {
   isResend: false,
   idToken: null,
   loginAt: null,
+  currentScopes: null,
 };
 
 const initialState = Record(initData)(initData);
@@ -113,19 +114,25 @@ export default class AuthReducer {
         //   : { username: '' };
         const idDecodeToken: {
           defaultProfileId: string | null;
-          userId: string | null;
+          sub: string | null;
+          scopes?: any;
         } = action.payload.idToken
           ? jwt_decode(action.payload.idToken)
-          : { defaultProfileId: null, userId: null };
+          : { defaultProfileId: null, sub: null };
 
-        return state
-          .set('isSigningIn', false)
-          .set('accessToken', action.payload.accessToken)
-          .set('refreshToken', action.payload.refreshToken)
-          .set('currentUserId', idDecodeToken.userId)
-          .set('currentEmailForChangePassword', action.payload.email)
-          .set('idToken', action.payload.idToken)
-          .set('loginAt', new Date());
+        console.log(idDecodeToken);
+        return (
+          state
+            .set('isSigningIn', false)
+            .set('accessToken', action.payload.accessToken)
+            .set('refreshToken', action.payload.refreshToken)
+            // .set('currentUserId', idDecodeToken.userId)
+            .set('currentUserId', idDecodeToken.sub)
+            .set('currentEmailForChangePassword', action.payload.email)
+            .set('idToken', action.payload.idToken)
+            .set('loginAt', new Date())
+            .set('currentScopes', idDecodeToken.scopes)
+        );
 
       case AuthAction.TYPES.SIGNIN.FAILURE:
         return state.set('isSigningIn', false).set('error', action.error);

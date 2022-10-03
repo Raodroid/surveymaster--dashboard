@@ -5,4 +5,6 @@ export { default as ProfileService } from './profile.service';
 export { default as AddressService } from './address.service';
 export { default as UploadService } from './upload.service';
 export { default as QuestionBankService } from './question-bank.service';
-export { default as ProjectService } from './profile.service';
+export { default as AdminService } from './admin.service';
+
+

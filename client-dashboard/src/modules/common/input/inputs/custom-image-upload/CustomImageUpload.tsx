@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { Upload } from 'antd';
 import notification from 'customize-components/CustomNotification';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/lib/upload';
@@ -45,7 +45,7 @@ const customRequest = async options => {
 
 const CustomImageUpload = (props: CustomUploadProps) => {
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string>(props.value);
   const { t } = useTranslation();
 
   const uploadButton = (
@@ -55,7 +55,17 @@ const CustomImageUpload = (props: CustomUploadProps) => {
     </div>
   );
 
-  const image = imageUrl || props.value;
+  const image = React.useMemo(() => {
+    if (!props.value) return null;
+    return imageUrl || props.value;
+  }, [props.value, imageUrl]);
+
+  // const image = imageUrl || props.value;
+  // useEffect(() => {
+  //   if (!props.value) {
+  //     setImageUrl('');
+  //   }
+  // }, [props.value]);
 
   const beforeUpload = (file: RcFile) => {
     const isJpgOrPng =
@@ -83,6 +93,7 @@ const CustomImageUpload = (props: CustomUploadProps) => {
       getBase64(info.file.originFileObj, imgUrl => {
         setLoading(false);
         setImageUrl(imgUrl);
+        console.log(imgUrl);
       });
     }
 

@@ -1,11 +1,11 @@
-import React, { lazy, useEffect, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import { CustomSpinSuspense } from 'modules/common/styles';
+import { ROUTE_PATH } from '../enums';
 import { useScrollbarContext } from '../scrollbarContext/useScrollBar';
 import { ProtectedRoutes } from './protected.route';
 import { NoAuthenticationRoutes } from './public.route';
-import { ROUTE_PATH } from '../enums';
-import { CustomSpinSuspense } from 'modules/common/styles';
 import { UnProtectedRoutes } from './unProtected.route';
 
 const Home = lazy(() => import('modules/dashboard/pages/Home'));
@@ -44,9 +44,14 @@ const AppRoutes = () => {
             <Route index element={<Home />} />
             <Route path={'/app/project'} element={<Project />} />
             <Route
-              path={ROUTE_PATH.DASHBOARD_PATHS.PROFILE}
+              path={ROUTE_PATH.DASHBOARD_PATHS.PROFILE.ROOT}
               element={<Profile />}
-            />
+            >
+              <Route
+                path={ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM}
+                element={<Profile />}
+              />
+            </Route>
             <Route
               path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}
               element={<QuestionBank />}

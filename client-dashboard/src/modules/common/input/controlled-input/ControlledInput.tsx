@@ -26,7 +26,7 @@ const ControlledInput = (props: ControlledInputProps) => {
   useEffect(() => {
     const handleClick = () => setValue('');
     const elm = inputRef.current.querySelector(
-      'div.form-item-contatiner .anticon-close-circle',
+      'div.form-item-container .anticon-close-circle',
     );
     elm?.addEventListener('click', handleClick);
 
