@@ -1,6 +1,7 @@
 import { Form } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
+import { mockSurveyList } from 'modules/dashboard/pages/Project/mockup';
 import { useParams } from 'react-router';
 import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
@@ -9,9 +10,13 @@ import { DetailSurveyHomeWrapper } from './styles';
 
 function DetailSurveyHome() {
   const params = useParams();
+
+  const { data } = mockSurveyList;
+  const project = data.find(elm => elm.project?.displayId === params.id);
+
   const routes = [
     {
-      name: params.id,
+      name: project?.name,
       href:
         params &&
         params.id &&
@@ -32,11 +37,10 @@ function DetailSurveyHome() {
       <div className="body">
         <Formik
           initialValues={{
-            surveyTitle: 'Month Survey',
-            dateCreated: '20.03.2022',
-            id: '113-2121',
-            surveyRemarks:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor inore magna aliqua.',
+            name: project?.name,
+            createdAt: project?.createdAt.toString().slice(0, 15),
+            id: project?.displayId,
+            surveyRemarks: project?.remark,
           }}
           onSubmit={() => {}}
         >

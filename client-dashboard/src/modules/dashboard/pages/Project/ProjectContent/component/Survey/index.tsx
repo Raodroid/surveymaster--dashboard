@@ -3,6 +3,7 @@ import { ROUTE_PATH } from 'enums';
 import { CloseIcon } from 'icons';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { mockSurveyList } from '../../../mockup';
 import { ProjectTableWrapper } from '../../style';
 import ProjectHeader from '../Header';
 import { SurveyWrapper } from './style';
@@ -29,23 +30,28 @@ const dataSource = [
 const columns = [
   {
     title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
+    dataIndex: 'displayId',
+    key: 'displayId',
   },
   {
-    title: 'Project Title',
-    dataIndex: 'projectTitle',
-    key: 'projectTitle',
+    title: 'Survey Title',
+    dataIndex: 'name',
+    key: 'name',
   },
   {
     title: 'Person In Charge',
-    dataIndex: 'personInCharge',
-    key: 'personInCharge',
+    dataIndex: 'createdBy',
+    key: 'createdBy',
+    render: (user: any) => <div>{user.fullName}</div>,
   },
   {
     title: 'Date of Creation',
-    dataIndex: 'dateOfCreation',
-    key: 'dateOfCreation',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
+    render: (text: any) => {
+      const str = text.toString();
+      return <div>{str.slice(0, 15)}</div>;
+    },
   },
   {
     title: 'Actions',
@@ -58,9 +64,13 @@ const columns = [
 function Survey() {
   const params = useParams();
   const navigate = useNavigate();
+
+  const { data } = mockSurveyList;
+  const project = data.find(elm => elm.project?.displayId === params.id);
+
   const routes = [
     {
-      name: params.id,
+      name: project?.name,
       href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + params.id,
     },
   ];
@@ -74,7 +84,7 @@ function Survey() {
           ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT.replace(
             ':id',
             params.id,
-          ).replace(':detailId', record.projectTitle),
+          ).replace(':detailId', record.name),
         ),
     };
   };
@@ -83,7 +93,7 @@ function Survey() {
     <SurveyWrapper>
       <ProjectHeader routes={routes} />
       <ProjectTableWrapper>
-        <Table dataSource={dataSource} columns={columns} onRow={onRow} />
+        <Table dataSource={data} columns={columns} onRow={onRow} />
       </ProjectTableWrapper>
     </SurveyWrapper>
   );

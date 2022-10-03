@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
 import { BooleanEnum } from 'type';
+import { mockSurveyList } from '../../mockup';
 import { ProjectTableWrapper } from '../style';
 
 const dataSource = [
@@ -41,30 +42,35 @@ function ProjectTable() {
     take: 10,
     isDeleted: isDeleted,
   };
-  const { data: projects } = useQuery(
-    'projects',
-    () => ProjectService.getProjects(queryParams),
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
+  // const { data: projects } = useQuery(
+  //   'projects',
+  //   () => ProjectService.getProjects(queryParams),
+  //   {
+  //     refetchOnWindowFocus: false,
+  //   },
+  // );
+
+  const { data } = mockSurveyList;
+
+  console.log(data);
 
   const columns = useMemo(
     () => [
       {
         title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
+        dataIndex: 'project',
+        key: 'project',
+        render: (project: any) => <div>{project.displayId}</div>,
       },
       {
         title: 'Project Title',
-        dataIndex: 'projectTitle',
-        key: 'projectTitle',
+        dataIndex: 'name',
+        key: 'name',
         render: (text: string, record: any) => (
           <Link
             to={ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(
               ':id',
-              record.route,
+              record.project.displayId,
             )}
           >
             {text}
@@ -73,18 +79,24 @@ function ProjectTable() {
       },
       {
         title: 'N of Surveys',
-        dataIndex: 'nOfSurveys',
-        key: 'nOfSurveys',
+        dataIndex: 'questions',
+        key: 'questions',
+        render: (list: any) => <div>{list.length}</div>,
       },
       {
         title: 'Person In Charge',
-        dataIndex: 'personInCharge',
-        key: 'personInCharge',
+        dataIndex: 'createdBy',
+        key: 'createdBy',
+        render: (user: any) => <div>{user.fullName}</div>,
       },
       {
         title: 'Date of Creation',
-        dataIndex: 'dateOfCreation',
-        key: 'dateOfCreation',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: (text: any) => {
+          const str = text.toString();
+          return <div>{str.slice(0, 15)}</div>;
+        },
       },
       {
         title: 'Actions',
@@ -97,8 +109,8 @@ function ProjectTable() {
                 navigate(
                   ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT.replace(
                     ':id',
-                    record.id,
-                  ) + `?title=${record.projectTitle}`,
+                    record.project.displayId,
+                  ) + `?title=${record.name}`,
                 )
               }
             />
@@ -111,7 +123,7 @@ function ProjectTable() {
 
   return (
     <ProjectTableWrapper>
-      <Table pagination={false} dataSource={dataSource} columns={columns} />
+      <Table pagination={false} dataSource={data} columns={columns} />
     </ProjectTableWrapper>
   );
 }

@@ -66,4 +66,10 @@ export const ProjectTableWrapper = styled.div`
   .ant-table-cell:last-child {
     text-align: center;
   }
+
+  a,
+  .ant-table-cell div,
+  span {
+    font-size: 12px;
+  }
 `;

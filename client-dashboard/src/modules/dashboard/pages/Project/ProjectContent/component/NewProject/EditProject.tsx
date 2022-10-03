@@ -59,39 +59,39 @@ function EditProject() {
   return (
     <>
       <ProjectHeader routes={routes} />
-      <Spin spinning={isLoading}>
-        <AddProjectWrapper>
-          <Formik
-            initialValues={project?.data || initialValues}
-            onSubmit={handleSubmit}
-          >
-            {({
-              values,
-              errors,
-              touched,
-              handleChange,
-              handleBlur,
-              handleSubmit: handleFinish,
-              isSubmitting,
-              setFieldValue,
-            }) => (
-              <Form layout="vertical" onFinish={handleFinish}>
-                <Inputs />
-                <div className="footer">
-                  <Button
-                    type="primary"
-                    className="info-btn"
-                    htmlType="submit"
-                    loading={mutationEditProject.isLoading}
-                  >
-                    Save Edits
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </AddProjectWrapper>
-      </Spin>
+      {/* <Spin spinning={isLoading}> */}
+      <AddProjectWrapper>
+        <Formik
+          initialValues={project?.data || initialValues}
+          onSubmit={handleSubmit}
+        >
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit: handleFinish,
+            isSubmitting,
+            setFieldValue,
+          }) => (
+            <Form layout="vertical" onFinish={handleFinish}>
+              <Inputs />
+              <div className="footer">
+                <Button
+                  type="primary"
+                  className="info-btn"
+                  htmlType="submit"
+                  loading={mutationEditProject.isLoading}
+                >
+                  Save Edits
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </AddProjectWrapper>
+      {/* </Spin> */}
     </>
   );
 }

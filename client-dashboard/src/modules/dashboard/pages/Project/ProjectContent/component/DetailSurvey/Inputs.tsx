@@ -11,12 +11,12 @@ function Inputs() {
         <div className="title">Main Information:</div>
         <div className="flex wrapper">
           <ControlledInput
-            name="surveyTitle"
+            name="name"
             label="Survey Title"
             inputType={INPUT_TYPES.INPUT}
           />
           <ControlledInput
-            name="dateCreated"
+            name="createdAt"
             label="Date Created"
             inputType={INPUT_TYPES.INPUT}
           />
