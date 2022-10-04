@@ -23,9 +23,8 @@ const initialValues = {
   lastName: '',
   email: '',
   displayName: '',
-  authentication: '',
+  authentication: [],
   departmentName: '',
-  roles: [],
 };
 
 interface InviteModal extends ProfileModal {
@@ -58,23 +57,18 @@ function InviteMemberModal(props: InviteModal) {
       email: userData.email,
       displayName: userData.displayName,
       departmentName: userData.departmentName,
-      authentication: userData.authentication,
-      roles: userData.roles,
+      authentication: userData.roles,
     };
   }, [userData]);
 
   const InviteMemberSchema = Yup.object({
     firstName: Yup.string().required(t('validation.messages.required')).trim(),
     lastName: Yup.string().required(t('validation.messages.required')).trim(),
-    displayName: Yup.string().trim(),
     email: Yup.string()
       .required(t('validation.messages.required'))
       .email(t('validation.messages.emailInvalid'))
       .trim(),
     departmentName: Yup.string()
-      .required(t('validation.messages.required'))
-      .trim(),
-    authentication: Yup.string()
       .required(t('validation.messages.required'))
       .trim(),
     roles: Yup.array().min(1, t('validation.messages.required')),
@@ -108,6 +102,7 @@ function InviteMemberModal(props: InviteModal) {
     if (edit) {
       mutationUpdateMember.mutateAsync({ ...payload, id: userData.id });
     } else {
+      console.log(payload);
       mutationInviteMember.mutateAsync(payload);
     }
   };
