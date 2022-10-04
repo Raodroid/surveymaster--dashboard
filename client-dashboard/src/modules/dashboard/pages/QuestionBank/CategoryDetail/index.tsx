@@ -6,6 +6,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { CategoryDetailWrapper } from './style';
@@ -26,6 +27,7 @@ import StyledPagination from '../../../components/StyledPagination';
 import qs from 'qs';
 import { PenFilled, TrashOutlined } from '../../../../../icons';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
+import HannahCustomSpin from '../../../components/HannahCustomSpin';
 
 enum ACTION_ENUM {
   DELETE = 'DELETE',
@@ -169,36 +171,40 @@ const CategoryDetail = () => {
     setParams(s => ({ ...initParams, ...queryString }));
   }, [queryString]);
 
+  const ref = useRef<any>();
+
   return (
     <CategoryDetailContext.Provider
       value={{ params, setParams, loading, setLoading }}
     >
-      <Spin spinning={loading || getQuestionListQuery.isLoading}>
-        <CategoryDetailWrapper>
-          <CategoryDetailHeader
-            searchTxt={searchTxt}
-            setSearchTxt={setSearchTxt}
+      <CategoryDetailWrapper ref={ref}>
+        <HannahCustomSpin
+          parentRef={ref}
+          spinning={loading || getQuestionListQuery.isLoading}
+        />
+        <CategoryDetailHeader
+          searchTxt={searchTxt}
+          setSearchTxt={setSearchTxt}
+        />
+        <div className={'CategoryDetail__body'}>
+          <Table
+            rowKey={record => record?.id as string}
+            dataSource={questionList}
+            columns={columns}
+            onRow={handleClickRow}
+            pagination={false}
           />
-          <div className={'CategoryDetail__body'}>
-            <Table
-              rowKey={record => record?.id as string}
-              dataSource={questionList}
-              columns={columns}
-              onRow={handleClickRow}
-              pagination={false}
-            />
-            <StyledPagination
-              onChange={page => {
-                setParams(s => ({ ...s, page }));
-              }}
-              showSizeChanger
-              pageSize={params.take}
-              onShowSizeChange={onShowSizeChange}
-              total={total}
-            />
-          </div>
-        </CategoryDetailWrapper>
-      </Spin>
+          <StyledPagination
+            onChange={page => {
+              setParams(s => ({ ...s, page }));
+            }}
+            showSizeChanger
+            pageSize={params.take}
+            onShowSizeChange={onShowSizeChange}
+            total={total}
+          />
+        </div>
+      </CategoryDetailWrapper>
     </CategoryDetailContext.Provider>
   );
 };

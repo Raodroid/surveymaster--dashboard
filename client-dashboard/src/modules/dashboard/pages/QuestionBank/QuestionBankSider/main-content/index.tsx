@@ -82,6 +82,7 @@ const QuestionBankSiderMainContent = () => {
           i.name,
           i?.id as string,
           <ArrowDown
+            className={'arrow-menu-icon'}
             style={{ color: templateVariable.primary_color, height: 5 }}
           />,
           i.children?.map(child => getItem(child.name, child?.id as string)),
@@ -94,7 +95,6 @@ const QuestionBankSiderMainContent = () => {
 
   return (
     <QuestionBankSiderMainContentWrapper>
-      ¬
       <div
         onClick={() => {
           navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
