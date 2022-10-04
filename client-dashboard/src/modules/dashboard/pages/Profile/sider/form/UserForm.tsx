@@ -21,9 +21,7 @@ function UserForm() {
     (payload: UserUpdatedDto) => {
       return UserService.updateProfile({
         ...payload,
-        avatar: '',
-        displayName: '',
-        description: '',
+        avatar: (payload.avatar as any)?.response?.url,
       });
     },
     {
