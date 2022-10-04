@@ -1,3 +1,5 @@
+export * from './project';
+
 import { BooleanEnum } from 'type';
 
 export interface Test {

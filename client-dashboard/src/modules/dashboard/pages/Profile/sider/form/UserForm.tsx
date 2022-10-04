@@ -60,6 +60,8 @@ function UserForm() {
               <Form layout="vertical" onFinish={handleFinish}>
                 <div className="avatar">
                   <ControlledInput
+                    moduleName="users"
+                    subPath="avatar"
                     inputType={INPUT_TYPES.IMAGE_UPLOAD}
                     name="avatar"
                     label={t('common.photo')}

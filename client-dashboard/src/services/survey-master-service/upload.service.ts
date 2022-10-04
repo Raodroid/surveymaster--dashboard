@@ -6,10 +6,12 @@ export default class UploadService {
     moduleName: string,
     name: string,
     type: string,
+    subPath?: string,
   ): Promise<AxiosResponse> {
     return APIService.post(`/${moduleName}/files/get-signed-url`, {
       filename: name,
       filetype: type,
+      subPath,
     });
   }
 

@@ -10,6 +10,8 @@ import { UploadService } from 'services';
 export type CustomUploadProps = UploadProps &
   OnchangeType & {
     value: string;
+    moduleName?: string;
+    subPath?: string;
   };
 
 function getBase64(img, callback) {
@@ -18,35 +20,38 @@ function getBase64(img, callback) {
   reader.readAsDataURL(img);
 }
 
-const customRequest = async options => {
-  let type = options.file.type;
-  let nameImage = options.file.name;
-  try {
-    const res = await UploadService.getPreSignedUrlUpload(
-      'products',
-      nameImage,
-      type,
-    );
-    const { data } = res;
-    if (data) {
-      await UploadService.putWithFormFileAsync(
-        data.urls[0],
-        options.file,
-        type,
-      );
-      options.onSuccess({
-        url: `${process.env.REACT_APP_S3_URL}/${data.filePath}`,
-      });
-    }
-  } catch (error) {
-    options.onError(error);
-  }
-};
-
 const CustomImageUpload = (props: CustomUploadProps) => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>(props.value);
   const { t } = useTranslation();
+
+  const customRequest = async options => {
+    let type = options.file.type;
+    let nameImage = options.file.name;
+    const moduleName = props.moduleName || 'users';
+    const subPath = `${moduleName}/${props.subPath || 'default'}`;
+    try {
+      const res = await UploadService.getPreSignedUrlUpload(
+        moduleName,
+        nameImage,
+        type,
+        subPath,
+      );
+      const { data } = res;
+      if (data) {
+        await UploadService.putWithFormFileAsync(
+          data.urls[0],
+          options.file,
+          type,
+        );
+        options.onSuccess({
+          url: `${process.env.REACT_APP_S3_URL}/${data.filePath}`,
+        });
+      }
+    } catch (error) {
+      options.onError(error);
+    }
+  };
 
   const uploadButton = (
     <div>
