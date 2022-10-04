@@ -23,7 +23,7 @@ const initialValues = {
   lastName: '',
   email: '',
   displayName: '',
-  authentication: [],
+  roles: [],
   departmentName: '',
 };
 
@@ -57,7 +57,7 @@ function InviteMemberModal(props: InviteModal) {
       email: userData.email,
       displayName: userData.displayName,
       departmentName: userData.departmentName,
-      authentication: userData.roles,
+      roles: userData.roles,
     };
   }, [userData]);
 
@@ -102,7 +102,6 @@ function InviteMemberModal(props: InviteModal) {
     if (edit) {
       mutationUpdateMember.mutateAsync({ ...payload, id: userData.id });
     } else {
-      console.log(payload);
       mutationInviteMember.mutateAsync(payload);
     }
   };
