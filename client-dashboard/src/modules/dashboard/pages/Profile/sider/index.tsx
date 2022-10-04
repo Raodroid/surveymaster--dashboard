@@ -51,7 +51,7 @@ function Sider(props: SiderProps) {
       )}
 
       <div className="form">
-        {PROFILE_TAB.USER ? <UserForm /> : <TeamForm />}
+        {tab === PROFILE_TAB.USER ? <UserForm /> : <TeamForm />}
       </div>
     </SiderWrapper>
   );

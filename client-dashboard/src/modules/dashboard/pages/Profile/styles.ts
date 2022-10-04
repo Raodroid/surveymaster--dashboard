@@ -194,7 +194,11 @@ export const SiderWrapper = styled.div`
   .form {
     overflow-y: hidden;
     padding: 0 24px;
+    flex: 1;
     .ant-spin-nested-loading {
+      height: 100%;
+    }
+    > div {
       height: 100%;
     }
   }

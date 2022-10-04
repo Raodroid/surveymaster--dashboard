@@ -174,7 +174,7 @@ function TeamContent() {
           <ThreeDotsDropdown
             overlay={
               <DropDownMenuStyled>
-                {!isAdminRole && canEdit && (
+                {canEdit && (
                   <Menu.Item
                     key="editPreferences"
                     disabled={!isAdminRole}

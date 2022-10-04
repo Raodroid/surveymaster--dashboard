@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import { UserUpdatedDto } from 'interfaces';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
+import { phonePrefix } from 'modules/common/validate/validate';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,9 +22,7 @@ function UserForm() {
     (payload: UserUpdatedDto) => {
       return UserService.updateProfile({
         ...payload,
-        avatar: '',
-        displayName: '',
-        description: '',
+        avatar: (payload.avatar as any)?.response?.url,
       });
     },
     {
@@ -38,28 +37,27 @@ function UserForm() {
     },
   );
 
+  const handleSubmit = (userFormValues: UserUpdatedDto) => {
+    mutationUpdateProfile.mutateAsync({ ...userFormValues });
+  };
+
   return (
     // <CustomSpinSuspense spinning={isLoading}>
     <UserFormWrapper>
       {profile && (
-        <Formik
-          initialValues={profile}
-          onSubmit={(userFormValues: UserUpdatedDto) =>
-            mutationUpdateProfile.mutateAsync({ ...userFormValues })
-          }
-        >
+        <Formik initialValues={profile} onSubmit={handleSubmit}>
           {({
             values,
             errors,
             touched,
             handleChange,
             handleBlur,
-            handleSubmit,
+            handleSubmit: handleFinish,
             isSubmitting,
             setFieldValue,
           }) => {
             return (
-              <Form layout="vertical" onFinish={handleSubmit}>
+              <Form layout="vertical" onFinish={handleFinish}>
                 <div className="avatar">
                   <ControlledInput
                     inputType={INPUT_TYPES.IMAGE_UPLOAD}
@@ -109,15 +107,15 @@ function UserForm() {
                   <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
                     type={'text'}
-                    name="scientificDegree"
-                    label={t('common.scientificDegree')}
+                    name="departmentName"
+                    label={t('common.departmentName')}
                   />
-                  <ControlledInput
+                  {/* <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
                     type={'tel'}
                     name="phone"
                     label={t('common.phoneNumber')}
-                  />
+                  /> */}
                 </div>
                 <Button
                   type="primary"

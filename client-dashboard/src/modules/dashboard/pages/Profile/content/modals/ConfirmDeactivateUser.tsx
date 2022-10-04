@@ -42,7 +42,7 @@ function ConfirmDeactivateUserModal(props: ConfirmDeactivate) {
     <ConfirmDeactivateModalStyled
       open={showModal}
       footer={false}
-      title="Confirm deactivate user"
+      title="Confirm Deactivate User"
       onCancel={() => setShowModal(false)}
       width={MODAL_WIDTH.SMALL}
       centered
