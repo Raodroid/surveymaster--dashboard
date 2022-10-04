@@ -160,12 +160,6 @@ function InviteMemberModal(props: InviteModal) {
                 <ControlledInput
                   inputType={INPUT_TYPES.INPUT}
                   type={'text'}
-                  name="authentication"
-                  label={t('common.authentication')}
-                />
-                <ControlledInput
-                  inputType={INPUT_TYPES.INPUT}
-                  type={'text'}
                   name="departmentName"
                   label={t('common.departmentName')}
                 />
@@ -174,7 +168,7 @@ function InviteMemberModal(props: InviteModal) {
                   inputType={INPUT_TYPES.SELECT}
                   type={'text'}
                   name="roles"
-                  label={t('common.userRole')}
+                  label={t('common.authentication')}
                   options={optionsList}
                 />
               </div>
