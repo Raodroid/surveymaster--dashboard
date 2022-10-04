@@ -42,7 +42,10 @@ const AppRoutes = () => {
         <Routes>
           <Route path={'/app'} element={<ProtectedRoutes />}>
             <Route index element={<Home />} />
-            <Route path={'/app/project'} element={<Project />} />
+            <Route
+              path={ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/*'}
+              element={<Project />}
+            />
             <Route
               path={ROUTE_PATH.DASHBOARD_PATHS.PROFILE.ROOT}
               element={<Profile />}
