@@ -16,9 +16,9 @@ export const WarningIcon = props => {
       <g
         id="Design"
         stroke="none"
-        stroke-width="1"
+        strokeWidth="1"
         fill="none"
-        fill-rule="evenodd"
+        fillRule="evenodd"
       >
         <g id="Icons" transform="translate(-1692.000000, -331.000000)">
           <g

@@ -361,7 +361,7 @@ export interface IGetParams {
   ids?: number;
   createdFrom?: string;
   createdTo?: string;
-  isDeleted?: BooleanEnum;
+  isDeleted?: BooleanEnum | boolean;
   selectAll?: boolean;
 }
 

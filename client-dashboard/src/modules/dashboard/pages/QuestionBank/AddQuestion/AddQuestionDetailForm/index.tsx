@@ -10,8 +10,7 @@ import { useFormikContext } from 'formik';
 const AddQuestionDetailForm = () => {
   const { t } = useTranslation();
 
-  const { setFieldValue, errors } = useFormikContext();
-  console.log(errors);
+  const { setFieldValue } = useFormikContext();
 
   const handleTextFieldChange = value => {
     switch (value) {
@@ -23,7 +22,12 @@ const AddQuestionDetailForm = () => {
       }
       case QuestionType.MULTIPLE_CHOICE:
       case QuestionType.RADIO_BUTTONS: {
-        setFieldValue('options', []);
+        setFieldValue('options', [
+          {
+            id: Math.random(),
+            text: '',
+          },
+        ]);
         break;
       }
     }
@@ -40,7 +44,7 @@ const AddQuestionDetailForm = () => {
         onChange={handleTextFieldChange}
       />
       <ControlledInput
-        inputType={INPUT_TYPES.TEXTAREA}
+        inputType={INPUT_TYPES.INPUT}
         name="title"
         label={t('common.question')}
       />

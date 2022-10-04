@@ -11,6 +11,8 @@ import templateVariable from '../../../../../../app/template-variables.module.sc
 import qs from 'qs';
 import { useGetAllCategories } from '../../util';
 
+import SimpleBarReact from 'simplebar-react';
+
 const getItem = (
   label: React.ReactNode,
   key: React.Key,
@@ -100,20 +102,22 @@ const QuestionBankSiderMainContent = () => {
         <h4>{t('common.questionBank')}</h4>
       </div>
       <div className={'QuestionBankSiderMainContent__body'}>
-        <div className={'category-list'}>
-          <Spin spinning={isLoading}>
+        <SimpleBarReact
+          style={{ height: 'calc(100% - 40px)', overflowX: 'hidden' }}
+        >
+          <div className={'category-list'}>
             <Menu
               expandIcon={() => null}
               mode="inline"
               openKeys={openKey}
+              style={{ width: '100%' }}
               selectedKeys={selectedKey}
               onOpenChange={onOpenChange}
-              style={{ width: 256 }}
               items={transformedCategories}
               onSelect={handleOnSelect}
             />
-          </Spin>
-        </div>
+          </div>
+        </SimpleBarReact>
       </div>
     </QuestionBankSiderMainContentWrapper>
   );
