@@ -76,7 +76,7 @@ function ChangePasswordModal(props: ProfileModal) {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="submit-btn"
+                className="submit-btn secondary-btn"
                 loading={isResettingPasswordForm}
               >
                 {t('common.sendConfirmation')}

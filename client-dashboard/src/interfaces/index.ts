@@ -1,3 +1,5 @@
+export * from './project';
+
 import { BooleanEnum } from 'type';
 
 export interface Test {
@@ -15,6 +17,7 @@ export interface UserUpdatedDto {
   phone?: string;
   avatar?: string;
   displayName?: string; // new field
+  departmentName?: string;
 }
 
 export interface InviteMember {
@@ -23,7 +26,9 @@ export interface InviteMember {
   email: string;
   displayName: string;
   description?: string;
-  roles?: number[];
+  roles: number[];
+  authentication: string;
+  departmentName: string;
 }
 
 export interface UpdateMember {
@@ -33,5 +38,7 @@ export interface UpdateMember {
   email: string;
   displayName: string;
   description?: string;
-  roles?: number[];
+  roles: number[];
+  authentication: string;
+  departmentName: string;
 }

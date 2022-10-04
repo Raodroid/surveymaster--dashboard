@@ -30,11 +30,14 @@ export const ModalStyled = styled(Modal)`
     }
   }
 
+  .footer {
+    padding: 0 40px;
+  }
+
   .submit-btn {
     width: 100%;
     height: 36px;
     margin-top: 40px;
-    background: #25216a;
   }
 `;
 
@@ -54,7 +57,7 @@ export const ChangePasswordModalStyled = styled(ModalStyled)`
 `;
 
 export const SetUpPreferencesModalStyled = styled(ModalStyled)`
-  --ant-primary-color: #b78c69;
+  // --ant-primary-color: #b78c69;
 
   .ant-modal-title,
   .ant-checkbox-wrapper span {
@@ -67,8 +70,8 @@ export const SetUpPreferencesModalStyled = styled(ModalStyled)`
   }
 
   .submit-btn {
-    --ant-primary-color-hover: rgba(51, 85, 108, 0.8);
-    --ant-primary-color-active: #096dd9;
+    // --ant-primary-color-hover: rgba(51, 85, 108, 0.8);
+    // --ant-primary-color-active: #096dd9;
 
     background: #33556c;
     span {
@@ -108,7 +111,7 @@ export const InviteMemberModalStyled = styled(ModalStyled)`
     }
   }
   .ant-modal-body {
-    padding: 40px 55px;
+    padding: 40px 0;
     flex: 1;
     overflow-y: hidden;
     display: flex;
@@ -134,8 +137,9 @@ export const InviteMemberModalStyled = styled(ModalStyled)`
     }
   }
   .input-wrapper {
-    height: calc(90vh - 364px);
+    max-height: calc(90vh - 364px);
     overflow-y: auto;
+    padding: 0 40px;
   }
 `;
 

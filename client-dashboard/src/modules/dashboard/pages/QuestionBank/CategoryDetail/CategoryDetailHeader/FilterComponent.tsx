@@ -15,6 +15,7 @@ import { INPUT_TYPES } from '../../../../../common/input/type';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import {
+  BooleanEnum,
   GetListQuestionDto,
   IOptionItem,
   QuestionType,
@@ -27,31 +28,39 @@ import { MOMENT_FORMAT, ROUTE_PATH } from '../../../../../../enums';
 import moment from 'moment';
 import { useGetAllCategories } from '../../util';
 
+const CHECKBOX_KEY = {
+  filterByCategory: 'filterByCategory',
+  filterBySubCategory: 'filterBySubCategory',
+  filterByCreatedDate: 'filterByCreatedDate',
+  filterByAnswerType: 'filterByAnswerType',
+  isDeleted: 'isDeleted',
+};
+
 const filterKeyPairArr: {
   checkKey: string;
   key: string;
   formatMoment?: string;
 }[] = [
   {
-    checkKey: 'filterByCategory',
+    checkKey: CHECKBOX_KEY.filterByCategory,
     key: 'categoryIds',
   },
   {
-    checkKey: 'filterBySubCategory',
+    checkKey: CHECKBOX_KEY.filterBySubCategory,
     key: 'subCategoryIds',
   },
   {
-    checkKey: 'filterByCreatedDate',
+    checkKey: CHECKBOX_KEY.filterByCreatedDate,
     key: 'createdFrom',
     formatMoment: MOMENT_FORMAT.FULL_DATE_FORMAT,
   },
   {
-    checkKey: 'filterByCreatedDate',
+    checkKey: CHECKBOX_KEY.filterByCreatedDate,
     key: 'createdTo',
     formatMoment: MOMENT_FORMAT.FULL_DATE_FORMAT,
   },
   {
-    checkKey: 'filterByAnswerType',
+    checkKey: CHECKBOX_KEY.filterByAnswerType,
     key: 'types',
   },
 ];
@@ -97,6 +106,7 @@ const initialFilterFormValues: IFormValue = {
   filterBySubCategory: false,
   createdFrom: '',
   createdTo: '',
+  isDeleted: false,
 };
 
 interface IFilerDropdown {
@@ -120,18 +130,25 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
 
   const onFinish = useCallback(
     (values: IFormValue) => {
-      const filterCount = Object.values(values).filter(val => val?.[0] === 1);
+      const filterCount = Object.keys(values).filter(key => {
+        const val = values[key];
+        return CHECKBOX_KEY[key] && val === true;
+      });
       setNumOfFilter(filterCount.length);
 
       const result = filterKeyPairArr.reduce((nextQueryObject: any, i) => {
         const { checkKey, key, formatMoment } = i;
-        if (values[checkKey]) {
+        if (values[checkKey] && values[key]) {
           nextQueryObject[key] = formatMoment
-            ? moment(values[key]).format(formatMoment)
+            ? moment(values[key]).format()
             : values[key];
         }
         return nextQueryObject;
       }, {});
+
+      if (values.isDeleted) {
+        result.isDeleted = BooleanEnum.TRUE;
+      }
 
       const nextQueryString = qs.stringify(result);
       navigate(
@@ -179,6 +196,15 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
               onFinish={handleSubmit}
               className={'sign-in-form'}
             >
+              <div className={'FilerDropdown__body__row'}>
+                <div className={'FilerDropdown__body__row__first'}>
+                  <ControlledInput
+                    inputType={INPUT_TYPES.CHECKBOX}
+                    name="isDeleted"
+                    children={'Show Deleted Question'}
+                  />
+                </div>
+              </div>
               <div className={'FilerDropdown__body__row'}>
                 <div className={'FilerDropdown__body__row__first'}>
                   <ControlledInput

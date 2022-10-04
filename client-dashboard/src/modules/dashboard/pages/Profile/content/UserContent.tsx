@@ -14,7 +14,6 @@ function UserContent() {
 
   return (
     <UserContentStyled className="flex">
-      <div className="cell padding-24 name title">{t('common.name')}</div>
       <div className="cell setting">
         <div className="password padding-24 flex-space-between">
           <span className="title">{t('common.password')}</span>

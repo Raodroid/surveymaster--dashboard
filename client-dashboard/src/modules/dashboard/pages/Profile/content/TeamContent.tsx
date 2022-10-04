@@ -1,20 +1,17 @@
 import {
-  DeleteFilled,
-  EyeOutlined,
-  SettingFilled,
-  UserDeleteOutlined,
+  DeleteOutlined,
+  EyeOutlined, SettingOutlined,
+  UserDeleteOutlined
 } from '@ant-design/icons';
 import {
   Button,
   Checkbox,
   Divider,
-  Form,
-  Image,
-  Input,
+  Form, Input,
   InputRef,
   Menu,
   Pagination,
-  Table,
+  Table
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
@@ -23,7 +20,7 @@ import { SCOPE_CONFIG } from 'enums/user';
 import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import useCheckScopeEntity, {
-  ScopeActionArray,
+  ScopeActionArray
 } from 'modules/common/hoc/useCheckScopeEntity';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -35,15 +32,16 @@ import { AdminService } from 'services';
 import { BooleanEnum } from 'type';
 import { useDebounce } from 'utils';
 import {
+  CustomFallbackStyled,
   DropDownMenuStyled,
   TableWrapperStyled,
-  TeamContentStyled,
+  TeamContentStyled
 } from '../styles';
 import {
   ConfirmDeactivateUserModal,
   ConfirmRestoreUserModal,
   InviteMemberModal,
-  ResetUserPasswordModal,
+  ResetUserPasswordModal
 } from './modals';
 
 interface DataType {
@@ -143,14 +141,21 @@ function TeamContent() {
       {
         title: '',
         dataIndex: 'avatar',
-        render: (src: string) => (
-          <Image
-            src={src}
-            width={40}
-            height={40}
-            style={{ borderRadius: 12 }}
-          />
-        ),
+        render: (src: string, record: any) =>
+          src ? (
+            <img
+              src={src}
+              width={40}
+              height={40}
+              style={{ borderRadius: 12 }}
+              alt=""
+            />
+          ) : (
+            <CustomFallbackStyled className="flex-j-center">
+              {record.firstName.slice(0, 1).toUpperCase()}
+              {record.lastName.slice(0, 1).toUpperCase()}
+            </CustomFallbackStyled>
+          ),
         className: 'avatar-cell',
         width: 68,
       },
@@ -166,6 +171,19 @@ function TeamContent() {
       {
         title: 'Authentication',
         dataIndex: 'authentication',
+        render: (_, record: any) => {
+          const list = Object.values(allRoles).filter(elm =>
+            record.authentication.some(el => el === elm.id),
+          );
+
+          return (
+            <div>
+              {list.map(elm => (
+                <span style={{ fontSize: 12 }}>{elm.name} </span>
+              ))}
+            </div>
+          );
+        },
       },
       {
         title: '',
@@ -174,7 +192,7 @@ function TeamContent() {
           <ThreeDotsDropdown
             overlay={
               <DropDownMenuStyled>
-                {!isAdminRole && canEdit && (
+                {canEdit && (
                   <Menu.Item
                     key="editPreferences"
                     disabled={!isAdminRole}
@@ -182,7 +200,7 @@ function TeamContent() {
                       handleEditPreferences(record.key);
                     }}
                   >
-                    <SettingFilled className="dropdown-icon" />{' '}
+                    <SettingOutlined className="dropdown-icon" />{' '}
                     {t('common.editPreferences')}
                   </Menu.Item>
                 )}
@@ -198,7 +216,7 @@ function TeamContent() {
                     {t('common.resetPassword')}
                   </Menu.Item>
                 )}
-                {!record.deleteAt &&
+                {!record.deletedAt &&
                   profile &&
                   profile.id !== record.key &&
                   canDelete && (
@@ -211,13 +229,13 @@ function TeamContent() {
                       {t('common.deactivateUser')}
                     </Menu.Item>
                   )}
-                {record.deleteAt && canRestore && (
+                {record.deletedAt && canRestore && (
                   <Menu.Item
                     key="restore"
                     disabled={!isAdminRole}
                     onClick={() => setShowConfirmRestoreModal(true)}
                   >
-                    <DeleteFilled className="dropdown-icon" />{' '}
+                    <DeleteOutlined className="dropdown-icon" />{' '}
                     {t('common.restore')}
                   </Menu.Item>
                 )}
@@ -231,17 +249,20 @@ function TeamContent() {
         ),
       },
     ],
-    [profile, t, isAdminRole, canEdit, canRestore, canDelete],
+    [profile, t, isAdminRole, canEdit, canRestore, canDelete, allRoles],
   );
 
   const data: DataType[] = teamMembers
     ? teamMembers.data.data.map(user => {
         return {
           key: user.id,
-          avatar: '',
+          avatar: user.avatar || '',
+          firstName: user.firstName,
+          lastName: user.lastName,
           name: user.firstName + ' ' + user.lastName,
           email: user.email,
-          authentication: 'auth',
+          authentication: user.roles,
+          deletedAt: user.deletedAt,
         };
       })
     : [];

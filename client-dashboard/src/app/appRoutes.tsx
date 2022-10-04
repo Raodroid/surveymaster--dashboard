@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import React, { lazy, useEffect, Suspense } from 'react';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { ROUTE_PATH } from '../enums';
@@ -42,7 +42,10 @@ const AppRoutes = () => {
         <Routes>
           <Route path={'/app'} element={<ProtectedRoutes />}>
             <Route index element={<Home />} />
-            <Route path={'/app/project'} element={<Project />} />
+            <Route
+              path={ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/*'}
+              element={<Project />}
+            />
             <Route
               path={ROUTE_PATH.DASHBOARD_PATHS.PROFILE.ROOT}
               element={<Profile />}

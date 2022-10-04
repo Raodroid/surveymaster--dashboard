@@ -95,7 +95,7 @@ function ResetUserPassword(props: ResetUserPasswordProps) {
             <Button
               type="primary"
               htmlType="submit"
-              className="submit-btn"
+              className="submit-btn secondary-btn"
               loading={mutationChangeUserPassword.isLoading}
             >
               {t('common.sendConfirmation')}

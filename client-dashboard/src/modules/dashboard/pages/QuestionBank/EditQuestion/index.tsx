@@ -52,11 +52,13 @@ function transformData(
     ...rest
   } = input;
 
+  const newValue = transformQuestionData(rest);
+
   if (!id) return undefined;
 
   if (questionData.status === QuestionVersionStatus.COMPLETED) {
     return {
-      version: rest,
+      version: newValue,
       questionId: questionData.questionId,
     } as IQuestionVersionPostNewDto;
   }
@@ -95,7 +97,11 @@ const EditQuestion = () => {
       masterCategoryId,
       masterSubCategoryId,
       masterVariableName,
-      options: currentVersionQuestionData?.options || [
+      options: currentVersionQuestionData?.options?.map(opt => ({
+        id: opt.sort,
+        sort: opt.sort,
+        text: opt.text,
+      })) || [
         {
           id: Math.random(),
           text: '',

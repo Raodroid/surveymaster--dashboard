@@ -30,6 +30,6 @@ export default class AdminService {
 
   static restoreUser(payload: { userId: string }): Promise<any> {
     const { userId } = payload;
-    return APIService.patch(`users/${userId}/restore`);
+    return APIService.post(`users/${userId}/restore`);
   }
 }

@@ -36,7 +36,7 @@ const NavBar = () => {
             className="logo"
             aria-label="Logo app"
           >
-            <LogoIcon />
+            <LogoIcon style={{ transform: 'translateY(-3px)' }} />
           </Link>
           <MainMenu />
           <RightMenu />

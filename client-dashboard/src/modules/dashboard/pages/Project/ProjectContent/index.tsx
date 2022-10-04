@@ -1,8 +1,15 @@
-import React from 'react';
-import { ProjectContentWrapper } from './style';
+import ProjectHeader from './component/Header';
+import ProjectTable from './component/ProjectTable';
 
 const ProjectContent = () => {
-  return <ProjectContentWrapper> project content</ProjectContentWrapper>;
+  // const [search, setSearch] = useState('');
+
+  return (
+    <>
+      <ProjectHeader />
+      <ProjectTable />
+    </>
+  );
 };
 
 export default ProjectContent;

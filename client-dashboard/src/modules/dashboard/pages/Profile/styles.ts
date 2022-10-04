@@ -26,6 +26,11 @@ export const FlexBox = styled.div`
     justify-content: flex-start;
     flex-direction: column;
   }
+  .flex-j-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 export const ProfileStyled = styled(FlexBox)`
@@ -194,7 +199,11 @@ export const SiderWrapper = styled.div`
   .form {
     overflow-y: hidden;
     padding: 0 24px;
+    flex: 1;
     .ant-spin-nested-loading {
+      height: 100%;
+    }
+    > div {
       height: 100%;
     }
   }
@@ -433,4 +442,11 @@ export const DropDownMenuStyled = styled(Menu)`
     color: var(--ant-primary-color);
     margin-bottom: 1px;
   }
+`;
+
+export const CustomFallbackStyled = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid gray;
 `;

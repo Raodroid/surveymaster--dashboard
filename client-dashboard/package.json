@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "env-cmd -f .env.development craco start",
+    "start": "env-cmd -f .env.dev-server craco start",
     "build:development": "env-cmd -f .env.development craco build",
     "build:dev-server": "env-cmd -f .env.dev-server craco build",
     "deploy:dev-server": "aws s3 sync build/ s3://eg-dev-server-survey-master-admin-origin --cache-control no-cache",
@@ -84,6 +84,7 @@
     "rimraf": "3.0.2",
     "sanitize.css": "13.0.0",
     "sass": "1.54.8",
+    "simplebar-react": "2.4.3",
     "styled-components": "5.3.5",
     "web-vitals": "3.0.1",
     "xlsx": "0.18.5",
