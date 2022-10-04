@@ -8,6 +8,7 @@ import { SliderBaseProps } from 'antd/es/slider';
 import { DATE_PICKER_TYPES } from 'enums';
 import { CustomRadioButtonGroupProps } from './inputs/custom-group-radio-button/CustomGroupRadioButton';
 import { CustomInputMaskProps } from './input-mask/BaseInputMask';
+import { CustomUploadProps } from './inputs/custom-image-upload/CustomImageUpload';
 
 export enum INPUT_TYPES {
   INPUT = 'INPUT',
@@ -59,6 +60,8 @@ export type ControlledInputProps = UncontrolledInputProps & {
   ref: any;
   isFastField?: boolean;
   className?: string;
+  moduleName?: string;
+  subPath?: string;
 };
 
 export type OnchangeType = {
