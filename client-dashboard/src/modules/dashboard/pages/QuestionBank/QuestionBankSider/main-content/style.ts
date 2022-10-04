@@ -17,5 +17,14 @@ export const QuestionBankSiderMainContentWrapper = styled.div`
     }
     &__body {
       height: 100%;
+    }
+  }
+  .ant-menu-submenu-inline.ant-menu-submenu-open {
+    .ant-menu-submenu-title .ant-menu-title-content {
+      color: ${templateVariable.primary_color} !important;
+    }
+    .arrow-menu-icon {
+      transform: rotateX(180deg);
+    }
   }
 `;

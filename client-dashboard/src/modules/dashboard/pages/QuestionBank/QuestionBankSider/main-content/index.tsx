@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { QuestionBankSiderMainContentWrapper } from './style';
 import { useTranslation } from 'react-i18next';
 import { useMatch, useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import qs from 'qs';
 import { useGetAllCategories } from '../../util';
 
 import SimpleBarReact from 'simplebar-react';
+import HannahCustomSpin from '../../../../components/HannahCustomSpin';
 
 const getItem = (
   label: React.ReactNode,
@@ -81,6 +82,7 @@ const QuestionBankSiderMainContent = () => {
           i.name,
           i?.id as string,
           <ArrowDown
+            className={'arrow-menu-icon'}
             style={{ color: templateVariable.primary_color, height: 5 }}
           />,
           i.children?.map(child => getItem(child.name, child?.id as string)),
@@ -88,6 +90,8 @@ const QuestionBankSiderMainContent = () => {
       ),
     [categories],
   );
+
+  const ref = useRef<any>();
 
   return (
     <QuestionBankSiderMainContentWrapper>
@@ -101,7 +105,9 @@ const QuestionBankSiderMainContent = () => {
       >
         <h4>{t('common.questionBank')}</h4>
       </div>
-      <div className={'QuestionBankSiderMainContent__body'}>
+      <div className={'QuestionBankSiderMainContent__body'} ref={ref}>
+        <HannahCustomSpin parentRef={ref} spinning={isLoading} />
+
         <SimpleBarReact
           style={{ height: 'calc(100% - 40px)', overflowX: 'hidden' }}
         >

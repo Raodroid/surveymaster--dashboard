@@ -26,8 +26,6 @@ const Project = () => {
     }),
   );
 
-  console.log(data);
-
   return (
     <ProjectWrapper>
       <ProjectSider />
