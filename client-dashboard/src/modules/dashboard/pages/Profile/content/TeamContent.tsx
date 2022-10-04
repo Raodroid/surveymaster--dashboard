@@ -1,7 +1,9 @@
 import {
   DeleteFilled,
+  DeleteOutlined,
   EyeOutlined,
   SettingFilled,
+  SettingOutlined,
   UserDeleteOutlined,
 } from '@ant-design/icons';
 import {
@@ -182,7 +184,7 @@ function TeamContent() {
                       handleEditPreferences(record.key);
                     }}
                   >
-                    <SettingFilled className="dropdown-icon" />{' '}
+                    <SettingOutlined className="dropdown-icon" />{' '}
                     {t('common.editPreferences')}
                   </Menu.Item>
                 )}
@@ -217,7 +219,7 @@ function TeamContent() {
                     disabled={!isAdminRole}
                     onClick={() => setShowConfirmRestoreModal(true)}
                   >
-                    <DeleteFilled className="dropdown-icon" />{' '}
+                    <DeleteOutlined className="dropdown-icon" />{' '}
                     {t('common.restore')}
                   </Menu.Item>
                 )}
