@@ -1,9 +1,15 @@
 import { SearchOutlined } from '@ant-design/icons';
+import { Input } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import StyledBreadcrumb from 'modules/common/commonComponent/StyledBreadcrumb';
 import { HeaderStyled } from '../style';
 
-function ProjectHeader(props: { routes?: any }) {
+function ProjectHeader(props: {
+  routes?: any;
+  // search?: string;
+  // setSearch?: (text: string) => void;
+}) {
+  // const { routes, search, setSearch } = props;
   const { routes } = props;
 
   const base = [
@@ -18,6 +24,12 @@ function ProjectHeader(props: { routes?: any }) {
   return (
     <HeaderStyled className="flex-start">
       <StyledBreadcrumb routes={base} />
+
+      {/* {setSearch && (
+        <div>
+          <Input value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+      )} */}
     </HeaderStyled>
   );
 }
