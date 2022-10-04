@@ -16,15 +16,6 @@ export const QuestionBankSiderMainContentWrapper = styled.div`
       }
     }
     &__body {
-      overflow: hidden;
-      .category-list {
-        height: 100%;
-        overflow-y: scroll;
-        .ant-menu-title-content {
-          font-size: 12px;
-          font-weight: 600;
-        }
-      }
-    }
+      height: 100%;
   }
 `;

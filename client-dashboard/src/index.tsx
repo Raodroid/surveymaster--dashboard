@@ -34,11 +34,11 @@ import styled from 'styled-components/macro';
 
 import './app/index.sass';
 import { ScrollbarProvider } from './scrollbarContext/useScrollBar';
-import { CloseIcon } from './icons/CloseIcon';
+import { CloseIcon } from './icons';
 import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import customHistory from 'utils/history';
-
+import 'simplebar/src/simplebar.css';
 // const appConfig = configureAppStore();
 
 // export const store = appConfig.store;

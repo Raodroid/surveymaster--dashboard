@@ -13,9 +13,9 @@ export const InfoIcon = () => {
       <g
         id="Design"
         stroke="none"
-        stroke-width="1"
+        strokeWidth="1"
         fill="none"
-        fill-rule="evenodd"
+        fillRule="evenodd"
       >
         <g id="Icons" transform="translate(-1723.000000, -329.000000)">
           <g

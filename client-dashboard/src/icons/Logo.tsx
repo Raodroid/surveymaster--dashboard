@@ -1,11 +1,8 @@
 import React from 'react';
 import templateVariable from '../app/template-variables.module.scss';
 
-const unActiveColor = templateVariable.text_primary_color;
-const activeColor = templateVariable.primary_color;
-
 export const LogoIcon = props => {
-  const { style, className, isActive } = props;
+  const { style, className } = props;
   return (
     <svg
       width="165px"

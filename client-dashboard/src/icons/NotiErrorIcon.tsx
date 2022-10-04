@@ -12,9 +12,9 @@ export const ErrorIcon = props => {
       <g
         id="Design"
         stroke="none"
-        stroke-width="1"
+        strokeWidth="1"
         fill="none"
-        fill-rule="evenodd"
+        fillRule="evenodd"
       >
         <g id="Icons" transform="translate(-1652.000000, -332.000000)">
           <g

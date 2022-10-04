@@ -36,24 +36,33 @@ const initValue: IAddQuestionFormValue = {
   options: undefined,
 };
 
-export const transformQuestionData = (input: BaseQuestionVersionDto) => {
+export const transformQuestionData = (
+  input: BaseQuestionVersionDto,
+): BaseQuestionVersionDto => {
+  const result = { ...input };
   if (
     ![QuestionType.MULTIPLE_CHOICE, QuestionType.RADIO_BUTTONS].includes(
-      input.type,
+      result.type,
     )
   ) {
-    delete input?.options;
+    delete result?.options;
+  } else {
+    result.options = result?.options?.map((opt, index) => ({
+      sort: index + 1,
+      text: opt.text,
+    }));
   }
 
-  if (input.type !== QuestionType.SLIDER) {
-    delete input?.numberMax;
-    delete input?.numberMin;
-    delete input?.numberStep;
+  if (result.type !== QuestionType.SLIDER) {
+    delete result?.numberMax;
+    delete result?.numberMin;
+    delete result?.numberStep;
   } else {
-    input.numberMax = stringToInt(input.numberMax);
-    input.numberMin = stringToInt(input.numberMin);
-    input.numberStep = stringToInt(input.numberStep);
+    result.numberMax = stringToInt(result.numberMax);
+    result.numberMin = stringToInt(result.numberMin);
+    result.numberStep = stringToInt(result.numberStep);
   }
+  return result;
 };
 
 const stringToInt = input => {
@@ -61,14 +70,15 @@ const stringToInt = input => {
 };
 
 function transformData(input: IAddQuestionFormValue): IQuestionCreatePostDto {
-  transformQuestionData(input);
   const { masterCategoryId, masterSubCategoryId, masterVariableName, ...rest } =
     input;
+  const newValue = transformQuestionData(rest);
+
   return {
     masterCategoryId,
     masterSubCategoryId,
     masterVariableName,
-    version: rest,
+    version: newValue,
   } as IQuestionCreatePostDto;
 }
 

@@ -91,14 +91,16 @@ const OptionList = React.memo(function QuoteListA(props: {
           <span>{t('common.answer')}</span>
         </div>
       </div>
-      {items.map((option: IQuestionVersionOption, index: number) => (
-        <DragOption
-          opt={option}
-          index={index}
-          key={option.id}
-          arrayHelpers={arrayHelpers}
-        />
-      ))}
+      {(items || []).map((option: IQuestionVersionOption, index: number) => {
+        return (
+          <DragOption
+            opt={option}
+            index={index}
+            key={option.id || option.sort}
+            arrayHelpers={arrayHelpers}
+          />
+        );
+      })}
     </>
   );
 });
