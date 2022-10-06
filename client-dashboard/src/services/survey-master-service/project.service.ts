@@ -1,26 +1,20 @@
-import { AxiosResponse } from 'axios';
+import { AxiosRequestConfig, AxiosResponse, AxiosResponseHeaders } from 'axios';
 import { CreateProject } from 'interfaces';
-import { IGetParams } from 'type';
-import { mockSurveyDetail, PostSurveyBodyDto } from '../../type';
-import { UpdateProject } from './../../interfaces/project';
+import { IGetParams, mockSurveyList } from 'type';
+import { UpdateProject } from '../../interfaces';
 import APIService from './base.service';
 
 export default class ProjectService {
-  static getSurveyById(props: PostSurveyBodyDto): Promise<AxiosResponse> {
-    const { projectId } = props;
-    // return APIService.get(`/surveys/${projectId}`);
+  static getProjects(params: IGetParams): Promise<AxiosResponse> {
+    // return APIService.get('projects', { params });
 
     return Promise.resolve({
-      data: mockSurveyDetail,
-      status: 200,
+      data: mockSurveyList,
+      status: 1998,
       statusText: '',
       headers: {},
       config: {},
     });
-  }
-
-  static getProjects(params: IGetParams): Promise<AxiosResponse> {
-    return APIService.get('projects', { params });
   }
 
   static getProjectById(id: string | undefined): Promise<AxiosResponse> {

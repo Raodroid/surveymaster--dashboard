@@ -1,6 +1,7 @@
 import {
   completedVersion,
   draftVersion,
+  IPaginationResponse,
   IQuestionVersion,
   mockCategories,
   mockUser,
@@ -32,6 +33,7 @@ export interface ISurvey {
   remark?: string;
   project?: IProject;
   questions?: ISurveyQuestion[];
+  numberOfQuestions: number;
 
   createdBy: UserPayload;
   updatedBy?: UserPayload;
@@ -47,17 +49,21 @@ export interface SurveyQuestionDto {
   remark?: string;
 }
 
-export interface PostSurveyBodyDto {
+export interface IPostSurveyBodyDto {
   name: string;
   projectId: string;
   remark?: string;
   questions: SurveyQuestionDto[];
+  surveyId?: string;
 }
 
-export interface PutSurveyBodyDto {
+export interface IPutSurveyBodyDto {
   name: string;
   remark?: string;
   questions: SurveyQuestionDto[];
+}
+export interface IPutSurveyBodyDtoExtendId extends IPutSurveyBodyDto {
+  id?: string;
 }
 
 export const mockSurveyDetail: ISurvey = {
@@ -72,6 +78,7 @@ export const mockSurveyDetail: ISurvey = {
     displayId: '111-23',
     name: 'FFQ',
   },
+  numberOfQuestions: 3,
   questions: [
     {
       id: '1',
@@ -184,4 +191,87 @@ export const mockSurveyDetail: ISurvey = {
   ],
   createdBy: mockUser,
   createdAt: new Date(),
+};
+
+export const mockSurveyList: IPaginationResponse<ISurvey> = {
+  hasNextPage: false,
+  hasPreviousPage: false,
+  itemCount: 2,
+  pageCount: 1,
+  page: 1,
+  take: 10,
+  data: [
+    {
+      id: '1',
+      displayId: '111-22',
+      projectId: 'p1',
+      name: 'Microbiome Donor Programme (AMD)',
+      remark:
+        'Quisque malesuada placerat nisl. Nulla facilisi. Pellentesque auctor neque nec urna. Pellentesque dapibus hendrerit tortor. Donec vitae sapien ut libero venenatis faucibus.',
+      project: {
+        id: 'p1',
+        displayId: '111-23',
+        name: 'FFQ',
+      },
+      numberOfQuestions: 3,
+      // questions: [
+      //   {
+      //     id: "1",
+      //     questionVersionId: "1",
+      //     surveyId: "1",
+      //     sort: 1
+      //   },
+      //   {
+      //     id: "2",
+      //     questionVersionId: "2",
+      //     surveyId: "1",
+      //     sort: 2
+      //   },
+      //   {
+      //     id: "3",
+      //     questionVersionId: "2",
+      //     surveyId: "1",
+      //     sort: 3
+      //   }
+      // ],
+      createdBy: mockUser,
+      createdAt: new Date(),
+    },
+    {
+      id: '2',
+      displayId: '111-23',
+      projectId: 'p1',
+      name: 'Microbiome Donor Version 2',
+      remark:
+        'Quisque malesuada placerat nisl. Nulla facilisi. Pellentesque auctor neque nec urna. Pellentesque dapibus hendrerit tortor. Donec vitae sapien ut libero venenatis faucibus.',
+      project: {
+        id: 'p1',
+        displayId: '111-23',
+        name: 'FFQ',
+      },
+      numberOfQuestions: 3,
+      // questions: [
+      //   {
+      //     id: "1",
+      //     questionVersionId: "1",
+      //     surveyId: "1",
+      //     sort: 1
+      //   },
+      //   {
+      //     id: "2",
+      //     questionVersionId: "2",
+      //     surveyId: "1",
+      //     sort: 2
+      //   },
+      //   {
+      //     id: "3",
+      //     questionVersionId: "2",
+      //     surveyId: "1",
+      //     sort: 3
+      //   }
+      // ],
+      createdBy: mockUser,
+      createdAt: new Date(),
+    },
+  ],
 };

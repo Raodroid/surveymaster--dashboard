@@ -5,11 +5,12 @@ import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useState } from 'react';
 import { useParams } from 'react-router';
-import { mockSurveyList } from '../../../mockup';
 import ProjectHeader from '../Header';
 import QuestionList from './QuestionList';
 import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
 import SurveyCustomSelect from './SurveyCustomSelect';
+import { useTranslation } from 'react-i18next';
+import { mockSurveyList } from '../../../../../../../type';
 
 const selectValues = {
   newSurvey: 'newSurvey',
@@ -18,6 +19,7 @@ const selectValues = {
 };
 
 function AddSurvey() {
+  const { t } = useTranslation();
   const params = useParams();
   const [templateValue, setTemplateValue] = useState('');
 
@@ -44,19 +46,12 @@ function AddSurvey() {
 
       <AddSurveyWrapper>
         <Formik initialValues={{}} onSubmit={() => {}}>
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            isSubmitting,
-            setFieldValue,
-          }) => (
+          {({ values, setFieldValue }) => (
             <Form layout="vertical">
               <AddSurveyContentWrapper>
-                <div className="title mainInfo">Main Information:</div>
+                <div className="title mainInfo">
+                  {t('common.mainInformation')}:
+                </div>
 
                 <SurveyCustomSelect
                   className="custom-select"

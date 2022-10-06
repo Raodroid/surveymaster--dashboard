@@ -15,7 +15,6 @@ import { INPUT_TYPES } from '../../../../../common/input/type';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import {
-  BooleanEnum,
   GetListQuestionDto,
   IOptionItem,
   QuestionType,
@@ -147,7 +146,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
       }, {});
 
       if (values.isDeleted) {
-        result.isDeleted = BooleanEnum.TRUE;
+        result.isDeleted = true;
       }
 
       const nextQueryString = qs.stringify(result);

@@ -1,59 +1,87 @@
-import { Button, Menu, Table } from 'antd';
+import { Button, Menu, notification, PaginationProps, Table } from 'antd';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { ROUTE_PATH } from 'enums';
-import { CloseIcon, PenFilled } from 'icons';
-import React, { useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
+import { PenFilled, TrashOutlined } from 'icons';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
-import { BooleanEnum } from 'type';
-import { mockSurveyList } from '../../mockup';
+import { GetListQuestionDto, IGetParams, IProject, IQuestion } from 'type';
 import { ProjectTableWrapper } from '../style';
+import { ColumnsType } from 'antd/lib/table/interface';
+import _get from 'lodash/get';
+import { onError, useDebounce } from '../../../../../../utils';
+import HannahCustomSpin from '../../../../components/HannahCustomSpin';
+import useParseQueryString from '../../../../../../hooks/useParseQueryString';
+import StyledPagination from '../../../../components/StyledPagination';
+import { useTranslation } from 'react-i18next';
+import { QuestionBankService, SurveyService } from '../../../../../../services';
+import { ItemType } from 'antd/es/menu/hooks/useItems';
 
-const dataSource = [
-  {
-    key: '1',
-    id: '113-8392',
-    projectTitle: 'Microbiome Donor Programme (AMD)',
-    route: 'Microbiome-Donor-Programme (AMD)',
-    nOfSurveys: '56',
-    personInCharge: 'Dorothy Hernandez',
-    dateOfCreation: '13.08.2022',
-  },
-  {
-    key: '2',
-    id: '113-8392',
-    projectTitle: 'Microbiome Donor Programme (AMD)',
-    route: 'Microbiome-Donor-Programme-(AMD)',
-    nOfSurveys: '56',
-    personInCharge: 'Dorothy Hernandez',
-    dateOfCreation: '13.08.2022',
-  },
-];
+const initParams: IGetParams = {
+  q: '',
+  page: 1,
+  take: 10,
+  isDeleted: false,
+};
+
+const getProjects = (params: GetListQuestionDto) => {
+  const newParams: GetListQuestionDto = {
+    ...params,
+  };
+  for (const key in newParams) {
+    if (!newParams[key] && typeof newParams[key] !== 'boolean') {
+      delete newParams[key];
+    }
+  }
+  return ProjectService.getProjects(newParams);
+};
 
 function ProjectTable() {
+  const wrapperRef = useRef<any>();
+  const [searchTxt, setSearchTxt] = useState<string>('');
+  const queryString = useParseQueryString<GetListQuestionDto>();
   const navigate = useNavigate();
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState('');
-  const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
 
-  const queryParams = {
-    q: query,
-    page: page,
-    take: 10,
-    isDeleted: isDeleted,
-  };
-  // const { data: projects } = useQuery(
-  //   'projects',
-  //   () => ProjectService.getProjects(queryParams),
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   },
-  // );
+  const [params, setParams] = useState<GetListQuestionDto>(initParams);
 
-  const { data } = mockSurveyList;
+  const debounceSearchText = useDebounce(searchTxt);
 
-  const columns = useMemo(
+  const getProjectListQuery = useQuery(
+    ['getProjects', params, debounceSearchText],
+    () => {
+      return getProjects({
+        ...params,
+        q: debounceSearchText,
+      });
+    },
+    {
+      onError,
+    },
+  );
+
+  const total: number = _get(getProjectListQuery.data, 'data.itemCount', 0);
+
+  const projects = useMemo<IProject[]>(
+    () => _get(getProjectListQuery.data, 'data.data'),
+    [getProjectListQuery.data],
+  );
+
+  const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
+    (current, pageSize) => {
+      setParams(s => ({ ...s, take: pageSize }));
+    },
+    [],
+  );
+
+  const columns = useMemo<ColumnsType<IProject>>(
     () => [
       {
         title: 'ID',
@@ -80,7 +108,7 @@ function ProjectTable() {
         title: 'N of Surveys',
         dataIndex: 'questions',
         key: 'questions',
-        render: (list: any) => <div>{list.length}</div>,
+        render: (list: any) => <div>{list?.length}</div>,
       },
       {
         title: 'Person In Charge',
@@ -101,21 +129,20 @@ function ProjectTable() {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',
-        render: (_, record: any) => (
+        render: (value, _: any) => (
           <div className="flex-center actions">
             <Button
               onClick={() =>
                 navigate(
                   ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT.replace(
                     ':id',
-                    record.project.displayId,
+                    _.project.displayId,
                   ),
                 )
               }
             >
               <PenFilled />
             </Button>
-            <ThreeDotsDropdown overlay={<Menu />} trigger={['click']} />
           </div>
         ),
       },
@@ -123,9 +150,26 @@ function ProjectTable() {
     [navigate],
   );
 
+  useEffect(() => {
+    setParams({ ...initParams, ...queryString });
+  }, [queryString]);
+
   return (
-    <ProjectTableWrapper>
-      <Table pagination={false} dataSource={data} columns={columns} />
+    <ProjectTableWrapper ref={wrapperRef}>
+      <Table pagination={false} dataSource={projects} columns={columns} />
+      <HannahCustomSpin
+        parentRef={wrapperRef}
+        spinning={getProjectListQuery.isLoading}
+      />
+      <StyledPagination
+        onChange={page => {
+          setParams(s => ({ ...s, page }));
+        }}
+        showSizeChanger
+        pageSize={params.take}
+        onShowSizeChange={onShowSizeChange}
+        total={total}
+      />
     </ProjectTableWrapper>
   );
 }

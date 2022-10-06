@@ -1,17 +1,19 @@
 import {
   DeleteOutlined,
-  EyeOutlined, SettingOutlined,
-  UserDeleteOutlined
+  EyeOutlined,
+  SettingOutlined,
+  UserDeleteOutlined,
 } from '@ant-design/icons';
 import {
   Button,
   Checkbox,
   Divider,
-  Form, Input,
+  Form,
+  Input,
   InputRef,
   Menu,
   Pagination,
-  Table
+  Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
@@ -20,7 +22,7 @@ import { SCOPE_CONFIG } from 'enums/user';
 import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import useCheckScopeEntity, {
-  ScopeActionArray
+  ScopeActionArray,
 } from 'modules/common/hoc/useCheckScopeEntity';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -29,19 +31,18 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
-import { BooleanEnum } from 'type';
 import { useDebounce } from 'utils';
 import {
   CustomFallbackStyled,
   DropDownMenuStyled,
   TableWrapperStyled,
-  TeamContentStyled
+  TeamContentStyled,
 } from '../styles';
 import {
   ConfirmDeactivateUserModal,
   ConfirmRestoreUserModal,
   InviteMemberModal,
-  ResetUserPasswordModal
+  ResetUserPasswordModal,
 } from './modals';
 
 interface DataType {
@@ -79,7 +80,7 @@ function TeamContent() {
   const [filter, setFilter] = useState('');
   const searchDebounce = useDebounce(search);
   const [page, setPage] = useState(1);
-  const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
   const [showConfirmDeactivateModal, setShowConfirmDeactivateModal] =
     useState(false);
   const [showConfirmRestoreModal, setShowConfirmRestoreModal] = useState(false);
@@ -308,14 +309,8 @@ function TeamContent() {
           </Form>
           <Checkbox
             className="show-inactivate-users-checkbox"
-            checked={isDeleted === BooleanEnum.TRUE ? true : false}
-            onChange={() =>
-              setIsDeleted(
-                isDeleted === BooleanEnum.TRUE
-                  ? BooleanEnum.FALSE
-                  : BooleanEnum.TRUE,
-              )
-            }
+            checked={isDeleted}
+            onChange={() => setIsDeleted(isDeleted)}
           >
             {t('common.showInactivateUsers')}
           </Checkbox>

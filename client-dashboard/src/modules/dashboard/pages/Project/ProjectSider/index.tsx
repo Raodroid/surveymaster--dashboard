@@ -1,39 +1,35 @@
-import { Button } from 'antd';
-import { ROUTE_PATH } from 'enums';
-import { PlusIcon } from 'icons';
-import React, { useState } from 'react';
-import { useLocation } from 'react-router';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router';
-import { mockSurveyList } from '../mockup';
 import { AddNewProjectBtn, ProjectSiderWrapper } from './style';
 import Title from './Title';
+import { ROUTE_PATH } from 'enums';
+import { PlusIcon } from 'icons';
+import { useGetAllProjects } from '../util';
+import HannahCustomSpin from '../../../components/HannahCustomSpin';
+import { useTranslation } from 'react-i18next';
+import { useMatch } from 'react-router-dom';
 
 const ProjectSider = () => {
+  const wrapperRef = useRef<any>();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const { data } = mockSurveyList;
 
-  const list = [
-    {
-      title: data?.[0].name,
-      routePath:
-        data && data[0] && data[0].project && data[0].project.displayId,
-    },
-    {
-      title: data?.[1].name,
-      routePath:
-        data && data[1] && data[1].project && data[1].project.displayId,
-    },
-  ];
+  const { projects, isLoading } = useGetAllProjects();
+
+  const isActive = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD,
+  });
+
   return (
-    <ProjectSiderWrapper>
+    <ProjectSiderWrapper ref={wrapperRef}>
       <div className="list">
-        {list.map(e => (
+        <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
+        {projects.map(e => (
           <Title
-            key={e.title}
-            title={e.title}
+            key={e.displayId}
+            title={e.name}
             routePath={
-              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/' + e.routePath
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/' + e.displayId
             }
           />
         ))}
@@ -45,12 +41,10 @@ const ProjectSider = () => {
           }
           type="default"
           className="new-project-btn"
-          isAddNewProjectPage={pathname.includes(
-            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD,
-          )}
+          isAddNewProjectPage={!!isActive}
         >
           <PlusIcon />
-          Add New Project
+          {t('common.addNewProject')}
         </AddNewProjectBtn>
       </div>
     </ProjectSiderWrapper>

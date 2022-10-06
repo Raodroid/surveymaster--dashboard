@@ -349,11 +349,6 @@ export interface IQuestionVersionPutUpdateDtoExtendId
   id: string;
 }
 
-export enum BooleanEnum {
-  TRUE = 'true',
-  FALSE = 'false',
-}
-
 export interface IGetParams {
   q?: string;
   take?: number;
@@ -361,7 +356,7 @@ export interface IGetParams {
   ids?: number;
   createdFrom?: string;
   createdTo?: string;
-  isDeleted?: BooleanEnum | boolean;
+  isDeleted?: boolean;
   selectAll?: boolean;
 }
 

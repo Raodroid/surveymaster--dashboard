@@ -1,28 +1,7 @@
 import { Table } from 'antd';
-import { mockSurveyDetail } from 'modules/dashboard/pages/Project/mockup';
 import React from 'react';
 import { QuestionListWrapper } from './styles';
-
-const dataSource = [
-  {
-    key: '1',
-    id: '113-8392',
-    question: 'What is your age?',
-    category: 'XXX-XXXX',
-    subCategory: 'XXX-XXXX',
-    variableName: 'YY-YY-YYY',
-    type: 'Radio Buttons',
-  },
-  {
-    key: '2',
-    id: '113-8392',
-    question: 'What is your age?',
-    category: 'XXX-XXXX',
-    subCategory: 'XXX-XXXX',
-    variableName: 'YY-YY-YYY',
-    type: 'Radio Buttons',
-  },
-];
+import { mockSurveyDetail } from 'type';
 
 const columns = [
   {

@@ -1,5 +1,5 @@
 import { ROUTE_PATH } from 'enums';
-import { mockSurveyList } from 'modules/dashboard/pages/Project/mockup';
+import { mockSurveyList } from 'type';
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router';
 import { useParams } from 'react-router';

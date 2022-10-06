@@ -2,9 +2,10 @@ import { UnorderedListOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { TitleStyled } from './style';
+import { useMatch } from 'react-router-dom';
 
 interface TitleProps {
   title: string;
@@ -16,9 +17,10 @@ function Title(props: TitleProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const active = useMemo(() => {
-    return pathname && pathname.includes(routePath);
-  }, [pathname, routePath]);
+  const isActive = useMatch({
+    path: routePath,
+    end: false,
+  });
 
   const handleTitleClick = () => {
     if (pathname.includes(routePath)) {
@@ -31,12 +33,12 @@ function Title(props: TitleProps) {
   return (
     <TitleStyled>
       <Button
-        className={`${active && 'active'} title-btn flex`}
+        className={`${!!isActive && 'active'} title-btn flex`}
         onClick={handleTitleClick}
       >
         {title}
       </Button>
-      <div className={`wrapper flex ${!active ? 'hide' : ''}`}>
+      <div className={`wrapper flex ${!isActive ? 'hide' : ''}`}>
         <Button
           className="flex-center primary"
           type="primary"

@@ -1,7 +1,7 @@
 import { Form } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
-import { mockSurveyList } from 'modules/dashboard/pages/Project/mockup';
+import { mockSurveyList } from 'type';
 import { useMemo } from 'react';
 import { useParams } from 'react-router';
 import ProjectHeader from '../../Header';

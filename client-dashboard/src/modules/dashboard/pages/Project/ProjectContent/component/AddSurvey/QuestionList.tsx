@@ -9,8 +9,6 @@ import { QuestionListWrapper, TableWrapper } from './styles';
 function QuestionList(props: { setFieldValue: any; values: any }) {
   const { values, setFieldValue } = props;
 
-  console.log(values);
-
   const dataSource = useMemo(
     () => [
       {

@@ -11,8 +11,8 @@ import React, {
 } from 'react';
 import { CategoryDetailWrapper } from './style';
 import CategoryDetailHeader from './CategoryDetailHeader';
-import { Menu, notification, PaginationProps, Spin, Table } from 'antd';
-import { BooleanEnum, GetListQuestionDto, IQuestion } from 'type';
+import { Menu, notification, PaginationProps, Table } from 'antd';
+import { GetListQuestionDto, IQuestion } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
 import ThreeDotsDropdown from '../../../../../customize-components/ThreeDotsDropdown';
@@ -99,11 +99,13 @@ const CategoryDetail = () => {
     () => [
       {
         title: 'ID',
+        width: 50,
         dataIndex: ['latestVersion', 'id'],
       },
       {
         title: t('common.question'),
         dataIndex: ['latestVersion'],
+        width: 300,
         render: value => value?.title || '--',
       },
       {
@@ -126,6 +128,7 @@ const CategoryDetail = () => {
       {
         title: t('common.action'),
         dataIndex: 'id',
+        width: 60,
         render: (value, _) => (
           <div
             onClick={e => {
@@ -168,7 +171,7 @@ const CategoryDetail = () => {
   );
 
   useEffect(() => {
-    setParams(s => ({ ...initParams, ...queryString }));
+    setParams({ ...initParams, ...queryString });
   }, [queryString]);
 
   const ref = useRef<any>();
@@ -178,10 +181,6 @@ const CategoryDetail = () => {
       value={{ params, setParams, loading, setLoading }}
     >
       <CategoryDetailWrapper ref={ref}>
-        <HannahCustomSpin
-          parentRef={ref}
-          spinning={loading || getQuestionListQuery.isLoading}
-        />
         <CategoryDetailHeader
           searchTxt={searchTxt}
           setSearchTxt={setSearchTxt}
@@ -193,6 +192,11 @@ const CategoryDetail = () => {
             columns={columns}
             onRow={handleClickRow}
             pagination={false}
+            sticky={true}
+          />
+          <HannahCustomSpin
+            parentRef={ref}
+            spinning={loading || getQuestionListQuery.isLoading}
           />
           <StyledPagination
             onChange={page => {

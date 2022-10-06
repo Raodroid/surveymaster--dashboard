@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
-import { mockSurveyList } from '../../../mockup';
 import ProjectHeader from '../Header';
 import Inputs from './Inputs';
 import { AddProjectWrapper } from './styles';
+import { mockSurveyList } from '../../../../../../../type';
 
 function EditProject() {
   const params = useParams();
