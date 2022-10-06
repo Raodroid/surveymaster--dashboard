@@ -8,10 +8,6 @@ export const DetailSurveyHomeWrapper = styled.div`
     flex: 1;
     overflow-y: auto;
   }
-
-  .ant-form {
-    padding-top: 40px;
-  }
 `;
 
 export const QuestionListWrapper = styled.div`

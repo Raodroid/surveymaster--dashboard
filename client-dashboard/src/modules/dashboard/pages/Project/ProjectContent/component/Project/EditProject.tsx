@@ -11,6 +11,7 @@ import { mockSurveyList } from '../../../mockup';
 import ProjectHeader from '../Header';
 import Inputs from './Inputs';
 import { AddProjectWrapper } from './styles';
+import { onError } from 'utils/funcs';
 
 function EditProject() {
   const params = useParams();
@@ -30,7 +31,7 @@ function EditProject() {
       name: project?.name,
       id: project?.project?.displayId,
       description: project?.remark,
-      personInCharge: project?.createdBy.fullName,
+      roles: project?.createdBy.fullName,
     };
   }, [project]);
 
@@ -54,6 +55,7 @@ function EditProject() {
   const mutationEditProject = useMutation(ProjectService.updateProject, {
     onSuccess: () =>
       notification.success({ message: t('common.updateSuccess') }),
+    onError,
   });
 
   const handleSubmit = (payload: UpdateProject) => {
@@ -94,7 +96,7 @@ function EditProject() {
                   htmlType="submit"
                   loading={mutationEditProject.isLoading}
                 >
-                  Save Edits
+                  {t('common.saveEdits')}
                 </Button>
               </div>
             </Form>

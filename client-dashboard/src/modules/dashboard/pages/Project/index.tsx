@@ -1,6 +1,7 @@
 import { ROUTE_PATH } from 'enums';
 import { useQuery } from 'react-query';
 import { Navigate, Route, Routes } from 'react-router';
+import { ProjectService } from 'services';
 import APIService from 'services/survey-master-service/base.service';
 import ProjectContent from './ProjectContent';
 import AddSurvey from './ProjectContent/component/AddSurvey';
@@ -14,19 +15,6 @@ import { ProjectWrapper } from './style';
 const Project = () => {
   const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
   const subRoute = (route: string) => route.replace(routePath.ROOT, '');
-
-  const { data } = useQuery('data', () =>
-    APIService.get('/projects', {
-      params: {
-        page: 1,
-        take: 10,
-        q: '',
-        isDeleted: false,
-      },
-    }),
-  );
-
-  console.log(data);
 
   return (
     <ProjectWrapper>

@@ -1,35 +1,14 @@
-import { Button, Menu, Table } from 'antd';
+import { Button, Menu, Pagination, Table } from 'antd';
+import CustomTable from 'customize-components/CustomTable';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { ROUTE_PATH } from 'enums';
-import { CloseIcon, PenFilled } from 'icons';
-import React, { useMemo, useState } from 'react';
+import { PenFilled } from 'icons';
+import { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
 import { BooleanEnum } from 'type';
-import { mockSurveyList } from '../../mockup';
 import { ProjectTableWrapper } from '../style';
-
-const dataSource = [
-  {
-    key: '1',
-    id: '113-8392',
-    projectTitle: 'Microbiome Donor Programme (AMD)',
-    route: 'Microbiome-Donor-Programme (AMD)',
-    nOfSurveys: '56',
-    personInCharge: 'Dorothy Hernandez',
-    dateOfCreation: '13.08.2022',
-  },
-  {
-    key: '2',
-    id: '113-8392',
-    projectTitle: 'Microbiome Donor Programme (AMD)',
-    route: 'Microbiome-Donor-Programme-(AMD)',
-    nOfSurveys: '56',
-    personInCharge: 'Dorothy Hernandez',
-    dateOfCreation: '13.08.2022',
-  },
-];
 
 function ProjectTable() {
   const navigate = useNavigate();
@@ -43,15 +22,14 @@ function ProjectTable() {
     take: 10,
     isDeleted: isDeleted,
   };
-  // const { data: projects } = useQuery(
-  //   'projects',
-  //   () => ProjectService.getProjects(queryParams),
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   },
-  // );
 
-  const { data } = mockSurveyList;
+  const { data: projects, isLoading } = useQuery(
+    'projectData',
+    () => ProjectService.getProjects(queryParams),
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const columns = useMemo(
     () => [
@@ -59,7 +37,7 @@ function ProjectTable() {
         title: 'ID',
         dataIndex: 'project',
         key: 'project',
-        render: (_, record: any) => <div>{record?.project.displayId}</div>,
+        render: (_, record: any) => <div>{record?.id}</div>,
       },
       {
         title: 'Project Title',
@@ -67,10 +45,12 @@ function ProjectTable() {
         key: 'name',
         render: (text: string, record: any) => (
           <Link
-            to={ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(
-              ':id',
-              record.project.displayId,
-            )}
+            to={
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(
+                ':id',
+                record?.id,
+              ) + `?title=${record.name}`
+            }
           >
             {text}
           </Link>
@@ -78,15 +58,20 @@ function ProjectTable() {
       },
       {
         title: 'N of Surveys',
-        dataIndex: 'questions',
-        key: 'questions',
-        render: (list: any) => <div>{list.length}</div>,
+        dataIndex: 'numberOfSurveys',
+        key: 'numberOfSurveys',
+        render: (text: any) => <div>{text}</div>,
       },
       {
         title: 'Person In Charge',
         dataIndex: 'createdBy',
         key: 'createdBy',
-        render: (user: any) => <div>{user.fullName}</div>,
+        render: (_, record: any) => (
+          <div>
+            {record.personResponsible.firstName}{' '}
+            {record.personResponsible.lastName}
+          </div>
+        ),
       },
       {
         title: 'Date of Creation',
@@ -94,7 +79,7 @@ function ProjectTable() {
         key: 'createdAt',
         render: (text: any) => {
           const str = text.toString();
-          return <div>{str.slice(0, 15)}</div>;
+          return <div>{str.slice(0, 10)}</div>;
         },
       },
       {
@@ -108,7 +93,7 @@ function ProjectTable() {
                 navigate(
                   ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT.replace(
                     ':id',
-                    record.project.displayId,
+                    record.id,
                   ),
                 )
               }
@@ -124,8 +109,14 @@ function ProjectTable() {
   );
 
   return (
-    <ProjectTableWrapper>
-      <Table pagination={false} dataSource={data} columns={columns} />
+    <ProjectTableWrapper className="flex-column">
+      <Table
+        dataSource={projects?.data.data}
+        columns={columns}
+        pagination={false}
+        // scroll={{ y: 'calc(100vh - 286px)' }}
+      />
+      <Pagination />
     </ProjectTableWrapper>
   );
 }

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useNavigate, useParams } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
+import { onError } from 'utils/funcs';
 import * as Yup from 'yup';
 import ProjectHeader from '../Header';
 import Inputs from './Inputs';
@@ -43,6 +44,7 @@ function AddProject() {
   const mutationCreateProject = useMutation(ProjectService.createProject, {
     onSuccess: () =>
       notification.success({ message: t('common.createSuccess') }),
+    onError,
   });
 
   const handleSubmit = (payload: CreateProject) => {
@@ -60,7 +62,7 @@ function AddProject() {
       <AddProjectWrapper>
         <Formik
           initialValues={initialValues}
-          onSubmit={fakeHandleSubmit}
+          onSubmit={handleSubmit}
           validationSchema={createProjectSchema}
         >
           {({
@@ -82,7 +84,7 @@ function AddProject() {
                   htmlType="submit"
                   loading={mutationCreateProject.isLoading}
                 >
-                  Save Project
+                  {t('common.saveProject')}
                 </Button>
               </div>
             </Form>

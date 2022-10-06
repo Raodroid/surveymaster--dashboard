@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router';
 import ProjectHeader from '../../Header';
 
-function EditSurvey() {
+function ActionHistory() {
   const params = useParams();
   const { t } = useTranslation();
 
@@ -34,7 +34,7 @@ function EditSurvey() {
           ).replace(':detailId', params.detailId),
       },
       {
-        name: 'Edit Survey',
+        name: 'Action History',
         href: '',
       },
     ],
@@ -44,9 +44,9 @@ function EditSurvey() {
   return (
     <>
       <ProjectHeader routes={routes} />
-      <div>{t('common.editSurvey')}</div>
+      <div>{t('common.actionHistory')}</div>
     </>
   );
 }
 
-export default EditSurvey;
+export default ActionHistory;

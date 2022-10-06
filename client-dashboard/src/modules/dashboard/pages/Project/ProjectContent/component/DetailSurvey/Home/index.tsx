@@ -11,8 +11,8 @@ import { DetailSurveyHomeWrapper } from './styles';
 
 function DetailSurveyHome() {
   const params = useParams();
-
   const { data } = mockSurveyList;
+  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
   const project = data.find(elm => elm.project?.displayId === params.id);
   const survey = data.find(elm => elm.displayId === params.detailId);
 
@@ -33,9 +33,33 @@ function DetailSurveyHome() {
     [params, project, survey],
   );
 
+  const links = [
+    params &&
+      params.id &&
+      params.detailId &&
+      routePath.DETAIL_SURVEY.EDIT.replace(':id', params.id).replace(
+        ':detailId',
+        params.detailId,
+      ),
+    params &&
+      params.id &&
+      params.detailId &&
+      routePath.DETAIL_SURVEY.HISTORY.replace(':id', params.id).replace(
+        ':detailId',
+        params.detailId,
+      ),
+    params &&
+      params.id &&
+      params.detailId &&
+      routePath.DETAIL_SURVEY.REMARKS.replace(':id', params.id).replace(
+        ':detailId',
+        params.detailId,
+      ),
+  ];
+
   return (
     <DetailSurveyHomeWrapper className="flex-column">
-      <ProjectHeader routes={routes} />
+      <ProjectHeader routes={routes} links={links} />
       <div className="body">
         <Formik
           initialValues={{

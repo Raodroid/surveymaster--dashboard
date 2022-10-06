@@ -1,32 +1,7 @@
 import styled from 'styled-components';
 import { BaseSectionWrapper } from '../../../../common/styles';
 
-export const FlexBox = styled(BaseSectionWrapper)`
-  .flex {
-    display: flex;
-    align-items: center;
-  }
-  .flex-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .flex-start {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  .flex-column {
-    display: flex;
-    flex-direction: column;
-  }
-  .flex-aligns-start {
-    display: flex;
-    align-items: flex-start;
-  }
-`;
-
-export const ProjectContentWrapper = styled(FlexBox)`
+export const ProjectContentWrapper = styled(BaseSectionWrapper)`
   flex: 1;
   padding: 0;
 
@@ -56,38 +31,61 @@ export const HeaderStyled = styled.div`
   svg {
     color: var(--ant-primary-color);
   }
+
+  .wrapper {
+    margin-left: auto;
+    gap: 24px;
+
+    .ant-divider {
+      background: #d3d3e1;
+      margin: 2px 0 0;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+    }
+  }
+`;
+
+export const ProjectHomeWrapper = styled.div`
+  width: 100%;
+  height: 100%;
 `;
 
 export const ProjectTableWrapper = styled.div`
-  padding: 20px 12px 16px;
-  height: 100%;
-  overflow-y: auto;
+  flex: 1;
 
-  .ant-table-cell:last-child {
-    text-align: center;
+  padding: 20px 12px;
+
+  .ant-table-cell {
+    height: 48px;
+    padding: 0 10px;
+  }
+
+  .ant-table {
+    .ant-table-cell {
+      a,
+      span,
+      div {
+        font-size: 12px;
+        color: var(--text-color);
+      }
+    }
   }
 
   .actions {
     gap: 4px;
-
-    .three-dots,
-    .ant-btn {
-      width: 24px;
-      height: 24px;
+    .ant-btn,
+    .three-dots {
+      width: 32px;
+      height: 32px;
       padding: 0;
-      background: transparent;
-      box-shadow: none;
-      color: var(--ant-primary-color);
     }
   }
 
-  a {
-    color: var(--text-color);
-  }
-
-  a,
-  .ant-table-cell div,
-  span {
-    font-size: 12px;
+  .ant-pagination {
+    margin-top: 10px;
+    text-align: end;
   }
 `;

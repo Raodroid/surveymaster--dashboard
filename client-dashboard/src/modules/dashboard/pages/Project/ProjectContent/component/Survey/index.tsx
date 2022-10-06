@@ -1,48 +1,61 @@
-import { Menu, Table } from 'antd';
+import { Menu, Pagination, Table } from 'antd';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { ROUTE_PATH } from 'enums';
 import { CloseIcon, PenFilled } from 'icons';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router';
+import { ProjectService } from 'services';
 import { mockSurveyList } from '../../../mockup';
 import { ProjectTableWrapper } from '../../style';
 import ProjectHeader from '../Header';
-import { SurveyWrapper } from './style';
-
-const dataSource = [
-  {
-    key: '1',
-    id: '113-8392',
-    projectTitle: 'Microbiome Donor Programme (AMD)',
-    nOfSurveys: '56',
-    personInCharge: 'Dorothy Hernandez',
-    dateOfCreation: '13.08.2022',
-  },
-  {
-    key: '2',
-    id: '113-8392',
-    projectTitle: 'Donor V2',
-    nOfSurveys: '56',
-    personInCharge: 'Dorothy Hernandez',
-    dateOfCreation: '13.08.2022',
-  },
-];
+import { SurveyWrapper, TableWrapper } from './style';
+import { useState } from 'react';
+import { BooleanEnum } from 'type';
+import { useLocation } from 'react-router';
+import { CustomSpinSuspense } from 'modules/common/styles';
+import SimpleBar from 'simplebar-react';
 
 function Survey() {
   const params = useParams();
+  const { search } = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  const { data } = mockSurveyList;
-  const project = data.filter(elm => elm.project?.displayId === params.id);
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState('');
+  const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
+
+  const title = useMemo(
+    () => search.replace('?title=', '').replace(/%20/g, ' '),
+    [search],
+  );
+
+  const queryParams = {
+    q: query,
+    page: page,
+    take: 10,
+    isDeleted: isDeleted,
+    projectId: params.id,
+  };
+
+  const { data: survey, isLoading } = useQuery(
+    ['survey', params.id],
+    () => ProjectService.getSurveys(queryParams),
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const routes = useMemo(
     () => [
       {
-        name: project[0]?.name,
+        name: title,
         href: '',
       },
     ],
-    [],
+    [title],
   );
 
   const columns = useMemo(
@@ -56,13 +69,11 @@ function Survey() {
         title: 'Survey Title',
         dataIndex: 'name',
         key: 'name',
-        render: () => <div>{project[0]?.project?.name}</div>,
       },
       {
-        title: 'Person In Charge',
-        dataIndex: 'createdBy',
-        key: 'createdBy',
-        render: (user: any) => <div>{user.fullName}</div>,
+        title: 'N of Questions',
+        dataIndex: 'numberOfQuestions',
+        key: 'numberOfQuestions',
       },
       {
         title: 'Date of Creation',
@@ -70,7 +81,7 @@ function Survey() {
         key: 'createdAt',
         render: (text: any) => {
           const str = text.toString();
-          return <div>{str.slice(0, 15)}</div>;
+          return <div>{str.slice(0, 10)}</div>;
         },
       },
       {
@@ -101,7 +112,7 @@ function Survey() {
                             )
                           }
                         >
-                          <PenFilled /> Edit Survey
+                          <PenFilled /> {t('common.editSurvey')}
                         </div>
                       ),
                     },
@@ -114,7 +125,7 @@ function Survey() {
         ),
       },
     ],
-    [project],
+    [navigate, t, params],
   );
 
   const onRow = (record, rowIndex) => {
@@ -132,16 +143,20 @@ function Survey() {
   };
 
   return (
-    <SurveyWrapper>
+    <SurveyWrapper className="flex-column">
       <ProjectHeader routes={routes} />
-      <ProjectTableWrapper>
+
+      <TableWrapper className="flex-column">
         <Table
-          dataSource={project}
+          dataSource={survey?.data.data}
           columns={columns}
           onRow={onRow}
           pagination={false}
+          loading={isLoading}
+          scroll={{ y: 'calc(100vh - 286px)' }}
         />
-      </ProjectTableWrapper>
+        <Pagination />
+      </TableWrapper>
     </SurveyWrapper>
   );
 }

@@ -2,6 +2,7 @@ import { Button } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 import { useNavigate } from 'react-router';
 import { mockSurveyList } from '../mockup';
@@ -11,6 +12,7 @@ import Title from './Title';
 const ProjectSider = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { t } = useTranslation();
   const { data } = mockSurveyList;
 
   const list = [
@@ -50,7 +52,7 @@ const ProjectSider = () => {
           )}
         >
           <PlusIcon />
-          Add New Project
+          {t('common.addNewProject')}
         </AddNewProjectBtn>
       </div>
     </ProjectSiderWrapper>

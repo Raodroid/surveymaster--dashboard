@@ -1,6 +1,7 @@
 import {
   completedVersion,
   draftVersion,
+  IGetParams,
   IQuestionVersion,
   mockCategories,
   mockUser,
@@ -185,3 +186,7 @@ export const mockSurveyDetail: ISurvey = {
   createdBy: mockUser,
   createdAt: new Date(),
 };
+
+export interface IGetSurvey extends IGetParams {
+  projectId?: string;
+}

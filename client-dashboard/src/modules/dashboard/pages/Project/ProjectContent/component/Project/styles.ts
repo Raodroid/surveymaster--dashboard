@@ -11,6 +11,10 @@ export const AddProjectWrapper = styled.div`
     padding: 40px 40px 76px;
   }
 
+  label {
+    padding-left: 4px;
+  }
+
   .footer {
     padding: 20px 0;
     border-top: 1px solid #f3eef3;
@@ -28,7 +32,9 @@ export const AddProjectWrapper = styled.div`
   }
 `;
 
-export const AddProjectContentWrapper = styled.div`
+export const AddProjectContentWrapper = styled.div``;
+
+export const InputsWrapper = styled.div`
   border-bottom: 1px solid #f3eef3;
   padding-bottom: 4px;
 
