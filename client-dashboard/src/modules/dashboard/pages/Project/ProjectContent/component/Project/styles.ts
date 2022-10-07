@@ -8,7 +8,7 @@ export const AddProjectWrapper = styled.div`
   .ant-form {
     height: 100%;
     overflow-y: auto;
-    padding: 40px 40px 76px;
+    padding: 40px;
   }
 
   label {
@@ -73,5 +73,19 @@ export const InputsWrapper = styled.div`
   }
   .personInCharge {
     grid-area: personInCharge;
+  }
+`;
+
+export const EditProjectWrapper = styled.div`
+  flex: 1;
+
+  .ant-spin-nested-loading {
+    flex: 1;
+  }
+
+  .ant-spin-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 `;

@@ -4,29 +4,33 @@ import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router';
 import { useLocation, useNavigate } from 'react-router';
 import { TitleStyled } from './style';
 
 interface TitleProps {
   title: string;
   routePath: string;
+  id?: string;
 }
 
 function Title(props: TitleProps) {
-  const { title, routePath } = props;
+  const { title, routePath: route_path, id: userId } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const params = useParams();
+  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
 
   const active = useMemo(() => {
-    return pathname && pathname.includes(routePath);
-  }, [pathname, routePath]);
+    return params && params.id && route_path.includes(params.id);
+  }, [route_path, params]);
 
   const handleTitleClick = () => {
-    if (pathname.includes(routePath)) {
-      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
+    if (userId === params.id) {
+      navigate(routePath.ROOT);
     } else {
-      navigate(routePath);
+      navigate(route_path);
     }
   };
 
@@ -43,15 +47,12 @@ function Title(props: TitleProps) {
           className="flex-center primary"
           type="primary"
           onClick={() => {
-            navigate(`${routePath}/add-survey`);
+            navigate(`${pathname}/add-survey${search}`);
           }}
         >
           <PlusIcon className="plus-icon" /> {t('common.addNewSurvey')}
         </Button>
-        <Button
-          className="flex-center"
-          onClick={() => navigate(`${routePath}`)}
-        >
+        <Button className="flex-center" onClick={() => navigate(route_path)}>
           <UnorderedListOutlined /> {t('common.surveyList')}
         </Button>
       </div>

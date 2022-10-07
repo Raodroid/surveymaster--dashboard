@@ -28,7 +28,7 @@ function Survey() {
   const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
 
   const title = useMemo(
-    () => search.replace('?title=', '').replace(/%20/g, ' '),
+    () => search.replace('?projectName=', '').replace(/%20/g, ' '),
     [search],
   );
 
@@ -137,7 +137,7 @@ function Survey() {
           ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT.replace(
             ':id',
             params.id,
-          ).replace(':detailId', record.displayId),
+          ).replace(':detailId', record.id) + `?projectName=${title}`,
         ),
     };
   };
@@ -153,9 +153,9 @@ function Survey() {
           onRow={onRow}
           pagination={false}
           loading={isLoading}
-          scroll={{ y: 'calc(100vh - 286px)' }}
+          // scroll={{ y: 'calc(100vh - 286px)' }}
         />
-        <Pagination />
+        <Pagination defaultCurrent={page} />
       </TableWrapper>
     </SurveyWrapper>
   );

@@ -10,21 +10,22 @@ import ProjectService from 'services/survey-master-service/project.service';
 import { BooleanEnum } from 'type';
 import { ProjectTableWrapper } from '../style';
 
-function ProjectTable() {
+function ProjectTable(props: { filterValue?: string }) {
+  const { filterValue } = props;
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [query, setQuery] = useState('');
   const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
+  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
 
   const queryParams = {
-    q: query,
+    q: filterValue,
     page: page,
     take: 10,
     isDeleted: isDeleted,
   };
 
   const { data: projects, isLoading } = useQuery(
-    'projectData',
+    ['projects', filterValue, page, isDeleted],
     () => ProjectService.getProjects(queryParams),
     {
       refetchOnWindowFocus: false,
@@ -46,10 +47,8 @@ function ProjectTable() {
         render: (text: string, record: any) => (
           <Link
             to={
-              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(
-                ':id',
-                record?.id,
-              ) + `?title=${record.name}`
+              routePath.SURVEY.replace(':id', record?.id) +
+              `?projectName=${record.name}`
             }
           >
             {text}
@@ -91,10 +90,8 @@ function ProjectTable() {
             <Button
               onClick={() =>
                 navigate(
-                  ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT.replace(
-                    ':id',
-                    record.id,
-                  ),
+                  routePath.PROJECT.EDIT.replace(':id', record.id) +
+                    `?projectName=${record.name}`,
                 )
               }
             >
@@ -105,7 +102,7 @@ function ProjectTable() {
         ),
       },
     ],
-    [navigate],
+    [navigate, routePath],
   );
 
   return (
@@ -115,8 +112,9 @@ function ProjectTable() {
         columns={columns}
         pagination={false}
         // scroll={{ y: 'calc(100vh - 286px)' }}
+        loading={isLoading}
       />
-      <Pagination />
+      <Pagination defaultCurrent={page} />
     </ProjectTableWrapper>
   );
 }

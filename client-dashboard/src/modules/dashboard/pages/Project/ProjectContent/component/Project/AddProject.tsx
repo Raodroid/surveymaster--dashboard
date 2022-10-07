@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { CreateProject } from 'interfaces/project';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
 import { onError } from 'utils/funcs';
@@ -24,6 +24,9 @@ function AddProject() {
   const params = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
+
   const routes = useMemo(
     () => [
       {
@@ -42,18 +45,16 @@ function AddProject() {
   });
 
   const mutationCreateProject = useMutation(ProjectService.createProject, {
-    onSuccess: () =>
-      notification.success({ message: t('common.createSuccess') }),
+    onSuccess: () => {
+      queryClient.invalidateQueries('projects');
+      notification.success({ message: t('common.createSuccess') });
+      navigate(routePath.ROOT);
+    },
     onError,
   });
 
   const handleSubmit = (payload: CreateProject) => {
     mutationCreateProject.mutateAsync(payload);
-  };
-
-  const fakeHandleSubmit = (payload: CreateProject) => {
-    // notification.success({ message: 'Create Success' });
-    navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
   };
 
   return (

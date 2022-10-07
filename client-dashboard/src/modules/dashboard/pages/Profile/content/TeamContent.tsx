@@ -1,17 +1,19 @@
 import {
   DeleteOutlined,
-  EyeOutlined, SettingOutlined,
-  UserDeleteOutlined
+  EyeOutlined,
+  SettingOutlined,
+  UserDeleteOutlined,
 } from '@ant-design/icons';
 import {
   Button,
   Checkbox,
   Divider,
-  Form, Input,
+  Form,
+  Input,
   InputRef,
   Menu,
   Pagination,
-  Table
+  Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
@@ -20,7 +22,7 @@ import { SCOPE_CONFIG } from 'enums/user';
 import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import useCheckScopeEntity, {
-  ScopeActionArray
+  ScopeActionArray,
 } from 'modules/common/hoc/useCheckScopeEntity';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -35,13 +37,13 @@ import {
   CustomFallbackStyled,
   DropDownMenuStyled,
   TableWrapperStyled,
-  TeamContentStyled
+  TeamContentStyled,
 } from '../styles';
 import {
   ConfirmDeactivateUserModal,
   ConfirmRestoreUserModal,
   InviteMemberModal,
-  ResetUserPasswordModal
+  ResetUserPasswordModal,
 } from './modals';
 
 interface DataType {
@@ -49,7 +51,7 @@ interface DataType {
   avatar?: string;
   name: string;
   email: string;
-  authentication: string;
+  authentication: any;
 }
 
 const rowSelection = {
@@ -173,13 +175,15 @@ function TeamContent() {
         dataIndex: 'authentication',
         render: (_, record: any) => {
           const list = Object.values(allRoles).filter(elm =>
-            record.authentication.some(el => el === elm.id),
+            record.authentication.some(el => el.roleId === elm.id),
           );
 
           return (
             <div>
-              {list.map(elm => (
-                <span style={{ fontSize: 12 }}>{elm.name} </span>
+              {list.map((elm: any, index: number) => (
+                <span style={{ fontSize: 12 }}>
+                  {elm.name} {index !== list.length - 1 && '| '}
+                </span>
               ))}
             </div>
           );
@@ -254,6 +258,7 @@ function TeamContent() {
 
   const data: DataType[] = teamMembers
     ? teamMembers.data.data.map(user => {
+        console.log(user);
         return {
           key: user.id,
           avatar: user.avatar || '',
@@ -261,7 +266,7 @@ function TeamContent() {
           lastName: user.lastName,
           name: user.firstName + ' ' + user.lastName,
           email: user.email,
-          authentication: user.roles,
+          authentication: user.userRoles,
           deletedAt: user.deletedAt,
         };
       })

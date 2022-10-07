@@ -30,16 +30,17 @@ export const TableWrapper = styled.div`
     }
   }
 
-  a {
-    color: var(--text-color);
-  }
-
   .ant-table {
     width: 100%;
     a,
     .ant-table-cell div,
     span {
       font-size: 12px;
+      color: var(--text-color);
     }
+  }
+
+  .ant-table-row {
+    cursor: pointer;
   }
 `;

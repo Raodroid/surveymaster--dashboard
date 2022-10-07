@@ -28,6 +28,21 @@ export const HeaderStyled = styled.div`
     color: var(--text-color);
   }
 
+  .search-form {
+    flex: 1;
+    margin-left: 20px;
+    .ant-input {
+      border: none;
+    }
+    .ant-btn {
+      background: transparent;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      box-shadow: none;
+    }
+  }
+
   svg {
     color: var(--ant-primary-color);
   }
@@ -61,6 +76,10 @@ export const ProjectTableWrapper = styled.div`
   .ant-table-cell {
     height: 48px;
     padding: 0 10px;
+
+    &:last-child {
+      text-align: center;
+    }
   }
 
   .ant-table {
@@ -81,6 +100,14 @@ export const ProjectTableWrapper = styled.div`
       width: 32px;
       height: 32px;
       padding: 0;
+    }
+    .ant-btn-default {
+      background: transparent;
+      border-radius: 8px;
+      box-shadow: none;
+      &:hover {
+        background: var(--ant-primary-color-deprecated-l-35);
+      }
     }
   }
 

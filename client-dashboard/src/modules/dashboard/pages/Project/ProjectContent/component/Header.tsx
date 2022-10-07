@@ -1,18 +1,23 @@
 import { ClockCircleOutlined } from '@ant-design/icons';
-import { Divider } from 'antd';
+import { Button, Divider, Form, Input } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Chat, Clock, PenFilled } from 'icons';
+import { SearchIcon } from 'icons/SearchIcon';
 import StyledBreadcrumb from 'modules/common/commonComponent/StyledBreadcrumb';
 import { Link } from 'react-router-dom';
 import { HeaderStyled } from '../style';
+import { useEffect } from 'react';
+import { CustomSpinSuspense } from 'modules/common/styles';
 
 function ProjectHeader(props: {
   routes?: any;
   search?: string;
+  debounce?: string;
   setSearch?: (text: string) => void;
+  setFilter?: (text: string) => void;
   links?: string[] | any;
 }) {
-  const { routes, search, setSearch, links } = props;
+  const { routes, search, debounce, setSearch, setFilter, links } = props;
 
   const base = [
     {
@@ -23,15 +28,30 @@ function ProjectHeader(props: {
 
   if (routes) base.push(...routes);
 
+  useEffect(() => {
+    if (!debounce && setFilter) {
+      setFilter('');
+    }
+  }, [debounce, setFilter]);
+
   return (
     <HeaderStyled className="flex-center-start">
       <StyledBreadcrumb routes={base} />
 
-      {/* {setSearch && (
-        <div>
+      {setSearch && setFilter && (
+        <Form
+          className="flex search-form"
+          onFinish={() => {
+            search && setFilter(search);
+            console.log(search);
+          }}
+        >
           <Input value={search} onChange={e => setSearch(e.target.value)} />
-        </div>
-      )} */}
+          <Button htmlType="submit">
+            <SearchIcon />
+          </Button>
+        </Form>
+      )}
 
       {links && (
         <div className="wrapper flex-center">

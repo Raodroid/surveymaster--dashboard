@@ -6,17 +6,21 @@ import { UpdateProject } from './../../interfaces/project';
 import APIService from './base.service';
 
 export default class ProjectService {
-  static getSurveyById(props: PostSurveyBodyDto): Promise<AxiosResponse> {
-    const { projectId } = props;
-    // return APIService.get(`/surveys/${projectId}`);
+  // static getSurveyById(props: PostSurveyBodyDto): Promise<AxiosResponse> {
+  //   const { projectId } = props;
+  //   // return APIService.get(`/surveys/${projectId}`);
 
-    return Promise.resolve({
-      data: mockSurveyDetail,
-      status: 200,
-      statusText: '',
-      headers: {},
-      config: {},
-    });
+  //   return Promise.resolve({
+  //     data: mockSurveyDetail,
+  //     status: 200,
+  //     statusText: '',
+  //     headers: {},
+  //     config: {},
+  //   });
+  // }
+
+  static getSurveyById(id: string | undefined): Promise<AxiosResponse> {
+    return APIService.get(`surveys/${id}`);
   }
 
   static getProjects(params: IGetParams): Promise<AxiosResponse> {

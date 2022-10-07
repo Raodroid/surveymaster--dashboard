@@ -41,6 +41,10 @@ export const RemarkWrapper = styled.div`
     background: rgba(0, 0, 0, 0.04);
   }
 
+  .ant-form-item-control-input ~ div {
+    display: none !important;
+  }
+
   textarea.ant-input {
     height: 32px;
     background: transparent;
