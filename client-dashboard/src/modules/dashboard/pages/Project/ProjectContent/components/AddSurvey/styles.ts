@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import templateVariable from '../../../../../../../app/template-variables.module.scss';
 
 export const AddSurveyWrapper = styled.div`
   flex: 1;
@@ -9,22 +10,6 @@ export const AddSurveyWrapper = styled.div`
     height: 100%;
     overflow-y: auto;
     padding: 40px 40px 76px;
-  }
-
-  .footer {
-    padding: 20px 0;
-    border-top: 1px solid #f3eef3;
-
-    position: absolute;
-    bottom: 0;
-    right: 40px;
-    left: 40px;
-    background: white;
-
-    .ant-btn {
-      width: 100%;
-      height: 36px;
-    }
   }
 `;
 
@@ -123,24 +108,22 @@ export const CustomPopUp = styled.div`
 
 export const QuestionListWrapper = styled.div`
   margin-top: 28px;
-
-  .btn-wrapper {
-    gap: 20px;
-    margin-bottom: 20px;
-
-    .ant-btn {
-      flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: ${templateVariable.section_spacing};
+  .QuestionListWrapper {
+    &__header {
+      font-weight: bold;
     }
-    .ant-btn-default {
-      font-weight: 600;
+    &__body {
     }
-  }
-`;
+    &__footer {
+      gap: 20px;
+      margin-bottom: 20px;
 
-export const TableWrapper = styled.div`
-  margin-bottom: 20px;
-
-  .ant-select {
-    min-width: 120px;
+      .ant-btn {
+        flex: 1;
+      }
+    }
   }
 `;

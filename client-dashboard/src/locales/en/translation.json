@@ -20,6 +20,15 @@
     "foods": "Foods"
   },
   "common": {
+    "remarks": "Remarks",
+    "questionCategory": "Question Category",
+    "addAllQuestionsFromOneCategory": "Add All Questions from One Category",
+    "addOneMoreQuestion": "Add One More Question",
+    "surveyQuestionList": "Survey Question List",
+    "surveyRemarks": "Survey Remarks",
+    "surveyParameters": "Survey Parameters",
+    "surveyTitle": "Survey Title",
+    "saveSurvey": "Save Survey",
     "addNewProject": "Add New Project",
     "order": "Order",
     "duplicate": "Duplicate",
@@ -405,5 +414,10 @@
     "SLIDER": "Slider",
     "TEXT_ENTRY": "Text Entry"
   },
-  "sign": "Lost your phone? Left yourself logged in on a public computer? Need a way to sign out everywhere except your current browser? This is for you."
+  "sign": "Lost your phone? Left yourself logged in on a public computer? Need a way to sign out everywhere except your current browser? This is for you.",
+  "surveyTemplateEnum": {
+    "NEW": "New Survey",
+    "DUPLICATE": "Duplicate Existing Survey",
+    "JSON": "Import from JSON file"
+  }
 }

@@ -3,6 +3,7 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import useParseQueryString from 'hooks/useParseQueryString';
+import { ProjectTableWrapper } from '../../style';
 import { PenFilled, TrashOutlined } from 'icons';
 import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
@@ -11,6 +12,8 @@ import StyledPagination from 'modules/dashboard/components/StyledPagination';
 import moment from 'moment';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { ColumnsType } from 'antd/lib/table/interface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
@@ -26,6 +29,7 @@ import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
+import { CustomSpinSuspense } from 'modules/common/styles';
 
 const initParams: IGetParams = {
   q: '',
@@ -161,14 +165,13 @@ function Survey() {
           }
         >
           <SimpleBar style={{ height: '100%' }}>
-            <Table
-              dataSource={surveys}
-              columns={columns}
-              onRow={onRow}
-              pagination={false}
-              rowKey="displayId"
-              // scroll={{ y: 100 }}
-            />
+
+                <Table
+                  dataSource={surveys}
+                  columns={columns}
+                  onRow={onRow}
+                  pagination={false}
+                />
             <StyledPagination
               onChange={page => {
                 setParamsQuery(s => ({ ...s, page }));
@@ -184,7 +187,7 @@ function Survey() {
       </TableWrapper>
     </SurveyWrapper>
   );
-}
+};
 
 export default Survey;
 interface IDropDownMenu {

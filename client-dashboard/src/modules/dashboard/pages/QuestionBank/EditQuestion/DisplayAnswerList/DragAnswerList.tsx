@@ -56,7 +56,7 @@ const DragOption: FC<{
             className={'delete-icon'}
             onClick={() => {
               arrayHelpers.remove(index);
-              if (index === 0) {
+              if (arrayHelpers.form?.[arrayHelpers.name]?.length === 0) {
                 arrayHelpers.push({
                   text: '',
                   id: Math.random(),
