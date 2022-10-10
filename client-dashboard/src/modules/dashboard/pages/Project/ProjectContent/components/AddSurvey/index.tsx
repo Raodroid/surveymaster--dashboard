@@ -5,12 +5,14 @@ import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
 import { useParams } from 'react-router';
 import { mockSurveyList } from '../../../../../../../type';
 import ProjectHeader from '../Header';
 import QuestionList from './QuestionList';
 import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
 import SurveyCustomSelect from './SurveyCustomSelect';
+import { useMemo } from 'react';
 
 const selectValues = {
   newSurvey: 'newSurvey',
@@ -22,23 +24,32 @@ function AddSurvey() {
   const params = useParams();
   const { t } = useTranslation();
   const [templateValue, setTemplateValue] = useState('');
+  const { search } = useLocation();
 
   const { data } = mockSurveyList;
   const project = data.find(elm => elm.project?.displayId === params.id);
 
-  const routes = [
-    {
-      name: project?.name,
-      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/' + params.id,
-    },
-    {
-      name: 'Add New Survey',
-      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY.replace(
-        ':id',
-        params.id || '',
-      ),
-    },
-  ];
+  const title = useMemo(
+    () => search.replace('?projectName=', '').replace(/%20/g, ' '),
+    [search],
+  );
+
+  const routes = useMemo(
+    () => [
+      {
+        name: title,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/' + params.id,
+      },
+      {
+        name: 'Add New Survey',
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY.replace(
+          ':id',
+          params.id || '',
+        ),
+      },
+    ],
+    [title, params],
+  );
 
   return (
     <>

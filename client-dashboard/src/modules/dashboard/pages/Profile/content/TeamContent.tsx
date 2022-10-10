@@ -50,7 +50,7 @@ interface DataType {
   avatar?: string;
   name: string;
   email: string;
-  authentication: string;
+  authentication: any;
 }
 
 const rowSelection = {
@@ -257,6 +257,7 @@ function TeamContent() {
 
   const data: DataType[] = teamMembers
     ? teamMembers.data.data.map(user => {
+        console.log(user);
         return {
           key: user.id,
           avatar: user.avatar || '',

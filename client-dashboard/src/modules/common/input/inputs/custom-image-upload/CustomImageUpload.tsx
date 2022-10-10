@@ -29,7 +29,7 @@ const CustomImageUpload = (props: CustomUploadProps) => {
     let type = options.file.type;
     let nameImage = options.file.name;
     const moduleName = props.moduleName || 'users';
-    const subPath = `${moduleName}/${props.subPath || 'default'}`;
+    const subPath = props.subPath || 'avatar';
     try {
       const res = await UploadService.getPreSignedUrlUpload(
         moduleName,
@@ -39,11 +39,7 @@ const CustomImageUpload = (props: CustomUploadProps) => {
       );
       const { data } = res;
       if (data) {
-        await UploadService.putWithFormFileAsync(
-          data.urls[0],
-          options.file,
-          type,
-        );
+        await UploadService.putWithFormFileAsync(data.url, options.file, type);
         options.onSuccess({
           url: `${process.env.REACT_APP_S3_URL}/${data.filePath}`,
         });
