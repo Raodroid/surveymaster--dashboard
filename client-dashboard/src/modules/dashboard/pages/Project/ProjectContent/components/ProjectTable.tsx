@@ -1,23 +1,19 @@
-import { Button, Menu, Pagination, Table } from 'antd';
-import CustomTable from 'customize-components/CustomTable';
+import { Button, Menu, PaginationProps, Table } from 'antd';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { ROUTE_PATH } from 'enums';
 import { PenFilled } from 'icons';
-import { useMemo, useState } from 'react';
+import _get from 'lodash/get';
+import { CustomSpinSuspense } from 'modules/common/styles';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
-import { BooleanEnum } from 'type';
-import { ProjectTableWrapper } from '../style';
-import { ColumnsType } from 'antd/lib/table/interface';
-import _get from 'lodash/get';
+import { GetListQuestionDto, IGetParams, IProject } from 'type';
+import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import { onError, useDebounce } from '../../../../../../utils';
 import HannahCustomSpin from '../../../../components/HannahCustomSpin';
-import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import StyledPagination from '../../../../components/StyledPagination';
-import { useTranslation } from 'react-i18next';
-import { QuestionBankService, SurveyService } from '../../../../../../services';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { ProjectTableWrapper } from '../style';
 
 const initParams: IGetParams = {
   q: '',
@@ -38,11 +34,12 @@ const getProjects = (params: GetListQuestionDto) => {
   return ProjectService.getProjects(newParams);
 };
 
-function ProjectTable() {
+function ProjectTable(props: { filterValue?: string }) {
   const wrapperRef = useRef<any>();
   const [searchTxt, setSearchTxt] = useState<string>('');
   const queryString = useParseQueryString<GetListQuestionDto>();
   const navigate = useNavigate();
+  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
 
   const [params, setParams] = useState<GetListQuestionDto>(initParams);
 
@@ -75,7 +72,7 @@ function ProjectTable() {
     [],
   );
 
-  const columns = useMemo<ColumnsType<IProject>>(
+  const columns = useMemo(
     () => [
       {
         title: 'ID',
@@ -90,10 +87,8 @@ function ProjectTable() {
         render: (text: string, record: any) => (
           <Link
             to={
-              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(
-                ':id',
-                record?.id,
-              ) + `?title=${record.name}`
+              routePath.SURVEY.replace(':id', record?.id) +
+              `?projectName=${record.name}`
             }
           >
             {text}
@@ -112,8 +107,8 @@ function ProjectTable() {
         key: 'createdBy',
         render: (_, record: any) => (
           <div>
-            {record.personResponsible.firstName}{' '}
-            {record.personResponsible.lastName}
+            {record?.personResponsible?.firstName}{' '}
+            {record?.personResponsible?.lastName}
           </div>
         ),
       },
@@ -130,47 +125,41 @@ function ProjectTable() {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',
-        render: (value, _: any) => (
+        render: (_, record: any) => (
           <div className="flex-center actions">
             <Button
               onClick={() =>
                 navigate(
-                  ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT.replace(
-                    ':id',
-                    _.project.displayId,
-                  ),
+                  routePath.PROJECT.EDIT.replace(':id', record.id) +
+                    `?projectName=${record.name}`,
                 )
               }
             >
               <PenFilled />
             </Button>
+            <ThreeDotsDropdown overlay={<Menu />} trigger={['click']} />
           </div>
         ),
       },
     ],
-    [navigate],
+    [navigate, routePath],
   );
-
-  useEffect(() => {
-    setParams({ ...initParams, ...queryString });
-  }, [queryString]);
 
   return (
     <ProjectTableWrapper ref={wrapperRef}>
-      <Table pagination={false} dataSource={projects} columns={columns} />
-      <HannahCustomSpin
-        parentRef={wrapperRef}
-        spinning={getProjectListQuery.isLoading}
-      />
-      <StyledPagination
-        onChange={page => {
-          setParams(s => ({ ...s, page }));
-        }}
-        showSizeChanger
-        pageSize={params.take}
-        onShowSizeChange={onShowSizeChange}
-        total={total}
-      />
+      <CustomSpinSuspense spinning={getProjectListQuery.isLoading}>
+        <Table pagination={false} dataSource={projects} columns={columns} />
+
+        <StyledPagination
+          onChange={page => {
+            setParams(s => ({ ...s, page }));
+          }}
+          showSizeChanger
+          pageSize={params.take}
+          onShowSizeChange={onShowSizeChange}
+          total={total}
+        />
+      </CustomSpinSuspense>
     </ProjectTableWrapper>
   );
 }

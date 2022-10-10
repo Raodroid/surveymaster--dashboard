@@ -1,11 +1,11 @@
 import { ROUTE_PATH } from 'enums';
-import { mockSurveyList } from 'modules/dashboard/pages/Project/mockup';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router';
+import { useParams } from 'react-router';
+import { mockSurveyList } from 'type';
 import ProjectHeader from '../../Header';
 
-function ActionHistory() {
+function EditSurvey() {
   const params = useParams();
   const { t } = useTranslation();
 
@@ -34,7 +34,7 @@ function ActionHistory() {
           ).replace(':detailId', params.detailId),
       },
       {
-        name: 'Action History',
+        name: 'Edit Survey',
         href: '',
       },
     ],
@@ -44,9 +44,9 @@ function ActionHistory() {
   return (
     <>
       <ProjectHeader routes={routes} />
-      <div>{t('common.actionHistory')}</div>
+      <div>{t('common.editSurvey')}</div>
     </>
   );
 }
 
-export default ActionHistory;
+export default EditSurvey;

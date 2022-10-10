@@ -6,12 +6,11 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
+import { mockSurveyList } from '../../../../../../../type';
 import ProjectHeader from '../Header';
 import QuestionList from './QuestionList';
 import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
 import SurveyCustomSelect from './SurveyCustomSelect';
-import { useTranslation } from 'react-i18next';
-import { mockSurveyList } from '../../../../../../../type';
 
 const selectValues = {
   newSurvey: 'newSurvey',
@@ -20,7 +19,6 @@ const selectValues = {
 };
 
 function AddSurvey() {
-  const { t } = useTranslation();
   const params = useParams();
   const { t } = useTranslation();
   const [templateValue, setTemplateValue] = useState('');

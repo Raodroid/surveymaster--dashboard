@@ -1,30 +1,28 @@
 import { AxiosResponse } from 'axios';
-import { CreateProject } from 'interfaces';
 import {
   IGetParams,
+  IGetSurvey,
   IPostSurveyBodyDto,
-  IPutSurveyBodyDto,
   IPutSurveyBodyDtoExtendId,
-  mockSurveyDetail,
 } from 'type';
-import { UpdateProject } from '../../interfaces';
 import APIService from './base.service';
 
 export default class SurveyService {
-  static getSurveyById(
-    props: IGetParams & { projectId: string },
-  ): Promise<AxiosResponse> {
-    const { projectId } = props;
-    // return APIService.get(`/surveys/${projectId}`);
+  // static getSurveys(
+  //   props: IGetParams & { projectId: string },
+  // ): Promise<AxiosResponse> {
+  //   const { projectId } = props;
+  //   return APIService.get(`/surveys/${projectId}`);
+  // }
 
-    return Promise.resolve({
-      data: mockSurveyDetail,
-      status: 200,
-      statusText: '',
-      headers: {},
-      config: {},
-    });
+  static getSurveys(params: IGetSurvey): Promise<AxiosResponse> {
+    return APIService.get('surveys', { params });
   }
+
+  static getSurveyById(id: string | undefined): Promise<AxiosResponse> {
+    return APIService.get(`surveys/${id}`);
+  }
+
   static createSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
     return APIService.post('surveys', props);
   }

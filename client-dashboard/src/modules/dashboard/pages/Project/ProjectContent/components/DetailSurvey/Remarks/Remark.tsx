@@ -1,8 +1,5 @@
-import Input from 'antd/lib/input/Input';
-import { ControlledInput, UncontrolledInput } from 'modules/common';
+import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import UncontrollInput from 'modules/common/input/uncontrolled-input/UncontrollInput';
-import React from 'react';
 import { RemarkWrapper } from './styles';
 
 export interface RemarkProps {
@@ -13,14 +10,14 @@ function Remark(props: RemarkProps) {
   const { index } = props;
   return (
     <RemarkWrapper className="flex-column">
-      <UncontrolledInput
-        name={`questions[${index}].title`}
+      <ControlledInput
+        name={`surveyQuestions[${index}].id`}
         inputType={INPUT_TYPES.INPUT}
         disabled
       />
       <strong>Remark</strong>
-      <UncontrolledInput
-        name={`questions[${index}].remark`}
+      <ControlledInput
+        name={`surveyQuestions[${index}].remark`}
         inputType={INPUT_TYPES.TEXTAREA}
         placeholder="Enter Remark"
       />

@@ -1,27 +1,47 @@
 import { Divider } from 'antd';
-import { t } from 'i18next';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import React, { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
-import { AddProjectContentWrapper, InputsWrapper } from './styles';
+import { AdminService } from 'services';
+import { InputsWrapper } from './styles';
 
 function Inputs() {
   const { t } = useTranslation();
 
   const allRoles = useSelector(AuthSelectors.getAllRoles);
-  const optionsList = useMemo(
-    () =>
-      Object.values(allRoles).map(elm => {
-        return {
-          label: elm.name,
-          value: elm.id,
-        };
-      }),
-    [allRoles],
+  const [page, setPage] = useState(1);
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  const baseParams = useMemo(
+    () => ({
+      page: page,
+      take: 10,
+      roles: Object.values(allRoles).map(elm => elm.id),
+      isDeleted: isDeleted,
+      q: '',
+    }),
+    [page, isDeleted, allRoles],
   );
+
+  const { data: teamMembers } = useQuery(
+    'users',
+    () => AdminService.getTeamMembers(baseParams),
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const optionsList = useMemo(() => {
+    if (teamMembers && teamMembers.data && teamMembers.data.data) {
+      return teamMembers.data.data.map(elm => {
+        return { label: elm.firstName + ' ' + elm.lastName, value: elm.id };
+      });
+    }
+  }, [teamMembers]);
 
   return (
     <InputsWrapper>
@@ -44,18 +64,17 @@ function Inputs() {
       <div className="title projParams">{t('common.projectParameters')}:</div>
       <ControlledInput
         inputType={INPUT_TYPES.INPUT}
-        name="id"
+        name="displayId"
         label="ID"
         className="projId"
         disabled
       />
       <ControlledInput
         inputType={INPUT_TYPES.SELECT}
-        name="roles"
+        name="personInCharge"
         label="Person In Charge"
         className="personInCharge"
         options={optionsList}
-        mode="multiple"
       />
     </InputsWrapper>
   );

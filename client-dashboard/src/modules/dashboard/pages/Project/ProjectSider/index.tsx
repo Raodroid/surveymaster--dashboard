@@ -1,18 +1,13 @@
-import { Button } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
-import React, { useState } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
 import { useNavigate } from 'react-router';
+import { useMatch } from 'react-router-dom';
+import HannahCustomSpin from '../../../components/HannahCustomSpin';
+import { useGetAllProjects } from '../util';
 import { AddNewProjectBtn, ProjectSiderWrapper } from './style';
 import Title from './Title';
-import { ROUTE_PATH } from 'enums';
-import { PlusIcon } from 'icons';
-import { useGetAllProjects } from '../util';
-import HannahCustomSpin from '../../../components/HannahCustomSpin';
-import { useTranslation } from 'react-i18next';
-import { useMatch } from 'react-router-dom';
 
 const ProjectSider = () => {
   const wrapperRef = useRef<any>();
@@ -31,11 +26,13 @@ const ProjectSider = () => {
         <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
         {projects.map(e => (
           <Title
-            key={e.displayId}
+            key={e.id}
             title={e.name}
             routePath={
-              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/' + e.displayId
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(':id', e.id) +
+              `?projectName=${e.name}`
             }
+            id={e.id}
           />
         ))}
       </div>

@@ -1,19 +1,19 @@
-import { Menu, notification, Table } from 'antd';
+import { Menu, notification, Pagination, Table } from 'antd';
+import { ItemType } from 'antd/es/menu/hooks/useItems';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { ROUTE_PATH } from 'enums';
-import { CloseIcon, PenFilled, TrashOutlined } from 'icons';
+import { PenFilled, TrashOutlined } from 'icons';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
-import { useNavigate, useParams } from 'react-router';
-import { ProjectTableWrapper } from '../../style';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { SurveyService } from '../../../../../../../services';
+import { ISurvey } from '../../../../../../../type';
+import { onError } from '../../../../../../../utils';
 import ProjectHeader from '../Header';
 import { SurveyWrapper, TableWrapper } from './style';
 import { useState } from 'react';
-import { BooleanEnum } from 'type';
-import { useLocation } from 'react-router';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import SimpleBar from 'simplebar-react';
 
 function Survey() {
   const params = useParams<{ id?: string }>();
@@ -23,10 +23,10 @@ function Survey() {
 
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
-  const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   const title = useMemo(
-    () => search.replace('?title=', '').replace(/%20/g, ' '),
+    () => search.replace('?projectName=', '').replace(/%20/g, ' '),
     [search],
   );
 
@@ -40,7 +40,7 @@ function Survey() {
 
   const { data: survey, isLoading } = useQuery(
     ['survey', params.id],
-    () => ProjectService.getSurveys(queryParams),
+    () => SurveyService.getSurveys(queryParams),
     {
       refetchOnWindowFocus: false,
     },
@@ -97,7 +97,7 @@ function Survey() {
         ),
       },
     ],
-    [navigate, t, params],
+    [],
   );
 
   const onRow = (record, rowIndex) => {
@@ -119,14 +119,15 @@ function Survey() {
       <ProjectHeader routes={routes} />
 
       <TableWrapper className="flex-column">
-        <Table
-          dataSource={survey?.data.data}
-          columns={columns}
-          onRow={onRow}
-          pagination={false}
-          // scroll={{ x: 1500 }}
-        />
-        <Pagination />
+        <CustomSpinSuspense spinning={isLoading}>
+          <Table
+            dataSource={survey?.data.data}
+            columns={columns}
+            onRow={onRow}
+            pagination={false}
+          />
+          <Pagination />
+        </CustomSpinSuspense>
       </TableWrapper>
     </SurveyWrapper>
   );

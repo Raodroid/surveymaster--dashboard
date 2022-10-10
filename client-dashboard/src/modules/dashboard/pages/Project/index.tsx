@@ -1,13 +1,10 @@
 import { ROUTE_PATH } from 'enums';
-import { useQuery } from 'react-query';
-import { Navigate, Route, Routes } from 'react-router';
-import { ProjectService } from 'services';
-import APIService from 'services/survey-master-service/base.service';
+import { Navigate, Outlet, Route, Routes } from 'react-router';
 import ProjectContent from './ProjectContent';
-import AddSurvey from './ProjectContent/component/AddSurvey';
-import DetailSurvey from './ProjectContent/component/DetailSurvey';
-import { AddProject, EditProject } from './ProjectContent/component/Project';
-import Survey from './ProjectContent/component/Survey';
+import AddSurvey from './ProjectContent/components/AddSurvey';
+import DetailSurvey from './ProjectContent/components/DetailSurvey';
+import { AddProject, EditProject } from './ProjectContent/components/Project';
+import Survey from './ProjectContent/components/Survey';
 import { ProjectContentWrapper } from './ProjectContent/style';
 import ProjectSider from './ProjectSider';
 import { ProjectWrapper } from './style';
@@ -18,9 +15,18 @@ const Project = () => {
 
   return (
     <ProjectWrapper>
-      <ProjectSider />
-      <ProjectContentWrapper>
-        <Routes>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <ProjectSider />
+              <ProjectContentWrapper>
+                <Outlet />
+              </ProjectContentWrapper>
+            </>
+          }
+        >
           <Route path="/" element={<ProjectContent />} />
 
           <Route path={subRoute(routePath.SURVEY)} element={<Survey />} />
@@ -42,8 +48,8 @@ const Project = () => {
           />
 
           <Route path="*" element={<Navigate to={routePath.ROOT} />} />
-        </Routes>
-      </ProjectContentWrapper>
+        </Route>
+      </Routes>
     </ProjectWrapper>
   );
 };

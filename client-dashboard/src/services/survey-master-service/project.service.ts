@@ -1,10 +1,7 @@
-import { AxiosRequestConfig, AxiosResponse, AxiosResponseHeaders } from 'axios';
+import { AxiosResponse } from 'axios';
 import { CreateProject } from 'interfaces';
 import { IGetParams, mockSurveyList } from 'type';
 import { UpdateProject } from '../../interfaces';
-import { IGetParams, IGetSurvey } from 'type';
-import { mockSurveyDetail, PostSurveyBodyDto } from '../../type';
-import { UpdateProject } from './../../interfaces/project';
 import APIService from './base.service';
 
 export default class ProjectService {
@@ -30,9 +27,5 @@ export default class ProjectService {
 
   static updateProject(payload: UpdateProject): Promise<AxiosResponse> {
     return APIService.put(`projects/${payload.id}`, payload);
-  }
-
-  static getSurveys(params: IGetSurvey): Promise<AxiosResponse> {
-    return APIService.get('surveys', { params });
   }
 }

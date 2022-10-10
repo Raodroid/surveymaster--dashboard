@@ -1,9 +1,7 @@
 import { PauseOutlined } from '@ant-design/icons';
 import { Button, Input, Radio, Select, Table } from 'antd';
-import { CloseIcon, TrashOutlined } from 'icons';
-import { ControlledInput } from 'modules/common';
-import { INPUT_TYPES } from 'modules/common/input/type';
-import React, { useMemo } from 'react';
+import { TrashOutlined } from 'icons';
+import { useMemo } from 'react';
 import { QuestionListWrapper, TableWrapper } from './styles';
 
 function QuestionList(props: { setFieldValue: any; values: any }) {

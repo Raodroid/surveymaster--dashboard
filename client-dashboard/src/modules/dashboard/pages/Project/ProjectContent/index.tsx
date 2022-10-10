@@ -1,6 +1,6 @@
 import { CustomSpinSuspense } from 'modules/common/styles';
-import ProjectHeader from './component/Header';
-import ProjectTable from './component/ProjectTable';
+import ProjectHeader from './components/Header';
+import ProjectTable from './components/ProjectTable';
 import { ProjectHomeWrapper } from './style';
 
 const ProjectContent = () => {

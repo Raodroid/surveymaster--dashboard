@@ -276,3 +276,7 @@ export const mockSurveyList: IPaginationResponse<ISurvey> = {
     },
   ],
 };
+
+export interface IGetSurvey extends IGetParams {
+  projectId?: string;
+}
