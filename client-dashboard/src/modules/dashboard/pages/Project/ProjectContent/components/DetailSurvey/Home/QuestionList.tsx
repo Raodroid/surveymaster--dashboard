@@ -1,5 +1,6 @@
 import { Table } from 'antd';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { mockSurveyDetail } from 'type';
 import { QuestionListWrapper } from './styles';
 
@@ -67,9 +68,10 @@ const columns = [
 
 function QuestionList(props: { survey: any }) {
   const { questions } = mockSurveyDetail;
+   const { t } = useTranslation();
   return (
     <QuestionListWrapper>
-      <div className="title">Survey Questions List:</div>
+      <div className="title">{t('common.surveyQuestionsList')}:</div>
       <Table dataSource={questions} columns={columns} pagination={false} />
     </QuestionListWrapper>
   );

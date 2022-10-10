@@ -22,7 +22,7 @@ function EditProject() {
 
   const { search } = useLocation();
 
-  const { data: project, isLoading } = useQuery(['project', params.id], () =>
+  const { data: project, isLoading } = useQuery(['getProject', params.id], () =>
     ProjectService.getProjectById(params.id),
   );
 
@@ -51,7 +51,9 @@ function EditProject() {
 
   const mutationEditProject = useMutation(ProjectService.updateProject, {
     onSuccess: () => {
-      queryClient.invalidateQueries('project');
+      queryClient.invalidateQueries('getProject');
+      queryClient.invalidateQueries('getProjects');
+      queryClient.invalidateQueries('getTeamMembers');
       notification.success({ message: t('common.updateSuccess') });
       navigate(routePath.ROOT);
     },
@@ -70,11 +72,7 @@ function EditProject() {
       <CustomSpinSuspense spinning={isLoading}>
         <AddProjectWrapper>
           {initialValues && (
-            <Formik
-              // initialValues={project?.data || initialValues}
-              initialValues={initialValues}
-              onSubmit={handleSubmit}
-            >
+            <Formik initialValues={initialValues} onSubmit={handleSubmit}>
               {({
                 values,
                 errors,

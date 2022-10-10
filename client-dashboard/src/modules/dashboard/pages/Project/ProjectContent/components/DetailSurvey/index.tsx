@@ -20,7 +20,7 @@ function DetailSurvey() {
   const subRoute = (route: string) => route.replace(routePath.ROOT, '');
 
   const { data: survey } = useQuery(
-    ['survey', params.detailId],
+    ['getSurvey', params.detailId],
     () => SurveyService.getSurveyById(params.detailId),
     { refetchOnWindowFocus: false },
   );

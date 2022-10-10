@@ -62,9 +62,19 @@ function DetailSurveyHome(props: DetailSurveyProps) {
       ) + `?projectName=${title}`,
   ];
 
-  const initialValue = useMemo(() => survey?.data, [survey]);
-
-  console.log(initialValue);
+  const initialValue = useMemo(() => {
+    console.log({
+      ...survey?.data,
+      createdAt: survey?.data.createdAt.slice(0, 10),
+    });
+    return (
+      survey &&
+      survey.data && {
+        ...survey?.data,
+        createdAt: survey?.data.createdAt.slice(0, 10),
+      }
+    );
+  }, [survey]);
 
   return (
     <DetailSurveyHomeWrapper className="flex-column">

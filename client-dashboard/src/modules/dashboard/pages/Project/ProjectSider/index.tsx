@@ -1,5 +1,6 @@
 import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
+import { CustomSpinSuspense } from 'modules/common/styles';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -23,18 +24,19 @@ const ProjectSider = () => {
   return (
     <ProjectSiderWrapper ref={wrapperRef}>
       <div className="list">
-        <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
-        {projects.map(e => (
-          <Title
-            key={e.id}
-            title={e.name}
-            routePath={
-              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(':id', e.id) +
-              `?projectName=${e.name}`
-            }
-            id={e.id}
-          />
-        ))}
+        <CustomSpinSuspense spinning={isLoading}>
+          {projects.map(e => (
+            <Title
+              key={e.id}
+              title={e.name}
+              routePath={
+                ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(':id', e.id) +
+                `?projectName=${e.name}`
+              }
+              id={e.id}
+            />
+          ))}
+        </CustomSpinSuspense>
       </div>
       <div className="add-new-project-btn-wrapper">
         <AddNewProjectBtn

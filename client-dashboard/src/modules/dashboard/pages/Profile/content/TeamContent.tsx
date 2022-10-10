@@ -174,13 +174,15 @@ function TeamContent() {
         dataIndex: 'authentication',
         render: (_, record: any) => {
           const list = Object.values(allRoles).filter(elm =>
-            record.authentication.some(el => el === elm.id),
+            record.authentication.some(el => el.roleId === elm.id),
           );
 
           return (
             <div>
-              {list.map(elm => (
-                <span style={{ fontSize: 12 }}>{elm.name} </span>
+              {list.map((elm: any, index: number) => (
+                <span style={{ fontSize: 12 }}>
+                  {elm.name} {index !== list.length - 1 && '| '}
+                </span>
               ))}
             </div>
           );
@@ -262,7 +264,7 @@ function TeamContent() {
           lastName: user.lastName,
           name: user.firstName + ' ' + user.lastName,
           email: user.email,
-          authentication: user.roles,
+          authentication: user.userRoles,
           deletedAt: user.deletedAt,
         };
       })

@@ -1,5 +1,6 @@
 import { Table } from 'antd';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Remark from './Remark';
 import { QuestionRemarksWrapper } from './styles';
 
@@ -14,9 +15,10 @@ const columns = [
 
 function QuestionRemarks(props: { questions: any }) {
   const { questions } = props;
+  const { t } = useTranslation();
   return (
     <QuestionRemarksWrapper>
-      <div className="title">Question Remarks</div>
+      <div className="title">{t('common.questionRemarks')}:</div>
       <Table
         dataSource={questions}
         columns={columns}

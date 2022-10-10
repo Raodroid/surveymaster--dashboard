@@ -1,6 +1,7 @@
 import { Divider } from 'antd';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
+import { CustomSpinSuspense } from 'modules/common/styles';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
@@ -28,7 +29,7 @@ function Inputs() {
   );
 
   const { data: teamMembers } = useQuery(
-    'users',
+    'teamMembers',
     () => AdminService.getTeamMembers(baseParams),
     {
       refetchOnWindowFocus: false,
@@ -69,13 +70,15 @@ function Inputs() {
         className="projId"
         disabled
       />
-      <ControlledInput
-        inputType={INPUT_TYPES.SELECT}
-        name="personInCharge"
-        label="Person In Charge"
-        className="personInCharge"
-        options={optionsList}
-      />
+      <CustomSpinSuspense spinning={!optionsList}>
+        <ControlledInput
+          inputType={INPUT_TYPES.SELECT}
+          name="personInCharge"
+          label="Person In Charge"
+          className="personInCharge"
+          options={optionsList}
+        />
+      </CustomSpinSuspense>
     </InputsWrapper>
   );
 }

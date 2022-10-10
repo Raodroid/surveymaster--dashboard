@@ -1,5 +1,6 @@
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
+import { useTranslation } from 'react-i18next';
 import { RemarkWrapper } from './styles';
 
 export interface RemarkProps {
@@ -8,6 +9,7 @@ export interface RemarkProps {
 
 function Remark(props: RemarkProps) {
   const { index } = props;
+  const { t } = useTranslation();
   return (
     <RemarkWrapper className="flex-column">
       <ControlledInput
@@ -15,7 +17,7 @@ function Remark(props: RemarkProps) {
         inputType={INPUT_TYPES.INPUT}
         disabled
       />
-      <strong>Remark</strong>
+      <strong>{t('common.remark')}</strong>
       <ControlledInput
         name={`surveyQuestions[${index}].remark`}
         inputType={INPUT_TYPES.TEXTAREA}

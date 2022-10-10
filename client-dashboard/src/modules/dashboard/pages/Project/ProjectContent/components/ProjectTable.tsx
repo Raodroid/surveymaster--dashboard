@@ -35,6 +35,7 @@ const getProjects = (params: GetListQuestionDto) => {
 };
 
 function ProjectTable(props: { filterValue?: string }) {
+  const { filterValue } = props;
   const wrapperRef = useRef<any>();
   const [searchTxt, setSearchTxt] = useState<string>('');
   const queryString = useParseQueryString<GetListQuestionDto>();
@@ -46,11 +47,11 @@ function ProjectTable(props: { filterValue?: string }) {
   const debounceSearchText = useDebounce(searchTxt);
 
   const getProjectListQuery = useQuery(
-    ['getProjects', params, debounceSearchText],
+    ['getProjects', params, debounceSearchText, filterValue],
     () => {
       return getProjects({
         ...params,
-        q: debounceSearchText,
+        q: filterValue,
       });
     },
     {
@@ -78,22 +79,12 @@ function ProjectTable(props: { filterValue?: string }) {
         title: 'ID',
         dataIndex: 'project',
         key: 'project',
-        render: (_, record: any) => <div>{record?.id}</div>,
+        render: (_, record: any) => <div>{record?.displayId}</div>,
       },
       {
         title: 'Project Title',
         dataIndex: 'name',
         key: 'name',
-        render: (text: string, record: any) => (
-          <Link
-            to={
-              routePath.SURVEY.replace(':id', record?.id) +
-              `?projectName=${record.name}`
-            }
-          >
-            {text}
-          </Link>
-        ),
       },
       {
         title: 'N of Surveys',
@@ -126,7 +117,10 @@ function ProjectTable(props: { filterValue?: string }) {
         dataIndex: 'actions',
         key: 'actions',
         render: (_, record: any) => (
-          <div className="flex-center actions">
+          <div
+            className="flex-center actions"
+            onClick={e => e.stopPropagation()}
+          >
             <Button
               onClick={() =>
                 navigate(
@@ -145,11 +139,25 @@ function ProjectTable(props: { filterValue?: string }) {
     [navigate, routePath],
   );
 
+  const onRow = (record: any) => {
+    return {
+      onClick: () =>
+        navigate(
+          routePath.SURVEY.replace(':id', record?.id) +
+            `?projectName=${record?.name}`,
+        ),
+    };
+  };
+
   return (
     <ProjectTableWrapper ref={wrapperRef}>
       <CustomSpinSuspense spinning={getProjectListQuery.isLoading}>
-        <Table pagination={false} dataSource={projects} columns={columns} />
-
+        <Table
+          pagination={false}
+          dataSource={projects}
+          columns={columns}
+          onRow={onRow}
+        />
         <StyledPagination
           onChange={page => {
             setParams(s => ({ ...s, page }));
@@ -157,6 +165,7 @@ function ProjectTable(props: { filterValue?: string }) {
           showSizeChanger
           pageSize={params.take}
           onShowSizeChange={onShowSizeChange}
+          defaultCurrent={1}
           total={total}
         />
       </CustomSpinSuspense>

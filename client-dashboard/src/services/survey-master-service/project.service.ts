@@ -6,15 +6,7 @@ import APIService from './base.service';
 
 export default class ProjectService {
   static getProjects(params: IGetParams): Promise<AxiosResponse> {
-    // return APIService.get('projects', { params });
-
-    return Promise.resolve({
-      data: mockSurveyList,
-      status: 1998,
-      statusText: '',
-      headers: {},
-      config: {},
-    });
+    return APIService.get('projects', { params });
   }
 
   static getProjectById(id: string | undefined): Promise<AxiosResponse> {

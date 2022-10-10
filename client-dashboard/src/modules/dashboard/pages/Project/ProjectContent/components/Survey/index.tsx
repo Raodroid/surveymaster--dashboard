@@ -109,7 +109,7 @@ function Survey() {
           ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT.replace(
             ':id',
             params.id,
-          ).replace(':detailId', record.displayId),
+          ).replace(':detailId', record.id) + `?projectName=${title}`,
         ),
     };
   };
@@ -126,7 +126,7 @@ function Survey() {
             onRow={onRow}
             pagination={false}
           />
-          <Pagination />
+          <Pagination defaultCurrent={1} />
         </CustomSpinSuspense>
       </TableWrapper>
     </SurveyWrapper>

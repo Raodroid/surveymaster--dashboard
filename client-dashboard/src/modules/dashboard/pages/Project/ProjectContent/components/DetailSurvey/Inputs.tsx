@@ -28,7 +28,7 @@ function Inputs(props: { disabled?: boolean; remarks?: boolean }) {
       )}
       {remarks && (
         <ControlledInput
-          name="surveyRemarks"
+          name="remark"
           label="Survey Remarks"
           className="surveyRemarks"
           disabled={disabled}
@@ -40,7 +40,7 @@ function Inputs(props: { disabled?: boolean; remarks?: boolean }) {
 
       <div className="title surveyParams">{t('common.surveyParameters')}:</div>
       <ControlledInput
-        name="id"
+        name="displayId"
         label="ID"
         type="text"
         className="surveyId"

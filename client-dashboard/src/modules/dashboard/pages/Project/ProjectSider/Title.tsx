@@ -23,8 +23,8 @@ function Title(props: TitleProps) {
   const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
 
   const active = useMemo(() => {
-    return params && params.id && route_path.includes(params.id);
-  }, [route_path, params]);
+    return params && params.id && params.id === userId;
+  }, [userId, params]);
 
   const handleTitleClick = () => {
     if (userId === params.id) {

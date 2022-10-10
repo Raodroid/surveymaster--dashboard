@@ -1,4 +1,5 @@
 import { AxiosResponse } from 'axios';
+import { UpdateSurvey } from 'interfaces';
 import {
   IGetParams,
   IGetSurvey,
@@ -30,10 +31,10 @@ export default class SurveyService {
     const { surveyId } = props;
     return APIService.post(`/surveys/${surveyId}/duplicate  `, props);
   }
-  static updateSurvey(
-    props: IPutSurveyBodyDtoExtendId,
-  ): Promise<AxiosResponse> {
+
+  static updateSurvey(props: UpdateSurvey): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.put(`/surveys/${id}/duplicate  `, props);
+    console.log(props);
+    return APIService.put(`/surveys/${id}  `, props);
   }
 }

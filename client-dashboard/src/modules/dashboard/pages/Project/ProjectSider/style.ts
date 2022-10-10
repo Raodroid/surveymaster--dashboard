@@ -17,6 +17,9 @@ export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
     flex: 1;
     overflow-y: auto;
     padding: 0 1.5rem;
+    .ant-spin-nested-loading {
+      height: 100%;
+    }
   }
   .add-new-project-btn-wrapper {
     padding: 16px;

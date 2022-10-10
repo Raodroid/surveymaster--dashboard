@@ -5,7 +5,7 @@ import { CreateProject } from 'interfaces/project';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
 import { onError } from 'utils/funcs';
 import * as Yup from 'yup';
@@ -21,7 +21,6 @@ const initialValues: CreateProject = {
 };
 
 function AddProject() {
-  const params = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -46,7 +45,8 @@ function AddProject() {
 
   const mutationCreateProject = useMutation(ProjectService.createProject, {
     onSuccess: () => {
-      queryClient.invalidateQueries('projects');
+      queryClient.invalidateQueries('getProjects');
+      queryClient.invalidateQueries('getAllProjects');
       notification.success({ message: t('common.createSuccess') });
       navigate(routePath.ROOT);
     },
