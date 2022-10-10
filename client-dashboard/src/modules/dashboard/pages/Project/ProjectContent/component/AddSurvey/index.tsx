@@ -4,6 +4,7 @@ import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import ProjectHeader from '../Header';
 import QuestionList from './QuestionList';
@@ -21,6 +22,7 @@ const selectValues = {
 function AddSurvey() {
   const { t } = useTranslation();
   const params = useParams();
+  const { t } = useTranslation();
   const [templateValue, setTemplateValue] = useState('');
 
   const { data } = mockSurveyList;
@@ -78,7 +80,9 @@ function AddSurvey() {
 
                 <Divider type="vertical" className="divider" />
 
-                <div className="title params">Survey Parameters:</div>
+                <div className="title params">
+                  {t('common.surveyParameters')}:
+                </div>
                 <ControlledInput
                   inputType={INPUT_TYPES.INPUT}
                   name="id"

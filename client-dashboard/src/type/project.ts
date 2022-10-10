@@ -2,6 +2,7 @@ import {
   completedVersion,
   draftVersion,
   IPaginationResponse,
+  IGetParams,
   IQuestionVersion,
   mockCategories,
   mockUser,

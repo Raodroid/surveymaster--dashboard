@@ -5,36 +5,44 @@ export const DetailSurveyWrapper = styled.div`
   label {
     padding-left: 4px;
   }
-
 `;
 
 export const InputsWrapper = styled.div`
-  margin: 0 40px;
-  padding-bottom: 28px;
+  margin: 40px 40px 0;
+  padding-bottom: 4px;
   border-bottom: 1px solid #f3eef3;
-  .main-info {
-    flex: 2;
-    padding-right: 40px;
-    border-right: 1px solid #f3eef3;
-    > .form-item-container {
-      .ant-form-item-control > div:last-child {
-        display: none !important;
-      }
-    }
-    .wrapper {
-      gap: 24px;
-      .form-item-container {
-        flex: 1;
-      }
-    }
-    .ant-input-textarea {
-      textarea {
-        height: 108px;
-      }
-    }
+
+  display: grid;
+  grid-template-columns: 2fr 1px 1fr;
+  column-gap: 40px;
+  grid-template-areas:
+    'mainInfo-title divider surveyParams'
+    'surveyTitle    divider surveyId'
+    'surveyRemarks  divider none';
+
+  .mainInfo-title {
+    grid-area: mainInfo-title;
   }
-  .parameters {
-    flex: 1;
-    margin-left: 40px;
+  .surveyParams {
+    grid-area: surveyParams;
+  }
+  .divider {
+    grid-area: divider;
+    height: calc(100% - 24px);
+    width: 1px;
+    margin: auto;
+    margin-top: 0;
+  }
+  .surveyTitle {
+    grid-area: surveyTitle;
+  }
+  .surveyId {
+    grid-area: surveyId;
+  }
+  .surveyRemarks {
+    grid-area: surveyRemarks;
+    textarea {
+      height: 32px;
+    }
   }
 `;

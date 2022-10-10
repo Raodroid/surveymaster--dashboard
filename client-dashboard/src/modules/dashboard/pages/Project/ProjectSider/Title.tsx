@@ -2,7 +2,8 @@ import { UnorderedListOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import { TitleStyled } from './style';
 import { useMatch } from 'react-router-dom';
@@ -15,6 +16,7 @@ interface TitleProps {
 function Title(props: TitleProps) {
   const { title, routePath } = props;
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { pathname } = useLocation();
 
   const isActive = useMatch({
@@ -46,13 +48,13 @@ function Title(props: TitleProps) {
             navigate(`${routePath}/add-survey`);
           }}
         >
-          <PlusIcon className="plus-icon" /> Add New Survey
+          <PlusIcon className="plus-icon" /> {t('common.addNewSurvey')}
         </Button>
         <Button
           className="flex-center"
           onClick={() => navigate(`${routePath}`)}
         >
-          <UnorderedListOutlined /> Survey List
+          <UnorderedListOutlined /> {t('common.surveyList')}
         </Button>
       </div>
     </TitleStyled>

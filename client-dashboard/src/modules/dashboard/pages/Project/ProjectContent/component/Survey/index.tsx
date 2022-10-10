@@ -3,40 +3,57 @@ import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { ROUTE_PATH } from 'enums';
 import { CloseIcon, PenFilled, TrashOutlined } from 'icons';
 import React, { FC, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router';
 import { ProjectTableWrapper } from '../../style';
 import ProjectHeader from '../Header';
-import { SurveyWrapper } from './style';
-import {
-  IProject,
-  IQuestion,
-  ISurvey,
-  mockSurveyList,
-} from '../../../../../../../type';
-import { useTranslation } from 'react-i18next';
-import { useMutation, useQueryClient } from 'react-query';
-import {
-  QuestionBankService,
-  SurveyService,
-} from '../../../../../../../services';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
-import { onError } from '../../../../../../../utils';
+import { SurveyWrapper, TableWrapper } from './style';
+import { useState } from 'react';
+import { BooleanEnum } from 'type';
+import { useLocation } from 'react-router';
+import { CustomSpinSuspense } from 'modules/common/styles';
+import SimpleBar from 'simplebar-react';
 
 function Survey() {
   const params = useParams<{ id?: string }>();
+  const { search } = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  const { data } = mockSurveyList;
-  const project = data.filter(elm => elm.project?.displayId === params.id);
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState('');
+  const [isDeleted, setIsDeleted] = useState(BooleanEnum.FALSE);
+
+  const title = useMemo(
+    () => search.replace('?title=', '').replace(/%20/g, ' '),
+    [search],
+  );
+
+  const queryParams = {
+    q: query,
+    page: page,
+    take: 10,
+    isDeleted: isDeleted,
+    projectId: params.id,
+  };
+
+  const { data: survey, isLoading } = useQuery(
+    ['survey', params.id],
+    () => ProjectService.getSurveys(queryParams),
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const routes = useMemo(
     () => [
       {
-        name: project[0]?.name,
+        name: title,
         href: '',
       },
     ],
-    [],
+    [title],
   );
 
   const columns = useMemo(
@@ -50,14 +67,11 @@ function Survey() {
         title: 'Survey Title',
         dataIndex: 'name',
         key: 'name',
-        width: 300,
-        render: () => <div>{project[0]?.project?.name}</div>,
       },
       {
-        title: 'Person In Charge',
-        dataIndex: 'createdBy',
-        key: 'createdBy',
-        render: (user: any) => <div>{user.fullName}</div>,
+        title: 'N of Questions',
+        dataIndex: 'numberOfQuestions',
+        key: 'numberOfQuestions',
       },
       {
         title: 'Date of Creation',
@@ -65,7 +79,7 @@ function Survey() {
         key: 'createdAt',
         render: (text: any) => {
           const str = text.toString();
-          return <div>{str.slice(0, 15)}</div>;
+          return <div>{str.slice(0, 10)}</div>;
         },
       },
       {
@@ -75,16 +89,15 @@ function Survey() {
         width: 30,
         render: (_, record: any) => (
           <div
-            onClick={e => {
-              e.stopPropagation();
-            }}
+            className="flex-center actions"
+            onClick={e => e.stopPropagation()}
           >
             <DropDownMenu record={record} />
           </div>
         ),
       },
     ],
-    [project],
+    [navigate, t, params],
   );
 
   const onRow = (record, rowIndex) => {
@@ -102,17 +115,19 @@ function Survey() {
   };
 
   return (
-    <SurveyWrapper>
+    <SurveyWrapper className="flex-column">
       <ProjectHeader routes={routes} />
-      <ProjectTableWrapper>
+
+      <TableWrapper className="flex-column">
         <Table
-          dataSource={project}
+          dataSource={survey?.data.data}
           columns={columns}
           onRow={onRow}
           pagination={false}
           // scroll={{ x: 1500 }}
         />
-      </ProjectTableWrapper>
+        <Pagination />
+      </TableWrapper>
     </SurveyWrapper>
   );
 }
