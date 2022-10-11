@@ -20,4 +20,14 @@ export default class ProjectService {
   static updateProject(payload: UpdateProject): Promise<AxiosResponse> {
     return APIService.put(`projects/${payload.id}`, payload);
   }
+
+  static deleteProject(payload: { projectId: string }): Promise<AxiosResponse> {
+    return APIService.delete(`projects/${payload.projectId}`);
+  }
+
+  static restoreProject(payload: {
+    projectId: string;
+  }): Promise<AxiosResponse> {
+    return APIService.post(`projects/${payload.projectId}/restore`);
+  }
 }

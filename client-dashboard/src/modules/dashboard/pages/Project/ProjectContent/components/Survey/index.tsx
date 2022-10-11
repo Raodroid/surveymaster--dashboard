@@ -3,44 +3,59 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { ROUTE_PATH } from 'enums';
 import { PenFilled, TrashOutlined } from 'icons';
-import React, { FC, useCallback, useMemo } from 'react';
+import { CustomSpinSuspense } from 'modules/common/styles';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { SurveyService } from '../../../../../../../services';
-import { ISurvey } from '../../../../../../../type';
-import { onError } from '../../../../../../../utils';
+import { IGetParams, ISurvey } from '../../../../../../../type';
+import { onError, useDebounce } from '../../../../../../../utils';
 import ProjectHeader from '../Header';
 import { SurveyWrapper, TableWrapper } from './style';
-import { useState } from 'react';
-import { CustomSpinSuspense } from 'modules/common/styles';
 
 function Survey() {
   const params = useParams<{ id?: string }>();
   const { search } = useLocation();
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const [page, setPage] = useState(1);
-  const [query, setQuery] = useState('');
-  const [isDeleted, setIsDeleted] = useState(false);
+
+  const [headerSearch, setHeaderSearch] = useState('');
+  const [filter, setFilter] = useState('');
+  const debounce = useDebounce(headerSearch);
+
+  const [filterParams, setFilterParams] = useState<IGetParams>({
+    isDeleted: false,
+    createdFrom: '',
+    createdTo: '',
+  });
 
   const title = useMemo(
     () => search.replace('?projectName=', '').replace(/%20/g, ' '),
     [search],
   );
 
-  const queryParams = {
-    q: query,
-    page: page,
-    take: 10,
-    isDeleted: isDeleted,
-    projectId: params.id,
-  };
+  const queryParams = useMemo(() => {
+    return {
+      q: filter,
+      page: page,
+      take: 10,
+      isDeleted: filterParams.isDeleted,
+      projectId: params.id,
+    };
+  }, [filter, page, params, filterParams]);
 
   const { data: survey, isLoading } = useQuery(
-    ['survey', params.id],
-    () => SurveyService.getSurveys(queryParams),
+    ['survey', params.id, filterParams, filter, queryParams],
+    () =>
+      filterParams.createdFrom || filterParams.createdTo
+        ? SurveyService.getSurveys({
+            ...queryParams,
+            createdFrom: filterParams.createdFrom,
+            createdTo: filterParams.createdTo,
+          })
+        : SurveyService.getSurveys(queryParams),
     {
       refetchOnWindowFocus: false,
     },
@@ -100,7 +115,7 @@ function Survey() {
     [],
   );
 
-  const onRow = (record, rowIndex) => {
+  const onRow = record => {
     return {
       onClick: () =>
         params &&
@@ -116,7 +131,14 @@ function Survey() {
 
   return (
     <SurveyWrapper className="flex-column">
-      <ProjectHeader routes={routes} />
+      <ProjectHeader
+        routes={routes}
+        search={headerSearch}
+        setSearch={setHeaderSearch}
+        setFilter={setFilter}
+        debounce={debounce}
+        setParams={setFilterParams}
+      />
 
       <TableWrapper className="flex-column">
         <CustomSpinSuspense spinning={isLoading}>

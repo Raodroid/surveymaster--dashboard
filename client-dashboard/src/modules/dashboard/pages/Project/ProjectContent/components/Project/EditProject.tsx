@@ -15,12 +15,11 @@ import { AddProjectWrapper, EditProjectWrapper } from './styles';
 
 function EditProject() {
   const params = useParams();
-  const queryClient = useQueryClient();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
-
   const { search } = useLocation();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
 
   const { data: project, isLoading } = useQuery(['getProject', params.id], () =>
     ProjectService.getProjectById(params.id),
@@ -71,38 +70,40 @@ function EditProject() {
       <ProjectHeader routes={routes} />
       <CustomSpinSuspense spinning={isLoading}>
         <AddProjectWrapper>
-          {initialValues && (
-            <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                handleSubmit: handleFinish,
-                isSubmitting,
-                setFieldValue,
-              }) => (
-                <Form
-                  layout="vertical"
-                  className="flex-column"
-                  onFinish={handleFinish}
-                >
-                  <Inputs />
-                  <div className="footer">
-                    <Button
-                      type="primary"
-                      className="info-btn"
-                      htmlType="submit"
-                      loading={mutationEditProject.isLoading}
-                    >
-                      {t('common.saveEdits')}
-                    </Button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          )}
+          <Formik
+            enableReinitialize={true}
+            initialValues={initialValues}
+            onSubmit={handleSubmit}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit: handleFinish,
+              isSubmitting,
+              setFieldValue,
+            }) => (
+              <Form
+                layout="vertical"
+                className="flex-column"
+                onFinish={handleFinish}
+              >
+                <Inputs />
+                <div className="footer">
+                  <Button
+                    type="primary"
+                    className="info-btn"
+                    htmlType="submit"
+                    loading={mutationEditProject.isLoading}
+                  >
+                    {t('common.saveEdits')}
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </AddProjectWrapper>
       </CustomSpinSuspense>
     </EditProjectWrapper>

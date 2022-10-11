@@ -5,7 +5,8 @@ import { SearchIcon } from 'icons/SearchIcon';
 import StyledBreadcrumb from 'modules/common/commonComponent/StyledBreadcrumb';
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { HeaderStyled } from '../style';
+import ProjectFilter from './ProjectFilter';
+import { HeaderStyled } from './styles';
 
 function ProjectHeader(props: {
   routes?: any;
@@ -14,8 +15,10 @@ function ProjectHeader(props: {
   setSearch?: (text: string) => void;
   setFilter?: (text: string) => void;
   links?: string[] | any;
+  setParams?: (payload: any) => void;
 }) {
-  const { routes, search, debounce, setSearch, setFilter, links } = props;
+  const { routes, search, debounce, setSearch, setFilter, links, setParams } =
+    props;
   const searchRef = useRef<InputRef>(null);
 
   const base = [
@@ -46,19 +49,25 @@ function ProjectHeader(props: {
       <StyledBreadcrumb routes={base} />
 
       {setSearch && setFilter && (
-        <Form
-          className="flex search-form"
-          onFinish={() => search && setFilter(search)}
-        >
-          <Input
-            ref={searchRef}
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          <Button htmlType="submit" onClick={handleSubmitBtnClick}>
-            <SearchIcon />
-          </Button>
-        </Form>
+        <>
+          <Form
+            className="flex search-form"
+            onFinish={() => search && setFilter(search)}
+          >
+            <Input
+              ref={searchRef}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <Button htmlType="submit" onClick={handleSubmitBtnClick}>
+              <SearchIcon />
+            </Button>
+          </Form>
+
+          <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+
+          <ProjectFilter setParams={setParams} />
+        </>
       )}
 
       {links && (

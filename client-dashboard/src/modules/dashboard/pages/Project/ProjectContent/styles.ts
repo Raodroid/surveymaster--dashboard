@@ -1,3 +1,5 @@
+import { Menu } from 'antd';
+import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import styled from 'styled-components';
 import { BaseSectionWrapper } from '../../../../common/styles';
 
@@ -7,53 +9,6 @@ export const ProjectContentWrapper = styled(BaseSectionWrapper)`
   .title {
     font-weight: bold;
     margin-bottom: 20px;
-  }
-`;
-
-export const HeaderStyled = styled.div`
-  min-height: 76px;
-  padding: 0 32px;
-  border-bottom: 1px solid #f3eef3;
-  .breadcrumb {
-    border-top: none;
-    span,
-    a {
-      font-size: 16px;
-    }
-  }
-  .breadcrumb-item span {
-    color: var(--text-color);
-  }
-  .search-form {
-    flex: 1;
-    margin-left: 20px;
-    .ant-input {
-      border: none;
-      box-shadow: none;
-      font-size: 14px;
-    }
-    .ant-btn {
-      background: transparent;
-      padding: 0;
-      width: 32px;
-      height: 32px;
-      box-shadow: none;
-    }
-  }
-  svg {
-    color: var(--ant-primary-color);
-  }
-  .wrapper {
-    margin-left: auto;
-    gap: 24px;
-    .ant-divider {
-      background: #d3d3e1;
-      margin: 2px 0 0;
-    }
-    a {
-      display: flex;
-      align-items: center;
-    }
   }
 `;
 
@@ -80,6 +35,10 @@ export const ProjectTableWrapper = styled.div`
         font-size: 12px;
         color: var(--text-color);
       }
+
+      .dots-container {
+        color: var(--ant-primary-color);
+      }
     }
   }
   .actions {
@@ -105,5 +64,20 @@ export const ProjectTableWrapper = styled.div`
   }
   .ant-table-row {
     cursor: pointer;
+  }
+`;
+
+export const StyledProjectMenu = styled(Menu)`
+  .ant-dropdown-menu-title-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    svg {
+      color: var(--ant-primary-color);
+      width: 14px;
+      height: 14px;
+    }
   }
 `;

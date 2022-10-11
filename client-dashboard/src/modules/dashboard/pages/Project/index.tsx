@@ -5,9 +5,9 @@ import AddSurvey from './ProjectContent/components/AddSurvey';
 import DetailSurvey from './ProjectContent/components/DetailSurvey';
 import { AddProject, EditProject } from './ProjectContent/components/Project';
 import Survey from './ProjectContent/components/Survey';
-import { ProjectContentWrapper } from './ProjectContent/style';
+import { ProjectContentWrapper } from './ProjectContent/styles';
 import ProjectSider from './ProjectSider';
-import { ProjectWrapper } from './style';
+import { ProjectWrapper } from './styles';
 
 const Project = () => {
   const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;

@@ -116,37 +116,39 @@ function Remarks(props: DetailSurveyProps) {
 
       <RemarksWrapper>
         <CustomSpinSuspense spinning={!initialValues}>
-          {initialValues && (
-            <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                handleSubmit: handleFinish,
-                isSubmitting,
-                setFieldValue,
-              }) => (
-                <Form layout="vertical" onFinish={handleFinish}>
-                  <SimpleBar style={{ height: 'calc(100vh - 229px)' }}>
-                    <Inputs remarks />
-                    <QuestionRemarks questions={survey?.data.surveyQuestions} />
-                  </SimpleBar>
-                  <div className="footer flex-center">
-                    <Button
-                      type="primary"
-                      className="info-btn"
-                      htmlType="submit"
-                      loading={mutationUpdateRemarks.isLoading}
-                    >
-                      {t('common.saveProject')}
-                    </Button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          )}
+          <Formik
+            enableReinitialize={true}
+            initialValues={initialValues}
+            onSubmit={handleSubmit}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit: handleFinish,
+              isSubmitting,
+              setFieldValue,
+            }) => (
+              <Form layout="vertical" onFinish={handleFinish}>
+                <SimpleBar style={{ height: 'calc(100vh - 229px)' }}>
+                  <Inputs remarks />
+                  <QuestionRemarks questions={survey?.data.surveyQuestions} />
+                </SimpleBar>
+                <div className="footer flex-center">
+                  <Button
+                    type="primary"
+                    className="info-btn"
+                    htmlType="submit"
+                    loading={mutationUpdateRemarks.isLoading}
+                  >
+                    {t('common.saveProject')}
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </CustomSpinSuspense>
       </RemarksWrapper>
     </>
