@@ -1,11 +1,11 @@
 import { Button, Menu, PaginationProps, Table } from 'antd';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
-import { ROUTE_PATH } from 'enums';
 import { PenFilled, TrashOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import _get from 'lodash/get';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
@@ -13,9 +13,9 @@ import { GetListQuestionDto, IGetParams, IProject } from 'type';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import { onError, useDebounce } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
+import { createProjectLink, projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper, StyledProjectMenu } from '../styles';
-import { useTranslation } from 'react-i18next';
 
 const initParams: IGetParams = {
   q: '',
@@ -47,7 +47,6 @@ function ProjectTable(props: {
 
   const [searchTxt, setSearchTxt] = useState<string>('');
   const queryString = useParseQueryString<GetListQuestionDto>();
-  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
   const [params, setParams] = useState<GetListQuestionDto>(initParams);
   const debounceSearchText = useDebounce(searchTxt);
 
@@ -137,8 +136,11 @@ function ProjectTable(props: {
               <Button
                 onClick={() =>
                   navigate(
-                    routePath.PROJECT.EDIT.replace(':id', record.id) +
-                      `?projectName=${record.name}`,
+                    createProjectLink(
+                      projectRoutePath.PROJECT.EDIT,
+                      record?.id,
+                      record?.name,
+                    ),
                   )
                 }
               >
@@ -166,7 +168,7 @@ function ProjectTable(props: {
         ),
       },
     ],
-    [navigate, routePath, queryParams],
+    [navigate, queryParams, t],
   );
 
   const onRow = (record: any) => {
@@ -174,8 +176,7 @@ function ProjectTable(props: {
       onClick: () =>
         !queryParams?.isDeleted &&
         navigate(
-          routePath.SURVEY.replace(':id', record?.id) +
-            `?projectName=${record?.name}`,
+          createProjectLink(projectRoutePath.SURVEY, record.id, record.name),
         ),
     };
   };

@@ -5,6 +5,7 @@ import { SearchIcon } from 'icons/SearchIcon';
 import StyledBreadcrumb from 'modules/common/commonComponent/StyledBreadcrumb';
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { projectRoutePath } from '../../../util';
 import ProjectFilter from './ProjectFilter';
 import { HeaderStyled } from './styles';
 
@@ -24,7 +25,7 @@ function ProjectHeader(props: {
   const base = [
     {
       name: 'Project',
-      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT,
+      href: projectRoutePath.ROOT,
     },
   ];
 

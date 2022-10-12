@@ -27,6 +27,7 @@ function RestoreProject(props: IRestoreProject) {
       onSuccess: () => {
         notification.success({ message: t('common.restoreSuccess') });
         queryClient.invalidateQueries('getProjects');
+        queryClient.invalidateQueries('getAllProjects');
         setShowModal(false);
       },
       onError: (error: any) => {
@@ -43,7 +44,7 @@ function RestoreProject(props: IRestoreProject) {
       open={showModal}
       footer={false}
       title="Confirm Restore Project"
-      onCancel={() => setShowModal(false)}
+      onCancel={() => !mutationRestoreProject.isLoading && setShowModal(false)}
       width={MODAL_WIDTH.SMALL}
       centered
       destroyOnClose

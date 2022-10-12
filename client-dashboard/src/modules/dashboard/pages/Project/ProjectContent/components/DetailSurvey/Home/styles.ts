@@ -4,9 +4,10 @@ export const DetailSurveyHomeWrapper = styled.div`
   flex: 1;
   overflow: hidden;
 
-  .body {
-    flex: 1;
-    overflow-y: auto;
+  .ant-spin-nested-loading,
+  .ant-spin-container {
+    height: 100%;
+    overflow-y: hidden;
   }
 `;
 

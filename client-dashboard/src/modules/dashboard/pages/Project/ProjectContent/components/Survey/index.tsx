@@ -11,6 +11,11 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 import { SurveyService } from '../../../../../../../services';
 import { IGetParams, ISurvey } from '../../../../../../../type';
 import { onError, useDebounce } from '../../../../../../../utils';
+import {
+  createProjectDetailLink,
+  getProjectTitle,
+  projectRoutePath,
+} from '../../../util';
 import ProjectHeader from '../Header';
 import { SurveyWrapper, TableWrapper } from './style';
 
@@ -31,10 +36,7 @@ function Survey() {
     createdTo: '',
   });
 
-  const title = useMemo(
-    () => search.replace('?projectName=', '').replace(/%20/g, ' '),
-    [search],
-  );
+  const title = useMemo(() => getProjectTitle(search), [search]);
 
   const queryParams = useMemo(() => {
     return {
@@ -121,10 +123,12 @@ function Survey() {
         params &&
         params.id &&
         navigate(
-          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT.replace(
-            ':id',
+          createProjectDetailLink(
+            projectRoutePath.DETAIL_SURVEY.ROOT,
             params.id,
-          ).replace(':detailId', record.id) + `?projectName=${title}`,
+            record.id,
+            title,
+          ),
         ),
     };
   };
@@ -218,10 +222,11 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         case ACTION_ENUM.EDIT: {
           if (!params.id) return;
           navigate(
-            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT.replace(
-              ':id',
+            createProjectDetailLink(
+              projectRoutePath.DETAIL_SURVEY.EDIT,
               params.id,
-            ).replace(':detailId', record.displayId),
+              record.displayId,
+            ),
           );
           return;
         }

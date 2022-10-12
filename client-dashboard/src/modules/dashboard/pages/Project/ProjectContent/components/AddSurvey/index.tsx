@@ -13,6 +13,11 @@ import QuestionList from './QuestionList';
 import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
 import SurveyCustomSelect from './SurveyCustomSelect';
 import { useMemo } from 'react';
+import {
+  createProjectLink,
+  getProjectTitle,
+  projectRoutePath,
+} from '../../../util';
 
 const selectValues = {
   newSurvey: 'newSurvey',
@@ -26,26 +31,20 @@ function AddSurvey() {
   const [templateValue, setTemplateValue] = useState('');
   const { search } = useLocation();
 
-  const { data } = mockSurveyList;
-  const project = data.find(elm => elm.project?.displayId === params.id);
-
-  const title = useMemo(
-    () => search.replace('?projectName=', '').replace(/%20/g, ' '),
-    [search],
-  );
+  const title = useMemo(() => getProjectTitle(search), [search]);
 
   const routes = useMemo(
     () => [
       {
         name: title,
-        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/' + params.id,
+        href:
+          params &&
+          params.id &&
+          createProjectLink(projectRoutePath.SURVEY, params.id, title),
       },
       {
         name: 'Add New Survey',
-        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY.replace(
-          ':id',
-          params.id || '',
-        ),
+        href: '',
       },
     ],
     [title, params],

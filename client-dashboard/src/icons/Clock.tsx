@@ -16,7 +16,7 @@ export const Clock = props => {
         stroke="none"
         stroke-width="1"
         fill="none"
-        fill-rule="evenodd"
+        fillRule="evenodd"
       >
         <g id="Assets" transform="translate(-120.000000, -116.000000)">
           <g

@@ -2,7 +2,7 @@ import { Radio } from 'antd';
 import {
   PROFILE_TAB,
   ROUTE_PATH,
-  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
+  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT
 } from 'enums';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

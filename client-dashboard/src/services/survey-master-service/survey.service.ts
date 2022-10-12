@@ -1,11 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { UpdateSurvey } from 'interfaces';
-import {
-  IGetParams,
-  IGetSurvey,
-  IPostSurveyBodyDto,
-  IPutSurveyBodyDtoExtendId,
-} from 'type';
+import { IGetSurvey, IPostSurveyBodyDto } from 'type';
 import APIService from './base.service';
 
 export default class SurveyService {
@@ -34,7 +29,6 @@ export default class SurveyService {
 
   static updateSurvey(props: UpdateSurvey): Promise<AxiosResponse> {
     const { id } = props;
-    console.log(props);
     return APIService.put(`/surveys/${id}  `, props);
   }
 }

@@ -1,11 +1,10 @@
 import { UnorderedListOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { projectRoutePath } from '../util';
 import { TitleStyled } from './style';
 
 interface TitleProps {
@@ -20,15 +19,14 @@ function Title(props: TitleProps) {
   const { t } = useTranslation();
   const { pathname, search } = useLocation();
   const params = useParams();
-  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
 
-  const active = useMemo(() => {
+  const isActive = useMemo(() => {
     return params && params.id && params.id === userId;
   }, [userId, params]);
 
   const handleTitleClick = () => {
     if (userId === params.id) {
-      navigate(routePath.ROOT);
+      navigate(projectRoutePath.ROOT);
     } else {
       navigate(route_path);
     }
@@ -37,12 +35,12 @@ function Title(props: TitleProps) {
   return (
     <TitleStyled>
       <Button
-        className={`${active && 'active'} title-btn flex`}
+        className={`${isActive && 'active'} title-btn flex`}
         onClick={handleTitleClick}
       >
         {title}
       </Button>
-      <div className={`wrapper flex ${!active ? 'hide' : ''}`}>
+      <div className={`wrapper flex ${!isActive ? 'hide' : ''}`}>
         <Button
           className="flex-center primary"
           type="primary"

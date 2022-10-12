@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
 import { onError } from 'utils/funcs';
 import * as Yup from 'yup';
+import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import Inputs from './Inputs';
 import { AddProjectWrapper } from './styles';
@@ -24,7 +25,6 @@ function AddProject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
 
   const routes = useMemo(
     () => [
@@ -48,7 +48,7 @@ function AddProject() {
       queryClient.invalidateQueries('getProjects');
       queryClient.invalidateQueries('getAllProjects');
       notification.success({ message: t('common.createSuccess') });
-      navigate(routePath.ROOT);
+      navigate(projectRoutePath.ROOT);
     },
     onError,
   });

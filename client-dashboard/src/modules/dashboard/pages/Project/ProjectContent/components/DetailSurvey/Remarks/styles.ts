@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const RemarksWrapper = styled.div`
-  height: 100%;
   .footer {
     height: 76px;
     background: white;
@@ -11,6 +10,11 @@ export const RemarksWrapper = styled.div`
       width: 100%;
       height: 36px;
     }
+  }
+  > .ant-spin-nested-loading,
+  > .ant-spin-nested-loading > .ant-spin-container {
+    height: 100%;
+    overflow-y: hidden;
   }
 `;
 
@@ -24,6 +28,10 @@ export const QuestionRemarksWrapper = styled.div`
   }
   .ant-table-cell {
     padding: 8px;
+  }
+  .ant-input-affix-wrapper-disabled {
+    background: rgba(0, 0, 0, 0.04);
+    border: none;
   }
 `;
 

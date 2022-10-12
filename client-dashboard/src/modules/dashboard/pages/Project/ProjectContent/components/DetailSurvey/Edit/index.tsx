@@ -1,44 +1,51 @@
-import { ROUTE_PATH } from 'enums';
+import {
+  createProjectDetailLink,
+  createProjectLink,
+  getProjectTitle,
+  projectRoutePath
+} from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
-import { mockSurveyList } from 'type';
+import { useLocation, useParams } from 'react-router';
+import { DetailSurveyProps } from '..';
 import ProjectHeader from '../../Header';
 
-function EditSurvey() {
+function EditSurvey(props: DetailSurveyProps) {
+  const { surveyData: survey } = props;
   const params = useParams();
   const { t } = useTranslation();
+  const { search } = useLocation();
 
-  const { data } = mockSurveyList;
-  const project = data.find(elm => elm.project?.displayId === params.id);
-  const survey = data.find(elm => elm.displayId === params.detailId);
+  const title = useMemo(() => getProjectTitle(search), [search]);
 
   const routes = useMemo(
     () => [
       {
-        name: project?.name,
+        name: title,
         href:
           params &&
           params.id &&
-          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(':id', params.id),
+          createProjectLink(projectRoutePath.SURVEY, params.id, title),
       },
       {
-        name: survey?.project?.name,
+        name: survey?.data.name,
         href:
           params &&
           params.id &&
           params.detailId &&
-          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT.replace(
-            ':id',
+          createProjectDetailLink(
+            projectRoutePath.DETAIL_SURVEY.ROOT,
             params.id,
-          ).replace(':detailId', params.detailId),
+            params.detailId,
+            title,
+          ),
       },
       {
         name: 'Edit Survey',
         href: '',
       },
     ],
-    [project, params, survey],
+    [params, title, survey],
   );
 
   return (

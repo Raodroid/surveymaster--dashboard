@@ -1,7 +1,12 @@
 import { Form } from 'antd';
-import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import {
+  createProjectDetailLink,
+  createProjectLink,
+  getProjectTitle,
+  projectRoutePath,
+} from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useLocation, useParams } from 'react-router';
 import { DetailSurveyProps } from '..';
@@ -9,17 +14,17 @@ import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
 import QuestionList from './QuestionList';
 import { DetailSurveyHomeWrapper } from './styles';
+import SimpleBar from 'simplebar-react';
 
 function DetailSurveyHome(props: DetailSurveyProps) {
   const { surveyData: survey } = props;
   const params = useParams();
   const { search } = useLocation();
-  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
+  const location = useLocation();
 
-  const title = useMemo(
-    () => search.replace('?projectName=', '').replace(/%20/g, ' '),
-    [search],
-  );
+  console.log(location, params);
+
+  const title = useMemo(() => getProjectTitle(search), [search]);
 
   const routes = useMemo(
     () => [
@@ -28,45 +33,47 @@ function DetailSurveyHome(props: DetailSurveyProps) {
         href:
           params &&
           params.id &&
-          routePath.SURVEY.replace(':id', params.id) + `?projectName=${title}`,
+          createProjectLink(projectRoutePath.SURVEY, params.id, title),
       },
       {
         name: survey?.data.name,
         href: '',
       },
     ],
-    [params, survey, routePath, title],
+    [params, survey, title],
   );
 
   const links = [
     params &&
       params.id &&
       params.detailId &&
-      routePath.DETAIL_SURVEY.EDIT.replace(':id', params.id).replace(
-        ':detailId',
+      createProjectDetailLink(
+        projectRoutePath.DETAIL_SURVEY.EDIT,
+        params.id,
         params.detailId,
+        title,
       ),
     params &&
       params.id &&
       params.detailId &&
-      routePath.DETAIL_SURVEY.HISTORY.replace(':id', params.id).replace(
-        ':detailId',
+      createProjectDetailLink(
+        projectRoutePath.DETAIL_SURVEY.HISTORY,
+        params.id,
         params.detailId,
+        title,
       ),
     params &&
       params.id &&
       params.detailId &&
-      routePath.DETAIL_SURVEY.REMARKS.replace(':id', params.id).replace(
-        ':detailId',
+      createProjectDetailLink(
+        projectRoutePath.DETAIL_SURVEY.REMARKS,
+        params.id,
         params.detailId,
-      ) + `?projectName=${title}`,
+        title,
+      ),
   ];
 
   const initialValue = useMemo(() => {
-    console.log({
-      ...survey?.data,
-      createdAt: survey?.data.createdAt.slice(0, 10),
-    });
     return (
       survey &&
       survey.data && {
@@ -81,7 +88,7 @@ function DetailSurveyHome(props: DetailSurveyProps) {
       <ProjectHeader routes={routes} links={links} />
       <CustomSpinSuspense spinning={!initialValue}>
         {initialValue && (
-          <div className="body">
+          <div className="body height-100">
             <Formik initialValues={initialValue} onSubmit={() => {}}>
               {({
                 values,
@@ -93,9 +100,11 @@ function DetailSurveyHome(props: DetailSurveyProps) {
                 isSubmitting,
                 setFieldValue,
               }) => (
-                <Form layout="vertical">
-                  <Inputs disabled />
-                  <QuestionList survey={survey?.data.surveyQuestions} />
+                <Form layout="vertical" className="height-100">
+                  <SimpleBar style={{ height: '100%' }}>
+                    <Inputs disabled />
+                    <QuestionList survey={survey?.data.surveyQuestions} />
+                  </SimpleBar>
                 </Form>
               )}
             </Formik>

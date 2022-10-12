@@ -27,6 +27,7 @@ function DeleteProject(props: IDeleteProject) {
       onSuccess: () => {
         notification.success({ message: t('common.deleteSuccess') });
         queryClient.invalidateQueries('getProjects');
+        queryClient.invalidateQueries('getAllProjects');
         setShowModal(false);
       },
       onError: (error: any) => {
@@ -43,7 +44,7 @@ function DeleteProject(props: IDeleteProject) {
       open={showModal}
       footer={false}
       title="Confirm Delete Project"
-      onCancel={() => setShowModal(false)}
+      onCancel={() => !mutationDeleteProject.isLoading && setShowModal(false)}
       width={MODAL_WIDTH.SMALL}
       centered
       destroyOnClose

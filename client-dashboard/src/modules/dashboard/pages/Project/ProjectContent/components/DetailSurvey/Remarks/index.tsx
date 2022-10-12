@@ -1,8 +1,13 @@
 import { Button, Form, notification } from 'antd';
-import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
 import { UpdateSurvey } from 'interfaces';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import {
+  createProjectDetailLink,
+  createProjectLink,
+  getProjectTitle,
+  projectRoutePath,
+} from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
@@ -37,12 +42,8 @@ function Remarks(props: DetailSurveyProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
 
-  const title = useMemo(
-    () => search.replace('?projectName=', '').replace(/%20/g, ' '),
-    [search],
-  );
+  const title = useMemo(() => getProjectTitle(search), [search]);
 
   const routes = useMemo(
     () => [
@@ -51,7 +52,7 @@ function Remarks(props: DetailSurveyProps) {
         href:
           params &&
           params.id &&
-          routePath.SURVEY.replace(':id', params.id) + `?projectName=${title}`,
+          createProjectLink(projectRoutePath.SURVEY, params.id, title),
       },
       {
         name: survey?.data.name,
@@ -59,17 +60,19 @@ function Remarks(props: DetailSurveyProps) {
           params &&
           params.id &&
           params.detailId &&
-          routePath.DETAIL_SURVEY.ROOT.replace(':id', params.id).replace(
-            ':detailId',
+          createProjectDetailLink(
+            projectRoutePath.DETAIL_SURVEY.ROOT,
+            params.id,
             params.detailId,
-          ) + `?projectName=${title}`,
+            title,
+          ),
       },
       {
         name: 'Remarks',
         href: '',
       },
     ],
-    [params, survey, title, routePath],
+    [params, survey, title],
   );
 
   const mutationUpdateRemarks = useMutation(
@@ -80,10 +83,12 @@ function Remarks(props: DetailSurveyProps) {
         notification.success({ message: t('common.updateSuccess') });
         if (params.id && params.detailId)
           navigate(
-            routePath.DETAIL_SURVEY.ROOT.replace(':id', params.id).replace(
-              ':detailId',
+            createProjectDetailLink(
+              projectRoutePath.DETAIL_SURVEY.ROOT,
+              params.id,
               params.detailId,
-            ) + `?projectName=${title}`,
+              title,
+            ),
           );
       },
       onError,
@@ -114,7 +119,7 @@ function Remarks(props: DetailSurveyProps) {
     <>
       <ProjectHeader routes={routes} />
 
-      <RemarksWrapper>
+      <RemarksWrapper className="height-100 overflow-hidden">
         <CustomSpinSuspense spinning={!initialValues}>
           <Formik
             enableReinitialize={true}
@@ -131,8 +136,12 @@ function Remarks(props: DetailSurveyProps) {
               isSubmitting,
               setFieldValue,
             }) => (
-              <Form layout="vertical" onFinish={handleFinish}>
-                <SimpleBar style={{ height: 'calc(100vh - 229px)' }}>
+              <Form
+                layout="vertical"
+                onFinish={handleFinish}
+                className="height-100"
+              >
+                <SimpleBar style={{ height: 'calc(100% - 76px)' }}>
                   <Inputs remarks />
                   <QuestionRemarks questions={survey?.data.surveyQuestions} />
                 </SimpleBar>

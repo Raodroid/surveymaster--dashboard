@@ -16,7 +16,7 @@ export const Chat = props => {
         stroke="none"
         stroke-width="1"
         fill="none"
-        fill-rule="evenodd"
+        fillRule="evenodd"
       >
         <g id="Assets" transform="translate(-84.000000, -117.000000)">
           <g

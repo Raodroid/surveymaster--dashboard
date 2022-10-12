@@ -1,8 +1,7 @@
-import { ROUTE_PATH } from 'enums';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router';
-import { Route, Routes } from 'react-router';
-import { ProjectService, SurveyService } from 'services';
+import { Route, Routes, useParams } from 'react-router';
+import { SurveyService } from 'services';
+import { projectRoutePath } from '../../../util';
 import EditSurvey from './Edit';
 import ActionHistory from './History';
 import DetailSurveyHome from './Home';
@@ -15,9 +14,8 @@ export interface DetailSurveyProps {
 
 function DetailSurvey() {
   const params = useParams();
-
-  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY;
-  const subRoute = (route: string) => route.replace(routePath.ROOT, '');
+  const subRoute = (route: string) =>
+    route.replace(projectRoutePath.DETAIL_SURVEY.ROOT, '');
 
   const { data: survey } = useQuery(
     ['getSurvey', params.detailId],
@@ -29,10 +27,16 @@ function DetailSurvey() {
     <DetailSurveyWrapper className="flex-column">
       <Routes>
         <Route path="/" element={<DetailSurveyHome surveyData={survey} />} />
-        <Route path={subRoute(routePath.EDIT)} element={<EditSurvey />} />
-        <Route path={subRoute(routePath.HISTORY)} element={<ActionHistory />} />
         <Route
-          path={subRoute(routePath.REMARKS)}
+          path={subRoute(projectRoutePath.DETAIL_SURVEY.EDIT)}
+          element={<EditSurvey surveyData={survey} />}
+        />
+        <Route
+          path={subRoute(projectRoutePath.DETAIL_SURVEY.HISTORY)}
+          element={<ActionHistory surveyData={survey} />}
+        />
+        <Route
+          path={subRoute(projectRoutePath.DETAIL_SURVEY.REMARKS)}
           element={<Remarks surveyData={survey} />}
         />
       </Routes>

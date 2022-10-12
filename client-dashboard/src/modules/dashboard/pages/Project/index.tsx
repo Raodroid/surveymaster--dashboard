@@ -8,10 +8,10 @@ import Survey from './ProjectContent/components/Survey';
 import { ProjectContentWrapper } from './ProjectContent/styles';
 import ProjectSider from './ProjectSider';
 import { ProjectWrapper } from './styles';
+import { projectRoutePath } from './util';
 
 const Project = () => {
-  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
-  const subRoute = (route: string) => route.replace(routePath.ROOT, '');
+  const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');
 
   return (
     <ProjectWrapper>
@@ -29,25 +29,28 @@ const Project = () => {
         >
           <Route path="/" element={<ProjectContent />} />
 
-          <Route path={subRoute(routePath.SURVEY)} element={<Survey />} />
           <Route
-            path={subRoute(routePath.ADD_NEW_SURVEY)}
+            path={subRoute(projectRoutePath.SURVEY)}
+            element={<Survey />}
+          />
+          <Route
+            path={subRoute(projectRoutePath.ADD_NEW_SURVEY)}
             element={<AddSurvey />}
           />
           <Route
-            path={subRoute(routePath.PROJECT.ADD)}
+            path={subRoute(projectRoutePath.PROJECT.ADD)}
             element={<AddProject />}
           />
           <Route
-            path={subRoute(routePath.PROJECT.EDIT)}
+            path={subRoute(projectRoutePath.PROJECT.EDIT)}
             element={<EditProject />}
           />
           <Route
-            path={subRoute(routePath.DETAIL_SURVEY.ROOT + '/*')}
+            path={subRoute(projectRoutePath.DETAIL_SURVEY.ROOT + '/*')}
             element={<DetailSurvey />}
           />
 
-          <Route path="*" element={<Navigate to={routePath.ROOT} />} />
+          <Route path="*" element={<Navigate to={projectRoutePath.ROOT} />} />
         </Route>
       </Routes>
     </ProjectWrapper>
