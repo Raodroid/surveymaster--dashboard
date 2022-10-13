@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import { Form } from 'antd';
-import templateVariable from '../../../../../../app/template-variables.module.scss';
 
 export const DisplayQuestionSurveyListWrapper = styled.div`
   .DisplayQuestionSurveyListWrapper {
@@ -41,15 +39,18 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
 
       .second {
         width: 30%;
+        overflow: hidden;
       }
       .third {
         width: 20%;
+        overflow: hidden;
       }
       .forth {
         width: 20%;
       }
       .fifth {
         width: 30%;
+        overflow: hidden;
       }
       .sixth {
         width: 30px;

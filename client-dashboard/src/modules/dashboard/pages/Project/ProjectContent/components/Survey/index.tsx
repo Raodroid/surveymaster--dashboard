@@ -171,6 +171,7 @@ function Survey() {
                   columns={columns}
                   onRow={onRow}
                   pagination={false}
+                  rowKey={record => record.id as string}
                 />
             <StyledPagination
               onChange={page => {

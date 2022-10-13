@@ -64,6 +64,9 @@ const CustomSelect = (props: CustomSelectProps) => {
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
+    if (props?.onSearch) {
+      props.onSearch(value);
+    }
   };
 
   const handleClear = () => {

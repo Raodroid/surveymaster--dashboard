@@ -20,6 +20,11 @@
     "foods": "Foods"
   },
   "common": {
+    "surveyList": "Survey List",
+    "addNewSurvey": "Add New Survey",
+    "add": "Add",
+    "questions": "Questions",
+    "searchCategory": "Search Category",
     "remarks": "Remarks",
     "questionCategory": "Question Category",
     "addAllQuestionsFromOneCategory": "Add All Questions from One Category",

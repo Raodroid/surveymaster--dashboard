@@ -55,7 +55,7 @@ export interface IPostSurveyBodyDto {
   name: string;
   projectId: string;
   remark?: string;
-  questions: ISurveyQuestionDto[];
+  questions?: ISurveyQuestionDto[];
   surveyId?: string;
 }
 

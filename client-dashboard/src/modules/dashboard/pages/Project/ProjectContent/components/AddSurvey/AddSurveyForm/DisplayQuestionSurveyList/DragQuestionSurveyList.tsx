@@ -1,37 +1,148 @@
 import { ControlledInput } from 'modules/common';
-import React, { FC, useState } from 'react';
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DroppableProps,
-} from 'react-beautiful-dnd';
+import React, { FC, useCallback, useMemo, useState } from 'react';
+import { DragDropContext, Draggable } from 'react-beautiful-dnd';
 
 import { Button } from 'antd';
-import { IQuestionVersionOption, QuestionType } from 'type';
+import {
+  GetListQuestionDto,
+  IOptionItem,
+  IQuestion,
+  IQuestionVersionOption,
+  QuestionType,
+} from 'type';
 import { FieldArrayRenderProps, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DragIcon, TrashOutlined } from 'icons';
 import { INPUT_TYPES } from '../../../../../../../../common/input/type';
+import { onError, transformEnumToOption, useDebounce } from 'utils';
+import { useInfiniteQuery } from 'react-query';
+import { QuestionBankService } from 'services';
+import {
+  IAddSurveyFormValues,
+  initNewQuestionOnAddSurveyForm,
+} from '../AddSurveyForm';
+import {
+  reorder,
+  StrictModeDroppable,
+} from '../../../../../../QuestionBank/EditQuestion/DisplayAnswerList/DragAnswerList';
 
-const reorder = (
-  list: IQuestionVersionOption[],
-  startIndex,
-  endIndex,
-): IQuestionVersionOption[] => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
+const initParams: GetListQuestionDto = {
+  q: '',
+  take: 10,
+  page: 1,
+  hasLatestCompletedVersion: true,
 };
 
 const DragOption: FC<{
   opt: IQuestionVersionOption;
   index: number;
   arrayHelpers: FieldArrayRenderProps;
+
+  data: any;
+  isLoading: boolean;
+  fetchNextPage: any;
+  hasNextPage?: boolean;
+  setSearchTxt: (value: string) => void;
 }> = props => {
-  const { opt, index, arrayHelpers } = props;
+  const {
+    opt,
+    index,
+    arrayHelpers,
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    setSearchTxt,
+  } = props;
+  const { t } = useTranslation();
+  const { setFieldValue, values } = useFormikContext<IAddSurveyFormValues>();
+
+  const [questionOption, normalizeByQuestionId] = useMemo<
+    [IOptionItem[], Record<string, IQuestion>]
+  >(() => {
+    if (!data) return [[], {}];
+
+    const currQuestionVersionId = values.questions[index].questionVersionId;
+
+    const options: IOptionItem[] = [];
+    if (currQuestionVersionId) {
+      options.push({
+        label: values.questions[index].questionTitle,
+        value: currQuestionVersionId,
+      });
+    }
+
+    const normalizeByQuestionId: Record<string, IQuestion> = {};
+
+    return [
+      data.pages.reduce((current, page) => {
+        const nextPageData = page.data.data;
+        nextPageData.forEach((question: IQuestion) => {
+          if (
+            values.questions.some(
+              q => q.questionVersionId === question.latestCompletedVersion.id, //filter out question was currently selected
+            ) ||
+            question.latestCompletedVersion.id === currQuestionVersionId
+          ) {
+            return current;
+          }
+          normalizeByQuestionId[question.latestCompletedVersion.id as string] =
+            question;
+
+          current.push({
+            label: question?.latestCompletedVersion?.title,
+            value: question.latestCompletedVersion.id as string,
+          });
+        });
+        return current;
+      }, options),
+      normalizeByQuestionId,
+    ];
+  }, [data, index, values.questions]);
+
+  const fetch = useCallback(
+    async target => {
+      target.scrollTo(0, target.scrollHeight);
+
+      if (hasNextPage) {
+        await fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage],
+  );
+  const onScroll = useCallback(
+    async event => {
+      let target = event.target;
+      if (
+        !isLoading &&
+        target.scrollTop + target.offsetHeight === target.scrollHeight
+      ) {
+        await fetch(target);
+      }
+    },
+    [fetch, isLoading],
+  );
+
+  const handleOnChange = useCallback(
+    value => {
+      const chooseQuestion = normalizeByQuestionId[value];
+      if (chooseQuestion) {
+        setFieldValue(
+          `questions[${index}].category`,
+          chooseQuestion.masterCategory?.name,
+        );
+        setFieldValue(
+          `questions[${index}].type`,
+          chooseQuestion.latestCompletedVersion.type,
+        );
+        setFieldValue(
+          `questions[${index}].questionTitle`,
+          chooseQuestion.latestCompletedVersion.title,
+        );
+      }
+    },
+    [index, normalizeByQuestionId, setFieldValue],
+  );
   return (
     <Draggable draggableId={`item${opt.id}`} index={index} key={opt.id}>
       {provided => (
@@ -49,20 +160,37 @@ const DragOption: FC<{
           </div>
           <div className={'DisplayQuestionSurveyListWrapper__row__item second'}>
             <ControlledInput
-              inputType={INPUT_TYPES.INPUT}
-              name={`questions[${index}].title`}
+              allowClear
+              inputType={INPUT_TYPES.SELECT}
+              name={`questions[${index}].questionVersionId`}
+              onPopupScroll={onScroll}
+              onChange={handleOnChange}
+              onSearch={value => {
+                setSearchTxt(value);
+              }}
+              filterOption={false}
+              showSearch
+              options={questionOption}
+              isFastField={false}
             />
           </div>
           <div className={'DisplayQuestionSurveyListWrapper__row__item third'}>
             <ControlledInput
+              disabled
+              suffixIcon={null}
               inputType={INPUT_TYPES.INPUT}
-              name={`questions[${index}].categoryName`}
+              name={`questions[${index}].category`}
             />
           </div>
           <div className={'DisplayQuestionSurveyListWrapper__row__item forth'}>
             <ControlledInput
-              inputType={INPUT_TYPES.INPUT}
+              disabled
+              suffixIcon={null}
+              inputType={INPUT_TYPES.SELECT}
               name={`questions[${index}].type`}
+              options={transformEnumToOption(QuestionType, questionType =>
+                t(`questionType.${questionType}`),
+              )}
             />
           </div>
           <div className={'DisplayQuestionSurveyListWrapper__row__item fifth'}>
@@ -78,12 +206,8 @@ const DragOption: FC<{
                 arrayHelpers.remove(index);
                 if (arrayHelpers.form?.[arrayHelpers.name]?.length === 0) {
                   arrayHelpers.push({
-                    title: '',
-                    questionVersionId: '',
-                    remark: '',
-                    id: Math.random(),
-                    type: QuestionType.TEXT_ENTRY,
-                    categoryName: '',
+                    ...initNewQuestionOnAddSurveyForm,
+                    id: Math.random().toString(),
                   });
                 }
               }}
@@ -106,6 +230,35 @@ const OptionList = React.memo(function QuoteListA(props: {
 }) {
   const { items, arrayHelpers } = props;
   const { t } = useTranslation();
+
+  const [searchTxt, setSearchTxt] = useState<string>('');
+
+  const debounceSearchText = useDebounce(searchTxt);
+
+  const currentParam = useMemo<GetListQuestionDto>(
+    () => ({
+      ...initParams,
+      q: debounceSearchText,
+    }),
+    [debounceSearchText],
+  );
+
+  const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    ['getQuestionList', currentParam],
+    ({ pageParam = currentParam }) => {
+      return QuestionBankService.getQuestions({
+        ...pageParam,
+      });
+    },
+    {
+      getNextPageParam: (lastPage, pages) => {
+        return lastPage.data.hasNextPage
+          ? { ...currentParam, page: lastPage.data.page + 1 }
+          : false;
+      },
+      onError,
+    },
+  );
   return (
     <>
       <div className={'DisplayQuestionSurveyListWrapper__row'}>
@@ -133,31 +286,17 @@ const OptionList = React.memo(function QuoteListA(props: {
             index={index}
             key={option.id || option.sort}
             arrayHelpers={arrayHelpers}
+            data={data}
+            isLoading={isLoading}
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            setSearchTxt={setSearchTxt}
           />
         );
       })}
     </>
   );
 });
-
-export const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
-  const [enabled, setEnabled] = useState(false);
-
-  React.useEffect(() => {
-    const animation = requestAnimationFrame(() => setEnabled(true));
-
-    return () => {
-      cancelAnimationFrame(animation);
-      setEnabled(false);
-    };
-  }, []);
-
-  if (!enabled) {
-    return null;
-  }
-
-  return <Droppable {...props}>{children}</Droppable>;
-};
 
 const DragQuestionSurveyList: FC<{
   questions: IQuestionVersionOption[];
@@ -183,7 +322,7 @@ const DragQuestionSurveyList: FC<{
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <StrictModeDroppable droppableId="list">
+      <StrictModeDroppable droppableId="DragQuestionSurveyList-list">
         {provided => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
             <OptionList items={questions} arrayHelpers={arrayHelpers} />

@@ -353,7 +353,7 @@ export interface IGetParams {
   q?: string;
   take?: number;
   page?: number;
-  ids?: number;
+  ids?: number[] | string[];
   createdFrom?: string;
   createdTo?: string;
   isDeleted?: boolean;
@@ -364,4 +364,5 @@ export type GetListQuestionDto = IGetParams & {
   categoryIds?: string[];
   subCategoryIds?: string[];
   types?: QuestionType[];
+  hasLatestCompletedVersion?: boolean;
 };

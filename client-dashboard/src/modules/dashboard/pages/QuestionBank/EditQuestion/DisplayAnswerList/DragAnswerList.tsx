@@ -13,17 +13,13 @@ import { IQuestionVersionOption } from 'type';
 import { FieldArrayRenderProps, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 
-const reorder = (
-  list: IQuestionVersionOption[],
-  startIndex,
-  endIndex,
-): IQuestionVersionOption[] => {
+export function reorder<T>(list: T[], startIndex, endIndex): T[] {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
 
   return result;
-};
+}
 
 const DragOption: FC<{
   opt: IQuestionVersionOption;
@@ -148,7 +144,7 @@ const DragAnswerList: FC<{
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <StrictModeDroppable droppableId="list">
+      <StrictModeDroppable droppableId="DragDropContext_list">
         {provided => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
             <OptionList items={options} arrayHelpers={arrayHelpers} />

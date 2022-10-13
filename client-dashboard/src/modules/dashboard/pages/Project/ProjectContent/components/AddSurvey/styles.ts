@@ -13,47 +13,6 @@ export const AddSurveyWrapper = styled.div`
   }
 `;
 
-export const AddSurveyContentWrapper = styled.div`
-  border-bottom: 1px solid #f3eef3;
-  padding-bottom: 4px;
-
-  display: grid;
-  grid-template-columns: 2fr 1px 1fr;
-  column-gap: 40px;
-  grid-template-areas:
-    'mainInfo       divider params'
-    'custom-select  divider id'
-    'surveyTitle    divider none'
-    'remarks        divider none';
-
-  .mainInfo {
-    grid-area: mainInfo;
-  }
-  .params {
-    grid-area: params;
-  }
-  .divider {
-    grid-area: divider;
-    height: calc(100% - 24px);
-    width: 1px;
-    margin: auto;
-    margin-top: 0;
-  }
-  .surveyTitle {
-    grid-area: surveyTitle;
-  }
-  .id {
-    grid-area: id;
-  }
-  .remarks {
-    grid-area: remarks;
-  }
-
-  label {
-    padding-left: 4px;
-  }
-`;
-
 export const SurveyCustomSelectWrapper = styled.div`
   position: relative;
   margin-bottom: 20px;

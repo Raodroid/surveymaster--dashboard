@@ -1,12 +1,10 @@
 import React from 'react';
 import { QuestionListWrapper } from './styles';
 import { useTranslation } from 'react-i18next';
-import { useFormikContext } from 'formik';
 import DisplayQuestionSurveyList from './AddSurveyForm/DisplayQuestionSurveyList';
 
 function QuestionSurveyList() {
   const { t } = useTranslation();
-  const { values } = useFormikContext();
 
   return (
     <QuestionListWrapper className={'QuestionListWrapper'}>

@@ -20,5 +20,5 @@ const transform = stringInput => {
   console.log(`t("common.${key}")`);
 };
 
-const input = 'Remarks';
+const input = 'Search Category';
 transform(input);
