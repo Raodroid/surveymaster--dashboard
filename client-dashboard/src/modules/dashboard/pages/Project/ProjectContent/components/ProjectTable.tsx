@@ -7,13 +7,14 @@ import { CustomSpinSuspense } from 'modules/common/styles';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
+import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import { onError, useDebounce } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
-import { createProjectLink, projectRoutePath } from '../../util';
+import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper, StyledProjectMenu } from '../styles';
 
@@ -36,34 +37,28 @@ const getProjects = (params: GetListQuestionDto) => {
   return ProjectService.getProjects(newParams);
 };
 
-function ProjectTable(props: {
-  filterValue?: string;
-  queryParams?: IGetParams;
-}) {
-  const { filterValue, queryParams } = props;
+function ProjectTable() {
   const wrapperRef = useRef<any>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const qsParams = useParseQueryString<IGetParams>();
 
-  const [searchTxt, setSearchTxt] = useState<string>('');
-  const queryString = useParseQueryString<GetListQuestionDto>();
   const [params, setParams] = useState<GetListQuestionDto>(initParams);
-  const debounceSearchText = useDebounce(searchTxt);
 
   const [projectId, setProjectId] = useState('');
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [showRestoreProject, setShowRestoreProject] = useState(false);
 
   const getProjectListQuery = useQuery(
-    ['getProjects', params, debounceSearchText, queryParams, filterValue],
+    ['getProjects', params, qsParams],
     () =>
       getProjects({
         ...params,
-        ...queryParams,
-        q: filterValue,
+        ...qsParams,
       }),
     {
       onError,
+      refetchOnWindowFocus: false,
     },
   );
 
@@ -132,15 +127,13 @@ function ProjectTable(props: {
               setProjectId(record.id);
             }}
           >
-            {!queryParams?.isDeleted && (
+            {!qsParams?.isDeleted && (
               <Button
                 onClick={() =>
                   navigate(
-                    createProjectLink(
-                      projectRoutePath.PROJECT.EDIT,
-                      record?.id,
-                      record?.name,
-                    ),
+                    generatePath(projectRoutePath.PROJECT.EDIT, {
+                      projectId: record?.id,
+                    }),
                   )
                 }
               >
@@ -150,12 +143,12 @@ function ProjectTable(props: {
             <ThreeDotsDropdown
               overlay={
                 <StyledProjectMenu>
-                  {!queryParams?.isDeleted && (
+                  {!qsParams?.isDeleted && (
                     <Menu.Item onClick={() => setShowDeleteProject(true)}>
                       <TrashOutlined /> {t('common.deleteProject')}
                     </Menu.Item>
                   )}
-                  {queryParams?.isDeleted && (
+                  {qsParams?.isDeleted && (
                     <Menu.Item onClick={() => setShowRestoreProject(true)}>
                       <Refresh /> {t('common.restoreProject')}
                     </Menu.Item>
@@ -168,15 +161,15 @@ function ProjectTable(props: {
         ),
       },
     ],
-    [navigate, queryParams, t],
+    [navigate, qsParams, t],
   );
 
   const onRow = (record: any) => {
     return {
       onClick: () =>
-        !queryParams?.isDeleted &&
+        !qsParams?.isDeleted &&
         navigate(
-          createProjectLink(projectRoutePath.SURVEY, record.id, record.name),
+          generatePath(projectRoutePath.SURVEY, { projectId: record.id }),
         ),
     };
   };

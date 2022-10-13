@@ -1,26 +1,26 @@
 import { Menu, notification, Pagination, Table } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
-import { ROUTE_PATH } from 'enums';
 import { PenFilled, TrashOutlined } from 'icons';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import {
+  generatePath,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router';
 import { SurveyService } from '../../../../../../../services';
 import { IGetParams, ISurvey } from '../../../../../../../type';
 import { onError, useDebounce } from '../../../../../../../utils';
-import {
-  createProjectDetailLink,
-  getProjectTitle,
-  projectRoutePath,
-} from '../../../util';
+import { getProjectTitle, projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import { SurveyWrapper, TableWrapper } from './style';
 
 function Survey() {
-  const params = useParams<{ id?: string }>();
+  const params = useParams<{ projectId?: string }>();
   const { search } = useLocation();
   const navigate = useNavigate();
 
@@ -44,12 +44,12 @@ function Survey() {
       page: page,
       take: 10,
       isDeleted: filterParams.isDeleted,
-      projectId: params.id,
+      id: params?.projectId,
     };
   }, [filter, page, params, filterParams]);
 
   const { data: survey, isLoading } = useQuery(
-    ['survey', params.id, filterParams, filter, queryParams],
+    ['survey', params?.projectId, filterParams, filter, queryParams],
     () =>
       filterParams.createdFrom || filterParams.createdTo
         ? SurveyService.getSurveys({
@@ -67,7 +67,7 @@ function Survey() {
     () => [
       {
         name: title,
-        href: '',
+        href: projectRoutePath.SURVEY,
       },
     ],
     [title],
@@ -120,29 +120,18 @@ function Survey() {
   const onRow = record => {
     return {
       onClick: () =>
-        params &&
-        params.id &&
         navigate(
-          createProjectDetailLink(
-            projectRoutePath.DETAIL_SURVEY.ROOT,
-            params.id,
-            record.id,
-            title,
-          ),
+          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+            projectId: params?.projectId,
+            surveyId: record.id,
+          }),
         ),
     };
   };
 
   return (
     <SurveyWrapper className="flex-column">
-      <ProjectHeader
-        routes={routes}
-        search={headerSearch}
-        setSearch={setHeaderSearch}
-        setFilter={setFilter}
-        debounce={debounce}
-        setParams={setFilterParams}
-      />
+      <ProjectHeader routes={routes} />
 
       <TableWrapper className="flex-column">
         <CustomSpinSuspense spinning={isLoading}>
@@ -174,7 +163,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const params = useParams<{ id?: string }>();
+  const params = useParams<{ projectId?: string }>();
 
   const duplicateMutation = useMutation(
     (data: { id: string }) => {
@@ -220,19 +209,18 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           return;
         }
         case ACTION_ENUM.EDIT: {
-          if (!params.id) return;
+          if (!params?.projectId) return;
           navigate(
-            createProjectDetailLink(
-              projectRoutePath.DETAIL_SURVEY.EDIT,
-              params.id,
-              record.displayId,
-            ),
+            generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
+              projectId: params?.projectId,
+              surveyId: record.displayId,
+            }),
           );
           return;
         }
       }
     },
-    [duplicateMutation, navigate, params.id],
+    [duplicateMutation, navigate, params],
   );
 
   const menu = (

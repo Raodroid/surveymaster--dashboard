@@ -21,11 +21,11 @@ function Title(props: TitleProps) {
   const params = useParams();
 
   const isActive = useMemo(() => {
-    return params && params.id && params.id === userId;
+    return params?.projectId === userId;
   }, [userId, params]);
 
   const handleTitleClick = () => {
-    if (userId === params.id) {
+    if (userId === params?.projectId) {
       navigate(projectRoutePath.ROOT);
     } else {
       navigate(route_path);

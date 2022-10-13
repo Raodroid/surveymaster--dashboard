@@ -2,13 +2,9 @@ import { PlusIcon } from 'icons';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { generatePath, useNavigate } from 'react-router';
 import { useMatch } from 'react-router-dom';
-import {
-  createProjectLink,
-  projectRoutePath,
-  useGetAllProjects,
-} from '../util';
+import { projectRoutePath, useGetAllProjects } from '../util';
 import { AddNewProjectBtn, ProjectSiderWrapper } from './style';
 import Title from './Title';
 
@@ -31,11 +27,9 @@ const ProjectSider = () => {
             <Title
               key={e.id}
               title={e.name}
-              routePath={createProjectLink(
-                projectRoutePath.SURVEY,
-                e.id,
-                e.name,
-              )}
+              routePath={generatePath(projectRoutePath.SURVEY, {
+                projectId: e.id,
+              })}
               id={e.id}
             />
           ))}

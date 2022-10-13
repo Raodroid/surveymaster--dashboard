@@ -1,10 +1,14 @@
 import { Button, Divider, Dropdown, Form } from 'antd';
 import { Formik } from 'formik';
+import useParseQueryString from 'hooks/useParseQueryString';
 import { ArrowDown, FilterOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useState } from 'react';
+import { useLocation } from 'react-router';
+import { useNavigate } from 'react-router';
+import { IGetParams } from 'type';
 import {
   ProjectFilterBtn,
   ProjectFilterOverlayWrapper,
@@ -12,26 +16,17 @@ import {
 } from './styles';
 
 export interface IFilter {
-  setParams?: (payload: any) => void;
   counter?: number;
   setCounter?: (payload: number) => void;
 }
 
 function ProjectFilter(props: IFilter) {
-  const { setParams } = props;
-
   const [counter, setCounter] = useState(0);
 
   return (
     <ProjectFilterWrapper>
       <Dropdown
-        overlay={
-          <FilterOverlay
-            setParams={setParams}
-            counter={counter}
-            setCounter={setCounter}
-          />
-        }
+        overlay={<FilterOverlay counter={counter} setCounter={setCounter} />}
         trigger={['click']}
       >
         <ProjectFilterBtn type="primary" className="flex-j-end">
@@ -57,7 +52,10 @@ const initialValues = {
 };
 
 function FilterOverlay(props: IFilter) {
-  const { setParams, counter, setCounter } = props;
+  const { counter, setCounter } = props;
+  const qsParams = useParseQueryString<{ q: string | undefined }>();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const handleReset = (
     values,
@@ -74,16 +72,34 @@ function FilterOverlay(props: IFilter) {
   const handleSubmit = (payload: any) => {
     const list = Object.values(payload).filter(elm => elm === true);
     if (setCounter) setCounter(list.length);
-    if (setParams)
-      setParams({
-        isDeleted: payload.isDeleted,
-        createdFrom: payload.dateCreation
-          ? payload?.createdFrom?.startOf('day')?._d
-          : null,
-        createdTo: payload.dateCreation
-          ? payload?.createdTo?.endOf('day')?._d
-          : null,
-      });
+
+    const payloadParams = {
+      q: qsParams?.q ? qsParams.q : '',
+      isDeleted: payload.isDeleted,
+      createdFrom: payload.dateCreation
+        ? payload?.createdFrom?.startOf('day')?._d
+        : '',
+      createdTo: payload.dateCreation
+        ? payload?.createdTo?.endOf('day')?._d
+        : '',
+    };
+
+    console.log(payload);
+
+    if (!payload.createdFrom) delete payloadParams.createdFrom;
+    if (!payload.createdTo) delete payloadParams.createdTo;
+
+    const keys = Object.keys(payloadParams);
+    let result = '';
+    keys.map(
+      (key: string, index: number) =>
+        (result =
+          result +
+          `${key}=${payloadParams[key]}${
+            index !== keys.length - 1 ? '&' : ''
+          }`),
+    );
+    navigate(pathname + '?' + result);
   };
 
   return (
@@ -93,16 +109,7 @@ function FilterOverlay(props: IFilter) {
         initialValues={initialValues}
         onSubmit={handleSubmit}
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          handleSubmit: handleFinish,
-          isSubmitting,
-          setFieldValue,
-        }) => {
+        {({ values, handleSubmit: handleFinish, setFieldValue }) => {
           return (
             <Form layout="vertical" onFinish={handleFinish}>
               <div className="header flex-j-between">
@@ -135,14 +142,12 @@ function FilterOverlay(props: IFilter) {
                       name="createdFrom"
                       inputType={INPUT_TYPES.DAY_PICKER}
                       suffixIcon={<ArrowDown />}
-                      // disabled={!values.dateCreation}
                     />
                     -
                     <ControlledInput
                       name="createdTo"
                       inputType={INPUT_TYPES.DAY_PICKER}
                       suffixIcon={<ArrowDown />}
-                      // disabled={!values.dateCreation}
                     />
                   </div>
                 </div>

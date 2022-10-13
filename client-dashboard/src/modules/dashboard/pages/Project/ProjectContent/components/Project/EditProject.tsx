@@ -5,50 +5,39 @@ import { CustomSpinSuspense } from 'modules/common/styles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
 import { onError } from 'utils/funcs';
-import {
-  createProjectLink,
-  getProjectTitle,
-  projectRoutePath,
-} from '../../../util';
+import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import Inputs from './Inputs';
 import { AddProjectWrapper, EditProjectWrapper } from './styles';
 
 function EditProject() {
   const params = useParams();
-  const { search } = useLocation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const { data: project, isLoading } = useQuery(['getProject', params.id], () =>
-    ProjectService.getProjectById(params.id),
+  const { data: project, isLoading } = useQuery(
+    ['getProject', params?.projectId],
+    () => ProjectService.getProjectById(params?.projectId),
   );
-
-  const title = useMemo(() => getProjectTitle(search), [search]);
 
   const routes = useMemo(
     () => [
       {
-        name: title,
-        href:
-          params &&
-          params.id &&
-          createProjectLink(
-            projectRoutePath.SURVEY,
-            params.id,
-            project?.data.name,
-          ),
+        name: project?.data?.name,
+        href: generatePath(projectRoutePath.SURVEY, {
+          projectId: params?.projectId,
+        }),
       },
       {
         name: 'Edit Project',
-        href: '',
+        href: projectRoutePath.PROJECT.EDIT,
       },
     ],
-    [params, project, title],
+    [params, project],
   );
 
   const mutationEditProject = useMutation(ProjectService.updateProject, {

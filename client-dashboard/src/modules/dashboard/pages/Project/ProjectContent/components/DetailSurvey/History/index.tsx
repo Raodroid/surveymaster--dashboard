@@ -1,15 +1,10 @@
-import { ROUTE_PATH } from 'enums';
 import {
-  createProjectDetailLink,
-  createProjectLink,
   getProjectTitle,
   projectRoutePath,
 } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
-import { useParams } from 'react-router';
-import { mockSurveyList } from 'type';
+import { generatePath, useLocation, useParams } from 'react-router';
 import { DetailSurveyProps } from '..';
 import ProjectHeader from '../../Header';
 
@@ -24,24 +19,15 @@ function ActionHistory(props: DetailSurveyProps) {
   const routes = useMemo(
     () => [
       {
-        name: title,
-        href:
-          params &&
-          params.id &&
-          createProjectLink(projectRoutePath.SURVEY, params.id, title),
+        name: survey?.data?.name,
+        href: (projectRoutePath.SURVEY, { projectId: params?.id }),
       },
       {
         name: survey?.data?.name,
-        href:
-          params &&
-          params.id &&
-          params.detailId &&
-          createProjectDetailLink(
-            projectRoutePath.DETAIL_SURVEY.ROOT,
-            params.id,
-            params.detailId,
-            title,
-          ),
+        href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+          projectId: params.projectId,
+          sureveyId: params.detailId,
+        }),
       },
       {
         name: 'Action History',

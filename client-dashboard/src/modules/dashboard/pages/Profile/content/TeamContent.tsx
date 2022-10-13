@@ -174,7 +174,7 @@ function TeamContent() {
         dataIndex: 'authentication',
         render: (_, record: any) => {
           const list = Object.values(allRoles).filter(elm =>
-            record.authentication.some(el => el.roleId === elm.id),
+            record.userRoles.some(el => el.roleId === elm.id),
           );
 
           return (
@@ -265,7 +265,7 @@ function TeamContent() {
           lastName: user.lastName,
           name: user.firstName + ' ' + user.lastName,
           email: user.email,
-          authentication: user.userRoles,
+          userRoles: user.userRoles,
           deletedAt: user.deletedAt,
         };
       })

@@ -1,26 +1,26 @@
 import { Button, Divider, Form, Input, InputRef } from 'antd';
-import { ROUTE_PATH } from 'enums';
+import useParseQueryString from 'hooks/useParseQueryString';
 import { Chat, Clock, PenFilled } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import StyledBreadcrumb from 'modules/common/commonComponent/StyledBreadcrumb';
-import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { IGetParams } from 'type';
+import { useDebounce } from 'utils';
 import { projectRoutePath } from '../../../util';
 import ProjectFilter from './ProjectFilter';
 import { HeaderStyled } from './styles';
 
-function ProjectHeader(props: {
-  routes?: any;
-  search?: string;
-  debounce?: string;
-  setSearch?: (text: string) => void;
-  setFilter?: (text: string) => void;
-  links?: string[] | any;
-  setParams?: (payload: any) => void;
-}) {
-  const { routes, search, debounce, setSearch, setFilter, links, setParams } =
-    props;
+function ProjectHeader(props: { routes?: any; links?: string[] | any }) {
+  const { routes, links } = props;
   const searchRef = useRef<InputRef>(null);
+
+  const [inputSearch, setInputSearch] = useState<string>('');
+  const debounce = useDebounce(inputSearch);
+
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const qsParams = useParseQueryString<IGetParams>();
 
   const base = [
     {
@@ -31,34 +31,53 @@ function ProjectHeader(props: {
 
   if (routes) base.push(...routes);
 
-  useEffect(() => {
-    if (!debounce && setFilter) {
-      setFilter('');
-    }
-  }, [debounce, setFilter]);
+  const handleSearch = useCallback(() => {
+    const payloadParams = {
+      ...qsParams,
+      q: inputSearch,
+    };
 
-  const handleSubmitBtnClick = () => {
-    if (search && setFilter && search.trim()) {
-      setFilter(search);
+    const keys = Object.keys(payloadParams);
+    let result = '';
+    keys.map(
+      (key: string, index: number) =>
+        (result =
+          result +
+          `${key}=${payloadParams[key]}${
+            index !== keys.length - 1 ? '&' : ''
+          }`),
+    );
+    navigate(pathname + '?' + result);
+  }, [navigate, pathname, qsParams, inputSearch]);
+
+  const handleSubmitBtnClick = useCallback(() => {
+    if (inputSearch.trim()) {
+      handleSearch();
     } else {
       searchRef.current?.focus();
     }
-  };
+  }, [inputSearch, searchRef, handleSearch]);
+
+  // useEffect(() => {
+  //   if (!debounce) {
+  //     setSearchParams({ ...searchParams, q: '' });
+  //     handleSearch();
+  //   }
+  // }, [debounce, searchParams, handleSearch]);
 
   return (
     <HeaderStyled className="flex-center-start">
       <StyledBreadcrumb routes={base} />
 
-      {setSearch && setFilter && (
+      {
         <>
-          <Form
-            className="flex search-form"
-            onFinish={() => search && setFilter(search)}
-          >
+          <Form className="flex search-form" onFinish={handleSearch}>
             <Input
               ref={searchRef}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
+              value={inputSearch}
+              onChange={e => {
+                setInputSearch(e.target.value);
+              }}
             />
             <Button htmlType="submit" onClick={handleSubmitBtnClick}>
               <SearchIcon />
@@ -67,9 +86,9 @@ function ProjectHeader(props: {
 
           <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
 
-          <ProjectFilter setParams={setParams} />
+          <ProjectFilter />
         </>
-      )}
+      }
 
       {links && (
         <div className="wrapper flex-center">

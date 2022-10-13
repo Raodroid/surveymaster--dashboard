@@ -3,15 +3,18 @@ import { Formik } from 'formik';
 import { UpdateSurvey } from 'interfaces';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import {
-  createProjectDetailLink,
-  createProjectLink,
   getProjectTitle,
   projectRoutePath,
 } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import {
+  generatePath,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
 import { onError } from 'utils';
@@ -20,7 +23,6 @@ import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
 import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
-
 export interface IQuestions {
   questionVersionId: string;
   remark: string;
@@ -49,27 +51,18 @@ function Remarks(props: DetailSurveyProps) {
     () => [
       {
         name: title,
-        href:
-          params &&
-          params.id &&
-          createProjectLink(projectRoutePath.SURVEY, params.id, title),
+        href: generatePath(projectRoutePath.SURVEY, { projectId: params?.id }),
       },
       {
         name: survey?.data.name,
-        href:
-          params &&
-          params.id &&
-          params.detailId &&
-          createProjectDetailLink(
-            projectRoutePath.DETAIL_SURVEY.ROOT,
-            params.id,
-            params.detailId,
-            title,
-          ),
+        href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+          projectId: params?.projectId,
+          surveyId: params?.surveyId,
+        }),
       },
       {
         name: 'Remarks',
-        href: '',
+        href: projectRoutePath.ROOT,
       },
     ],
     [params, survey, title],
@@ -81,15 +74,12 @@ function Remarks(props: DetailSurveyProps) {
       onSuccess: () => {
         queryClient.invalidateQueries('getSurvey');
         notification.success({ message: t('common.updateSuccess') });
-        if (params.id && params.detailId)
-          navigate(
-            createProjectDetailLink(
-              projectRoutePath.DETAIL_SURVEY.ROOT,
-              params.id,
-              params.detailId,
-              title,
-            ),
-          );
+        navigate(
+          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+            projectId: params?.projectId,
+            surveyId: params?.surveyId,
+          }),
+        );
       },
       onError,
     },
@@ -126,16 +116,7 @@ function Remarks(props: DetailSurveyProps) {
             initialValues={initialValues}
             onSubmit={handleSubmit}
           >
-            {({
-              values,
-              errors,
-              touched,
-              handleChange,
-              handleBlur,
-              handleSubmit: handleFinish,
-              isSubmitting,
-              setFieldValue,
-            }) => (
+            {({ handleSubmit: handleFinish }) => (
               <Form
                 layout="vertical"
                 onFinish={handleFinish}

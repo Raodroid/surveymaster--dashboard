@@ -6,26 +6,10 @@ import ProjectTable from './components/ProjectTable';
 import { ProjectHomeWrapper } from './styles';
 
 const ProjectContent = () => {
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('');
-  const debounce = useDebounce(search);
-
-  const [params, setParams] = useState<IGetParams>({
-    isDeleted: false,
-    createdFrom: '',
-    createdTo: '',
-  });
-
   return (
     <ProjectHomeWrapper className="flex-column">
-      <ProjectHeader
-        search={search}
-        setSearch={setSearch}
-        setFilter={setFilter}
-        debounce={debounce}
-        setParams={setParams}
-      />
-      <ProjectTable filterValue={filter} queryParams={params} />
+      <ProjectHeader />
+      <ProjectTable />
     </ProjectHomeWrapper>
   );
 };

@@ -1,23 +1,15 @@
 import { Button, Divider, Form } from 'antd';
-import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
-import { useParams } from 'react-router';
-import { mockSurveyList } from '../../../../../../../type';
+import { generatePath, useLocation, useParams } from 'react-router';
+import { getProjectTitle, projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import QuestionList from './QuestionList';
 import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
 import SurveyCustomSelect from './SurveyCustomSelect';
-import { useMemo } from 'react';
-import {
-  createProjectLink,
-  getProjectTitle,
-  projectRoutePath,
-} from '../../../util';
 
 const selectValues = {
   newSurvey: 'newSurvey',
@@ -37,14 +29,11 @@ function AddSurvey() {
     () => [
       {
         name: title,
-        href:
-          params &&
-          params.id &&
-          createProjectLink(projectRoutePath.SURVEY, params.id, title),
+        href: generatePath(projectRoutePath.SURVEY, { projectId: params?.id }),
       },
       {
         name: 'Add New Survey',
-        href: '',
+        href: projectRoutePath.ADD_NEW_SURVEY,
       },
     ],
     [title, params],

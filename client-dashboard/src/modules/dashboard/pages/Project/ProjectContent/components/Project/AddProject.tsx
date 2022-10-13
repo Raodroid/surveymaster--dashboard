@@ -30,7 +30,7 @@ function AddProject() {
     () => [
       {
         name: 'Add New Project',
-        href: '',
+        href: projectRoutePath.PROJECT.ADD,
       },
     ],
     [],
