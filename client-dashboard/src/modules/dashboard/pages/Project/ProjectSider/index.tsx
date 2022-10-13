@@ -1,13 +1,16 @@
-import React, { useRef } from 'react';
+import { PlusIcon } from 'icons';
+import { CustomSpinSuspense } from 'modules/common/styles';
+import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { useMatch } from 'react-router-dom';
+import {
+  createProjectLink,
+  projectRoutePath,
+  useGetAllProjects,
+} from '../util';
 import { AddNewProjectBtn, ProjectSiderWrapper } from './style';
 import Title from './Title';
-import { ROUTE_PATH } from 'enums';
-import { PlusIcon } from 'icons';
-import { useGetAllProjects } from '../util';
-import HannahCustomSpin from '../../../components/HannahCustomSpin';
-import { useTranslation } from 'react-i18next';
-import { useMatch } from 'react-router-dom';
 
 const ProjectSider = () => {
   const wrapperRef = useRef<any>();
@@ -17,28 +20,30 @@ const ProjectSider = () => {
   const { projects, isLoading } = useGetAllProjects();
 
   const isActive = useMatch({
-    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD,
+    path: projectRoutePath.PROJECT.ADD,
   });
 
   return (
     <ProjectSiderWrapper ref={wrapperRef}>
-      <div className="list">
-        <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
-        {projects.map(e => (
-          <Title
-            key={e.displayId}
-            title={e.name}
-            routePath={
-              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT + '/' + e.displayId
-            }
-          />
-        ))}
+      <div className="list flex-column">
+        <CustomSpinSuspense spinning={isLoading}>
+          {projects.map(e => (
+            <Title
+              key={e.id}
+              title={e.name}
+              routePath={createProjectLink(
+                projectRoutePath.SURVEY,
+                e.id,
+                e.name,
+              )}
+              id={e.id}
+            />
+          ))}
+        </CustomSpinSuspense>
       </div>
       <div className="add-new-project-btn-wrapper">
         <AddNewProjectBtn
-          onClick={() =>
-            navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD)
-          }
+          onClick={() => navigate(projectRoutePath.PROJECT.ADD)}
           type="default"
           className="new-project-btn"
           isAddNewProjectPage={!!isActive}

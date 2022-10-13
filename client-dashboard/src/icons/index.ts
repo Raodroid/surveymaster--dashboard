@@ -18,3 +18,5 @@ export * from './RollbackOutlined';
 export * from './ArrowDown';
 export * from './TrashOutlined';
 export * from './DragIcon';
+export * from './Chat';
+export * from './Clock';

@@ -1,59 +1,58 @@
 import { ROUTE_PATH } from 'enums';
-import { useQuery } from 'react-query';
-import { Navigate, Route, Routes } from 'react-router';
-import APIService from 'services/survey-master-service/base.service';
+import { Navigate, Outlet, Route, Routes } from 'react-router';
 import ProjectContent from './ProjectContent';
-import AddSurvey from './ProjectContent/component/AddSurvey';
-import DetailSurvey from './ProjectContent/component/DetailSurvey';
-import { AddProject, EditProject } from './ProjectContent/component/Project';
-import Survey from './ProjectContent/component/Survey';
-import { ProjectContentWrapper } from './ProjectContent/style';
+import AddSurvey from './ProjectContent/components/AddSurvey';
+import DetailSurvey from './ProjectContent/components/DetailSurvey';
+import { AddProject, EditProject } from './ProjectContent/components/Project';
+import Survey from './ProjectContent/components/Survey';
+import { ProjectContentWrapper } from './ProjectContent/styles';
 import ProjectSider from './ProjectSider';
-import { ProjectWrapper } from './style';
+import { ProjectWrapper } from './styles';
+import { projectRoutePath } from './util';
 
 const Project = () => {
-  const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;
-  const subRoute = (route: string) => route.replace(routePath.ROOT, '');
-
-  const { data } = useQuery('data', () =>
-    APIService.get('/projects', {
-      params: {
-        page: 1,
-        take: 10,
-        q: '',
-        isDeleted: false,
-      },
-    }),
-  );
+  const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');
 
   return (
     <ProjectWrapper>
-      <ProjectSider />
-      <ProjectContentWrapper>
-        <Routes>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <ProjectSider />
+              <ProjectContentWrapper>
+                <Outlet />
+              </ProjectContentWrapper>
+            </>
+          }
+        >
           <Route path="/" element={<ProjectContent />} />
 
-          <Route path={subRoute(routePath.SURVEY)} element={<Survey />} />
           <Route
-            path={subRoute(routePath.ADD_NEW_SURVEY)}
+            path={subRoute(projectRoutePath.SURVEY)}
+            element={<Survey />}
+          />
+          <Route
+            path={subRoute(projectRoutePath.ADD_NEW_SURVEY)}
             element={<AddSurvey />}
           />
           <Route
-            path={subRoute(routePath.PROJECT.ADD)}
+            path={subRoute(projectRoutePath.PROJECT.ADD)}
             element={<AddProject />}
           />
           <Route
-            path={subRoute(routePath.PROJECT.EDIT)}
+            path={subRoute(projectRoutePath.PROJECT.EDIT)}
             element={<EditProject />}
           />
           <Route
-            path={subRoute(routePath.DETAIL_SURVEY.ROOT + '/*')}
+            path={subRoute(projectRoutePath.DETAIL_SURVEY.ROOT + '/*')}
             element={<DetailSurvey />}
           />
 
-          <Route path="*" element={<Navigate to={routePath.ROOT} />} />
-        </Routes>
-      </ProjectContentWrapper>
+          <Route path="*" element={<Navigate to={projectRoutePath.ROOT} />} />
+        </Route>
+      </Routes>
     </ProjectWrapper>
   );
 };

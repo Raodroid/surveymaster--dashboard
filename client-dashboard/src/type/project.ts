@@ -2,6 +2,7 @@ import {
   completedVersion,
   draftVersion,
   IPaginationResponse,
+  IGetParams,
   IQuestionVersion,
   mockCategories,
   mockUser,
@@ -275,3 +276,7 @@ export const mockSurveyList: IPaginationResponse<ISurvey> = {
     },
   ],
 };
+
+export interface IGetSurvey extends IGetParams {
+  projectId?: string;
+}

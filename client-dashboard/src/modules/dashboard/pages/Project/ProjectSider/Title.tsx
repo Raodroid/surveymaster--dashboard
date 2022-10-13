@@ -1,39 +1,41 @@
 import { UnorderedListOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { ROUTE_PATH } from 'enums';
 import { PlusIcon } from 'icons';
-import { memo } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { memo, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { projectRoutePath } from '../util';
 import { TitleStyled } from './style';
-import { useMatch } from 'react-router-dom';
 
 interface TitleProps {
   title: string;
   routePath: string;
+  id?: string;
 }
 
 function Title(props: TitleProps) {
-  const { title, routePath } = props;
+  const { title, routePath: route_path, id: userId } = props;
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { t } = useTranslation();
+  const { pathname, search } = useLocation();
+  const params = useParams();
 
-  const isActive = useMatch({
-    path: routePath,
-    end: false,
-  });
+  const isActive = useMemo(() => {
+    return params && params.id && params.id === userId;
+  }, [userId, params]);
 
   const handleTitleClick = () => {
-    if (pathname.includes(routePath)) {
-      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
+    if (userId === params.id) {
+      navigate(projectRoutePath.ROOT);
     } else {
-      navigate(routePath);
+      navigate(route_path);
     }
   };
 
   return (
     <TitleStyled>
       <Button
-        className={`${!!isActive && 'active'} title-btn flex`}
+        className={`${isActive && 'active'} title-btn flex`}
         onClick={handleTitleClick}
       >
         {title}
@@ -43,16 +45,13 @@ function Title(props: TitleProps) {
           className="flex-center primary"
           type="primary"
           onClick={() => {
-            navigate(`${routePath}/add-survey`);
+            navigate(`${pathname}/add-survey${search}`);
           }}
         >
-          <PlusIcon className="plus-icon" /> Add New Survey
+          <PlusIcon className="plus-icon" /> {t('common.addNewSurvey')}
         </Button>
-        <Button
-          className="flex-center"
-          onClick={() => navigate(`${routePath}`)}
-        >
-          <UnorderedListOutlined /> Survey List
+        <Button className="flex-center" onClick={() => navigate(route_path)}>
+          <UnorderedListOutlined /> {t('common.surveyList')}
         </Button>
       </div>
     </TitleStyled>

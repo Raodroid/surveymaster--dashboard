@@ -20,6 +20,8 @@ export const ROUTE_PATH = {
       DETAIL_SURVEY: {
         ROOT: '/app/project/:id/:detailId',
         EDIT: '/app/project/:id/:detailId/edit',
+        HISTORY: '/app/project/:id/:detailId/action-history',
+        REMARKS: '/app/project/:id/:detailId/remarks',
       },
     },
     QUESTION_BANK: {
