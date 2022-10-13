@@ -30,6 +30,7 @@ import ProjectHeader from '../Header';
 import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import { ProjectTableWrapper } from '../../styles';
 
 const initParams: IGetParams = {
   q: '',
@@ -208,12 +209,12 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const params = useParams<{ projectId?: string }>();
 
   const duplicateMutation = useMutation(
-    (data: { id: string }) => {
+    (data: IPostSurveyBodyDto) => {
       return SurveyService.duplicateSurvey(data as any);
     },
     {
       onSuccess: async () => {
-        await queryClient.invalidateQueries('getProjects');
+        await queryClient.invalidateQueries('getSurveys');
         notification.success({ message: t('common.duplicateSuccess') });
       },
       onError,
@@ -247,7 +248,11 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       const { key, record } = props;
       switch (key) {
         case ACTION_ENUM.DUPLICATE_SURVEY: {
-          await duplicateMutation.mutateAsync({ id: record.id as string });
+          await duplicateMutation.mutateAsync({
+            name: `${record.name} (Copy)`,
+            projectId: params.id as string,
+            surveyId: record.id as string,
+          });
           return;
         }
         case ACTION_ENUM.EDIT: {

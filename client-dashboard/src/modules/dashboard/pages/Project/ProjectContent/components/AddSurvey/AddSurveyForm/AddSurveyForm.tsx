@@ -13,7 +13,7 @@ import { SurveyService } from 'services';
 import { ROUTE_PATH } from 'enums';
 import { useNavigate } from 'react-router-dom';
 import { SurveyFormWrapper } from './style';
-import { useParams } from 'react-router';
+import { generatePath, useParams } from 'react-router';
 import { TemplateOption } from '../../../../ProjectSider/SurveyTemplateOption';
 
 export enum SurveyTemplateEnum {
@@ -67,8 +67,12 @@ const AddSurveyForm: FC = props => {
   const onSuccess = useCallback(async () => {
     await queryClient.invalidateQueries('getProjects');
     notification.success({ message: t('common.createSuccess') });
-    navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
-  }, [navigate, queryClient, t]);
+    navigate(
+      generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
+        id: params.id,
+      }),
+    );
+  }, [navigate, params.id, queryClient, t]);
 
   const addSurveyMutation = useMutation(
     (data: IPostSurveyBodyDto) => {

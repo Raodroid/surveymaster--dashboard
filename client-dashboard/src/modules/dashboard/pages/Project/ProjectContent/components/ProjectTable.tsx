@@ -204,7 +204,7 @@ function ProjectTable() {
             dataSource={projects}
             columns={columns}
             onRow={onRow}
-            rowKey="id"
+            rowKey={record => record.id as string}
             // scroll={{ y: 100 }}
           />
           <StyledPagination

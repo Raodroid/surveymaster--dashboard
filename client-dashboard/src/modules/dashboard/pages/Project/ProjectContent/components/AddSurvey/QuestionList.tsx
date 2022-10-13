@@ -2,7 +2,8 @@ import { PauseOutlined } from '@ant-design/icons';
 import { Button, Input, Radio, Select, Table } from 'antd';
 import { TrashOutlined } from 'icons';
 import { useMemo } from 'react';
-import { QuestionListWrapper, TableWrapper } from './styles';
+import { TableWrapper } from '../Survey/style';
+import { QuestionListWrapper } from './styles';
 
 function QuestionList(props: { setFieldValue: any; values: any }) {
   const { values, setFieldValue } = props;

@@ -4,18 +4,17 @@ import { useFormikContext } from 'formik';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { ISurvey } from '../../../../../type';
 import { Input, Radio, Space, Table } from 'antd';
-import {
-  IAddSurveyFormValues,
-  SurveyTemplateEnum,
-} from '../ProjectContent/component/AddSurvey/AddSurveyForm/AddSurveyForm';
 import { useInfiniteQuery } from 'react-query';
-import ProjectService from '../../../../../services/survey-master-service/project.service';
 import _get from 'lodash/get';
 import { onError, useDebounce } from '../../../../../utils';
 import InfiniteScroll from 'react-infinite-scroller';
 import { TemplateOptionWrapper } from './style';
 import { SurveyService } from '../../../../../services';
 import { useParams } from 'react-router';
+import {
+  IAddSurveyFormValues,
+  SurveyTemplateEnum,
+} from '../ProjectContent/components/AddSurvey/AddSurveyForm/AddSurveyForm';
 
 const columns: ColumnsType<ISurvey> = [
   {
@@ -88,7 +87,6 @@ export const TemplateOption = () => {
       onChange: (selectedRowKeys: React.Key[], selectedRows: ISurvey[]) => {
         setFieldValue('surveyId', selectedRows[0].id);
         setX([selectedRows[0].id as string]);
-        setSearchTxt(selectedRows[0].name);
       },
     }),
     [setFieldValue, x],
@@ -131,6 +129,7 @@ export const TemplateOption = () => {
             onChange={e => setSearchTxt(e.target.value)}
             style={{ width: '100%' }}
             value={searchTxt}
+            placeholder={'Search...'}
           />
           <InfiniteScroll
             loadMore={fetchNextPage as any}

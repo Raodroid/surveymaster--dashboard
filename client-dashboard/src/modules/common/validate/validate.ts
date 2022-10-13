@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import moment from 'moment';
 import { QuestionType } from '../../../type';
-import { SurveyTemplateEnum } from '../../dashboard/pages/Project/ProjectContent/component/AddSurvey/AddSurveyForm/AddSurveyForm';
+import { SurveyTemplateEnum } from '../../dashboard/pages/Project/ProjectContent/components/AddSurvey/AddSurveyForm/AddSurveyForm';
 
 export const INVALID_FIELDS = {
   MIN_USERNAME: 'validation.messages.minUserName',
