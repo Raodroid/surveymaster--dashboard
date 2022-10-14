@@ -1,9 +1,11 @@
 import { Button, Menu, PaginationProps, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { PenFilled, TrashOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import _get from 'lodash/get';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import moment from 'moment';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
@@ -12,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
-import { onError, useDebounce } from '../../../../../../utils';
+import { onError } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
 import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
@@ -23,6 +25,13 @@ const initParams: IGetParams = {
   page: 1,
   take: 10,
   isDeleted: false,
+};
+
+type QsParams = {
+  q?: string;
+  isDeleted?: string;
+  createdFrom?: string;
+  createdTo?: string;
 };
 
 const getProjects = (params: GetListQuestionDto) => {
@@ -49,18 +58,31 @@ function ProjectTable() {
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [showRestoreProject, setShowRestoreProject] = useState(false);
 
+  const formatQsParams = useMemo(() => {
+    const formatQs: IGetParams = {
+      ...qsParams,
+      createdFrom: moment(qsParams.createdFrom)?.startOf('day')?.format(),
+      createdTo: moment(qsParams.createdTo)?.endOf('day')?.format(),
+    };
+    if (!qsParams.createdFrom) delete formatQs.createdFrom;
+    if (!qsParams.createdTo) delete formatQs.createdTo;
+    return formatQs;
+  }, [qsParams]);
+
   const getProjectListQuery = useQuery(
-    ['getProjects', params, qsParams],
+    ['getProjects', params, formatQsParams],
     () =>
       getProjects({
         ...params,
-        ...qsParams,
+        ...formatQsParams,
       }),
     {
       onError,
       refetchOnWindowFocus: false,
     },
   );
+
+  console.log(qsParams);
 
   const total: number = _get(getProjectListQuery.data, 'data.itemCount', 0);
 
@@ -76,7 +98,7 @@ function ProjectTable() {
     [],
   );
 
-  const columns = useMemo(
+  const columns: ColumnsType<IProject> = useMemo(
     () => [
       {
         title: 'ID',

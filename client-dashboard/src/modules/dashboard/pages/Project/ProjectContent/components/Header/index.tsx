@@ -10,9 +10,14 @@ import { useDebounce } from 'utils';
 import { projectRoutePath } from '../../../util';
 import ProjectFilter from './ProjectFilter';
 import { HeaderStyled } from './styles';
+import { useEffect } from 'react';
 
-function ProjectHeader(props: { routes?: any; links?: string[] | any }) {
-  const { routes, links } = props;
+function ProjectHeader(props: {
+  routes?: any;
+  links?: string[] | any;
+  search?: boolean;
+}) {
+  const { routes, links, search } = props;
   const searchRef = useRef<InputRef>(null);
 
   const [inputSearch, setInputSearch] = useState<string>('');
@@ -58,18 +63,17 @@ function ProjectHeader(props: { routes?: any; links?: string[] | any }) {
     }
   }, [inputSearch, searchRef, handleSearch]);
 
-  // useEffect(() => {
-  //   if (!debounce) {
-  //     setSearchParams({ ...searchParams, q: '' });
-  //     handleSearch();
-  //   }
-  // }, [debounce, searchParams, handleSearch]);
+  useEffect(() => {
+    if (!debounce && qsParams.q) {
+      // navigate({ ...qsParams, q: '' });
+    }
+  }, [debounce, qsParams, navigate]);
 
   return (
     <HeaderStyled className="flex-center-start">
       <StyledBreadcrumb routes={base} />
 
-      {
+      {search && (
         <>
           <Form className="flex search-form" onFinish={handleSearch}>
             <Input
@@ -88,7 +92,7 @@ function ProjectHeader(props: { routes?: any; links?: string[] | any }) {
 
           <ProjectFilter />
         </>
-      }
+      )}
 
       {links && (
         <div className="wrapper flex-center">

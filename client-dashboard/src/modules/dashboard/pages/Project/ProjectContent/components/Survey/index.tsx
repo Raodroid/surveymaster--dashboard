@@ -1,79 +1,96 @@
-import { Menu, notification, Pagination, Table } from 'antd';
+import { Menu, notification, PaginationProps, Table } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
+import useParseQueryString from 'hooks/useParseQueryString';
 import { PenFilled, TrashOutlined } from 'icons';
+import _get from 'lodash/get';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import StyledPagination from 'modules/dashboard/components/StyledPagination';
+import moment from 'moment';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { generatePath, useNavigate, useParams } from 'react-router';
+import { ProjectService, SurveyService } from '../../../../../../../services';
 import {
-  generatePath,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router';
-import { SurveyService } from '../../../../../../../services';
-import { IGetParams, ISurvey } from '../../../../../../../type';
-import { onError, useDebounce } from '../../../../../../../utils';
-import { getProjectTitle, projectRoutePath } from '../../../util';
+  GetListQuestionDto,
+  IGetParams,
+  ISurvey,
+} from '../../../../../../../type';
+import { onError } from '../../../../../../../utils';
+import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import { SurveyWrapper, TableWrapper } from './style';
 
+const initParams: IGetParams = {
+  q: '',
+  page: 1,
+  take: 10,
+  isDeleted: false,
+};
+
 function Survey() {
-  const params = useParams<{ projectId?: string }>();
-  const { search } = useLocation();
+  const params = useParams<{ projectId: string }>();
   const navigate = useNavigate();
+  const qsParams = useParseQueryString<IGetParams>();
 
-  const [page, setPage] = useState(1);
+  const [paramsQuery, setParamsQuery] =
+    useState<GetListQuestionDto>(initParams);
 
-  const [headerSearch, setHeaderSearch] = useState('');
-  const [filter, setFilter] = useState('');
-  const debounce = useDebounce(headerSearch);
-
-  const [filterParams, setFilterParams] = useState<IGetParams>({
-    isDeleted: false,
-    createdFrom: '',
-    createdTo: '',
-  });
-
-  const title = useMemo(() => getProjectTitle(search), [search]);
-
-  const queryParams = useMemo(() => {
-    return {
-      q: filter,
-      page: page,
-      take: 10,
-      isDeleted: filterParams.isDeleted,
-      id: params?.projectId,
+  const formatQsParams = useMemo(() => {
+    const formatQs: IGetParams = {
+      ...qsParams,
+      createdFrom: moment(qsParams.createdFrom)?.startOf('day')?.format(),
+      createdTo: moment(qsParams.createdTo)?.endOf('day')?.format(),
     };
-  }, [filter, page, params, filterParams]);
+    if (!qsParams.createdFrom) delete formatQs.createdFrom;
+    if (!qsParams.createdTo) delete formatQs.createdTo;
+    return formatQs;
+  }, [qsParams]);
 
-  const { data: survey, isLoading } = useQuery(
-    ['survey', params?.projectId, filterParams, filter, queryParams],
+  const { data: project } = useQuery(['project', params.projectId], () =>
+    ProjectService.getProjectById(params.projectId),
+  );
+
+  const getSurveyListQuery = useQuery(
+    ['getSurveys', formatQsParams, paramsQuery, params],
     () =>
-      filterParams.createdFrom || filterParams.createdTo
-        ? SurveyService.getSurveys({
-            ...queryParams,
-            createdFrom: filterParams.createdFrom,
-            createdTo: filterParams.createdTo,
-          })
-        : SurveyService.getSurveys(queryParams),
+      SurveyService.getSurveys({
+        ...paramsQuery,
+        ...formatQsParams,
+        projectId: params.projectId,
+      }),
     {
       refetchOnWindowFocus: false,
     },
   );
 
+  const total: number = _get(getSurveyListQuery.data, 'data.itemCount', 0);
+
+  const surveys = useMemo<ISurvey[]>(
+    () => _get(getSurveyListQuery.data, 'data.data'),
+    [getSurveyListQuery.data],
+  );
+
+  const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
+    (current, pageSize) => {
+      setParamsQuery(s => ({ ...s, take: pageSize }));
+    },
+    [],
+  );
+
   const routes = useMemo(
     () => [
       {
-        name: title,
+        name: project?.data.name || '...',
         href: projectRoutePath.SURVEY,
       },
     ],
-    [title],
+    [project],
   );
 
-  const columns = useMemo(
+  const columns: ColumnsType<ISurvey> = useMemo(
     () => [
       {
         title: 'ID',
@@ -131,17 +148,26 @@ function Survey() {
 
   return (
     <SurveyWrapper className="flex-column">
-      <ProjectHeader routes={routes} />
+      <ProjectHeader routes={routes} search />
 
       <TableWrapper className="flex-column">
-        <CustomSpinSuspense spinning={isLoading}>
+        <CustomSpinSuspense spinning={getSurveyListQuery.isLoading}>
           <Table
-            dataSource={survey?.data.data}
+            dataSource={surveys}
             columns={columns}
             onRow={onRow}
             pagination={false}
           />
-          <Pagination defaultCurrent={1} />
+          <StyledPagination
+            onChange={page => {
+              setParamsQuery(s => ({ ...s, page }));
+            }}
+            showSizeChanger
+            pageSize={paramsQuery.take}
+            onShowSizeChange={onShowSizeChange}
+            defaultCurrent={1}
+            total={total}
+          />
         </CustomSpinSuspense>
       </TableWrapper>
     </SurveyWrapper>

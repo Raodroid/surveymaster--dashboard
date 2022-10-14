@@ -1,40 +1,34 @@
 import { Form } from 'antd';
 import { Formik } from 'formik';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import {
-  getProjectTitle,
-  projectRoutePath,
-} from 'modules/dashboard/pages/Project/util';
+import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
-import { generatePath, useLocation, useParams } from 'react-router';
+import { generatePath, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
-import { DetailSurveyProps } from '..';
+import { DetailSurveyProps, projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
 import QuestionList from './QuestionList';
 import { DetailSurveyHomeWrapper } from './styles';
 
 function DetailSurveyHome(props: DetailSurveyProps) {
-  const { surveyData: survey } = props;
-  const params = useParams();
-  const { search } = useLocation();
-
-  const title = useMemo(() => getProjectTitle(search), [search]);
+  const { surveyData: survey, projectData: project } = props;
+  const params = useParams<projectSurveyParams>();
 
   const routes = useMemo(
     () => [
       {
-        name: title,
+        name: project?.data.name || '...',
         href: generatePath(projectRoutePath.SURVEY, {
-          projectId: params?.id,
+          projectId: params?.projectId,
         }),
       },
       {
-        name: survey?.data.name,
+        name: survey?.data.name || '...',
         href: projectRoutePath.DETAIL_SURVEY.ROOT,
       },
     ],
-    [params, survey, title],
+    [params, survey, project],
   );
 
   const links = [
@@ -61,33 +55,32 @@ function DetailSurveyHome(props: DetailSurveyProps) {
     };
   }, [survey]);
 
+  const handleSubmit = () => {};
+
   return (
     <DetailSurveyHomeWrapper className="flex-column">
       <ProjectHeader routes={routes} links={links} />
-      <CustomSpinSuspense spinning={!initialValue}>
-        {initialValue && (
-          <div className="body height-100">
-            <Formik initialValues={initialValue} onSubmit={() => {}}>
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                isSubmitting,
-                setFieldValue,
-              }) => (
-                <Form layout="vertical" className="height-100">
-                  <SimpleBar style={{ height: '100%' }}>
-                    <Inputs disabled />
-                    <QuestionList survey={survey?.data.surveyQuestions} />
-                  </SimpleBar>
-                </Form>
-              )}
-            </Formik>
-          </div>
-        )}
+      <CustomSpinSuspense spinning={!survey}>
+        <div className="body height-100">
+          <Formik
+            initialValues={initialValue}
+            onSubmit={handleSubmit}
+            enableReinitialize={true}
+          >
+            {({ handleSubmit: handleFinish }) => (
+              <Form
+                layout="vertical"
+                className="height-100"
+                onFinish={handleFinish}
+              >
+                <SimpleBar style={{ height: '100%' }}>
+                  <Inputs disabled />
+                  <QuestionList survey={survey?.data.questions} />
+                </SimpleBar>
+              </Form>
+            )}
+          </Formik>
+        </div>
       </CustomSpinSuspense>
     </DetailSurveyHomeWrapper>
   );

@@ -5,23 +5,39 @@ import { ArrowDown, FilterOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import { useState } from 'react';
-import { useLocation } from 'react-router';
-import { useNavigate } from 'react-router';
+import moment from 'moment';
+import { useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import { IGetParams } from 'type';
 import {
   ProjectFilterBtn,
   ProjectFilterOverlayWrapper,
   ProjectFilterWrapper,
 } from './styles';
+import { useEffect } from 'react';
 
 export interface IFilter {
   counter?: number;
   setCounter?: (payload: number) => void;
 }
 
-function ProjectFilter(props: IFilter) {
+function ProjectFilter() {
   const [counter, setCounter] = useState(0);
+  const qsParams = useParseQueryString<{
+    isDeleted?: string;
+    createdFrom?: string;
+    createdTo?: string;
+  }>();
+
+  useEffect(() => {
+    const list = Object.values({
+      ...qsParams,
+      dateCreation:
+        qsParams.createdFrom || qsParams.createdTo ? 'true' : 'false',
+    }).filter(elm => elm === 'true');
+
+    if (setCounter) setCounter(list.length);
+  }, [qsParams]);
 
   return (
     <ProjectFilterWrapper>
@@ -44,18 +60,32 @@ function ProjectFilter(props: IFilter) {
 
 export default ProjectFilter;
 
-const initialValues = {
+const defaultInit = {
   dateCreation: false,
   isDeleted: false,
-  createdFrom: null,
-  createdTo: null,
+  createdFrom: '',
+  createdTo: '',
 };
 
 function FilterOverlay(props: IFilter) {
   const { counter, setCounter } = props;
-  const qsParams = useParseQueryString<{ q: string | undefined }>();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const qsParams = useParseQueryString<{
+    q?: string;
+    isDeleted?: string;
+    createdFrom?: string;
+    createdTo?: string;
+  }>();
+
+  const initialValues = useMemo(() => {
+    return {
+      dateCreation: qsParams.createdFrom || qsParams.createdTo ? true : false,
+      isDeleted: qsParams.isDeleted === 'true',
+      createdFrom: qsParams.createdFrom && moment(qsParams.createdFrom),
+      createdTo: qsParams.createdTo && moment(qsParams.createdTo),
+    };
+  }, [qsParams]);
 
   const handleReset = (
     values,
@@ -66,28 +96,23 @@ function FilterOverlay(props: IFilter) {
     ) => void,
   ) => {
     const valuesList = Object.keys(values);
-    valuesList.forEach(elm => setFieldValue(elm, initialValues[elm]));
+    valuesList.forEach(elm => setFieldValue(elm, defaultInit[elm]));
   };
 
   const handleSubmit = (payload: any) => {
     const list = Object.values(payload).filter(elm => elm === true);
     if (setCounter) setCounter(list.length);
 
-    const payloadParams = {
-      q: qsParams?.q ? qsParams.q : '',
+    const payloadParams: IGetParams = {
+      q: qsParams.q || '',
       isDeleted: payload.isDeleted,
-      createdFrom: payload.dateCreation
-        ? payload?.createdFrom?.startOf('day')?._d
-        : '',
-      createdTo: payload.dateCreation
-        ? payload?.createdTo?.endOf('day')?._d
-        : '',
+      createdFrom:
+        payload.dateCreation && payload.createdFrom ? payload.createdFrom : '',
+      createdTo:
+        payload.dateCreation && payload.createdTo ? payload.createdTo : '',
     };
 
-    console.log(payload);
-
-    if (!payload.createdFrom) delete payloadParams.createdFrom;
-    if (!payload.createdTo) delete payloadParams.createdTo;
+    console.log(payloadParams);
 
     const keys = Object.keys(payloadParams);
     let result = '';

@@ -13,13 +13,13 @@ function Remark(props: RemarkProps) {
   return (
     <RemarkWrapper className="flex-column">
       <ControlledInput
-        name={`surveyQuestions[${index}].id`}
+        name={`questions[${index}].questionVersion.title`}
         inputType={INPUT_TYPES.INPUT}
         disabled
       />
       <strong>{t('common.remark')}</strong>
       <ControlledInput
-        name={`surveyQuestions[${index}].remark`}
+        name={`questions[${index}].remark`}
         inputType={INPUT_TYPES.TEXTAREA}
         placeholder="Enter Remark"
       />

@@ -2,23 +2,15 @@ import { Button, Form, notification } from 'antd';
 import { Formik } from 'formik';
 import { UpdateSurvey } from 'interfaces';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import {
-  getProjectTitle,
-  projectRoutePath,
-} from 'modules/dashboard/pages/Project/util';
+import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
-import {
-  generatePath,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
 import { onError } from 'utils';
-import { DetailSurveyProps } from '..';
+import { DetailSurveyProps, projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
 import QuestionRemarks from './QuestionRemarks';
@@ -38,23 +30,22 @@ export interface IUpdateSurvey {
 }
 
 function Remarks(props: DetailSurveyProps) {
-  const { surveyData: survey } = props;
-  const params = useParams();
-  const { search } = useLocation();
+  const { surveyData: survey, projectData: project } = props;
+  const params = useParams<projectSurveyParams>();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const title = useMemo(() => getProjectTitle(search), [search]);
-
   const routes = useMemo(
     () => [
       {
-        name: title,
-        href: generatePath(projectRoutePath.SURVEY, { projectId: params?.id }),
+        name: project?.data.name || '...',
+        href: generatePath(projectRoutePath.SURVEY, {
+          projectId: params?.projectId,
+        }),
       },
       {
-        name: survey?.data.name,
+        name: survey?.data.name || '...',
         href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
           projectId: params?.projectId,
           surveyId: params?.surveyId,
@@ -62,10 +53,10 @@ function Remarks(props: DetailSurveyProps) {
       },
       {
         name: 'Remarks',
-        href: projectRoutePath.ROOT,
+        href: projectRoutePath.DETAIL_SURVEY.REMARKS,
       },
     ],
-    [params, survey, title],
+    [params, survey, project],
   );
 
   const mutationUpdateRemarks = useMutation(
@@ -95,6 +86,7 @@ function Remarks(props: DetailSurveyProps) {
           questionVersionId: elm.questionVersionId,
           remark: elm.remark,
           sort: elm.sort,
+          surveyId: params.surveyId || '',
         };
       }),
       name: payload.name,
@@ -103,17 +95,15 @@ function Remarks(props: DetailSurveyProps) {
     mutationUpdateRemarks.mutateAsync(updateSurveyPayload);
   };
 
-  const initialValues = useMemo(() => survey?.data, [survey]);
-
   return (
     <>
       <ProjectHeader routes={routes} />
 
       <RemarksWrapper className="height-100 overflow-hidden">
-        <CustomSpinSuspense spinning={!initialValues}>
+        <CustomSpinSuspense spinning={!survey?.data}>
           <Formik
             enableReinitialize={true}
-            initialValues={initialValues}
+            initialValues={survey?.data}
             onSubmit={handleSubmit}
           >
             {({ handleSubmit: handleFinish }) => (
@@ -124,7 +114,7 @@ function Remarks(props: DetailSurveyProps) {
               >
                 <SimpleBar style={{ height: 'calc(100% - 76px)' }}>
                   <Inputs remarks />
-                  <QuestionRemarks questions={survey?.data.surveyQuestions} />
+                  <QuestionRemarks questions={survey?.data.questions} />
                 </SimpleBar>
                 <div className="footer flex-center">
                   <Button
@@ -133,7 +123,7 @@ function Remarks(props: DetailSurveyProps) {
                     htmlType="submit"
                     loading={mutationUpdateRemarks.isLoading}
                   >
-                    {t('common.saveProject')}
+                    {t('common.saveRemarks')}
                   </Button>
                 </div>
               </Form>

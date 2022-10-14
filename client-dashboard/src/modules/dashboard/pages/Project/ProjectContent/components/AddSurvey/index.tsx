@@ -4,8 +4,8 @@ import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useLocation, useParams } from 'react-router';
-import { getProjectTitle, projectRoutePath } from '../../../util';
+import { generatePath, useParams } from 'react-router';
+import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import QuestionList from './QuestionList';
 import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
@@ -21,22 +21,21 @@ function AddSurvey() {
   const params = useParams();
   const { t } = useTranslation();
   const [templateValue, setTemplateValue] = useState('');
-  const { search } = useLocation();
-
-  const title = useMemo(() => getProjectTitle(search), [search]);
 
   const routes = useMemo(
     () => [
       {
-        name: title,
-        href: generatePath(projectRoutePath.SURVEY, { projectId: params?.id }),
+        name: 'title',
+        href: generatePath(projectRoutePath.SURVEY, {
+          projectId: params?.projectId,
+        }),
       },
       {
         name: 'Add New Survey',
         href: projectRoutePath.ADD_NEW_SURVEY,
       },
     ],
-    [title, params],
+    [params],
   );
 
   return (

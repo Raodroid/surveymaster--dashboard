@@ -2,24 +2,26 @@ import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
-import { DetailSurveyProps } from '..';
+import { DetailSurveyProps, projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
 
 function EditSurvey(props: DetailSurveyProps) {
-  const { surveyData: survey } = props;
-  const params = useParams();
+  const { surveyData: survey, projectData: project } = props;
+  const params = useParams<projectSurveyParams>();
   const { t } = useTranslation();
 
   const routes = useMemo(
     () => [
       {
-        name: survey?.name,
-        href: generatePath(projectRoutePath.SURVEY, { projectId: params?.id }),
+        name: project?.data.name || '...',
+        href: generatePath(projectRoutePath.SURVEY, {
+          projectId: params?.projectId,
+        }),
       },
       {
-        name: survey?.data.name,
+        name: survey?.data.name || '...',
         href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
-          projectId: params?.id,
+          projectId: params?.projectId,
           surveyId: params?.surveyId,
         }),
       },
@@ -28,7 +30,7 @@ function EditSurvey(props: DetailSurveyProps) {
         href: projectRoutePath.DETAIL_SURVEY.EDIT,
       },
     ],
-    [params, survey],
+    [params, survey, project],
   );
 
   return (

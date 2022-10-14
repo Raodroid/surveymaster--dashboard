@@ -8,7 +8,7 @@ import { ProjectHomeWrapper } from './styles';
 const ProjectContent = () => {
   return (
     <ProjectHomeWrapper className="flex-column">
-      <ProjectHeader />
+      <ProjectHeader search />
       <ProjectTable />
     </ProjectHomeWrapper>
   );

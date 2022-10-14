@@ -26,7 +26,4 @@ export const useGetAllProjects = () => {
   return { projects, isLoading: getAllProjectQuery.isLoading };
 };
 
-export const getProjectTitle = (search: string) =>
-  search.replace('?projectName=', '').replace(/%20/g, ' ');
-
 export const projectRoutePath = ROUTE_PATH.DASHBOARD_PATHS.PROJECT;

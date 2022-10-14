@@ -4,32 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { mockSurveyDetail } from 'type';
 import { QuestionListWrapper } from './styles';
 
-const dataSource = [
-  {
-    key: '1',
-    id: '113-8392',
-    question: 'What is your age?',
-    category: 'XXX-XXXX',
-    subCategory: 'XXX-XXXX',
-    variableName: 'YY-YY-YYY',
-    type: 'Radio Buttons',
-  },
-  {
-    key: '2',
-    id: '113-8392',
-    question: 'What is your age?',
-    category: 'XXX-XXXX',
-    subCategory: 'XXX-XXXX',
-    variableName: 'YY-YY-YYY',
-    type: 'Radio Buttons',
-  },
-];
-
 const columns = [
   {
     title: 'ID',
-    dataIndex: 'questionVersion',
-    key: 'questionVersion',
+    dataIndex: 'id',
+    key: 'id',
     render: (_, record: any) => (
       <div>{record.questionVersion.question.displayId}</div>
     ),
@@ -44,7 +23,9 @@ const columns = [
     title: 'Category',
     dataIndex: 'category',
     key: 'category',
-    render: () => <div>XXX-XXXX</div>,
+    render: (_, record: any) => (
+      <div>{record.questionVersion.question.masterCategory.name}</div>
+    ),
   },
   {
     title: 'Sub Category',
@@ -56,7 +37,9 @@ const columns = [
     title: 'Variable Name',
     dataIndex: 'variableName',
     key: 'variableName',
-    render: () => <div>YY-YY-YYY</div>,
+    render: (_, record: any) => (
+      <div>{record.questionVersion.question.masterVariableName}</div>
+    ),
   },
   {
     title: 'Type',
@@ -67,12 +50,12 @@ const columns = [
 ];
 
 function QuestionList(props: { survey: any }) {
-  const { questions } = mockSurveyDetail;
-   const { t } = useTranslation();
+  const { survey } = props;
+  const { t } = useTranslation();
   return (
     <QuestionListWrapper>
       <div className="title">{t('common.surveyQuestionsList')}:</div>
-      <Table dataSource={questions} columns={columns} pagination={false} />
+      <Table dataSource={survey} columns={columns} pagination={false} />
     </QuestionListWrapper>
   );
 }

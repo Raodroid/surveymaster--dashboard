@@ -1,32 +1,26 @@
-import {
-  getProjectTitle,
-  projectRoutePath,
-} from 'modules/dashboard/pages/Project/util';
+import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useLocation, useParams } from 'react-router';
-import { DetailSurveyProps } from '..';
+import { generatePath, useParams } from 'react-router';
+import { DetailSurveyProps, projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
 
 function ActionHistory(props: DetailSurveyProps) {
-  const { surveyData: survey } = props;
-  const params = useParams();
+  const { surveyData: survey, projectData: project } = props;
+  const params = useParams<projectSurveyParams>();
   const { t } = useTranslation();
-  const { search } = useLocation();
-
-  const title = useMemo(() => getProjectTitle(search), [search]);
 
   const routes = useMemo(
     () => [
       {
-        name: survey?.data?.name,
-        href: (projectRoutePath.SURVEY, { projectId: params?.id }),
+        name: project?.data.name || '...',
+        href: (projectRoutePath.SURVEY, { projectId: params?.projectId }),
       },
       {
-        name: survey?.data?.name,
+        name: survey?.data.name || '...',
         href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
           projectId: params.projectId,
-          sureveyId: params.detailId,
+          surveyId: params.surveyId,
         }),
       },
       {
@@ -34,7 +28,7 @@ function ActionHistory(props: DetailSurveyProps) {
         href: '',
       },
     ],
-    [params, survey, title],
+    [params, survey, project],
   );
 
   return (

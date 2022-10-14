@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { UpdateSurvey } from 'interfaces';
-import { IGetSurvey, IPostSurveyBodyDto } from 'type';
+import {  GetListSurveyDto, IPostSurveyBodyDto } from 'type';
 import APIService from './base.service';
 
 export default class SurveyService {
@@ -11,7 +11,7 @@ export default class SurveyService {
   //   return APIService.get(`/surveys/${projectId}`);
   // }
 
-  static getSurveys(params: IGetSurvey): Promise<AxiosResponse> {
+  static getSurveys(params: any): Promise<AxiosResponse> {
     return APIService.get('surveys', { params });
   }
 

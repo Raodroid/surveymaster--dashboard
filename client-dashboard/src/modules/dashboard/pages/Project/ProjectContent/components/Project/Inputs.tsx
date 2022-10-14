@@ -1,8 +1,8 @@
-import { Divider } from 'antd';
+import { Divider, Input, Select } from 'antd';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -14,18 +14,13 @@ function Inputs() {
   const { t } = useTranslation();
 
   const allRoles = useSelector(AuthSelectors.getAllRoles);
-  const [page, setPage] = useState(1);
-  const [isDeleted, setIsDeleted] = useState(false);
 
   const baseParams = useMemo(
     () => ({
-      page: page,
-      take: 10,
       roles: Object.values(allRoles).map(elm => elm.id),
-      isDeleted: isDeleted,
-      q: '',
+      selectAll: true,
     }),
-    [page, isDeleted, allRoles],
+    [allRoles],
   );
 
   const { data: teamMembers } = useQuery(
@@ -70,15 +65,13 @@ function Inputs() {
         className="projId"
         disabled
       />
-      <CustomSpinSuspense spinning={!optionsList}>
-        <ControlledInput
-          inputType={INPUT_TYPES.SELECT}
-          name="personInCharge"
-          label="Person In Charge"
-          className="personInCharge"
-          options={optionsList}
-        />
-      </CustomSpinSuspense>
+      <ControlledInput
+        inputType={INPUT_TYPES.SELECT}
+        name="personInCharge"
+        label="Person In Charge"
+        className="personInCharge"
+        options={optionsList}
+      />
     </InputsWrapper>
   );
 }
