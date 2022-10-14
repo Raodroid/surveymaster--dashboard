@@ -44,3 +44,25 @@ export const SurveyFormWrapper = styled(Form)`
     }
   }
 `;
+
+export const QuestionListWrapper = styled.div`
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: ${templateVariable.section_spacing};
+  .QuestionListWrapper {
+    &__header {
+      font-weight: bold;
+    }
+    &__body {
+    }
+    &__footer {
+      gap: 20px;
+      margin-bottom: 20px;
+
+      .ant-btn {
+        flex: 1;
+      }
+    }
+  }
+`;

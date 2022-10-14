@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "declineChange": "Decline change",
     "surveyList": "Survey List",
     "addNewSurvey": "Add New Survey",
     "add": "Add",

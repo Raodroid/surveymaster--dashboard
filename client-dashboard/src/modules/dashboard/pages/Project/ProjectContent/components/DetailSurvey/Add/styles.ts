@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import templateVariable from '../../../../../../../app/template-variables.module.scss';
+import templateVariable from '../../../../../../../../app/template-variables.module.scss';
 
 export const AddSurveyWrapper = styled.div`
   flex: 1;
@@ -62,27 +62,5 @@ export const CustomPopUp = styled.div`
   }
   .duplicate-selector {
     margin-top: 12px;
-  }
-`;
-
-export const QuestionListWrapper = styled.div`
-  margin-top: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: ${templateVariable.section_spacing};
-  .QuestionListWrapper {
-    &__header {
-      font-weight: bold;
-    }
-    &__body {
-    }
-    &__footer {
-      gap: 20px;
-      margin-bottom: 20px;
-
-      .ant-btn {
-        flex: 1;
-      }
-    }
   }
 `;

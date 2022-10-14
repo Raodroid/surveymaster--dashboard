@@ -1,4 +1,4 @@
-import React, { FC, memo, useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DisplayQuestionSurveyListWrapper } from './style';
 import { FieldArray, useFormikContext } from 'formik';
@@ -7,16 +7,11 @@ import DragQuestionSurveyList from './DragQuestionSurveyList';
 import {
   IAddSurveyFormValues,
   initNewQuestionOnAddSurveyForm,
-} from '../AddSurveyForm';
+} from '../SurveyForm';
 import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
 import { useToggle } from '../../../../../../../../../utils';
 
-interface IDisplayAnswerList {
-  mode?: 'view' | 'edit';
-}
-
-const DisplayQuestionSurveyList: FC<IDisplayAnswerList> = props => {
-  const { mode = 'edit' } = props;
+const DisplayQuestionSurveyList = () => {
   const { values } = useFormikContext<IAddSurveyFormValues>();
   const { t } = useTranslation();
   const [openLoadCategoryForm, toggleLoadCategoryForm] = useToggle();
@@ -37,28 +32,26 @@ const DisplayQuestionSurveyList: FC<IDisplayAnswerList> = props => {
               questions={values.questions}
               arrayHelpers={arrayHelpers}
             />
-            {mode === 'edit' && (
-              <div className="QuestionListWrapper__footer flex">
-                <Button onClick={handleAddFormCategory}>
-                  {t('common.addAllQuestionsFromOneCategory')}
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() =>
-                    arrayHelpers.push({
-                      ...initNewQuestionOnAddSurveyForm,
-                      id: Math.random().toString(),
-                    })
-                  }
-                >
-                  {t('common.addOneMoreQuestion')}
-                </Button>
-                <AddQuestionFormCategoryModal
-                  open={openLoadCategoryForm}
-                  onCancel={toggleLoadCategoryForm}
-                />
-              </div>
-            )}
+            <div className="QuestionListWrapper__footer flex">
+              <Button onClick={handleAddFormCategory}>
+                {t('common.addAllQuestionsFromOneCategory')}
+              </Button>
+              <Button
+                type="primary"
+                onClick={() =>
+                  arrayHelpers.push({
+                    ...initNewQuestionOnAddSurveyForm,
+                    id: Math.random().toString(),
+                  })
+                }
+              >
+                {t('common.addOneMoreQuestion')}
+              </Button>
+              <AddQuestionFormCategoryModal
+                open={openLoadCategoryForm}
+                onCancel={toggleLoadCategoryForm}
+              />
+            </div>{' '}
           </>
         )}
       />

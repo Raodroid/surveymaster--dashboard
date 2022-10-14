@@ -1,16 +1,12 @@
-import { useParams } from 'react-router';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { useMemo } from 'react';
 import { generatePath, useParams } from 'react-router';
-import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import { AddSurveyWrapper } from './styles';
-import AddSurveyForm from './AddSurveyForm/AddSurveyForm';
-import { useMemo } from 'react';
+import SurveyForm from '../SurveyForm/SurveyForm'
 import {
   projectRoutePath,
 } from '../../../util';
-import {  AddSurveyWrapper } from './styles';
 
 function AddSurvey() {
   const params = useParams();
@@ -35,7 +31,7 @@ function AddSurvey() {
       <ProjectHeader routes={routes} />
 
       <AddSurveyWrapper>
-        <AddSurveyForm />
+        <SurveyForm />
       </AddSurveyWrapper>
     </>
   );

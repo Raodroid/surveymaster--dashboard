@@ -8,7 +8,7 @@ import Checkbox from 'antd/es/checkbox';
 import { onError, useDebounce } from 'utils';
 import { DisplayQuestionListWrapper } from './style';
 import { useFormikContext } from 'formik';
-import { IAddSurveyFormValues } from '../../AddSurveyForm';
+import { IAddSurveyFormValues } from '../../SurveyForm';
 import { useTranslation } from 'react-i18next';
 
 interface IDisplayQuestionList {

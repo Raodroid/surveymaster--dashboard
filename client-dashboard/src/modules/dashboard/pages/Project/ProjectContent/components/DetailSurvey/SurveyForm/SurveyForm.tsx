@@ -4,17 +4,24 @@ import { ControlledInput } from '../../../../../../../common';
 import { INPUT_TYPES } from '../../../../../../../common/input/type';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { IPostSurveyBodyDto, ISurveyQuestionDto, QuestionType } from 'type';
+import {
+  IPostSurveyBodyDto,
+  IQuestionVersion,
+  ISurvey,
+  ISurveyQuestionDto,
+  QuestionType,
+} from 'type';
 import { transformEnumToOption, onError } from 'utils';
-import QuestionSurveyList from '../QuestionSurveyList';
 import { SURVEY_FORM_SCHEMA } from '../../../../../../../common/validate/validate';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from 'services';
 import { ROUTE_PATH } from 'enums';
-import { useNavigate } from 'react-router-dom';
-import { SurveyFormWrapper } from './style';
+import { useMatch, useNavigate } from 'react-router-dom';
+import { QuestionListWrapper, SurveyFormWrapper } from './style';
 import { generatePath, useParams } from 'react-router';
-import { TemplateOption } from '../../../../ProjectSider/SurveyTemplateOption';
+import { TemplateOption } from './SurveyTemplateOption';
+import DisplayQuestionSurveyList from './DisplayQuestionSurveyList';
+import { useGetSurveyById } from '../../Survey/util';
 
 export enum SurveyTemplateEnum {
   NEW = 'NEW',
@@ -22,16 +29,17 @@ export enum SurveyTemplateEnum {
   JSON = 'JSON',
 }
 
+export type questionValueType = ISurveyQuestionDto & {
+  type: QuestionType | string;
+  category: string;
+  id?: string;
+  questionTitle: string;
+  versions?: IQuestionVersion[];
+};
+
 export interface IAddSurveyFormValues extends IPostSurveyBodyDto {
   template: SurveyTemplateEnum;
-  questions: Array<
-    ISurveyQuestionDto & {
-      type: QuestionType | string;
-      category: string;
-      id?: string;
-      questionTitle: string;
-    }
-  >;
+  questions: questionValueType[];
 }
 
 export const initNewQuestionOnAddSurveyForm = {
@@ -42,27 +50,49 @@ export const initNewQuestionOnAddSurveyForm = {
   questionTitle: '',
 };
 
-const baseInitialValues: IAddSurveyFormValues = {
-  projectId: '',
-  name: '',
-  remark: '',
-  questions: [],
-  template: SurveyTemplateEnum.NEW,
+const transformQuestionData = (
+  input: ISurvey,
+): questionValueType[] | undefined => {
+  if (!input?.questions) return undefined;
+
+  const { questions } = input;
+
+  return questions?.map(q => ({
+    questionTitle: q.questionVersion?.title as string,
+    type: q.questionVersion?.type as string,
+    remark: q.remark as string,
+    questionVersionId: q.questionVersionId,
+    id: q.id,
+    versions: q.questionVersion?.question?.versions,
+    category: q.questionVersion?.question?.masterCategory?.name as string,
+  }));
 };
 
-const AddSurveyForm: FC = props => {
-  const params = useParams<{ id?: string }>();
+const SurveyForm: FC = () => {
+  const params = useParams<{ id?: string; detailId?: string }>();
   const projectId = params.id || '';
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const { surveyData, isLoading } = useGetSurveyById(params?.detailId);
+
   const initialValues = useMemo<IAddSurveyFormValues>(
     () => ({
-      ...baseInitialValues,
+      surveyId: surveyData?.displayId || '',
+      name: surveyData?.name || '',
+      template: SurveyTemplateEnum.NEW,
+      remark: surveyData?.remark || '',
+      questions: transformQuestionData(surveyData) || [],
       projectId,
     }),
-    [projectId],
+    [projectId, surveyData],
   );
+  const editRouteMath = useMatch(
+    ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
+  );
+
+  const isEditMode = !!editRouteMath;
 
   const onSuccess = useCallback(async () => {
     await queryClient.invalidateQueries('getProjects');
@@ -142,14 +172,16 @@ const AddSurveyForm: FC = props => {
                 {t('common.mainInformation')}:
               </div>
 
-              <ControlledInput
-                inputType={INPUT_TYPES.SELECT}
-                name={'template'}
-                options={transformEnumToOption(SurveyTemplateEnum, type =>
-                  t(`surveyTemplateEnum.${type}`),
-                )}
-                dropdownRender={TemplateOption}
-              />
+              {!isEditMode && (
+                <ControlledInput
+                  inputType={INPUT_TYPES.SELECT}
+                  name={'template'}
+                  options={transformEnumToOption(SurveyTemplateEnum, type =>
+                    t(`surveyTemplateEnum.${type}`),
+                  )}
+                  dropdownRender={TemplateOption}
+                />
+              )}
               <ControlledInput
                 inputType={INPUT_TYPES.INPUT}
                 name="name"
@@ -168,7 +200,7 @@ const AddSurveyForm: FC = props => {
               </div>
               <ControlledInput
                 inputType={INPUT_TYPES.INPUT}
-                name="id"
+                name="surveyId"
                 label="ID"
                 disabled
               />
@@ -195,4 +227,17 @@ const AddSurveyForm: FC = props => {
   );
 };
 
-export default AddSurveyForm;
+export default SurveyForm;
+
+function QuestionSurveyList() {
+  const { t } = useTranslation();
+
+  return (
+    <QuestionListWrapper className={'QuestionListWrapper'}>
+      <div className="QuestionListWrapper__header">
+        {t('common.surveyQuestionList')}:
+      </div>
+      <DisplayQuestionSurveyList />
+    </QuestionListWrapper>
+  );
+}
