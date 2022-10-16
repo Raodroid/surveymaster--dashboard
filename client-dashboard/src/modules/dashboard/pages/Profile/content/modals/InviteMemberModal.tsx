@@ -5,7 +5,7 @@ import { CloseIcon } from 'icons';
 import { InviteMember, UpdateMember } from 'interfaces';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -15,7 +15,6 @@ import * as Yup from 'yup';
 import { ProfileModal } from '.';
 import { onError } from '../../../../../../utils/funcs';
 import { InviteMemberModalStyled } from './styles';
-import { useMemo } from 'react';
 
 const initialValues = {
   id: '',
@@ -27,13 +26,21 @@ const initialValues = {
   departmentName: '',
 };
 
-interface InviteModal extends ProfileModal {
+interface InviteModal extends Omit<ProfileModal, 'userId'> {
   edit?: boolean;
-  userData?: any;
+  userData?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    displayName: string;
+    departmentName: string;
+    roles: number[];
+  };
 }
 
 function InviteMemberModal(props: InviteModal) {
-  const { showModal, setShowModal, edit = false, userData = {} } = props;
+  const { showModal, setShowModal, edit = false, userData } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -50,15 +57,17 @@ function InviteMemberModal(props: InviteModal) {
   );
 
   const userInit = useMemo(() => {
-    return {
-      id: userData.id,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      email: userData.email,
-      displayName: userData.displayName,
-      departmentName: userData.departmentName,
-      roles: userData.roles,
-    };
+    return userData
+      ? {
+          id: userData.id,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          displayName: userData.displayName,
+          departmentName: userData.departmentName,
+          roles: userData.roles,
+        }
+      : initialValues;
   }, [userData]);
 
   const InviteMemberSchema = Yup.object({
@@ -99,7 +108,7 @@ function InviteMemberModal(props: InviteModal) {
   );
 
   const handleFinish = (payload: InviteMember | UpdateMember) => {
-    if (edit) {
+    if (edit && userData) {
       mutationUpdateMember.mutateAsync({ ...payload, id: userData.id });
     } else {
       mutationInviteMember.mutateAsync(payload);
@@ -119,6 +128,7 @@ function InviteMemberModal(props: InviteModal) {
     >
       <>
         <Formik
+          enableReinitialize={true}
           initialValues={edit ? userInit : initialValues}
           onSubmit={handleFinish}
           validationSchema={InviteMemberSchema}

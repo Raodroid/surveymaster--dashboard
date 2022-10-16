@@ -5,6 +5,7 @@ import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import useParseQueryString from 'hooks/useParseQueryString';
 import { PenFilled, TrashOutlined } from 'icons';
 import _get from 'lodash/get';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import StyledPagination from 'modules/dashboard/components/StyledPagination';
 import moment from 'moment';
@@ -80,7 +81,7 @@ function Survey() {
     [],
   );
 
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
         name: project?.data.name || '...',
@@ -111,7 +112,7 @@ function Survey() {
         title: 'Date of Creation',
         dataIndex: 'createdAt',
         key: 'createdAt',
-        render: (text: any) => {
+        render: (text: Date) => {
           const str = text.toString();
           return <div>{str.slice(0, 10)}</div>;
         },
@@ -120,8 +121,8 @@ function Survey() {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',
-        width: 30,
-        render: (_, record: any) => (
+        width: 100,
+        render: (_, record: ISurvey) => (
           <div
             className="flex-center actions"
             onClick={e => e.stopPropagation()}
@@ -150,13 +151,14 @@ function Survey() {
     <SurveyWrapper className="flex-column">
       <ProjectHeader routes={routes} search />
 
-      <TableWrapper className="flex-column">
+      <TableWrapper className="flex-column project-table-max-height">
         <CustomSpinSuspense spinning={getSurveyListQuery.isLoading}>
           <Table
             dataSource={surveys}
             columns={columns}
             onRow={onRow}
             pagination={false}
+            scroll={{ y: 100 }}
           />
           <StyledPagination
             onChange={page => {

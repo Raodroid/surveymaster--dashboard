@@ -1,19 +1,40 @@
 import { Table } from 'antd';
-import React from 'react';
+import { ColumnsType } from 'antd/lib/table';
 import { useTranslation } from 'react-i18next';
+import { UserPayload } from 'redux/user';
+import { IQuestionCategory, IQuestionVersion } from 'type';
 import Remark from './Remark';
 import { QuestionRemarksWrapper } from './styles';
 
-const columns = [
+export interface ISurveyQuestion {
+  id: string;
+  displayId: string;
+  latestCompletedVersion: IQuestionVersion;
+  latestVersion: IQuestionVersion;
+  versions: [IQuestionVersion, IQuestionVersion];
+  masterCategoryId: string;
+  masterCategory: IQuestionCategory;
+  masterSubCategoryId: string;
+  masterSubCategory: IQuestionCategory;
+  masterVariableName: string;
+  masterCombineTokenString: string;
+  createdBy: UserPayload;
+  createdAt: Date;
+  type: string;
+}
+
+const columns: ColumnsType<ISurveyQuestion> = [
   {
     title: '',
     dataIndex: 'remark',
     key: 'remark',
-    render: (_, record: any, index: number) => <Remark index={index} />,
+    render: (_, record: ISurveyQuestion, index: number) => (
+      <Remark index={index} />
+    ),
   },
 ];
 
-function QuestionRemarks(props: { questions: any }) {
+function QuestionRemarks(props: { questions: ISurveyQuestion[] }) {
   const { questions } = props;
   const { t } = useTranslation();
   return (

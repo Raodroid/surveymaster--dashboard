@@ -2,7 +2,7 @@ import { Button, Divider, Form, Input, InputRef } from 'antd';
 import useParseQueryString from 'hooks/useParseQueryString';
 import { Chat, Clock, PenFilled } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
-import StyledBreadcrumb from 'modules/common/commonComponent/StyledBreadcrumb';
+import StyledBreadcrumb, { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { useCallback, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
@@ -13,8 +13,8 @@ import { HeaderStyled } from './styles';
 import { useEffect } from 'react';
 
 function ProjectHeader(props: {
-  routes?: any;
-  links?: string[] | any;
+  routes?: IBreadcrumbItem[];
+  links?: string[];
   search?: boolean;
 }) {
   const { routes, links, search } = props;

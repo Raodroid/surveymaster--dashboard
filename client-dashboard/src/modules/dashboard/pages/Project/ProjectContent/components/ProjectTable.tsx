@@ -27,12 +27,9 @@ const initParams: IGetParams = {
   isDeleted: false,
 };
 
-type QsParams = {
-  q?: string;
-  isDeleted?: string;
-  createdFrom?: string;
-  createdTo?: string;
-};
+interface ProjectColumnRecord extends IProject {
+  personResponsible: Record<string, any>;
+}
 
 const getProjects = (params: GetListQuestionDto) => {
   const newParams: GetListQuestionDto = {
@@ -82,11 +79,9 @@ function ProjectTable() {
     },
   );
 
-  console.log(qsParams);
-
   const total: number = _get(getProjectListQuery.data, 'data.itemCount', 0);
 
-  const projects = useMemo<IProject[]>(
+  const projects = useMemo<ProjectColumnRecord[]>(
     () => _get(getProjectListQuery.data, 'data.data'),
     [getProjectListQuery.data],
   );
@@ -98,13 +93,15 @@ function ProjectTable() {
     [],
   );
 
-  const columns: ColumnsType<IProject> = useMemo(
+  const columns: ColumnsType<ProjectColumnRecord> = useMemo(
     () => [
       {
         title: 'ID',
         dataIndex: 'project',
         key: 'project',
-        render: (_, record: any) => <div>{record?.displayId}</div>,
+        render: (_, record: ProjectColumnRecord) => (
+          <div>{record?.displayId}</div>
+        ),
       },
       {
         title: 'Project Title',
@@ -115,13 +112,13 @@ function ProjectTable() {
         title: 'N of Surveys',
         dataIndex: 'numberOfSurveys',
         key: 'numberOfSurveys',
-        render: (text: any) => <div>{text}</div>,
+        render: (text: string) => <div>{text}</div>,
       },
       {
         title: 'Person In Charge',
         dataIndex: 'createdBy',
         key: 'createdBy',
-        render: (_, record: any) => (
+        render: (_, record: ProjectColumnRecord) => (
           <div>
             {record?.personResponsible?.firstName}{' '}
             {record?.personResponsible?.lastName}
@@ -132,7 +129,7 @@ function ProjectTable() {
         title: 'Date of Creation',
         dataIndex: 'createdAt',
         key: 'createdAt',
-        render: (text: any) => {
+        render: (text: string) => {
           const str = text.toString();
           return <div>{str.slice(0, 10)}</div>;
         },
@@ -141,7 +138,7 @@ function ProjectTable() {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',
-        render: (_, record: any) => (
+        render: (_, record: ProjectColumnRecord) => (
           <div
             className="flex-center actions"
             onClick={e => {
@@ -186,7 +183,7 @@ function ProjectTable() {
     [navigate, qsParams, t],
   );
 
-  const onRow = (record: any) => {
+  const onRow = (record: ProjectColumnRecord) => {
     return {
       onClick: () =>
         !qsParams?.isDeleted &&
@@ -197,13 +194,14 @@ function ProjectTable() {
   };
 
   return (
-    <ProjectTableWrapper ref={wrapperRef}>
+    <ProjectTableWrapper ref={wrapperRef} className="project-table-max-height">
       <CustomSpinSuspense spinning={getProjectListQuery.isLoading}>
         <Table
           pagination={false}
           dataSource={projects}
           columns={columns}
           onRow={onRow}
+          scroll={{ y: 100 }}
         />
         <StyledPagination
           onChange={page => {

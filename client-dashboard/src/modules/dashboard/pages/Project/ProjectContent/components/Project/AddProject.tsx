@@ -2,6 +2,7 @@ import { Button, Form, notification } from 'antd';
 import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
 import { CreateProject } from 'interfaces/project';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
@@ -26,7 +27,7 @@ function AddProject() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
         name: 'Add New Project',

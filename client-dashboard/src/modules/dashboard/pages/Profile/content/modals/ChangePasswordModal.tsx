@@ -19,7 +19,9 @@ const initialValues = {
   verifyPassword: '',
 };
 
-function ChangePasswordModal(props: ProfileModal) {
+interface ChangePassword extends Omit<ProfileModal, 'userId'> {}
+
+function ChangePasswordModal(props: ChangePassword) {
   const { showModal, setShowModal } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();

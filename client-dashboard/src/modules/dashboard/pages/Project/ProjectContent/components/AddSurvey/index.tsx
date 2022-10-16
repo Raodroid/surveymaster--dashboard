@@ -1,6 +1,7 @@
 import { Button, Divider, Form } from 'antd';
 import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +23,7 @@ function AddSurvey() {
   const { t } = useTranslation();
   const [templateValue, setTemplateValue] = useState('');
 
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
         name: 'title',

@@ -1,6 +1,7 @@
 import { Button, Form, notification } from 'antd';
 import { Formik } from 'formik';
 import { UpdateProject } from 'interfaces/project';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,10 +25,10 @@ function EditProject() {
     () => ProjectService.getProjectById(params?.projectId),
   );
 
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: project?.data?.name,
+        name: project?.data?.name || '...',
         href: generatePath(projectRoutePath.SURVEY, {
           projectId: params?.projectId,
         }),

@@ -3,5 +3,5 @@ export { default as RestoreProjectModal } from './RestoreProject';
 
 export interface IProjectModal {
   showModal: boolean;
-  setShowModal: (payload: any) => void;
+  setShowModal: (payload: boolean) => void;
 }

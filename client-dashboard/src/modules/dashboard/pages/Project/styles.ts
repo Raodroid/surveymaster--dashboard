@@ -10,6 +10,7 @@ export const ProjectWrapper = styled(Content)`
   background: none;
 
   height: 100%;
+  width: 100%;
 
   @media only screen and (${screenSize.medium}) {
     flex-direction: column;
@@ -44,5 +45,13 @@ export const ProjectWrapper = styled(Content)`
   }
   .overflow-hidden {
     overflow-y: hidden;
+  }
+  .project-table-max-height {
+    .ant-table-thead .ant-table-cell:nth-last-child(2) {
+      text-align: center;
+    }
+    .ant-table-body {
+      max-height: calc(100vh - 310px) !important;
+    }
   }
 `;

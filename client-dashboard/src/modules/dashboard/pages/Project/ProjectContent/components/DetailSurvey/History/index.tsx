@@ -1,3 +1,4 @@
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,11 +11,13 @@ function ActionHistory(props: DetailSurveyProps) {
   const params = useParams<projectSurveyParams>();
   const { t } = useTranslation();
 
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
         name: project?.data.name || '...',
-        href: (projectRoutePath.SURVEY, { projectId: params?.projectId }),
+        href: generatePath(projectRoutePath.SURVEY, {
+          projectId: params.projectId,
+        }),
       },
       {
         name: survey?.data.name || '...',
@@ -25,7 +28,7 @@ function ActionHistory(props: DetailSurveyProps) {
       },
       {
         name: 'Action History',
-        href: '',
+        href: projectRoutePath.DETAIL_SURVEY.HISTORY,
       },
     ],
     [params, survey, project],

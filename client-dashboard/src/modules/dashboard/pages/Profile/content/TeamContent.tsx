@@ -16,6 +16,7 @@ import {
   Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { String } from 'aws-sdk/clients/cloudhsm';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
@@ -30,6 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
+import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
 import { useDebounce } from 'utils';
 import {
@@ -46,11 +48,14 @@ import {
 } from './modals';
 
 interface DataType {
-  key: React.Key;
+  key: string;
   avatar?: string;
   name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  authentication: any;
+  userRoles: Record<string, any>[];
+  deletedAt: Date;
 }
 
 const rowSelection = {
@@ -72,22 +77,25 @@ function TeamContent() {
   const profile = useSelector(AuthSelectors.getProfile);
 
   const searchRef = useRef<InputRef>(null);
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState<string>('');
   const allRoles = useSelector(AuthSelectors.getAllRoles);
   const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
 
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('');
+  const [search, setSearch] = useState<String>('');
+  const [filter, setFilter] = useState<String>('');
   const searchDebounce = useDebounce(search);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState<number>(1);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
+
   const [showConfirmDeactivateModal, setShowConfirmDeactivateModal] =
-    useState(false);
-  const [showConfirmRestoreModal, setShowConfirmRestoreModal] = useState(false);
-  const [showInviteModal, setShowInviteModal] = useState(false);
-  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+    useState<boolean>(false);
+  const [showConfirmRestoreModal, setShowConfirmRestoreModal] =
+    useState<boolean>(false);
+  const [showInviteModal, setShowInviteModal] = useState<boolean>(false);
+  const [showResetPasswordModal, setShowResetPasswordModal] =
+    useState<boolean>(false);
   const [showEditPreferencesModal, setShowEditPreferencesModal] =
-    useState(false);
+    useState<boolean>(false);
 
   const isAdminRole = useMemo(() => {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
@@ -142,7 +150,7 @@ function TeamContent() {
       {
         title: '',
         dataIndex: 'avatar',
-        render: (src: string, record: any) =>
+        render: (src: string, record: DataType) =>
           src ? (
             <img
               src={src}
@@ -172,14 +180,14 @@ function TeamContent() {
       {
         title: 'Authentication',
         dataIndex: 'authentication',
-        render: (_, record: any) => {
+        render: (_, record: DataType) => {
           const list = Object.values(allRoles).filter(elm =>
             record.userRoles.some(el => el.roleId === elm.id),
           );
 
           return (
             <div>
-              {list.map((elm: any, index: number) => (
+              {list.map((elm: DataType, index: number) => (
                 <span style={{ fontSize: 12 }}>
                   {elm.name} {index !== list.length - 1 && '| '}
                 </span>
@@ -191,7 +199,7 @@ function TeamContent() {
       {
         title: '',
         dataIndex: 'threeDots',
-        render: (_, record: any) => (
+        render: (_, record: DataType) => (
           <ThreeDotsDropdown
             overlay={
               <DropDownMenuStyled>
@@ -255,21 +263,24 @@ function TeamContent() {
     [profile, t, isAdminRole, canEdit, canRestore, canDelete, allRoles],
   );
 
-  const data: DataType[] = teamMembers
-    ? teamMembers.data.data.map(user => {
-        console.log(user);
-        return {
-          key: user.id,
-          avatar: user.avatar || '',
-          firstName: user.firstName,
-          lastName: user.lastName,
-          name: user.firstName + ' ' + user.lastName,
-          email: user.email,
-          userRoles: user.userRoles,
-          deletedAt: user.deletedAt,
-        };
-      })
-    : [];
+  const data: DataType[] = useMemo(
+    () =>
+      teamMembers
+        ? teamMembers.data.data.map(user => {
+            return {
+              key: user.id,
+              avatar: user.avatar || '',
+              firstName: user.firstName,
+              lastName: user.lastName,
+              name: user.firstName + ' ' + user.lastName,
+              email: user.email,
+              userRoles: user.userRoles,
+              deletedAt: user.deletedAt,
+            };
+          })
+        : [],
+    [teamMembers],
+  );
 
   return (
     <TeamContentStyled className="flex">

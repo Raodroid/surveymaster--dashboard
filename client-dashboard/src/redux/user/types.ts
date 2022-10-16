@@ -57,6 +57,7 @@ export interface UserPayload {
   country?: string;
   userRoles?: Record<string, any>[];
   disabledNotificationTypes?: any;
+  departmentName?: string;
 }
 
 export interface ChangePasswordPayload {

@@ -56,7 +56,9 @@ const reverseNotificationTypeValue = (
   );
 };
 
-function SetUpPreferencesModal(props: ProfileModal) {
+interface SetUpPreferences extends Omit<ProfileModal, 'userId'> {}
+
+function SetUpPreferencesModal(props: SetUpPreferences) {
   const { showModal, setShowModal } = props;
   const queryClient = useQueryClient();
   const { t } = useTranslation();

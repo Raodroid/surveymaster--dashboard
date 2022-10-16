@@ -5,7 +5,7 @@ import { ArrowDown, FilterOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { IGetParams } from 'type';
@@ -19,6 +19,13 @@ import { useEffect } from 'react';
 export interface IFilter {
   counter?: number;
   setCounter?: (payload: number) => void;
+}
+
+interface FilterParams {
+  isDeleted?: boolean;
+  dateCreation?: boolean;
+  createdFrom?: Moment | string;
+  createdTo?: Moment | string;
 }
 
 function ProjectFilter() {
@@ -78,7 +85,7 @@ function FilterOverlay(props: IFilter) {
     createdTo?: string;
   }>();
 
-  const initialValues = useMemo(() => {
+  const initialValues: FilterParams = useMemo(() => {
     return {
       dateCreation: qsParams.createdFrom || qsParams.createdTo ? true : false,
       isDeleted: qsParams.isDeleted === 'true',
@@ -99,11 +106,11 @@ function FilterOverlay(props: IFilter) {
     valuesList.forEach(elm => setFieldValue(elm, defaultInit[elm]));
   };
 
-  const handleSubmit = (payload: any) => {
+  const handleSubmit = (payload: FilterParams) => {
     const list = Object.values(payload).filter(elm => elm === true);
     if (setCounter) setCounter(list.length);
 
-    const payloadParams: IGetParams = {
+    const payloadParams = {
       q: qsParams.q || '',
       isDeleted: payload.isDeleted,
       createdFrom:
@@ -111,8 +118,6 @@ function FilterOverlay(props: IFilter) {
       createdTo:
         payload.dateCreation && payload.createdTo ? payload.createdTo : '',
     };
-
-    console.log(payloadParams);
 
     const keys = Object.keys(payloadParams);
     let result = '';

@@ -1,6 +1,7 @@
 import { Button, Form, notification } from 'antd';
 import { Formik } from 'formik';
 import { UpdateSurvey } from 'interfaces';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
@@ -15,7 +16,7 @@ import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
 import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
-export interface IQuestions {
+interface IQuestions {
   questionVersionId: string;
   remark: string;
   sort: number;
@@ -25,7 +26,7 @@ export interface IUpdateSurvey {
   id: string;
   name: string;
   remark: string;
-  surveyQuestions: IQuestions[];
+  questions: IQuestions[];
   projectId: string;
 }
 
@@ -36,7 +37,7 @@ function Remarks(props: DetailSurveyProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
         name: project?.data.name || '...',
@@ -80,7 +81,7 @@ function Remarks(props: DetailSurveyProps) {
     const updateSurveyPayload = {
       id: payload.id,
       projectId: payload.projectId,
-      questions: payload.surveyQuestions.map((elm: IQuestions) => {
+      questions: payload.questions.map((elm: IQuestions) => {
         return {
           id: elm.id,
           questionVersionId: elm.questionVersionId,

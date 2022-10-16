@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { BaseSectionWrapper } from '../../../../common/styles';
 
 export const ProjectContentWrapper = styled(BaseSectionWrapper)`
+  width: 100%;
+  overflow: hidden;
   flex: 1;
   padding: 0;
   .title {
@@ -23,10 +25,8 @@ export const ProjectTableWrapper = styled.div`
   .ant-table-cell {
     height: 48px;
     padding: 0 10px;
-    &:last-child {
-      text-align: center;
-    }
   }
+
   .ant-table {
     .ant-table-cell {
       a,

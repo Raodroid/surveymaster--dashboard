@@ -5,7 +5,7 @@ export const SurveyWrapper = styled.div`
 `;
 
 export const TableWrapper = styled.div`
-  padding: 20px 12px 16px;
+  padding: 20px 12px 0;
   flex: 1;
   width: 100%;
   height: 100%;
@@ -38,6 +38,7 @@ export const TableWrapper = styled.div`
       color: var(--text-color);
     }
   }
+
   .ant-table-cell {
     padding: 0 10px;
   }

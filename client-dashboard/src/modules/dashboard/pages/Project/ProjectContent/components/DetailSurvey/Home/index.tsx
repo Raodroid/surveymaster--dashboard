@@ -1,5 +1,6 @@
 import { Form } from 'antd';
 import { Formik } from 'formik';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
@@ -15,7 +16,7 @@ function DetailSurveyHome(props: DetailSurveyProps) {
   const { surveyData: survey, projectData: project } = props;
   const params = useParams<projectSurveyParams>();
 
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
         name: project?.data.name || '...',
@@ -31,7 +32,7 @@ function DetailSurveyHome(props: DetailSurveyProps) {
     [params, survey, project],
   );
 
-  const links = [
+  const links: string[] = [
     generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
       projectId: params.projectId,
       surveyId: params.surveyId,
@@ -57,6 +58,8 @@ function DetailSurveyHome(props: DetailSurveyProps) {
 
   const handleSubmit = () => {};
 
+  console.log(survey?.data.questions);
+
   return (
     <DetailSurveyHomeWrapper className="flex-column">
       <ProjectHeader routes={routes} links={links} />
@@ -75,7 +78,7 @@ function DetailSurveyHome(props: DetailSurveyProps) {
               >
                 <SimpleBar style={{ height: '100%' }}>
                   <Inputs disabled />
-                  <QuestionList survey={survey?.data.questions} />
+                  <QuestionList questions={survey?.data.questions} />
                 </SimpleBar>
               </Form>
             )}
