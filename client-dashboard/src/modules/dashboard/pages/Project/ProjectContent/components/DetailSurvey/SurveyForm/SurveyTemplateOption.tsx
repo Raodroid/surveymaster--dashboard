@@ -93,6 +93,7 @@ export const TemplateOption = () => {
     e => {
       e.preventDefault();
       if (e.target.value) setFieldValue('template', e.target.value);
+      setFieldValue('surveyId', undefined);
     },
     [setFieldValue],
   );

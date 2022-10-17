@@ -114,6 +114,16 @@ const SurveyForm: FC = () => {
     },
   );
 
+  const updateSurveyMutation = useMutation(
+    (data: IPostSurveyBodyDto) => {
+      return SurveyService.updateSurvey(data);
+    },
+    {
+      onSuccess,
+      onError,
+    },
+  );
+
   const duplicateSurveyMutation = useMutation(
     (data: IPostSurveyBodyDto) => {
       return SurveyService.duplicateSurvey(data);
@@ -137,6 +147,15 @@ const SurveyForm: FC = () => {
         ...rest,
       };
 
+      if (isEditMode) {
+        transformValue.questions = questions.map((q, index) => ({
+          questionVersionId: q.questionVersionId,
+          sort: index + 1,
+          remark: q.remark,
+        }));
+        await updateSurveyMutation.mutateAsync(transformValue);
+      }
+
       if (values.template === SurveyTemplateEnum.DUPLICATE) {
         await duplicateSurveyMutation.mutateAsync(transformValue);
       }
@@ -150,7 +169,13 @@ const SurveyForm: FC = () => {
         await addSurveyMutation.mutateAsync(transformValue);
       }
     },
-    [addSurveyMutation, duplicateSurveyMutation, navigate],
+    [
+      addSurveyMutation,
+      duplicateSurveyMutation,
+      isEditMode,
+      navigate,
+      updateSurveyMutation,
+    ],
   );
 
   return (
@@ -211,16 +236,17 @@ const SurveyForm: FC = () => {
               <QuestionSurveyList />
             )}
           </div>
-          <Button
-            style={{ width: '100%' }}
-            type="primary"
-            className="info-btn"
-            htmlType="submit"
-            disabled={!dirty || !isValid}
-            loading={addSurveyMutation.isLoading}
-          >
-            {t('common.saveSurvey')}
-          </Button>
+          <div className={'SurveyFormWrapper__submit_btn'}>
+            <Button
+              type="primary"
+              className="info-btn"
+              htmlType="submit"
+              disabled={!isValid}
+              loading={addSurveyMutation.isLoading}
+            >
+              {t('common.saveSurvey')}
+            </Button>
+          </div>
         </SurveyFormWrapper>
       )}
     </Formik>

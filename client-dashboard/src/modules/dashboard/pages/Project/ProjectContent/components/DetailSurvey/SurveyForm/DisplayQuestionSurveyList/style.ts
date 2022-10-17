@@ -14,6 +14,18 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
         background: rgb(245 250 254);
       }
 
+      &.title-column {
+        .second {
+          .question-info-wrapper {
+            align-items: center;
+            .category,
+            .question-type {
+              margin: 0;
+            }
+          }
+        }
+      }
+
       &__item {
         span {
           font-weight: 600;
@@ -41,17 +53,18 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
         width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.5rem;
         .question-info-wrapper {
           display: flex;
-          align-items: flex-end;
-          gap: 1rem;
+          align-items: flex-start;
+          gap: 1.5rem;
           .question {
             width: 60%;
             .question-label-info {
               display: flex;
               align-items: center;
               gap: 5px;
+              margin-bottom: 6px;
             }
             .status-question {
               width: 8px;
@@ -65,20 +78,35 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
                 background: #ff634e;
               }
             }
-            .decline-change-btn {
+            .decline-change-btn,
+            .show-history-btn {
+              display: flex;
+              gap: 0.5rem;
               font-size: 12px;
-              font-weight: 500;
+              font-weight: 600;
               cursor: pointer;
+              align-items: center;
               color: ${templateVariable.primary_color};
+              :hover {
+                color: ${templateVariable.primary_color_hover};
+              }
+            }
+            .show-history-btn {
+              padding-top: 1rem;
             }
           }
           .category {
             width: 40%;
             height: fit-content;
+            margin-top: 25px;
           }
           .question-type {
             width: 150px;
             height: fit-content;
+            margin-top: 25px;
+            > div:nth-child(1) {
+              width: 100%;
+            }
           }
         }
       }

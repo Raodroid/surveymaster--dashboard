@@ -2,23 +2,21 @@ import { ControlledInput } from 'modules/common';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { DragDropContext, Draggable } from 'react-beautiful-dnd';
 
-import { Button, Menu, notification } from 'antd';
+import { Button, Menu } from 'antd';
 import {
   GetListQuestionDto,
   IOptionItem,
-  IPostSurveyBodyDto,
   IQuestion,
-  IQuestionVersionOption,
-  ISurvey,
+  IQuestionVersion,
   QuestionType,
 } from 'type';
-import { FieldArrayRenderProps, useField, useFormikContext } from 'formik';
+import { FieldArrayRenderProps, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { DragIcon, PenFilled, TrashOutlined } from 'icons';
+import { ArrowDown, DragIcon, TrashOutlined } from 'icons';
 import { INPUT_TYPES } from '../../../../../../../../common/input/type';
 import { onError, transformEnumToOption, useDebounce } from 'utils';
-import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
-import { QuestionBankService, SurveyService } from 'services';
+import { useInfiniteQuery } from 'react-query';
+import { QuestionBankService } from 'services';
 import {
   IAddSurveyFormValues,
   initNewQuestionOnAddSurveyForm,
@@ -30,16 +28,10 @@ import {
 } from '../../../../../../QuestionBank/EditQuestion/DisplayAnswerList/DragAnswerList';
 import moment from 'moment';
 import { MOMENT_FORMAT } from '../../../../../../../../../enums';
-import { useNavigate, useParams } from 'react-router';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
-import { createProjectDetailLink, projectRoutePath } from '../../../../../util';
 import ThreeDotsDropdown from '../../../../../../../../../customize-components/ThreeDotsDropdown';
-import { StyledProjectMenu } from '../../../../styles';
-import { Refresh } from '../../../../../../../../../icons/Refresh';
 import UncontrollInput from '../../../../../../../../common/input/uncontrolled-input/UncontrollInput';
 import { SuffixIcon } from '../../../../../../../../../icons/SuffixIcon';
 
-interface IDropDownMenu {}
 enum ACTION_ENUM {
   DELETE = 'DELETE',
   CHANGE = 'CHANGE',
@@ -170,8 +162,39 @@ const DragOption: FC<{
     [index, normalizeByQuestionId, setFieldValue],
   );
 
-  const renderContent = () => {
+  const [newVersions, historyVersions] = useMemo<
+    [IQuestionVersion[] | undefined, IQuestionVersion[] | undefined]
+  >(() => {
     const versions = values.questions[index].versions;
+
+    if (!versions) return [undefined, undefined];
+
+    const newVersions: IQuestionVersion[] = [];
+    const historyVersions: IQuestionVersion[] = [];
+
+    let chosenValueIdx: undefined | number = undefined;
+
+    versions?.forEach((ver, idx) => {
+      const isCurrentValue =
+        ver.id === values.questions[index].questionVersionId;
+
+      if (chosenValueIdx !== undefined && idx > chosenValueIdx) {
+        historyVersions.push(ver);
+        return;
+      }
+
+      if (isCurrentValue) {
+        chosenValueIdx = idx;
+      }
+      newVersions.push(ver);
+    }, []);
+
+    return [newVersions, historyVersions];
+  }, [index, values.questions]);
+
+  const RenderContent = () => {
+    const [show, setShow] = useState(false);
+
     return (
       <>
         <div className={'DisplayQuestionSurveyListWrapper__row__item first'}>
@@ -180,7 +203,7 @@ const DragOption: FC<{
         </div>
 
         <div className={'DisplayQuestionSurveyListWrapper__row__item second'}>
-          {!versions ? (
+          {!newVersions ? (
             <div className={'question-info-wrapper'}>
               <div className={'question'}>
                 <ControlledInput
@@ -220,7 +243,7 @@ const DragOption: FC<{
             </div>
           ) : (
             <>
-              {versions.map((ver, idx) => {
+              {newVersions.map((ver, idx) => {
                 const isCurrentValue =
                   ver.id === values.questions[index].questionVersionId;
 
@@ -266,6 +289,23 @@ const DragOption: FC<{
                         options={questionOption}
                         suffixIcon={null}
                       />
+                      {!!historyVersions?.length && (
+                        <span
+                          className={'show-history-btn'}
+                          onClick={() => setShow(s => !s)}
+                        >
+                          {t(
+                            `common.${
+                              show ? 'closeHistoryList' : 'showHistoryList'
+                            }`,
+                          )}{' '}
+                          <ArrowDown
+                            style={{
+                              transform: show ? 'rotateX(180deg)' : 'none',
+                            }}
+                          />
+                        </span>
+                      )}
                     </div>
 
                     <div className={'category'}>
@@ -309,11 +349,11 @@ const DragOption: FC<{
                     </div>
 
                     <div className={'category'}>
-                      <UncontrollInput
+                      <ControlledInput
                         disabled
                         suffixIcon={null}
                         inputType={INPUT_TYPES.INPUT}
-                        name={ver.question?.masterCategory?.name}
+                        name={`questions[${index}].category`}
                       />
                     </div>
                     <div className={'question-type'}>
@@ -331,6 +371,51 @@ const DragOption: FC<{
                   </div>
                 );
               })}
+
+              {show &&
+                historyVersions?.map((ver, idx) => {
+                  return (
+                    <div className={'question-info-wrapper'} key={ver.id}>
+                      <div className={'question'}>
+                        <div className={'question-label-info'}>
+                          <span className={'status-question warning-color'} />{' '}
+                          <span>
+                            {moment(ver.updatedAt).format(
+                              MOMENT_FORMAT.FULL_DATE_FORMAT,
+                            )}
+                          </span>
+                        </div>
+                        <UncontrollInput
+                          disabled
+                          inputType={INPUT_TYPES.INPUT}
+                          name={`questions[${index}].questionVersionId`}
+                          value={ver.title}
+                        />
+                      </div>
+
+                      <div className={'category'}>
+                        <ControlledInput
+                          disabled
+                          suffixIcon={null}
+                          inputType={INPUT_TYPES.INPUT}
+                          name={`questions[${index}].category`}
+                        />
+                      </div>
+                      <div className={'question-type'}>
+                        <UncontrollInput
+                          disabled
+                          suffixIcon={null}
+                          inputType={INPUT_TYPES.SELECT}
+                          value={ver.type}
+                          options={transformEnumToOption(
+                            QuestionType,
+                            questionType => t(`questionType.${questionType}`),
+                          )}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
             </>
           )}
         </div>
@@ -343,7 +428,7 @@ const DragOption: FC<{
         </div>
 
         <div className={'DisplayQuestionSurveyListWrapper__row__item forth'}>
-          {!versions ? (
+          {!newVersions || newVersions.length === 1 ? (
             <Button
               className={'delete-icon'}
               onClick={() => {
@@ -390,8 +475,8 @@ const DragOption: FC<{
                           if (idx === index) {
                             return {
                               ...q,
-                              questionVersionId: versions[0].id as string,
-                              questionTitle: versions[0].title as string,
+                              questionVersionId: newVersions[0].id as string,
+                              questionTitle: newVersions[0].title as string,
                             };
                           }
                           return q;
@@ -421,7 +506,7 @@ const DragOption: FC<{
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          {renderContent()}
+          <RenderContent />
         </div>
       )}
     </Draggable>
@@ -465,7 +550,7 @@ const OptionList = React.memo(function QuoteListA(props: {
   );
   return (
     <>
-      <div className={'DisplayQuestionSurveyListWrapper__row'}>
+      <div className={'DisplayQuestionSurveyListWrapper__row title-column'}>
         <div className={'DisplayQuestionSurveyListWrapper__row__item first'}>
           <span style={{ marginLeft: 'auto' }}>{t('common.order')}</span>
         </div>

@@ -20,6 +20,8 @@
     "foods": "Foods"
   },
   "common": {
+    "showHistoryList": "Show History List",
+    "closeHistoryList": "Close History List",
     "declineChange": "Decline change",
     "surveyList": "Survey List",
     "addNewSurvey": "Add New Survey",

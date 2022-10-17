@@ -22,7 +22,15 @@ export const SurveyFormWrapper = styled(Form)`
         width: 284px;
       }
     }
-    &__questions {
+    &__submit_btn {
+      width: calc(100% - 80px);
+      position: absolute;
+      bottom: 0;
+      background: white;
+      padding: 1.5rem 0;
+      .ant-btn {
+        width: 100%;
+      }
     }
   }
 
