@@ -58,8 +58,6 @@ function DetailSurveyHome(props: DetailSurveyProps) {
 
   const handleSubmit = () => {};
 
-  console.log(survey?.data.questions);
-
   return (
     <DetailSurveyHomeWrapper className="flex-column">
       <ProjectHeader routes={routes} links={links} />

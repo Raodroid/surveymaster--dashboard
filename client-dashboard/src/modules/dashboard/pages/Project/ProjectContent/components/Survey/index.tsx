@@ -153,7 +153,11 @@ function Survey() {
       <ProjectHeader routes={routes} search />
 
       <TableWrapper className="flex-column project-table-max-height">
-        <CustomSpinSuspense spinning={getSurveyListQuery.isLoading}>
+        <CustomSpinSuspense
+          spinning={
+            getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
+          }
+        >
           <Table
             dataSource={surveys}
             columns={columns}

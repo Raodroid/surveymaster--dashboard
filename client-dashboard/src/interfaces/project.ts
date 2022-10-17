@@ -1,11 +1,5 @@
 import { UserPayload } from 'redux/user';
-import { ISurveyQuestion } from 'type';
-
-export interface IProject {
-  id: string;
-  name: string;
-  displayId: string;
-}
+import { IProject, ISurveyQuestion } from 'type';
 
 export interface CreateProject {
   name?: string;

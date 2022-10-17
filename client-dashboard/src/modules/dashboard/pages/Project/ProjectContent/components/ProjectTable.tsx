@@ -95,8 +95,6 @@ function ProjectTable() {
     [],
   );
 
-  console.log(qsParams, typeof qsParams.isDeleted);
-
   const columns: ColumnsType<ProjectColumnRecord> = useMemo(
     () => [
       {
@@ -199,7 +197,11 @@ function ProjectTable() {
 
   return (
     <ProjectTableWrapper ref={wrapperRef} className="project-table-max-height">
-      <CustomSpinSuspense spinning={getProjectListQuery.isLoading}>
+      <CustomSpinSuspense
+        spinning={
+          getProjectListQuery.isLoading || getProjectListQuery.isFetching
+        }
+      >
         <Table
           pagination={false}
           dataSource={projects}
