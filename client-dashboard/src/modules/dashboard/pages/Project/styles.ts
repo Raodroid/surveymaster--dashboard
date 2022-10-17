@@ -47,7 +47,8 @@ export const ProjectWrapper = styled(Content)`
     overflow-y: hidden;
   }
   .project-table-max-height {
-    .ant-table-thead .ant-table-cell:nth-last-child(2) {
+    // .ant-table-thead .ant-table-cell:nth-last-child(2),
+    .ant-table-thead .ant-table-cell:nth-last-child(1) {
       text-align: center;
     }
     .ant-table-body {

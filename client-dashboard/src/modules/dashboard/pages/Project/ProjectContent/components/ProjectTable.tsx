@@ -198,12 +198,12 @@ function ProjectTable() {
 
   return (
     <ProjectTableWrapper ref={wrapperRef} className="project-table-max-height">
-      <SimpleBar style={{ height: '100%' }}>
-        <CustomSpinSuspense
-          spinning={
-            getProjectListQuery.isLoading || getProjectListQuery.isFetching
-          }
-        >
+      <CustomSpinSuspense
+        spinning={
+          getProjectListQuery.isLoading || getProjectListQuery.isFetching
+        }
+      >
+        <SimpleBar style={{ height: '100%' }}>
           <Table
             pagination={false}
             dataSource={projects}
@@ -221,8 +221,8 @@ function ProjectTable() {
             defaultCurrent={1}
             total={total}
           />
-        </CustomSpinSuspense>
-      </SimpleBar>
+        </SimpleBar>
+      </CustomSpinSuspense>
       <DeleteProjectModal
         setShowModal={setShowDeleteProject}
         showModal={showDeleteProject}

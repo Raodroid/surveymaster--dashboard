@@ -50,4 +50,10 @@ export const TableWrapper = styled.div`
   .ant-table-row {
     cursor: pointer;
   }
+
+  .ant-spin-nested-loading,
+  .ant-spin-container {
+    height: 100%;
+    overflow: hidden;
+  }
 `;

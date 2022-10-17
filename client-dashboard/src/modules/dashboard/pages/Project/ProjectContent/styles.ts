@@ -66,13 +66,19 @@ export const ProjectTableWrapper = styled.div`
   .ant-table-row {
     cursor: pointer;
   }
+
+  .ant-spin-nested-loading,
+  .ant-spin-container {
+    height: 100%;
+    overflow: hidden;
+  }
 `;
 
 export const StyledProjectMenu = styled(Menu)`
   .ant-dropdown-menu-title-content {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 4px;
 
     svg {

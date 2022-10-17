@@ -8,12 +8,13 @@ import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import StyledPagination from 'modules/dashboard/components/StyledPagination';
-import SimpleBar from 'simplebar-react';
 import moment from 'moment';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
+import SimpleBar from 'simplebar-react';
+import styled from 'styled-components';
 import { ProjectService, SurveyService } from '../../../../../../../services';
 import {
   GetListQuestionDto,
@@ -154,12 +155,12 @@ function Survey() {
       <ProjectHeader routes={routes} search />
 
       <TableWrapper className="flex-column project-table-max-height">
-        <SimpleBar style={{ height: '100%' }}>
-          <CustomSpinSuspense
-            spinning={
-              getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
-            }
-          >
+        <CustomSpinSuspense
+          spinning={
+            getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
+          }
+        >
+          <SimpleBar style={{ height: '100%' }}>
             <Table
               dataSource={surveys}
               columns={columns}
@@ -177,8 +178,8 @@ function Survey() {
               defaultCurrent={1}
               total={total}
             />
-          </CustomSpinSuspense>
-        </SimpleBar>
+          </SimpleBar>
+        </CustomSpinSuspense>
       </TableWrapper>
     </SurveyWrapper>
   );
@@ -260,7 +261,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   );
 
   const menu = (
-    <Menu
+    <SurveyMenu
       onClick={input => {
         handleSelect({ ...input, record }).then();
       }}
@@ -276,3 +277,11 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     />
   );
 };
+
+const SurveyMenu = styled(Menu)`
+  svg {
+    width: 14px;
+    height: 14px;
+    color: var(--ant-primary-color);
+  }
+`;
