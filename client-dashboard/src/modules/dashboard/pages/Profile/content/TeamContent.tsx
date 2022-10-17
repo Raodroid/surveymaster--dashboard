@@ -16,7 +16,6 @@ import {
   Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { String } from 'aws-sdk/clients/cloudhsm';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
@@ -31,7 +30,6 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
-import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
 import { useDebounce } from 'utils';
 import {
@@ -81,8 +79,8 @@ function TeamContent() {
   const allRoles = useSelector(AuthSelectors.getAllRoles);
   const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
 
-  const [search, setSearch] = useState<String>('');
-  const [filter, setFilter] = useState<String>('');
+  const [search, setSearch] = useState<string>('');
+  const [filter, setFilter] = useState<string>('');
   const searchDebounce = useDebounce(search);
   const [page, setPage] = useState<number>(1);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
@@ -324,7 +322,7 @@ function TeamContent() {
           <Checkbox
             className="show-inactivate-users-checkbox"
             checked={isDeleted}
-            onChange={() => setIsDeleted(isDeleted)}
+            onChange={() => setIsDeleted(!isDeleted)}
           >
             {t('common.showInactivateUsers')}
           </Checkbox>
