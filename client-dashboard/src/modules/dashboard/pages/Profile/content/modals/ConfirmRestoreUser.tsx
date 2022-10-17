@@ -9,11 +9,7 @@ import { onError } from 'utils';
 import { ProfileModal } from '.';
 import { ConfirmDeactivateModalStyled } from './styles';
 
-interface ConfirmDeactivate extends ProfileModal {
-  userId: string;
-}
-
-function ConfirmRestoreUserModal(props: ConfirmDeactivate) {
+function ConfirmRestoreUserModal(props: ProfileModal) {
   const { showModal, setShowModal, userId } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();

@@ -11,17 +11,17 @@ export const ROUTE_PATH = {
     HOME: '/app',
     PROJECT: {
       ROOT: '/app/project',
-      SURVEY: '/app/project/:id',
-      ADD_NEW_SURVEY: '/app/project/:id/add-survey',
+      SURVEY: '/app/project/:projectId',
+      ADD_NEW_SURVEY: '/app/project/:projectId/add-survey',
       PROJECT: {
         ADD: '/app/project/add-project',
-        EDIT: '/app/project/:id/edit-project',
+        EDIT: '/app/project/:projectId/edit-project',
       },
       DETAIL_SURVEY: {
-        ROOT: '/app/project/:id/:detailId',
-        EDIT: '/app/project/:id/:detailId/edit',
-        HISTORY: '/app/project/:id/:detailId/action-history',
-        REMARKS: '/app/project/:id/:detailId/remarks',
+        ROOT: '/app/project/:projectId/:surveyId',
+        EDIT: '/app/project/:projectId/:surveyId/edit',
+        HISTORY: '/app/project/:projectId/:surveyId/action-history',
+        REMARKS: '/app/project/:projectId/:surveyId/remarks',
       },
     },
     QUESTION_BANK: {

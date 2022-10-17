@@ -1,19 +1,20 @@
 import { Table } from 'antd';
-import React from 'react';
+import { ColumnsType } from 'antd/lib/table';
 import { useTranslation } from 'react-i18next';
+import { IQuestion } from 'type';
 import Remark from './Remark';
 import { QuestionRemarksWrapper } from './styles';
 
-const columns = [
+const columns: ColumnsType<IQuestion> = [
   {
     title: '',
     dataIndex: 'remark',
     key: 'remark',
-    render: (_, record: any, index: number) => <Remark index={index} />,
+    render: (_, record: IQuestion, index: number) => <Remark index={index} />,
   },
 ];
 
-function QuestionRemarks(props: { questions: any }) {
+function QuestionRemarks(props: { questions: IQuestion[] }) {
   const { questions } = props;
   const { t } = useTranslation();
   return (

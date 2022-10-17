@@ -1,79 +1,100 @@
-import { Menu, notification, Pagination, Table } from 'antd';
+import { Menu, notification, PaginationProps, Table } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
-import { ROUTE_PATH } from 'enums';
+import useParseQueryString from 'hooks/useParseQueryString';
 import { PenFilled, TrashOutlined } from 'icons';
+import _get from 'lodash/get';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import StyledPagination from 'modules/dashboard/components/StyledPagination';
+import moment from 'moment';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useLocation, useNavigate, useParams } from 'react-router';
-import { SurveyService } from '../../../../../../../services';
-import { IGetParams, ISurvey } from '../../../../../../../type';
-import { onError, useDebounce } from '../../../../../../../utils';
+import { generatePath, useNavigate, useParams } from 'react-router';
+import SimpleBar from 'simplebar-react';
+import styled from 'styled-components';
+import { ProjectService, SurveyService } from '../../../../../../../services';
 import {
-  createProjectDetailLink,
-  getProjectTitle,
-  projectRoutePath,
-} from '../../../util';
+  GetListQuestionDto,
+  IGetParams,
+  ISurvey,
+} from '../../../../../../../type';
+import { onError } from '../../../../../../../utils';
+import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
+import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
 
+const initParams: IGetParams = {
+  q: '',
+  page: 1,
+  take: 10,
+  isDeleted: false,
+};
+
 function Survey() {
-  const params = useParams<{ id?: string }>();
-  const { search } = useLocation();
+  const params = useParams<{ projectId: string }>();
   const navigate = useNavigate();
+  const qsParams = useParseQueryString<QsParams>();
 
-  const [page, setPage] = useState(1);
+  const [paramsQuery, setParamsQuery] =
+    useState<GetListQuestionDto>(initParams);
 
-  const [headerSearch, setHeaderSearch] = useState('');
-  const [filter, setFilter] = useState('');
-  const debounce = useDebounce(headerSearch);
-
-  const [filterParams, setFilterParams] = useState<IGetParams>({
-    isDeleted: false,
-    createdFrom: '',
-    createdTo: '',
-  });
-
-  const title = useMemo(() => getProjectTitle(search), [search]);
-
-  const queryParams = useMemo(() => {
-    return {
-      q: filter,
-      page: page,
-      take: 10,
-      isDeleted: filterParams.isDeleted,
-      projectId: params.id,
+  const formatQsParams = useMemo(() => {
+    const formatQs: QsParams = {
+      ...qsParams,
+      createdFrom: moment(qsParams.createdFrom)?.startOf('day')?.format(),
+      createdTo: moment(qsParams.createdTo)?.endOf('day')?.format(),
     };
-  }, [filter, page, params, filterParams]);
+    if (!qsParams.createdFrom) delete formatQs.createdFrom;
+    if (!qsParams.createdTo) delete formatQs.createdTo;
+    return formatQs;
+  }, [qsParams]);
 
-  const { data: survey, isLoading } = useQuery(
-    ['survey', params.id, filterParams, filter, queryParams],
+  const { data: project } = useQuery(['project', params.projectId], () =>
+    ProjectService.getProjectById(params.projectId),
+  );
+
+  const getSurveyListQuery = useQuery(
+    ['getSurveys', formatQsParams, paramsQuery, params],
     () =>
-      filterParams.createdFrom || filterParams.createdTo
-        ? SurveyService.getSurveys({
-            ...queryParams,
-            createdFrom: filterParams.createdFrom,
-            createdTo: filterParams.createdTo,
-          })
-        : SurveyService.getSurveys(queryParams),
+      SurveyService.getSurveys({
+        ...paramsQuery,
+        ...formatQsParams,
+        projectId: params.projectId,
+      }),
     {
       refetchOnWindowFocus: false,
     },
   );
 
-  const routes = useMemo(
-    () => [
-      {
-        name: title,
-        href: '',
-      },
-    ],
-    [title],
+  const total: number = _get(getSurveyListQuery.data, 'data.itemCount', 0);
+
+  const surveys = useMemo<ISurvey[]>(
+    () => _get(getSurveyListQuery.data, 'data.data'),
+    [getSurveyListQuery.data],
   );
 
-  const columns = useMemo(
+  const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
+    (current, pageSize) => {
+      setParamsQuery(s => ({ ...s, take: pageSize }));
+    },
+    [],
+  );
+
+  const routes: IBreadcrumbItem[] = useMemo(
+    () => [
+      {
+        name: project?.data.name || '...',
+        href: projectRoutePath.SURVEY,
+      },
+    ],
+    [project],
+  );
+
+  const columns: ColumnsType<ISurvey> = useMemo(
     () => [
       {
         title: 'ID',
@@ -94,7 +115,7 @@ function Survey() {
         title: 'Date of Creation',
         dataIndex: 'createdAt',
         key: 'createdAt',
-        render: (text: any) => {
+        render: (text: Date) => {
           const str = text.toString();
           return <div>{str.slice(0, 10)}</div>;
         },
@@ -103,8 +124,8 @@ function Survey() {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',
-        width: 30,
-        render: (_, record: any) => (
+        width: 100,
+        render: (_, record: ISurvey) => (
           <div
             className="flex-center actions"
             onClick={e => e.stopPropagation()}
@@ -120,39 +141,45 @@ function Survey() {
   const onRow = record => {
     return {
       onClick: () =>
-        params &&
-        params.id &&
         navigate(
-          createProjectDetailLink(
-            projectRoutePath.DETAIL_SURVEY.ROOT,
-            params.id,
-            record.id,
-            title,
-          ),
+          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+            projectId: params?.projectId,
+            surveyId: record.id,
+          }),
         ),
     };
   };
 
   return (
     <SurveyWrapper className="flex-column">
-      <ProjectHeader
-        routes={routes}
-        search={headerSearch}
-        setSearch={setHeaderSearch}
-        setFilter={setFilter}
-        debounce={debounce}
-        setParams={setFilterParams}
-      />
+      <ProjectHeader routes={routes} search />
 
-      <TableWrapper className="flex-column">
-        <CustomSpinSuspense spinning={isLoading}>
-          <Table
-            dataSource={survey?.data.data}
-            columns={columns}
-            onRow={onRow}
-            pagination={false}
-          />
-          <Pagination defaultCurrent={1} />
+      <TableWrapper className="flex-column project-table-max-height">
+        <CustomSpinSuspense
+          spinning={
+            getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
+          }
+        >
+          <SimpleBar style={{ height: '100%' }}>
+            <Table
+              dataSource={surveys}
+              columns={columns}
+              onRow={onRow}
+              pagination={false}
+              rowKey="displayId"
+              // scroll={{ y: 100 }}
+            />
+            <StyledPagination
+              onChange={page => {
+                setParamsQuery(s => ({ ...s, page }));
+              }}
+              showSizeChanger
+              pageSize={paramsQuery.take}
+              onShowSizeChange={onShowSizeChange}
+              defaultCurrent={1}
+              total={total}
+            />
+          </SimpleBar>
         </CustomSpinSuspense>
       </TableWrapper>
     </SurveyWrapper>
@@ -174,7 +201,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const params = useParams<{ id?: string }>();
+  const params = useParams<{ projectId?: string }>();
 
   const duplicateMutation = useMutation(
     (data: { id: string }) => {
@@ -220,23 +247,22 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           return;
         }
         case ACTION_ENUM.EDIT: {
-          if (!params.id) return;
+          if (!params?.projectId) return;
           navigate(
-            createProjectDetailLink(
-              projectRoutePath.DETAIL_SURVEY.EDIT,
-              params.id,
-              record.displayId,
-            ),
+            generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
+              projectId: params?.projectId,
+              surveyId: record.displayId,
+            }),
           );
           return;
         }
       }
     },
-    [duplicateMutation, navigate, params.id],
+    [duplicateMutation, navigate, params],
   );
 
   const menu = (
-    <Menu
+    <SurveyMenu
       onClick={input => {
         handleSelect({ ...input, record }).then();
       }}
@@ -252,3 +278,11 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     />
   );
 };
+
+const SurveyMenu = styled(Menu)`
+  svg {
+    width: 14px;
+    height: 14px;
+    color: var(--ant-primary-color);
+  }
+`;

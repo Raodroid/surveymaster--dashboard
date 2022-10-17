@@ -1,51 +1,37 @@
-import {
-  createProjectDetailLink,
-  createProjectLink,
-  getProjectTitle,
-  projectRoutePath
-} from 'modules/dashboard/pages/Project/util';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
+import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router';
-import { DetailSurveyProps } from '..';
+import { generatePath, useParams } from 'react-router';
+import { DetailSurveyProps, projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
 
 function EditSurvey(props: DetailSurveyProps) {
-  const { surveyData: survey } = props;
-  const params = useParams();
+  const { surveyData: survey, projectData: project } = props;
+  const params = useParams<projectSurveyParams>();
   const { t } = useTranslation();
-  const { search } = useLocation();
 
-  const title = useMemo(() => getProjectTitle(search), [search]);
-
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: title,
-        href:
-          params &&
-          params.id &&
-          createProjectLink(projectRoutePath.SURVEY, params.id, title),
+        name: project?.data.name || '...',
+        href: generatePath(projectRoutePath.SURVEY, {
+          projectId: params?.projectId,
+        }),
       },
       {
-        name: survey?.data.name,
-        href:
-          params &&
-          params.id &&
-          params.detailId &&
-          createProjectDetailLink(
-            projectRoutePath.DETAIL_SURVEY.ROOT,
-            params.id,
-            params.detailId,
-            title,
-          ),
+        name: survey?.data.name || '...',
+        href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+          projectId: params?.projectId,
+          surveyId: params?.surveyId,
+        }),
       },
       {
         name: 'Edit Survey',
-        href: '',
+        href: projectRoutePath.DETAIL_SURVEY.EDIT,
       },
     ],
-    [params, title, survey],
+    [params, survey, project],
   );
 
   return (

@@ -18,11 +18,7 @@ import * as Yup from 'yup';
 import { ProfileModal } from '.';
 import { ChangePasswordModalStyled } from './styles';
 
-interface ResetUserPasswordProps extends ProfileModal {
-  userId: string;
-}
-
-function ResetUserPassword(props: ResetUserPasswordProps) {
+function ResetUserPassword(props: ProfileModal) {
   const { userId, showModal, setShowModal } = props;
   const { t } = useTranslation();
 

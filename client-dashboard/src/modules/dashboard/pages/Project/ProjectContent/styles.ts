@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { BaseSectionWrapper } from '../../../../common/styles';
 
 export const ProjectContentWrapper = styled(BaseSectionWrapper)`
+  width: 100%;
+  overflow: hidden;
   flex: 1;
   padding: 0;
   .title {
@@ -19,15 +21,14 @@ export const ProjectHomeWrapper = styled.div`
 
 export const ProjectTableWrapper = styled.div`
   flex: 1;
-  padding: 20px 12px;
+  overflow: hidden;
   .ant-table-cell {
     height: 48px;
     padding: 0 10px;
-    &:last-child {
-      text-align: center;
-    }
   }
+
   .ant-table {
+    padding: 20px 12px 0;
     .ant-table-cell {
       a,
       span,
@@ -71,7 +72,7 @@ export const StyledProjectMenu = styled(Menu)`
   .ant-dropdown-menu-title-content {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 4px;
 
     svg {

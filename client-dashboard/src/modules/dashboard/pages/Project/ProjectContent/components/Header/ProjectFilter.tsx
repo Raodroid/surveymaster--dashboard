@@ -1,37 +1,58 @@
 import { Button, Divider, Dropdown, Form } from 'antd';
 import { Formik } from 'formik';
+import useParseQueryString from 'hooks/useParseQueryString';
 import { ArrowDown, FilterOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import { useState } from 'react';
+import moment, { Moment } from 'moment';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router';
 import {
   ProjectFilterBtn,
   ProjectFilterOverlayWrapper,
   ProjectFilterWrapper,
 } from './styles';
+import qs from 'qs';
 
 export interface IFilter {
-  setParams?: (payload: any) => void;
   counter?: number;
   setCounter?: (payload: number) => void;
 }
 
-function ProjectFilter(props: IFilter) {
-  const { setParams } = props;
+interface FilterParams {
+  isDeleted?: boolean;
+  dateCreation?: boolean;
+  createdFrom?: Moment | string;
+  createdTo?: Moment | string;
+}
 
+export interface QsParams {
+  q?: string;
+  isDeleted?: string;
+  createdFrom?: string;
+  createdTo?: string;
+}
+
+function ProjectFilter() {
   const [counter, setCounter] = useState(0);
+  const qsParams = useParseQueryString<QsParams>();
+
+  useEffect(() => {
+    const list = Object.values({
+      ...qsParams,
+      dateCreation:
+        qsParams.createdFrom || qsParams.createdTo ? 'true' : 'false',
+    }).filter(elm => elm === 'true');
+
+    if (setCounter) setCounter(list.length);
+  }, [qsParams]);
 
   return (
     <ProjectFilterWrapper>
       <Dropdown
-        overlay={
-          <FilterOverlay
-            setParams={setParams}
-            counter={counter}
-            setCounter={setCounter}
-          />
-        }
+        overlay={<FilterOverlay counter={counter} setCounter={setCounter} />}
         trigger={['click']}
       >
         <ProjectFilterBtn type="primary" className="flex-j-end">
@@ -49,15 +70,29 @@ function ProjectFilter(props: IFilter) {
 
 export default ProjectFilter;
 
-const initialValues = {
+const defaultInit = {
   dateCreation: false,
   isDeleted: false,
-  createdFrom: null,
-  createdTo: null,
+  createdFrom: '',
+  createdTo: '',
 };
 
 function FilterOverlay(props: IFilter) {
-  const { setParams, counter, setCounter } = props;
+  const { counter, setCounter } = props;
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { t } = useTranslation();
+
+  const qsParams = useParseQueryString<QsParams>();
+
+  const initialValues: FilterParams = useMemo(() => {
+    return {
+      dateCreation: qsParams.createdFrom || qsParams.createdTo ? true : false,
+      isDeleted: qsParams.isDeleted === 'true',
+      createdFrom: qsParams.createdFrom && moment(qsParams.createdFrom),
+      createdTo: qsParams.createdTo && moment(qsParams.createdTo),
+    };
+  }, [qsParams]);
 
   const handleReset = (
     values,
@@ -68,22 +103,27 @@ function FilterOverlay(props: IFilter) {
     ) => void,
   ) => {
     const valuesList = Object.keys(values);
-    valuesList.forEach(elm => setFieldValue(elm, initialValues[elm]));
+    valuesList.forEach(elm => setFieldValue(elm, defaultInit[elm]));
   };
 
-  const handleSubmit = (payload: any) => {
+  const handleSubmit = (payload: FilterParams) => {
     const list = Object.values(payload).filter(elm => elm === true);
     if (setCounter) setCounter(list.length);
-    if (setParams)
-      setParams({
-        isDeleted: payload.isDeleted,
-        createdFrom: payload.dateCreation
-          ? payload?.createdFrom?.startOf('day')?._d
-          : null,
-        createdTo: payload.dateCreation
-          ? payload?.createdTo?.endOf('day')?._d
-          : null,
-      });
+
+    const payloadParams = {
+      q: qsParams.q || '',
+      isDeleted: payload.isDeleted,
+      createdFrom:
+        payload.dateCreation && payload.createdFrom
+          ? moment(payload.createdFrom).format()
+          : '',
+      createdTo:
+        payload.dateCreation && payload.createdTo
+          ? moment(payload.createdTo).format()
+          : '',
+    };
+
+    navigate(pathname + '?' + qs.stringify(payloadParams));
   };
 
   return (
@@ -93,21 +133,12 @@ function FilterOverlay(props: IFilter) {
         initialValues={initialValues}
         onSubmit={handleSubmit}
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          handleSubmit: handleFinish,
-          isSubmitting,
-          setFieldValue,
-        }) => {
+        {({ values, handleSubmit: handleFinish, setFieldValue }) => {
           return (
             <Form layout="vertical" onFinish={handleFinish}>
               <div className="header flex-j-between">
                 <div className="left flex-center">
-                  Filters
+                  {t('common.filters')}
                   <div className="counter flex-center">{counter}</div>
                 </div>
                 <div className="right">
@@ -135,14 +166,12 @@ function FilterOverlay(props: IFilter) {
                       name="createdFrom"
                       inputType={INPUT_TYPES.DAY_PICKER}
                       suffixIcon={<ArrowDown />}
-                      // disabled={!values.dateCreation}
                     />
                     -
                     <ControlledInput
                       name="createdTo"
                       inputType={INPUT_TYPES.DAY_PICKER}
                       suffixIcon={<ArrowDown />}
-                      // disabled={!values.dateCreation}
                     />
                   </div>
                 </div>
@@ -152,7 +181,7 @@ function FilterOverlay(props: IFilter) {
                   type="primary"
                   htmlType="submit"
                 >
-                  Apply
+                  {t('common.apply')}
                 </Button>
               </div>
             </Form>

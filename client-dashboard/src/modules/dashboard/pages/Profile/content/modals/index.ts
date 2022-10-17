@@ -6,6 +6,7 @@ export { default as SetUpPreferencesModal } from './SetUpPreferencesModal';
 export { default as ConfirmDeactivateUserModal } from './ConfirmDeactivateUser';
 export { default as ConfirmRestoreUserModal } from './ConfirmRestoreUser';
 export interface ProfileModal {
+  userId: string;
   showModal: boolean;
   setShowModal: Dispatch<SetStateAction<boolean>>;
 }

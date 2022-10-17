@@ -46,16 +46,7 @@ function UserForm() {
     <UserFormWrapper>
       {profile && (
         <Formik initialValues={profile} onSubmit={handleSubmit}>
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit: handleFinish,
-            isSubmitting,
-            setFieldValue,
-          }) => {
+          {({ handleSubmit: handleFinish, setFieldValue }) => {
             return (
               <Form layout="vertical" onFinish={handleFinish}>
                 <div className="avatar">

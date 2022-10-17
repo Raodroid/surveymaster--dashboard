@@ -1,74 +1,75 @@
 import { Table } from 'antd';
-import React from 'react';
+import { ColumnsType } from 'antd/lib/table';
 import { useTranslation } from 'react-i18next';
-import { mockSurveyDetail } from 'type';
+import { IQuestion, IQuestionVersion } from 'type';
 import { QuestionListWrapper } from './styles';
 
-const dataSource = [
-  {
-    key: '1',
-    id: '113-8392',
-    question: 'What is your age?',
-    category: 'XXX-XXXX',
-    subCategory: 'XXX-XXXX',
-    variableName: 'YY-YY-YYY',
-    type: 'Radio Buttons',
-  },
-  {
-    key: '2',
-    id: '113-8392',
-    question: 'What is your age?',
-    category: 'XXX-XXXX',
-    subCategory: 'XXX-XXXX',
-    variableName: 'YY-YY-YYY',
-    type: 'Radio Buttons',
-  },
-];
+interface IDetailSurveyQuestion extends IQuestion {
+  questionVersionId: string;
+  surveyId: string;
+  sort: number;
+  questionVersion: IQuestionVersion & {
+    question: IQuestion & {
+      type: string;
+    };
+  };
+}
 
-const columns = [
+const columns: ColumnsType<IDetailSurveyQuestion> = [
   {
     title: 'ID',
-    dataIndex: 'questionVersion',
-    key: 'questionVersion',
-    render: (_, record: any) => (
-      <div>{record.questionVersion.question.displayId}</div>
+    dataIndex: 'id',
+    key: 'id',
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.question?.displayId}</div>
     ),
   },
   {
     title: 'Question',
     dataIndex: 'question',
     key: 'question',
-    render: (_, record: any) => <div>{record.questionVersion.title}</div>,
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.title}</div>
+    ),
   },
   {
     title: 'Category',
     dataIndex: 'category',
     key: 'category',
-    render: () => <div>XXX-XXXX</div>,
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.question?.masterCategory?.name}</div>
+    ),
   },
   {
     title: 'Sub Category',
     dataIndex: 'subCategory',
     key: 'subCategory',
-    render: () => <div>XXX-XXXX</div>,
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.question?.masterSubCategory?.name}</div>
+    ),
   },
   {
     title: 'Variable Name',
     dataIndex: 'variableName',
     key: 'variableName',
-    render: () => <div>YY-YY-YYY</div>,
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.question?.masterVariableName}</div>
+    ),
   },
   {
     title: 'Type',
     dataIndex: 'type',
     key: 'type',
-    render: () => <div>Radio Buttons</div>,
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.question?.type}</div>
+    ),
   },
 ];
 
-function QuestionList(props: { survey: any }) {
-  const { questions } = mockSurveyDetail;
-   const { t } = useTranslation();
+function QuestionList(props: { questions: IDetailSurveyQuestion[] }) {
+  const { questions } = props;
+  const { t } = useTranslation();
+
   return (
     <QuestionListWrapper>
       <div className="title">{t('common.surveyQuestionsList')}:</div>

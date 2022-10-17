@@ -20,8 +20,6 @@ export const HeaderStyled = styled.div`
     flex: 1;
     margin-left: 20px;
     .ant-input {
-      border: none;
-      box-shadow: none;
       font-size: 14px;
     }
     .ant-btn {
@@ -30,6 +28,16 @@ export const HeaderStyled = styled.div`
       width: 32px;
       height: 32px;
       box-shadow: none;
+      z-index: 10;
+    }
+    .ant-input-affix-wrapper {
+      border: none;
+      box-shadow: none;
+    }
+    .ant-input-clear-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
   svg {

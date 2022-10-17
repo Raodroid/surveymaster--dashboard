@@ -1,115 +1,87 @@
 import { Form } from 'antd';
 import { Formik } from 'formik';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import {
-  createProjectDetailLink,
-  createProjectLink,
-  getProjectTitle,
-  projectRoutePath,
-} from 'modules/dashboard/pages/Project/util';
+import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
-import { useLocation, useParams } from 'react-router';
-import { DetailSurveyProps } from '..';
+import { generatePath, useParams } from 'react-router';
+import SimpleBar from 'simplebar-react';
+import { DetailSurveyProps, projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
 import QuestionList from './QuestionList';
 import { DetailSurveyHomeWrapper } from './styles';
-import SimpleBar from 'simplebar-react';
 
 function DetailSurveyHome(props: DetailSurveyProps) {
-  const { surveyData: survey } = props;
-  const params = useParams();
-  const { search } = useLocation();
-  const location = useLocation();
+  const { surveyData: survey, projectData: project } = props;
+  const params = useParams<projectSurveyParams>();
 
-  console.log(location, params);
-
-  const title = useMemo(() => getProjectTitle(search), [search]);
-
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: title,
-        href:
-          params &&
-          params.id &&
-          createProjectLink(projectRoutePath.SURVEY, params.id, title),
+        name: project?.data.name || '...',
+        href: generatePath(projectRoutePath.SURVEY, {
+          projectId: params?.projectId,
+        }),
       },
       {
-        name: survey?.data.name,
-        href: '',
+        name: survey?.data.name || '...',
+        href: projectRoutePath.DETAIL_SURVEY.ROOT,
       },
     ],
-    [params, survey, title],
+    [params, survey, project],
   );
 
-  const links = [
-    params &&
-      params.id &&
-      params.detailId &&
-      createProjectDetailLink(
-        projectRoutePath.DETAIL_SURVEY.EDIT,
-        params.id,
-        params.detailId,
-        title,
-      ),
-    params &&
-      params.id &&
-      params.detailId &&
-      createProjectDetailLink(
-        projectRoutePath.DETAIL_SURVEY.HISTORY,
-        params.id,
-        params.detailId,
-        title,
-      ),
-    params &&
-      params.id &&
-      params.detailId &&
-      createProjectDetailLink(
-        projectRoutePath.DETAIL_SURVEY.REMARKS,
-        params.id,
-        params.detailId,
-        title,
-      ),
+  const links: string[] = [
+    generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
+      projectId: params.projectId,
+      surveyId: params.surveyId,
+    }),
+
+    generatePath(projectRoutePath.DETAIL_SURVEY.HISTORY, {
+      projectId: params.projectId,
+      surveyId: params.surveyId,
+    }),
+
+    generatePath(projectRoutePath.DETAIL_SURVEY.REMARKS, {
+      projectId: params.projectId,
+      surveyId: params.surveyId,
+    }),
   ];
 
   const initialValue = useMemo(() => {
-    return (
-      survey &&
-      survey.data && {
-        ...survey?.data,
-        createdAt: survey?.data.createdAt.slice(0, 10),
-      }
-    );
+    return {
+      ...survey?.data,
+      createdAt: survey?.data?.createdAt?.slice(0, 10),
+    };
   }, [survey]);
+
+  const handleSubmit = () => {};
 
   return (
     <DetailSurveyHomeWrapper className="flex-column">
       <ProjectHeader routes={routes} links={links} />
-      <CustomSpinSuspense spinning={!initialValue}>
-        {initialValue && (
-          <div className="body height-100">
-            <Formik initialValues={initialValue} onSubmit={() => {}}>
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                isSubmitting,
-                setFieldValue,
-              }) => (
-                <Form layout="vertical" className="height-100">
-                  <SimpleBar style={{ height: '100%' }}>
-                    <Inputs disabled />
-                    <QuestionList survey={survey?.data.surveyQuestions} />
-                  </SimpleBar>
-                </Form>
-              )}
-            </Formik>
-          </div>
-        )}
+      <CustomSpinSuspense spinning={!survey}>
+        <div className="body height-100">
+          <Formik
+            initialValues={initialValue}
+            onSubmit={handleSubmit}
+            enableReinitialize={true}
+          >
+            {({ handleSubmit: handleFinish }) => (
+              <Form
+                layout="vertical"
+                className="height-100"
+                onFinish={handleFinish}
+              >
+                <SimpleBar style={{ height: '100%' }}>
+                  <Inputs disabled />
+                  <QuestionList questions={survey?.data.questions} />
+                </SimpleBar>
+              </Form>
+            )}
+          </Formik>
+        </div>
       </CustomSpinSuspense>
     </DetailSurveyHomeWrapper>
   );

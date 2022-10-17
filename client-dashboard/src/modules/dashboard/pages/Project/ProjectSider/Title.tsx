@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { PlusIcon } from 'icons';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import { projectRoutePath } from '../util';
 import { TitleStyled } from './style';
 
@@ -17,15 +17,14 @@ function Title(props: TitleProps) {
   const { title, routePath: route_path, id: userId } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { pathname, search } = useLocation();
   const params = useParams();
 
   const isActive = useMemo(() => {
-    return params && params.id && params.id === userId;
+    return params?.projectId === userId;
   }, [userId, params]);
 
   const handleTitleClick = () => {
-    if (userId === params.id) {
+    if (userId === params?.projectId) {
       navigate(projectRoutePath.ROOT);
     } else {
       navigate(route_path);
@@ -45,7 +44,11 @@ function Title(props: TitleProps) {
           className="flex-center primary"
           type="primary"
           onClick={() => {
-            navigate(`${pathname}/add-survey${search}`);
+            navigate(
+              generatePath(projectRoutePath.ADD_NEW_SURVEY, {
+                projectId: params.projectId,
+              }),
+            );
           }}
         >
           <PlusIcon className="plus-icon" /> {t('common.addNewSurvey')}

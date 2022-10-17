@@ -1,21 +1,26 @@
 import { Button, Menu, PaginationProps, Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { PenFilled, TrashOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import _get from 'lodash/get';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import moment from 'moment';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
+import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
-import { onError, useDebounce } from '../../../../../../utils';
+import { onError } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
-import { createProjectLink, projectRoutePath } from '../../util';
+import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper, StyledProjectMenu } from '../styles';
+import { QsParams } from './Header/ProjectFilter';
+import SimpleBar from 'simplebar-react';
 
 const initParams: IGetParams = {
   q: '',
@@ -23,6 +28,10 @@ const initParams: IGetParams = {
   take: 10,
   isDeleted: false,
 };
+
+interface ProjectColumnRecord extends IProject {
+  personResponsible: Record<string, any>;
+}
 
 const getProjects = (params: GetListQuestionDto) => {
   const newParams: GetListQuestionDto = {
@@ -36,40 +45,46 @@ const getProjects = (params: GetListQuestionDto) => {
   return ProjectService.getProjects(newParams);
 };
 
-function ProjectTable(props: {
-  filterValue?: string;
-  queryParams?: IGetParams;
-}) {
-  const { filterValue, queryParams } = props;
+function ProjectTable() {
   const wrapperRef = useRef<any>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const qsParams = useParseQueryString<QsParams>();
 
-  const [searchTxt, setSearchTxt] = useState<string>('');
-  const queryString = useParseQueryString<GetListQuestionDto>();
   const [params, setParams] = useState<GetListQuestionDto>(initParams);
-  const debounceSearchText = useDebounce(searchTxt);
 
   const [projectId, setProjectId] = useState('');
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [showRestoreProject, setShowRestoreProject] = useState(false);
 
+  const formatQsParams = useMemo(() => {
+    const formatQs: QsParams = {
+      ...qsParams,
+      createdFrom: moment(qsParams.createdFrom)?.startOf('day')?.format(),
+      createdTo: moment(qsParams.createdTo)?.endOf('day')?.format(),
+    };
+    if (!qsParams.createdFrom) delete formatQs.createdFrom;
+    if (!qsParams.createdTo) delete formatQs.createdTo;
+    return formatQs;
+  }, [qsParams]);
+
   const getProjectListQuery = useQuery(
-    ['getProjects', params, debounceSearchText, queryParams, filterValue],
+    ['getProjects', params, formatQsParams],
     () =>
       getProjects({
         ...params,
-        ...queryParams,
-        q: filterValue,
+        ...formatQsParams,
+        isDeleted: formatQsParams.isDeleted === 'true' ? true : false,
       }),
     {
       onError,
+      refetchOnWindowFocus: false,
     },
   );
 
   const total: number = _get(getProjectListQuery.data, 'data.itemCount', 0);
 
-  const projects = useMemo<IProject[]>(
+  const projects = useMemo<ProjectColumnRecord[]>(
     () => _get(getProjectListQuery.data, 'data.data'),
     [getProjectListQuery.data],
   );
@@ -81,13 +96,15 @@ function ProjectTable(props: {
     [],
   );
 
-  const columns = useMemo(
+  const columns: ColumnsType<ProjectColumnRecord> = useMemo(
     () => [
       {
         title: 'ID',
-        dataIndex: 'project',
-        key: 'project',
-        render: (_, record: any) => <div>{record?.displayId}</div>,
+        dataIndex: 'id',
+        key: 'id',
+        render: (_, record: ProjectColumnRecord) => (
+          <div>{record?.displayId}</div>
+        ),
       },
       {
         title: 'Project Title',
@@ -98,13 +115,13 @@ function ProjectTable(props: {
         title: 'N of Surveys',
         dataIndex: 'numberOfSurveys',
         key: 'numberOfSurveys',
-        render: (text: any) => <div>{text}</div>,
+        render: (text: string) => <div>{text}</div>,
       },
       {
         title: 'Person In Charge',
         dataIndex: 'createdBy',
         key: 'createdBy',
-        render: (_, record: any) => (
+        render: (_, record: ProjectColumnRecord) => (
           <div>
             {record?.personResponsible?.firstName}{' '}
             {record?.personResponsible?.lastName}
@@ -115,7 +132,7 @@ function ProjectTable(props: {
         title: 'Date of Creation',
         dataIndex: 'createdAt',
         key: 'createdAt',
-        render: (text: any) => {
+        render: (text: string) => {
           const str = text.toString();
           return <div>{str.slice(0, 10)}</div>;
         },
@@ -124,7 +141,7 @@ function ProjectTable(props: {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',
-        render: (_, record: any) => (
+        render: (_, record: ProjectColumnRecord) => (
           <div
             className="flex-center actions"
             onClick={e => {
@@ -132,15 +149,13 @@ function ProjectTable(props: {
               setProjectId(record.id);
             }}
           >
-            {!queryParams?.isDeleted && (
+            {qsParams?.isDeleted !== 'true' && (
               <Button
                 onClick={() =>
                   navigate(
-                    createProjectLink(
-                      projectRoutePath.PROJECT.EDIT,
-                      record?.id,
-                      record?.name,
-                    ),
+                    generatePath(projectRoutePath.PROJECT.EDIT, {
+                      projectId: record?.id,
+                    }),
                   )
                 }
               >
@@ -150,12 +165,12 @@ function ProjectTable(props: {
             <ThreeDotsDropdown
               overlay={
                 <StyledProjectMenu>
-                  {!queryParams?.isDeleted && (
+                  {qsParams?.isDeleted !== 'true' && (
                     <Menu.Item onClick={() => setShowDeleteProject(true)}>
                       <TrashOutlined /> {t('common.deleteProject')}
                     </Menu.Item>
                   )}
-                  {queryParams?.isDeleted && (
+                  {qsParams?.isDeleted === 'true' && (
                     <Menu.Item onClick={() => setShowRestoreProject(true)}>
                       <Refresh /> {t('common.restoreProject')}
                     </Menu.Item>
@@ -168,40 +183,47 @@ function ProjectTable(props: {
         ),
       },
     ],
-    [navigate, queryParams, t],
+    [navigate, qsParams, t],
   );
 
-  const onRow = (record: any) => {
+  const onRow = (record: ProjectColumnRecord) => {
     return {
       onClick: () =>
-        !queryParams?.isDeleted &&
+        !qsParams?.isDeleted &&
         navigate(
-          createProjectLink(projectRoutePath.SURVEY, record.id, record.name),
+          generatePath(projectRoutePath.SURVEY, { projectId: record.id }),
         ),
     };
   };
 
   return (
-    <ProjectTableWrapper ref={wrapperRef}>
-      <CustomSpinSuspense spinning={getProjectListQuery.isLoading}>
-        <Table
-          pagination={false}
-          dataSource={projects}
-          columns={columns}
-          onRow={onRow}
-        />
-        <StyledPagination
-          onChange={page => {
-            setParams(s => ({ ...s, page }));
-          }}
-          showSizeChanger
-          pageSize={params.take}
-          onShowSizeChange={onShowSizeChange}
-          defaultCurrent={1}
-          total={total}
-        />
+    <ProjectTableWrapper ref={wrapperRef} className="project-table-max-height">
+      <CustomSpinSuspense
+        spinning={
+          getProjectListQuery.isLoading || getProjectListQuery.isFetching
+        }
+      >
+        <SimpleBar style={{ height: '100%' }}>
+          <Table
+            pagination={false}
+            dataSource={projects}
+            columns={columns}
+            onRow={onRow}
+            rowKey="id"
+            // scroll={{ y: 100 }}
+          />
+          <StyledPagination
+            onChange={page => {
+              setParams(s => ({ ...s, page }));
+            }}
+            showSizeChanger
+            pageSize={params.take}
+            onShowSizeChange={onShowSizeChange}
+            defaultCurrent={1}
+            total={total}
+          />
+        </SimpleBar>
       </CustomSpinSuspense>
-
       <DeleteProjectModal
         setShowModal={setShowDeleteProject}
         showModal={showDeleteProject}

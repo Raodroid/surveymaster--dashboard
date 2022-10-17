@@ -1,23 +1,16 @@
 import { Button, Divider, Form } from 'antd';
-import { ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
 import { ControlledInput } from 'modules/common';
+import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
-import { useParams } from 'react-router';
-import { mockSurveyList } from '../../../../../../../type';
+import { generatePath, useParams } from 'react-router';
+import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import QuestionList from './QuestionList';
 import { AddSurveyContentWrapper, AddSurveyWrapper } from './styles';
 import SurveyCustomSelect from './SurveyCustomSelect';
-import { useMemo } from 'react';
-import {
-  createProjectLink,
-  getProjectTitle,
-  projectRoutePath,
-} from '../../../util';
 
 const selectValues = {
   newSurvey: 'newSurvey',
@@ -28,26 +21,22 @@ const selectValues = {
 function AddSurvey() {
   const params = useParams();
   const { t } = useTranslation();
-  const [templateValue, setTemplateValue] = useState('');
-  const { search } = useLocation();
+  const [templateValue, setTemplateValue] = useState<string>('');
 
-  const title = useMemo(() => getProjectTitle(search), [search]);
-
-  const routes = useMemo(
+  const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: title,
-        href:
-          params &&
-          params.id &&
-          createProjectLink(projectRoutePath.SURVEY, params.id, title),
+        name: 'title',
+        href: generatePath(projectRoutePath.SURVEY, {
+          projectId: params?.projectId,
+        }),
       },
       {
         name: 'Add New Survey',
-        href: '',
+        href: projectRoutePath.ADD_NEW_SURVEY,
       },
     ],
-    [title, params],
+    [params],
   );
 
   return (

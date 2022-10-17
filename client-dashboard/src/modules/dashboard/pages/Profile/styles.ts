@@ -334,14 +334,18 @@ export const TeamContentStyled = styled(ContentStyled)`
   .search {
     width: 100%;
     .ant-input {
-      border: none;
       border-radius: 0;
       font-size: 16px;
+    }
+    .ant-input-affix-wrapper {
+      border: none;
+      box-shadow: none;
     }
     .ant-input:focus {
       box-shadow: none;
     }
     .search-btn {
+      box-shadow: none;
       position: relative;
       z-index: 1;
       min-width: 32px;
