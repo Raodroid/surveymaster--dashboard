@@ -21,13 +21,14 @@ export const ProjectHomeWrapper = styled.div`
 
 export const ProjectTableWrapper = styled.div`
   flex: 1;
-  padding: 20px 12px;
+  overflow: hidden;
   .ant-table-cell {
     height: 48px;
     padding: 0 10px;
   }
 
   .ant-table {
+    padding: 20px 12px;
     .ant-table-cell {
       a,
       span,

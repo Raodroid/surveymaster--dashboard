@@ -8,6 +8,7 @@ import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import StyledPagination from 'modules/dashboard/components/StyledPagination';
+import SimpleBar from 'simplebar-react';
 import moment from 'moment';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -153,29 +154,31 @@ function Survey() {
       <ProjectHeader routes={routes} search />
 
       <TableWrapper className="flex-column project-table-max-height">
-        <CustomSpinSuspense
-          spinning={
-            getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
-          }
-        >
-          <Table
-            dataSource={surveys}
-            columns={columns}
-            onRow={onRow}
-            pagination={false}
-            scroll={{ y: 100 }}
-          />
-          <StyledPagination
-            onChange={page => {
-              setParamsQuery(s => ({ ...s, page }));
-            }}
-            showSizeChanger
-            pageSize={paramsQuery.take}
-            onShowSizeChange={onShowSizeChange}
-            defaultCurrent={1}
-            total={total}
-          />
-        </CustomSpinSuspense>
+        <SimpleBar style={{ height: '100%' }}>
+          <CustomSpinSuspense
+            spinning={
+              getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
+            }
+          >
+            <Table
+              dataSource={surveys}
+              columns={columns}
+              onRow={onRow}
+              pagination={false}
+              // scroll={{ y: 100 }}
+            />
+            <StyledPagination
+              onChange={page => {
+                setParamsQuery(s => ({ ...s, page }));
+              }}
+              showSizeChanger
+              pageSize={paramsQuery.take}
+              onShowSizeChange={onShowSizeChange}
+              defaultCurrent={1}
+              total={total}
+            />
+          </CustomSpinSuspense>
+        </SimpleBar>
       </TableWrapper>
     </SurveyWrapper>
   );

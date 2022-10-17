@@ -5,11 +5,11 @@ export const SurveyWrapper = styled.div`
 `;
 
 export const TableWrapper = styled.div`
-  padding: 20px 12px 0;
   flex: 1;
   width: 100%;
   height: 100%;
   overflow-y: auto;
+
   .ant-pagination {
     margin-top: 10px;
     text-align: end;
@@ -30,12 +30,17 @@ export const TableWrapper = styled.div`
     }
   }
   .ant-table {
+    padding: 20px 12px;
     width: 100%;
     a,
     .ant-table-cell div,
     span {
       font-size: 12px;
       color: var(--text-color);
+    }
+
+    .ant-table-cell .dots-container {
+      color: var(--ant-primary-color);
     }
   }
 

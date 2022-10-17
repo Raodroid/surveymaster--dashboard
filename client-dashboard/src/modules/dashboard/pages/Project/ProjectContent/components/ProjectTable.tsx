@@ -20,6 +20,7 @@ import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper, StyledProjectMenu } from '../styles';
 import { QsParams } from './Header/ProjectFilter';
+import SimpleBar from 'simplebar-react';
 
 const initParams: IGetParams = {
   q: '',
@@ -197,30 +198,31 @@ function ProjectTable() {
 
   return (
     <ProjectTableWrapper ref={wrapperRef} className="project-table-max-height">
-      <CustomSpinSuspense
-        spinning={
-          getProjectListQuery.isLoading || getProjectListQuery.isFetching
-        }
-      >
-        <Table
-          pagination={false}
-          dataSource={projects}
-          columns={columns}
-          onRow={onRow}
-          scroll={{ y: 100 }}
-        />
-        <StyledPagination
-          onChange={page => {
-            setParams(s => ({ ...s, page }));
-          }}
-          showSizeChanger
-          pageSize={params.take}
-          onShowSizeChange={onShowSizeChange}
-          defaultCurrent={1}
-          total={total}
-        />
-      </CustomSpinSuspense>
-
+      <SimpleBar style={{ height: '100%' }}>
+        <CustomSpinSuspense
+          spinning={
+            getProjectListQuery.isLoading || getProjectListQuery.isFetching
+          }
+        >
+          <Table
+            pagination={false}
+            dataSource={projects}
+            columns={columns}
+            onRow={onRow}
+            // scroll={{ y: 100 }}
+          />
+          <StyledPagination
+            onChange={page => {
+              setParams(s => ({ ...s, page }));
+            }}
+            showSizeChanger
+            pageSize={params.take}
+            onShowSizeChange={onShowSizeChange}
+            defaultCurrent={1}
+            total={total}
+          />
+        </CustomSpinSuspense>
+      </SimpleBar>
       <DeleteProjectModal
         setShowModal={setShowDeleteProject}
         showModal={showDeleteProject}
