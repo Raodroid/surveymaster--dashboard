@@ -1,6 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { UpdateSurvey } from 'interfaces';
-import {  GetListSurveyDto, IPostSurveyBodyDto } from 'type';
+import { IPostSurveyBodyDto } from 'type';
 import APIService from './base.service';
 
 export default class SurveyService {
@@ -27,8 +26,8 @@ export default class SurveyService {
     return APIService.post(`/surveys/${surveyId}/duplicate  `, props);
   }
 
-  static updateSurvey(props: UpdateSurvey): Promise<AxiosResponse> {
-    const { id } = props;
-    return APIService.put(`/surveys/${id}  `, props);
+  static updateSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
+    const { surveyId } = props;
+    return APIService.put(`/surveys/${surveyId}  `, props);
   }
 }

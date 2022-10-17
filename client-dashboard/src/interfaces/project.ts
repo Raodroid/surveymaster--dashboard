@@ -33,14 +33,6 @@ export interface ISurvey {
   deletedAt?: Date | string | null;
 }
 
-export interface UpdateSurvey {
-  id: string;
-  name: string;
-  remark: string;
-  questions: ISurveyQuestion[];
-  projectId: string;
-}
-
 export interface SurveyQuestionDto {
   questionVersionId: string;
   sort: number;

@@ -1,31 +1,34 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useTranslation } from 'react-i18next';
-import { ISurveyQuestionRemark } from '../Remarks/QuestionRemarks';
+import { IQuestion, IQuestionVersion } from 'type';
 import { QuestionListWrapper } from './styles';
 
-interface IQuestion {
-  id: string;
+interface IDetailSurveyQuestion extends IQuestion {
   questionVersionId: string;
   surveyId: string;
   sort: number;
-  questionVersion: { title: string; question: ISurveyQuestionRemark };
+  questionVersion: IQuestionVersion & {
+    question: IQuestion & {
+      type: string;
+    };
+  };
 }
 
-const columns: ColumnsType<IQuestion> = [
+const columns: ColumnsType<IDetailSurveyQuestion> = [
   {
     title: 'ID',
     dataIndex: 'id',
     key: 'id',
-    render: (_, record: IQuestion) => (
-      <div>{record?.questionVersion.question.displayId}</div>
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.question?.displayId}</div>
     ),
   },
   {
     title: 'Question',
     dataIndex: 'question',
     key: 'question',
-    render: (_, record: IQuestion) => (
+    render: (_, record: IDetailSurveyQuestion) => (
       <div>{record?.questionVersion.title}</div>
     ),
   },
@@ -33,37 +36,37 @@ const columns: ColumnsType<IQuestion> = [
     title: 'Category',
     dataIndex: 'category',
     key: 'category',
-    render: (_, record: IQuestion) => (
-      <div>{record?.questionVersion.question.masterCategory?.name}</div>
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.question?.masterCategory?.name}</div>
     ),
   },
   {
     title: 'Sub Category',
     dataIndex: 'subCategory',
     key: 'subCategory',
-    render: (_, record: IQuestion) => (
-      <div>{record?.questionVersion.question.masterSubCategory?.name}</div>
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.question?.masterSubCategory?.name}</div>
     ),
   },
   {
     title: 'Variable Name',
     dataIndex: 'variableName',
     key: 'variableName',
-    render: (_, record: IQuestion) => (
-      <div>{record?.questionVersion.question.masterVariableName}</div>
+    render: (_, record: IDetailSurveyQuestion) => (
+      <div>{record?.questionVersion.question?.masterVariableName}</div>
     ),
   },
   {
     title: 'Type',
     dataIndex: 'type',
     key: 'type',
-    render: (_, record: IQuestion) => (
+    render: (_, record: IDetailSurveyQuestion) => (
       <div>{record?.questionVersion.question?.type}</div>
     ),
   },
 ];
 
-function QuestionList(props: { questions: IQuestion[] }) {
+function QuestionList(props: { questions: IDetailSurveyQuestion[] }) {
   const { questions } = props;
   const { t } = useTranslation();
 

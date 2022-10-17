@@ -14,6 +14,7 @@ import {
   ProjectFilterOverlayWrapper,
   ProjectFilterWrapper,
 } from './styles';
+import qs from 'qs';
 
 export interface IFilter {
   counter?: number;
@@ -113,22 +114,16 @@ function FilterOverlay(props: IFilter) {
       q: qsParams.q || '',
       isDeleted: payload.isDeleted,
       createdFrom:
-        payload.dateCreation && payload.createdFrom ? payload.createdFrom : '',
+        payload.dateCreation && payload.createdFrom
+          ? moment(payload.createdFrom).format()
+          : '',
       createdTo:
-        payload.dateCreation && payload.createdTo ? payload.createdTo : '',
+        payload.dateCreation && payload.createdTo
+          ? moment(payload.createdTo).format()
+          : '',
     };
 
-    const keys = Object.keys(payloadParams);
-    let result = '';
-    keys.map(
-      (key: string, index: number) =>
-        (result =
-          result +
-          `${key}=${payloadParams[key]}${
-            index !== keys.length - 1 ? '&' : ''
-          }`),
-    );
-    navigate(pathname + '?' + result);
+    navigate(pathname + '?' + qs.stringify(payloadParams));
   };
 
   return (

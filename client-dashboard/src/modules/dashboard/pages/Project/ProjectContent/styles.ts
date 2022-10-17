@@ -28,7 +28,7 @@ export const ProjectTableWrapper = styled.div`
   }
 
   .ant-table {
-    padding: 20px 12px;
+    padding: 20px 12px 0;
     .ant-table-cell {
       a,
       span,
@@ -65,12 +65,6 @@ export const ProjectTableWrapper = styled.div`
   }
   .ant-table-row {
     cursor: pointer;
-  }
-
-  .ant-spin-nested-loading,
-  .ant-spin-container {
-    height: 100%;
-    overflow: hidden;
   }
 `;
 

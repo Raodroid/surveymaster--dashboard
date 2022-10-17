@@ -305,19 +305,10 @@ function TeamContent() {
             <Input
               value={search}
               ref={searchRef}
+              allowClear
               onChange={e => setSearch(e.target.value)}
               placeholder="Search Team Member..."
             />
-            {search && (
-              <Button
-                className="clear-btn"
-                onClick={() => {
-                  setSearch('');
-                }}
-              >
-                <CloseIcon />
-              </Button>
-            )}
           </Form>
           <Checkbox
             className="show-inactivate-users-checkbox"

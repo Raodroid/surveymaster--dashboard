@@ -30,7 +30,7 @@ export const TableWrapper = styled.div`
     }
   }
   .ant-table {
-    padding: 20px 12px;
+    padding: 20px 12px 0;
     width: 100%;
     a,
     .ant-table-cell div,
@@ -49,11 +49,5 @@ export const TableWrapper = styled.div`
   }
   .ant-table-row {
     cursor: pointer;
-  }
-
-  .ant-spin-nested-loading,
-  .ant-spin-container {
-    height: 100%;
-    overflow: hidden;
   }
 `;

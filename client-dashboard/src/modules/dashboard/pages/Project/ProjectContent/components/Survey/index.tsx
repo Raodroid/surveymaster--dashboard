@@ -166,6 +166,7 @@ function Survey() {
               columns={columns}
               onRow={onRow}
               pagination={false}
+              rowKey="displayId"
               // scroll={{ y: 100 }}
             />
             <StyledPagination

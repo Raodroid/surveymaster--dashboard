@@ -13,27 +13,7 @@ import { projectRoutePath } from '../../../util';
 import ProjectFilter from './ProjectFilter';
 import { HeaderStyled } from './styles';
 import { useEffect } from 'react';
-
-export const generatePathParams = (
-  qsParams: Record<string, any>,
-  q: string,
-): string => {
-  const payloadParams = {
-    ...qsParams,
-    q: q,
-  };
-
-  const keys = Object.keys(payloadParams);
-  let result = '';
-  keys.map(
-    (key: string, index: number) =>
-      (result =
-        result +
-        `${key}=${payloadParams[key]}${index !== keys.length - 1 ? '&' : ''}`),
-  );
-
-  return result;
-};
+import qs from 'qs';
 
 function ProjectHeader(props: {
   routes?: IBreadcrumbItem[];
@@ -60,7 +40,7 @@ function ProjectHeader(props: {
   if (routes) base.push(...routes);
 
   const handleSearch = useCallback(() => {
-    navigate(pathname + '?' + generatePathParams(qsParams, inputSearch));
+    navigate(pathname + '?' + qs.stringify({ ...qsParams, q: inputSearch }));
   }, [navigate, pathname, qsParams, inputSearch]);
 
   const handleSubmitBtnClick = useCallback(() => {
@@ -70,12 +50,6 @@ function ProjectHeader(props: {
       searchRef.current?.focus();
     }
   }, [inputSearch, searchRef, handleSearch]);
-
-  useEffect(() => {
-    if (!debounce && !inputSearch && qsParams.q !== inputSearch) {
-      navigate(pathname + '?' + generatePathParams(qsParams, ''));
-    }
-  }, [debounce, qsParams, navigate, inputSearch, pathname]);
 
   return (
     <HeaderStyled className="flex-center-start">
@@ -87,6 +61,7 @@ function ProjectHeader(props: {
             <Input
               ref={searchRef}
               value={inputSearch}
+              allowClear
               onChange={e => {
                 setInputSearch(e.target.value);
               }}

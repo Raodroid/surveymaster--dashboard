@@ -100,8 +100,8 @@ function ProjectTable() {
     () => [
       {
         title: 'ID',
-        dataIndex: 'project',
-        key: 'project',
+        dataIndex: 'id',
+        key: 'id',
         render: (_, record: ProjectColumnRecord) => (
           <div>{record?.displayId}</div>
         ),
@@ -209,6 +209,7 @@ function ProjectTable() {
             dataSource={projects}
             columns={columns}
             onRow={onRow}
+            rowKey="id"
             // scroll={{ y: 100 }}
           />
           <StyledPagination
