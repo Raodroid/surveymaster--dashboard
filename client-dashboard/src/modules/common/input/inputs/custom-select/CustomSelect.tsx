@@ -78,19 +78,32 @@ const CustomSelect = (props: CustomSelectProps) => {
   });
 
   return (
-    <SelectStyled
-      {...res}
-      value={value || undefined}
-      showSearch={showSearch}
-      onSearch={showSearch ? handleSearch : undefined}
-      options={options || fetchedOptions || []}
-      onClear={showSearch ? handleClear : undefined}
-      suffixIcon={
-        <ArrowDown
-          style={{ height: 5, color: templateVariable.primary_color }}
+    <>
+      {!res.loading ? (
+        <SelectStyled
+          {...res}
+          value={value || undefined}
+          showSearch={showSearch}
+          onSearch={showSearch ? handleSearch : undefined}
+          options={options || fetchedOptions || []}
+          onClear={showSearch ? handleClear : undefined}
+          suffixIcon={
+            <ArrowDown
+              style={{ height: 5, color: templateVariable.primary_color }}
+            />
+          }
         />
-      }
-    />
+      ) : (
+        <SelectStyled
+          {...res}
+          value={value || undefined}
+          showSearch={showSearch}
+          onSearch={showSearch ? handleSearch : undefined}
+          options={options || fetchedOptions || []}
+          onClear={showSearch ? handleClear : undefined}
+        />
+      )}
+    </>
   );
 };
 

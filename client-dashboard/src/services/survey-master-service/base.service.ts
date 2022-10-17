@@ -1,3 +1,4 @@
+import { CognitoService } from 'services';
 import axios from 'axios';
 import { store } from 'store';
 import { AuthSelectors, AuthAction } from 'redux/auth';
@@ -44,10 +45,28 @@ APIService.interceptors.response.use(
     const originalRequest = error.config;
     const { message, statusCode } = error?.response?.data || {};
     if (statusCode === 401) {
-      originalRequest.url.includes('logout')
-        ? handleLogout()
-        : store.dispatch(AuthAction.userSignOut());
-      return Promise.reject(error);
+      if (message !== 'Token is expired or invalid') {
+        originalRequest.url.includes('logout')
+          ? handleLogout()
+          : store.dispatch(AuthAction.userSignOut());
+        return Promise.reject(error);
+      } else {
+        let data;
+        try {
+          data = await CognitoService.refreshToken();
+        } catch (err) {
+          handleLogout();
+          return Promise.reject(err);
+        }
+        const idToken = data?.AuthenticationResult?.IdToken;
+        const accessToken = data?.AuthenticationResult?.AccessToken;
+        originalRequest.headers.Authorization = `Bearer ${idToken}`;
+        store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
+        return APIService(originalRequest).catch(err => {
+          err?.response?.data.statusCode === 401 && handleLogout();
+          return Promise.reject(err);
+        });
+      }
     } else {
       originalRequest.url.includes('logout') && handleLogout();
       return Promise.reject(error);

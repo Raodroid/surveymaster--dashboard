@@ -1,4 +1,5 @@
 import { Divider, Input, Select } from 'antd';
+import { CreateProject } from 'interfaces';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { CustomSpinSuspense } from 'modules/common/styles';
@@ -24,7 +25,7 @@ function Inputs() {
   );
 
   const { data: teamMembers } = useQuery(
-    'teamMembers',
+    'getAllTeamMembers',
     () => AdminService.getTeamMembers(baseParams),
     {
       refetchOnWindowFocus: false,
@@ -71,6 +72,7 @@ function Inputs() {
         label="Person In Charge"
         className="personInCharge"
         options={optionsList}
+        loading={!optionsList}
       />
     </InputsWrapper>
   );

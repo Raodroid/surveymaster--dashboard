@@ -67,7 +67,6 @@ function QuestionList(props: { questions: IQuestion[] }) {
   const { questions } = props;
   const { t } = useTranslation();
 
-  console.log(questions);
   return (
     <QuestionListWrapper>
       <div className="title">{t('common.surveyQuestionsList')}:</div>
