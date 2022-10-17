@@ -5,8 +5,7 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
   .DisplayQuestionSurveyListWrapper {
     &__row {
       display: flex;
-      align-items: center;
-      gap: 1rem;
+      gap: 1.5rem;
       padding: 1rem 1.5rem;
       border-radius: 4px;
 
@@ -23,6 +22,9 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
               margin: 0;
             }
           }
+        }
+        .third {
+          margin-top: 25px;
         }
       }
 
@@ -44,7 +46,7 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
       }
 
       .first {
-        width: 50px;
+        width: 100px;
         display: flex;
         align-items: center;
         gap: 1.5rem;
@@ -54,6 +56,16 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
+        &.marginTop {
+          .question-info-wrapper {
+            .category {
+              margin-top: 25px;
+            }
+            .question-type {
+              margin-top: 25px;
+            }
+          }
+        }
         .question-info-wrapper {
           display: flex;
           align-items: flex-start;
@@ -98,12 +110,9 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
           .category {
             width: 40%;
             height: fit-content;
-            margin-top: 25px;
           }
           .question-type {
             width: 150px;
-            height: fit-content;
-            margin-top: 25px;
             > div:nth-child(1) {
               width: 100%;
             }
@@ -112,9 +121,14 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
       }
       .third {
         width: 300px;
+        &.marginTop {
+          margin-top: 25px;
+        }
       }
       .forth {
         width: 30px;
+        display: flex;
+        align-items: center;
       }
     }
   }

@@ -79,7 +79,7 @@ const SurveyForm: FC = () => {
 
   const initialValues = useMemo<IAddSurveyFormValues>(
     () => ({
-      surveyId: surveyData?.displayId || '',
+      surveyId: surveyData?.id || '',
       name: surveyData?.name || '',
       template: SurveyTemplateEnum.NEW,
       remark: surveyData?.remark || '',
@@ -94,15 +94,22 @@ const SurveyForm: FC = () => {
 
   const isEditMode = !!editRouteMath;
 
-  const onSuccess = useCallback(async () => {
-    await queryClient.invalidateQueries('getProjects');
-    notification.success({ message: t('common.createSuccess') });
-    navigate(
-      generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
-        id: params.id,
-      }),
-    );
-  }, [navigate, params.id, queryClient, t]);
+  const onSuccess = useCallback(
+    async res => {
+      await queryClient.invalidateQueries('getProjects');
+      await queryClient.invalidateQueries('getSurveyById');
+      notification.success({
+        message: t(`common.${isEditMode ? 'updateSuccess' : 'createSuccess'}`),
+      });
+      navigate(
+        generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
+          id: params.id,
+          surveyId: res.data.data.id,
+        }),
+      );
+    },
+    [isEditMode, navigate, params.id, queryClient, t],
+  );
 
   const addSurveyMutation = useMutation(
     (data: IPostSurveyBodyDto) => {
@@ -242,7 +249,11 @@ const SurveyForm: FC = () => {
               className="info-btn"
               htmlType="submit"
               disabled={!isValid}
-              loading={addSurveyMutation.isLoading}
+              loading={
+                addSurveyMutation.isLoading ||
+                updateSurveyMutation.isLoading ||
+                isLoading
+              }
             >
               {t('common.saveSurvey')}
             </Button>

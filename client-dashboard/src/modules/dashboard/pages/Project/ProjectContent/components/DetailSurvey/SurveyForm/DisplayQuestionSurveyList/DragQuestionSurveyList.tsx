@@ -27,10 +27,11 @@ import {
   StrictModeDroppable,
 } from '../../../../../../QuestionBank/EditQuestion/DisplayAnswerList/DragAnswerList';
 import moment from 'moment';
-import { MOMENT_FORMAT } from '../../../../../../../../../enums';
+import { MOMENT_FORMAT, ROUTE_PATH } from '../../../../../../../../../enums';
 import ThreeDotsDropdown from '../../../../../../../../../customize-components/ThreeDotsDropdown';
 import UncontrollInput from '../../../../../../../../common/input/uncontrolled-input/UncontrollInput';
 import { SuffixIcon } from '../../../../../../../../../icons/SuffixIcon';
+import { useMatch } from 'react-router-dom';
 
 enum ACTION_ENUM {
   DELETE = 'DELETE',
@@ -54,6 +55,7 @@ const DragOption: FC<{
   fetchNextPage: any;
   hasNextPage?: boolean;
   setSearchTxt: (value: string) => void;
+  searchTxt: string;
 }> = props => {
   const {
     opt,
@@ -66,7 +68,7 @@ const DragOption: FC<{
     setSearchTxt,
   } = props;
   const { t } = useTranslation();
-  const { setFieldValue, values, setValues, initialValues, getFieldMeta } =
+  const { values, setValues, initialValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();
 
   const { value, initialValue } = getFieldMeta(
@@ -145,21 +147,25 @@ const DragOption: FC<{
     value => {
       const chooseQuestion = normalizeByQuestionId[value];
       if (chooseQuestion) {
-        setFieldValue(
-          `questions[${index}].category`,
-          chooseQuestion.masterCategory?.name,
-        );
-        setFieldValue(
-          `questions[${index}].type`,
-          chooseQuestion.latestCompletedVersion.type,
-        );
-        setFieldValue(
-          `questions[${index}].questionTitle`,
-          chooseQuestion.latestCompletedVersion.title,
-        );
+        setValues(v => ({
+          ...v,
+          questions: v.questions.map((q, idx) => {
+            if (idx === index) {
+              return {
+                ...q,
+                category: chooseQuestion.masterCategory?.name as string,
+                type: chooseQuestion.latestCompletedVersion.type as string,
+                questionTitle: chooseQuestion.latestCompletedVersion
+                  .title as string,
+              };
+            }
+            return q;
+          }),
+        }));
+        setSearchTxt('');
       }
     },
-    [index, normalizeByQuestionId, setFieldValue],
+    [index, normalizeByQuestionId, setValues, setSearchTxt],
   );
 
   const [newVersions, historyVersions] = useMemo<
@@ -192,144 +198,195 @@ const DragOption: FC<{
     return [newVersions, historyVersions];
   }, [index, values.questions]);
 
-  const RenderContent = () => {
-    const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
 
-    return (
-      <>
-        <div className={'DisplayQuestionSurveyListWrapper__row__item first'}>
-          <DragIcon />
-          <span> {index + 1}</span>
-        </div>
+  const hasTopContent = !!newVersions;
 
-        <div className={'DisplayQuestionSurveyListWrapper__row__item second'}>
-          {!newVersions ? (
-            <div className={'question-info-wrapper'}>
-              <div className={'question'}>
-                <ControlledInput
-                  allowClear
-                  inputType={INPUT_TYPES.SELECT}
-                  name={`questions[${index}].questionVersionId`}
-                  onPopupScroll={onScroll}
-                  onChange={handleOnChange}
-                  onSearch={value => {
-                    setSearchTxt(value);
-                  }}
-                  filterOption={false}
-                  showSearch
-                  options={questionOption}
-                  isFastField={false}
-                />
-              </div>
-              <div className={'category'}>
-                <ControlledInput
-                  disabled
-                  suffixIcon={null}
-                  inputType={INPUT_TYPES.INPUT}
-                  name={`questions[${index}].category`}
-                />
-              </div>
-              <div className={'question-type'}>
-                <ControlledInput
-                  disabled
-                  suffixIcon={null}
-                  inputType={INPUT_TYPES.SELECT}
-                  name={`questions[${index}].type`}
-                  options={transformEnumToOption(QuestionType, questionType =>
-                    t(`questionType.${questionType}`),
-                  )}
-                />
-              </div>
+  const renderContent = (
+    <>
+      <div className={'DisplayQuestionSurveyListWrapper__row__item first'}>
+        <DragIcon />
+        <span> {index + 1}</span>
+      </div>
+
+      <div
+        className={`DisplayQuestionSurveyListWrapper__row__item second ${
+          hasTopContent ? 'marginTop' : ''
+        }`}
+      >
+        {!newVersions ? (
+          <div className={'question-info-wrapper'}>
+            <div className={'question'}>
+              <ControlledInput
+                allowClear
+                inputType={INPUT_TYPES.SELECT}
+                name={`questions[${index}].questionVersionId`}
+                onPopupScroll={onScroll}
+                onChange={handleOnChange}
+                onSearch={value => {
+                  console.log({ value });
+                  setSearchTxt(value);
+                }}
+                filterOption={false}
+                showSearch
+                options={questionOption}
+                isFastField={false}
+              />
             </div>
-          ) : (
-            <>
-              {newVersions.map((ver, idx) => {
-                const isCurrentValue =
-                  ver.id === values.questions[index].questionVersionId;
+            <div className={'category'}>
+              <ControlledInput
+                disabled
+                suffixIcon={null}
+                inputType={INPUT_TYPES.INPUT}
+                name={`questions[${index}].category`}
+              />
+            </div>
+            <div className={'question-type'}>
+              <ControlledInput
+                disabled
+                suffixIcon={null}
+                inputType={INPUT_TYPES.SELECT}
+                name={`questions[${index}].type`}
+                options={transformEnumToOption(QuestionType, questionType =>
+                  t(`questionType.${questionType}`),
+                )}
+              />
+            </div>
+          </div>
+        ) : (
+          <>
+            {newVersions.map((ver, idx) => {
+              const isCurrentValue =
+                ver.id === values.questions[index].questionVersionId;
 
-                return isCurrentValue ? (
-                  <div className={'question-info-wrapper'} key={ver.id}>
-                    <div className={'question'}>
-                      <div className={'question-label-info'}>
-                        <span className={'status-question success-color'} />{' '}
-                        <span>
-                          {moment(ver.updatedAt).format(
-                            MOMENT_FORMAT.FULL_DATE_FORMAT,
-                          )}
-                        </span>
-                        {isDirty && idx === 0 && (
-                          <span
-                            className={'decline-change-btn'}
-                            onClick={() => {
-                              setValues(values => ({
-                                ...values,
-                                questions: values.questions.map((q, idx) => {
-                                  if (idx === index) {
-                                    return {
-                                      ...q,
-                                      questionVersionId: initialValue as string,
-                                      questionTitle:
-                                        initialValues.questions[index]
-                                          .questionTitle,
-                                    };
-                                  }
-                                  return q;
-                                }),
-                              }));
-                            }}
-                          >
-                            {t('common.declineChange')}
-                          </span>
+              return isCurrentValue ? (
+                <div className={'question-info-wrapper'} key={ver.id}>
+                  <div className={'question'}>
+                    <div className={'question-label-info'}>
+                      <span className={'status-question success-color'} />{' '}
+                      <span>
+                        {moment(ver.updatedAt).format(
+                          MOMENT_FORMAT.FULL_DATE_FORMAT,
                         )}
-                      </div>
-                      <ControlledInput
-                        disabled
-                        inputType={INPUT_TYPES.SELECT}
-                        name={`questions[${index}].questionVersionId`}
-                        options={questionOption}
-                        suffixIcon={null}
-                      />
-                      {!!historyVersions?.length && (
+                      </span>
+                      {isDirty && idx === 0 && (
                         <span
-                          className={'show-history-btn'}
-                          onClick={() => setShow(s => !s)}
+                          className={'decline-change-btn'}
+                          onClick={() => {
+                            setValues(values => ({
+                              ...values,
+                              questions: values.questions.map((q, idx) => {
+                                if (idx === index) {
+                                  return {
+                                    ...q,
+                                    questionVersionId: initialValue as string,
+                                    questionTitle:
+                                      initialValues.questions[index]
+                                        .questionTitle,
+                                  };
+                                }
+                                return q;
+                              }),
+                            }));
+                          }}
                         >
-                          {t(
-                            `common.${
-                              show ? 'closeHistoryList' : 'showHistoryList'
-                            }`,
-                          )}{' '}
-                          <ArrowDown
-                            style={{
-                              transform: show ? 'rotateX(180deg)' : 'none',
-                            }}
-                          />
+                          {t('common.declineChange')}
                         </span>
                       )}
                     </div>
-
-                    <div className={'category'}>
-                      <ControlledInput
-                        disabled
-                        suffixIcon={null}
-                        inputType={INPUT_TYPES.INPUT}
-                        name={`questions[${index}].category`}
-                      />
-                    </div>
-                    <div className={'question-type'}>
-                      <ControlledInput
-                        disabled
-                        suffixIcon={null}
-                        inputType={INPUT_TYPES.SELECT}
-                        name={`questions[${index}].type`}
-                        options={transformEnumToOption(
-                          QuestionType,
-                          questionType => t(`questionType.${questionType}`),
-                        )}
-                      />
-                    </div>
+                    <ControlledInput
+                      disabled
+                      inputType={INPUT_TYPES.SELECT}
+                      name={`questions[${index}].questionVersionId`}
+                      options={questionOption}
+                      suffixIcon={null}
+                    />
+                    {!!historyVersions?.length && (
+                      <span
+                        className={'show-history-btn'}
+                        onClick={() => setShow(s => !s)}
+                      >
+                        {t(
+                          `common.${
+                            show ? 'closeHistoryList' : 'showHistoryList'
+                          }`,
+                        )}{' '}
+                        <ArrowDown
+                          style={{
+                            transform: show ? 'rotateX(180deg)' : 'none',
+                          }}
+                        />
+                      </span>
+                    )}
                   </div>
-                ) : (
+
+                  <div className={'category'}>
+                    <ControlledInput
+                      disabled
+                      suffixIcon={null}
+                      inputType={INPUT_TYPES.INPUT}
+                      name={`questions[${index}].category`}
+                    />
+                  </div>
+                  <div className={'question-type'}>
+                    <ControlledInput
+                      disabled
+                      suffixIcon={null}
+                      inputType={INPUT_TYPES.SELECT}
+                      name={`questions[${index}].type`}
+                      options={transformEnumToOption(
+                        QuestionType,
+                        questionType => t(`questionType.${questionType}`),
+                      )}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className={'question-info-wrapper'} key={ver.id}>
+                  <div className={'question'}>
+                    <div className={'question-label-info'}>
+                      <span className={'status-question warning-color'} />{' '}
+                      <span>
+                        {moment(ver.updatedAt).format(
+                          MOMENT_FORMAT.FULL_DATE_FORMAT,
+                        )}
+                      </span>
+                    </div>
+                    <UncontrollInput
+                      disabled
+                      inputType={INPUT_TYPES.INPUT}
+                      name={`questions[${index}].questionVersionId`}
+                      value={ver.title}
+                    />
+                  </div>
+
+                  <div className={'category'}>
+                    <ControlledInput
+                      disabled
+                      suffixIcon={null}
+                      inputType={INPUT_TYPES.INPUT}
+                      name={`questions[${index}].category`}
+                    />
+                  </div>
+                  <div className={'question-type'}>
+                    <UncontrollInput
+                      disabled
+                      suffixIcon={null}
+                      inputType={INPUT_TYPES.SELECT}
+                      value={ver.type}
+                      options={transformEnumToOption(
+                        QuestionType,
+                        questionType => t(`questionType.${questionType}`),
+                      )}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+
+            {show &&
+              historyVersions?.map((ver, idx) => {
+                return (
                   <div className={'question-info-wrapper'} key={ver.id}>
                     <div className={'question'}>
                       <div className={'question-label-info'}>
@@ -371,130 +428,91 @@ const DragOption: FC<{
                   </div>
                 );
               })}
+          </>
+        )}
+      </div>
 
-              {show &&
-                historyVersions?.map((ver, idx) => {
-                  return (
-                    <div className={'question-info-wrapper'} key={ver.id}>
-                      <div className={'question'}>
-                        <div className={'question-label-info'}>
-                          <span className={'status-question warning-color'} />{' '}
-                          <span>
-                            {moment(ver.updatedAt).format(
-                              MOMENT_FORMAT.FULL_DATE_FORMAT,
-                            )}
-                          </span>
-                        </div>
-                        <UncontrollInput
-                          disabled
-                          inputType={INPUT_TYPES.INPUT}
-                          name={`questions[${index}].questionVersionId`}
-                          value={ver.title}
-                        />
-                      </div>
+      <div
+        className={`DisplayQuestionSurveyListWrapper__row__item third ${
+          hasTopContent ? 'marginTop' : ''
+        }`}
+      >
+        <ControlledInput
+          inputType={INPUT_TYPES.TEXTAREA}
+          rows={hasTopContent ? 3 : 1}
+          name={`questions[${index}].remark`}
+        />
+      </div>
 
-                      <div className={'category'}>
-                        <ControlledInput
-                          disabled
-                          suffixIcon={null}
-                          inputType={INPUT_TYPES.INPUT}
-                          name={`questions[${index}].category`}
-                        />
-                      </div>
-                      <div className={'question-type'}>
-                        <UncontrollInput
-                          disabled
-                          suffixIcon={null}
-                          inputType={INPUT_TYPES.SELECT}
-                          value={ver.type}
-                          options={transformEnumToOption(
-                            QuestionType,
-                            questionType => t(`questionType.${questionType}`),
-                          )}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-            </>
-          )}
-        </div>
-
-        <div className={'DisplayQuestionSurveyListWrapper__row__item third'}>
-          <ControlledInput
-            inputType={INPUT_TYPES.TEXTAREA}
-            name={`questions[${index}].remark`}
+      <div
+        className={`DisplayQuestionSurveyListWrapper__row__item forth ${
+          hasTopContent ? 'marginTop' : ''
+        }`}
+      >
+        {!newVersions || newVersions.length === 1 ? (
+          <Button
+            className={'delete-icon'}
+            onClick={() => {
+              arrayHelpers.remove(index);
+              if (arrayHelpers.form?.[arrayHelpers.name]?.length === 0) {
+                arrayHelpers.push({
+                  ...initNewQuestionOnAddSurveyForm,
+                  id: Math.random().toString(),
+                });
+              }
+            }}
+            icon={
+              <span>
+                <TrashOutlined />
+              </span>
+            }
           />
-        </div>
-
-        <div className={'DisplayQuestionSurveyListWrapper__row__item forth'}>
-          {!newVersions || newVersions.length === 1 ? (
-            <Button
-              className={'delete-icon'}
-              onClick={() => {
-                arrayHelpers.remove(index);
-                if (arrayHelpers.form?.[arrayHelpers.name]?.length === 0) {
-                  arrayHelpers.push({
-                    ...initNewQuestionOnAddSurveyForm,
-                    id: Math.random().toString(),
-                  });
-                }
-              }}
-              icon={
-                <span>
-                  <TrashOutlined />
-                </span>
-              }
-            />
-          ) : (
-            <ThreeDotsDropdown
-              overlay={
-                <Menu>
-                  <Menu.Item
-                    key={ACTION_ENUM.DELETE}
-                    onClick={() => {
-                      arrayHelpers.remove(index);
-                      if (
-                        arrayHelpers.form?.[arrayHelpers.name]?.length === 0
-                      ) {
-                        arrayHelpers.push({
-                          ...initNewQuestionOnAddSurveyForm,
-                          id: Math.random().toString(),
-                        });
-                      }
-                    }}
-                  >
-                    <TrashOutlined /> {t('common.delete')}
-                  </Menu.Item>
-                  <Menu.Item
-                    key={ACTION_ENUM.CHANGE}
-                    onClick={() => {
-                      setValues(values => ({
-                        ...values,
-                        questions: values.questions.map((q, idx) => {
-                          if (idx === index) {
-                            return {
-                              ...q,
-                              questionVersionId: newVersions[0].id as string,
-                              questionTitle: newVersions[0].title as string,
-                            };
-                          }
-                          return q;
-                        }),
-                      }));
-                    }}
-                  >
-                    <SuffixIcon /> {t('common.change')}
-                  </Menu.Item>
-                </Menu>
-              }
-              trigger={['click']}
-            />
-          )}
-        </div>
-      </>
-    );
-  };
+        ) : (
+          <ThreeDotsDropdown
+            overlay={
+              <Menu>
+                <Menu.Item
+                  key={ACTION_ENUM.DELETE}
+                  onClick={() => {
+                    arrayHelpers.remove(index);
+                    if (arrayHelpers.form?.[arrayHelpers.name]?.length === 0) {
+                      arrayHelpers.push({
+                        ...initNewQuestionOnAddSurveyForm,
+                        id: Math.random().toString(),
+                      });
+                    }
+                  }}
+                >
+                  <TrashOutlined /> {t('common.delete')}
+                </Menu.Item>
+                <Menu.Item
+                  key={ACTION_ENUM.CHANGE}
+                  onClick={() => {
+                    setValues(values => ({
+                      ...values,
+                      questions: values.questions.map((q, idx) => {
+                        if (idx === index) {
+                          return {
+                            ...q,
+                            questionVersionId: newVersions[0].id as string,
+                            questionTitle: newVersions[0].title as string,
+                          };
+                        }
+                        return q;
+                      }),
+                    }));
+                  }}
+                >
+                  <SuffixIcon /> {t('common.change')}
+                </Menu.Item>
+              </Menu>
+            }
+            trigger={['click']}
+          />
+        )}
+      </div>
+    </>
+  );
 
   return (
     <Draggable draggableId={`item${opt.id}`} index={index} key={opt.id}>
@@ -506,7 +524,7 @@ const DragOption: FC<{
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <RenderContent />
+          {renderContent}
         </div>
       )}
     </Draggable>
@@ -552,7 +570,7 @@ const OptionList = React.memo(function QuoteListA(props: {
     <>
       <div className={'DisplayQuestionSurveyListWrapper__row title-column'}>
         <div className={'DisplayQuestionSurveyListWrapper__row__item first'}>
-          <span style={{ marginLeft: 'auto' }}>{t('common.order')}</span>
+          <span>{t('common.order')}</span>
         </div>
         <div className={'DisplayQuestionSurveyListWrapper__row__item second'}>
           <div className={'question-info-wrapper'}>
@@ -578,13 +596,14 @@ const OptionList = React.memo(function QuoteListA(props: {
           <DragOption
             opt={option}
             index={index}
-            key={option.id || option.sort}
+            key={option.id}
             arrayHelpers={arrayHelpers}
             data={data}
             isLoading={isLoading}
             fetchNextPage={fetchNextPage}
             hasNextPage={hasNextPage}
             setSearchTxt={setSearchTxt}
+            searchTxt={searchTxt}
           />
         );
       })}
