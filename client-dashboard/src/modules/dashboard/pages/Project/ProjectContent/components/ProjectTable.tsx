@@ -19,6 +19,7 @@ import StyledPagination from '../../../../components/StyledPagination';
 import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper, StyledProjectMenu } from '../styles';
+import { QsParams } from './Header/ProjectFilter';
 
 const initParams: IGetParams = {
   q: '',
@@ -47,7 +48,7 @@ function ProjectTable() {
   const wrapperRef = useRef<any>();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const qsParams = useParseQueryString<IGetParams>();
+  const qsParams = useParseQueryString<QsParams>();
 
   const [params, setParams] = useState<GetListQuestionDto>(initParams);
 
@@ -56,7 +57,7 @@ function ProjectTable() {
   const [showRestoreProject, setShowRestoreProject] = useState(false);
 
   const formatQsParams = useMemo(() => {
-    const formatQs: IGetParams = {
+    const formatQs: QsParams = {
       ...qsParams,
       createdFrom: moment(qsParams.createdFrom)?.startOf('day')?.format(),
       createdTo: moment(qsParams.createdTo)?.endOf('day')?.format(),
@@ -72,6 +73,7 @@ function ProjectTable() {
       getProjects({
         ...params,
         ...formatQsParams,
+        isDeleted: formatQsParams.isDeleted === 'true' ? true : false,
       }),
     {
       onError,
@@ -92,6 +94,8 @@ function ProjectTable() {
     },
     [],
   );
+
+  console.log(qsParams, typeof qsParams.isDeleted);
 
   const columns: ColumnsType<ProjectColumnRecord> = useMemo(
     () => [
@@ -146,7 +150,7 @@ function ProjectTable() {
               setProjectId(record.id);
             }}
           >
-            {!qsParams?.isDeleted && (
+            {qsParams?.isDeleted !== 'true' && (
               <Button
                 onClick={() =>
                   navigate(
@@ -162,12 +166,12 @@ function ProjectTable() {
             <ThreeDotsDropdown
               overlay={
                 <StyledProjectMenu>
-                  {!qsParams?.isDeleted && (
+                  {qsParams?.isDeleted !== 'true' && (
                     <Menu.Item onClick={() => setShowDeleteProject(true)}>
                       <TrashOutlined /> {t('common.deleteProject')}
                     </Menu.Item>
                   )}
-                  {qsParams?.isDeleted && (
+                  {qsParams?.isDeleted === 'true' && (
                     <Menu.Item onClick={() => setShowRestoreProject(true)}>
                       <Refresh /> {t('common.restoreProject')}
                     </Menu.Item>

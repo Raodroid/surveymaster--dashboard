@@ -67,16 +67,7 @@ function EditProject() {
             initialValues={initialValues}
             onSubmit={handleSubmit}
           >
-            {({
-              values,
-              errors,
-              touched,
-              handleChange,
-              handleBlur,
-              handleSubmit: handleFinish,
-              isSubmitting,
-              setFieldValue,
-            }) => (
+            {({ handleSubmit: handleFinish }) => (
               <Form
                 layout="vertical"
                 className="flex-column"

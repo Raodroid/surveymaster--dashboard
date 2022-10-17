@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import { IGetParams } from 'type';
-import { useDebounce } from 'utils';
 import ProjectHeader from './components/Header';
 import ProjectTable from './components/ProjectTable';
 import { ProjectHomeWrapper } from './styles';

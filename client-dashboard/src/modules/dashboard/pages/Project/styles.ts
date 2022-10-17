@@ -51,6 +51,7 @@ export const ProjectWrapper = styled(Content)`
       text-align: center;
     }
     .ant-table-body {
+      min-height: calc(100vh - 310px);
       max-height: calc(100vh - 310px) !important;
     }
   }

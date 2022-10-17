@@ -22,6 +22,7 @@ import {
 import { onError } from '../../../../../../../utils';
 import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
+import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
 
 const initParams: IGetParams = {
@@ -34,13 +35,13 @@ const initParams: IGetParams = {
 function Survey() {
   const params = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const qsParams = useParseQueryString<IGetParams>();
+  const qsParams = useParseQueryString<QsParams>();
 
   const [paramsQuery, setParamsQuery] =
     useState<GetListQuestionDto>(initParams);
 
   const formatQsParams = useMemo(() => {
-    const formatQs: IGetParams = {
+    const formatQs: QsParams = {
       ...qsParams,
       createdFrom: moment(qsParams.createdFrom)?.startOf('day')?.format(),
       createdTo: moment(qsParams.createdTo)?.endOf('day')?.format(),

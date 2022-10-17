@@ -6,15 +6,14 @@ import { Refresh } from 'icons/Refresh';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import moment, { Moment } from 'moment';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { IGetParams } from 'type';
 import {
   ProjectFilterBtn,
   ProjectFilterOverlayWrapper,
   ProjectFilterWrapper,
 } from './styles';
-import { useEffect } from 'react';
 
 export interface IFilter {
   counter?: number;
@@ -28,13 +27,16 @@ interface FilterParams {
   createdTo?: Moment | string;
 }
 
+export interface QsParams {
+  q?: string;
+  isDeleted?: string;
+  createdFrom?: string;
+  createdTo?: string;
+}
+
 function ProjectFilter() {
   const [counter, setCounter] = useState(0);
-  const qsParams = useParseQueryString<{
-    isDeleted?: string;
-    createdFrom?: string;
-    createdTo?: string;
-  }>();
+  const qsParams = useParseQueryString<QsParams>();
 
   useEffect(() => {
     const list = Object.values({
@@ -78,12 +80,9 @@ function FilterOverlay(props: IFilter) {
   const { counter, setCounter } = props;
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const qsParams = useParseQueryString<{
-    q?: string;
-    isDeleted?: string;
-    createdFrom?: string;
-    createdTo?: string;
-  }>();
+  const { t } = useTranslation();
+
+  const qsParams = useParseQueryString<QsParams>();
 
   const initialValues: FilterParams = useMemo(() => {
     return {
@@ -144,7 +143,7 @@ function FilterOverlay(props: IFilter) {
             <Form layout="vertical" onFinish={handleFinish}>
               <div className="header flex-j-between">
                 <div className="left flex-center">
-                  Filters
+                  {t('common.filters')}
                   <div className="counter flex-center">{counter}</div>
                 </div>
                 <div className="right">
@@ -187,7 +186,7 @@ function FilterOverlay(props: IFilter) {
                   type="primary"
                   htmlType="submit"
                 >
-                  Apply
+                  {t('common.apply')}
                 </Button>
               </div>
             </Form>

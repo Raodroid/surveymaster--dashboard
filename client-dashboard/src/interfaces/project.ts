@@ -1,5 +1,5 @@
 import { UserPayload } from 'redux/user';
-import { IGetParams, IQuestionVersion } from 'type';
+import { ISurveyQuestion } from 'type';
 
 export interface IProject {
   id: string;
@@ -39,15 +39,6 @@ export interface ISurvey {
   deletedAt?: Date | string | null;
 }
 
-export interface ISurveyQuestion {
-  id?: string;
-  surveyId: string;
-  questionVersionId: string;
-  sort: number;
-  survey?: ISurvey;
-  remark?: string;
-  questionVersion?: IQuestionVersion;
-}
 export interface UpdateSurvey {
   id: string;
   name: string;

@@ -16,16 +16,7 @@ function TeamForm() {
   }, [currentRoles]);
   return (
     <Formik initialValues={{ teamName: 'Amili' }} onSubmit={() => {}}>
-      {({
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        isSubmitting,
-        setFieldValue,
-      }) => (
+      {({ handleSubmit, setFieldValue }) => (
         <Form layout="vertical" disabled={!isAdminRole} onFinish={handleSubmit}>
           <div className="avatar">
             <ControlledInput

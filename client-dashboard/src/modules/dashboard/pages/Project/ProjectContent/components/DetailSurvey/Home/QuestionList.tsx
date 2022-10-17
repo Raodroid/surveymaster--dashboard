@@ -1,7 +1,7 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useTranslation } from 'react-i18next';
-import { ISurveyQuestion } from '../Remarks/QuestionRemarks';
+import { ISurveyQuestionRemark } from '../Remarks/QuestionRemarks';
 import { QuestionListWrapper } from './styles';
 
 interface IQuestion {
@@ -9,7 +9,7 @@ interface IQuestion {
   questionVersionId: string;
   surveyId: string;
   sort: number;
-  questionVersion: { title: string; question: ISurveyQuestion };
+  questionVersion: { title: string; question: ISurveyQuestionRemark };
 }
 
 const columns: ColumnsType<IQuestion> = [

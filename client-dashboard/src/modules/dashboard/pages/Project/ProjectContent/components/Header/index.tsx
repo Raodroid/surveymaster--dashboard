@@ -2,7 +2,9 @@ import { Button, Divider, Form, Input, InputRef } from 'antd';
 import useParseQueryString from 'hooks/useParseQueryString';
 import { Chat, Clock, PenFilled } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
-import StyledBreadcrumb, { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
+import StyledBreadcrumb, {
+  IBreadcrumbItem,
+} from 'modules/common/commonComponent/StyledBreadcrumb';
 import { useCallback, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
@@ -11,6 +13,27 @@ import { projectRoutePath } from '../../../util';
 import ProjectFilter from './ProjectFilter';
 import { HeaderStyled } from './styles';
 import { useEffect } from 'react';
+
+export const generatePathParams = (
+  qsParams: Record<string, any>,
+  q: string,
+): string => {
+  const payloadParams = {
+    ...qsParams,
+    q: q,
+  };
+
+  const keys = Object.keys(payloadParams);
+  let result = '';
+  keys.map(
+    (key: string, index: number) =>
+      (result =
+        result +
+        `${key}=${payloadParams[key]}${index !== keys.length - 1 ? '&' : ''}`),
+  );
+
+  return result;
+};
 
 function ProjectHeader(props: {
   routes?: IBreadcrumbItem[];
@@ -37,22 +60,7 @@ function ProjectHeader(props: {
   if (routes) base.push(...routes);
 
   const handleSearch = useCallback(() => {
-    const payloadParams = {
-      ...qsParams,
-      q: inputSearch,
-    };
-
-    const keys = Object.keys(payloadParams);
-    let result = '';
-    keys.map(
-      (key: string, index: number) =>
-        (result =
-          result +
-          `${key}=${payloadParams[key]}${
-            index !== keys.length - 1 ? '&' : ''
-          }`),
-    );
-    navigate(pathname + '?' + result);
+    navigate(pathname + '?' + generatePathParams(qsParams, inputSearch));
   }, [navigate, pathname, qsParams, inputSearch]);
 
   const handleSubmitBtnClick = useCallback(() => {
@@ -64,10 +72,10 @@ function ProjectHeader(props: {
   }, [inputSearch, searchRef, handleSearch]);
 
   useEffect(() => {
-    if (!debounce && qsParams.q) {
-      // navigate({ ...qsParams, q: '' });
+    if (!debounce && !inputSearch && qsParams.q !== inputSearch) {
+      navigate(pathname + '?' + generatePathParams(qsParams, ''));
     }
-  }, [debounce, qsParams, navigate]);
+  }, [debounce, qsParams, navigate, inputSearch, pathname]);
 
   return (
     <HeaderStyled className="flex-center-start">

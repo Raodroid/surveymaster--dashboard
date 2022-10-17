@@ -66,12 +66,12 @@ function Remarks(props: DetailSurveyProps) {
       onSuccess: () => {
         queryClient.invalidateQueries('getSurvey');
         notification.success({ message: t('common.updateSuccess') });
-        navigate(
-          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
-            projectId: params?.projectId,
-            surveyId: params?.surveyId,
-          }),
-        );
+        // navigate(
+        //   generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+        //     projectId: params?.projectId,
+        //     surveyId: params?.surveyId,
+        //   }),
+        // );
       },
       onError,
     },

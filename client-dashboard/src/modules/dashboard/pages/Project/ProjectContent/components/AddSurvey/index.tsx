@@ -21,7 +21,7 @@ const selectValues = {
 function AddSurvey() {
   const params = useParams();
   const { t } = useTranslation();
-  const [templateValue, setTemplateValue] = useState('');
+  const [templateValue, setTemplateValue] = useState<string>('');
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [

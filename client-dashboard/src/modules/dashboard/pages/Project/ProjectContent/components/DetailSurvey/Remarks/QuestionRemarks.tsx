@@ -6,7 +6,7 @@ import { IQuestionCategory, IQuestionVersion } from 'type';
 import Remark from './Remark';
 import { QuestionRemarksWrapper } from './styles';
 
-export interface ISurveyQuestion {
+export interface ISurveyQuestionRemark {
   id: string;
   displayId: string;
   latestCompletedVersion: IQuestionVersion;
@@ -23,18 +23,18 @@ export interface ISurveyQuestion {
   type: string;
 }
 
-const columns: ColumnsType<ISurveyQuestion> = [
+const columns: ColumnsType<ISurveyQuestionRemark> = [
   {
     title: '',
     dataIndex: 'remark',
     key: 'remark',
-    render: (_, record: ISurveyQuestion, index: number) => (
+    render: (_, record: ISurveyQuestionRemark, index: number) => (
       <Remark index={index} />
     ),
   },
 ];
 
-function QuestionRemarks(props: { questions: ISurveyQuestion[] }) {
+function QuestionRemarks(props: { questions: ISurveyQuestionRemark[] }) {
   const { questions } = props;
   const { t } = useTranslation();
   return (

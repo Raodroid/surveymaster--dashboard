@@ -67,16 +67,7 @@ function AddProject() {
           onSubmit={handleSubmit}
           validationSchema={createProjectSchema}
         >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit: handleFinish,
-            isSubmitting,
-            setFieldValue,
-          }) => (
+          {({ handleSubmit: handleFinish }) => (
             <Form layout="vertical" onFinish={handleFinish}>
               <Inputs />
               <div className="footer">
