@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Popover } from 'antd';
 
 export const CategoryDetailWrapper = styled.div`
   overflow: scroll;
@@ -9,5 +10,10 @@ export const CategoryDetailWrapper = styled.div`
         cursor: pointer;
       }
     }
+  }
+`;
+export const QuestionTypePopover = styled.div`
+  p {
+    font-size: 12px;
   }
 `;

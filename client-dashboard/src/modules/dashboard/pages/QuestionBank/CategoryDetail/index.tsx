@@ -9,9 +9,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { CategoryDetailWrapper } from './style';
+import { CategoryDetailWrapper, QuestionTypePopover } from './style';
 import CategoryDetailHeader from './CategoryDetailHeader';
-import { Menu, notification, PaginationProps, Table } from 'antd';
+import { Menu, notification, PaginationProps, Popover, Table } from 'antd';
 import { GetListQuestionDto, IQuestion } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
@@ -84,6 +84,7 @@ const CategoryDetail = () => {
       });
     },
     {
+      refetchOnWindowFocus: false,
       onError,
     },
   );
@@ -110,11 +111,11 @@ const CategoryDetail = () => {
       },
       {
         title: t('common.category'),
-        dataIndex: ['masterCategoryId'],
+        dataIndex: ['masterCategory', 'name'],
       },
       {
         title: t('common.subCategory'),
-        dataIndex: ['masterSubCategoryId'],
+        dataIndex: ['masterSubCategory', 'name'],
       },
       {
         title: t('common.variableName'),
@@ -123,7 +124,39 @@ const CategoryDetail = () => {
       {
         title: t('common.answerType'),
         dataIndex: ['latestVersion', 'type'],
-        render: value => (value ? t(`questionType.${value}`) : '--'),
+        render: (value: string, _) => {
+          if (!value) {
+            return '--';
+          }
+
+          const options = _.latestVersion.options;
+
+          if (!options) {
+            return t(`questionType.${value}`);
+          }
+
+          return (
+            <Popover
+              placement={'bottom'}
+              content={
+                !!options?.length && (
+                  <QuestionTypePopover>
+                    {options?.map(option => (
+                      <p key={option.id}>{option.text}</p>
+                    ))}
+                  </QuestionTypePopover>
+                )
+              }
+              title={
+                options?.length === 1
+                  ? '1 Answer'
+                  : `${options?.length} Answers`
+              }
+            >
+              {t(`questionType.${value}`)}
+            </Popover>
+          );
+        },
       },
       {
         title: t('common.action'),
