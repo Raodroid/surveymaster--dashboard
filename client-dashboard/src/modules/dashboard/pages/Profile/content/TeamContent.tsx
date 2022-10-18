@@ -2,7 +2,7 @@ import {
   DeleteOutlined,
   EyeOutlined,
   SettingOutlined,
-  UserDeleteOutlined
+  UserDeleteOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -13,7 +13,7 @@ import {
   InputRef,
   Menu,
   Pagination,
-  Table
+  Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
@@ -21,7 +21,7 @@ import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
 import { SearchIcon } from 'icons/SearchIcon';
 import useCheckScopeEntity, {
-  ScopeActionArray
+  ScopeActionArray,
 } from 'modules/common/hoc/useCheckScopeEntity';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -36,13 +36,13 @@ import {
   CustomFallbackStyled,
   DropDownMenuStyled,
   TableWrapperStyled,
-  TeamContentStyled
+  TeamContentStyled,
 } from '../styles';
 import {
   ConfirmDeactivateUserModal,
   ConfirmRestoreUserModal,
   InviteMemberModal,
-  ResetUserPasswordModal
+  ResetUserPasswordModal,
 } from './modals';
 
 interface TeamMember extends UserPayload {
