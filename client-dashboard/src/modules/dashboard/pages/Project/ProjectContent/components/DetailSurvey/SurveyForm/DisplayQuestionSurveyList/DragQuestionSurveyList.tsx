@@ -99,27 +99,35 @@ const DragOption: FC<{
       data.pages.reduce((current, page) => {
         const nextPageData = page.data.data;
         nextPageData.forEach((question: IQuestion) => {
+          const questionIdMap = values.questionIdMap;
+
+          const latestQuestionVersionId = question.latestCompletedVersion.id;
+
           if (
-            values.questions.some(
-              q => q.questionVersionId === question.latestCompletedVersion.id, //filter out question was currently selected
-            ) ||
-            question.latestCompletedVersion.id === currQuestionVersionId
+            questionIdMap &&
+            Object.keys(questionIdMap).some(questionVersionId => {
+              const versions = questionIdMap[questionVersionId].versions;
+
+              if (questionVersionId === latestQuestionVersionId) return true; //check if questionId was existed
+
+              return versions.some(ver => ver.id === latestQuestionVersionId); // check if chosen version is in the same question but different version
+            })
           ) {
             return current;
           }
-          normalizeByQuestionId[question.latestCompletedVersion.id as string] =
-            question;
+
+          normalizeByQuestionId[latestQuestionVersionId as string] = question;
 
           current.push({
             label: question?.latestCompletedVersion?.title,
-            value: question.latestCompletedVersion.id as string,
+            value: latestQuestionVersionId as string,
           });
         });
         return current;
       }, options),
       normalizeByQuestionId,
     ];
-  }, [data, index, values.questions]);
+  }, [data, index, values]);
 
   const fetch = useCallback(
     async target => {

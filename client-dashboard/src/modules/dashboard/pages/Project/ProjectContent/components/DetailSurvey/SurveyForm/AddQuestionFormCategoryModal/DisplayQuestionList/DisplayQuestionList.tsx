@@ -82,8 +82,16 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
         >,
         questionId,
       ) => {
+        const questionIdMap = values.questionIdMap;
         if (
-          values.questions.some(value => value.questionVersionId === questionId)
+          questionIdMap &&
+          Object.keys(questionIdMap).some(questionVersionId => {
+            const versions = questionIdMap[questionVersionId].versions;
+
+            if (questionVersionId === questionId) return true; //check if questionId was existed
+
+            return versions.some(ver => ver.id === questionId); // check if chosen version is in the same question but different version
+          })
         ) {
           return result;
         }
@@ -111,13 +119,7 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
     if (onClose) {
       onClose();
     }
-  }, [
-    onClose,
-    questions,
-    selectedQuestionIdList,
-    setFieldValue,
-    values.questions,
-  ]);
+  }, [onClose, questions, selectedQuestionIdList, setFieldValue, values]);
 
   return (
     <Spin spinning={getQuestionByCategoryIdListQuery.isLoading}>

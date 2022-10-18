@@ -20,7 +20,7 @@ export const AddQuestionFormCategoryModalWrapper = styled(Modal)`
 
 export const CategoryMenuWrapper = styled(Menu)`
   width: 100%;
-  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  &.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
     border-radius: 6px;
   }
   .ant-menu-title-content {
