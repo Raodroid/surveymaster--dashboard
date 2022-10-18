@@ -134,7 +134,6 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
         <Checkbox.Group
           value={selectedQuestionIdList}
           options={options}
-          defaultValue={['Apple']}
           onChange={onChange}
         />
         <Button
