@@ -15,7 +15,7 @@ function Inputs(props: {
   return (
     <InputsWrapper>
       <div className="mainInfo-title title">{t('common.mainInformation')}:</div>
-      <>
+      <div className="flex-j-between title-wrapper">
         <ControlledInput
           name="name"
           label="Survey Title"
@@ -31,7 +31,7 @@ function Inputs(props: {
             inputType={INPUT_TYPES.INPUT}
           />
         )}
-      </>
+      </div>
       {!hideRemarks && (
         <ControlledInput
           name="remark"

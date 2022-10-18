@@ -16,6 +16,9 @@ export const RemarksWrapper = styled.div`
     height: 100%;
     overflow-y: hidden;
   }
+  .surveyRemarks textarea {
+    height: 32px;
+  }
 `;
 
 export const QuestionRemarksWrapper = styled.div`
@@ -29,10 +32,6 @@ export const QuestionRemarksWrapper = styled.div`
   .ant-table-cell {
     padding: 8px;
   }
-  .ant-input-affix-wrapper-disabled {
-    background: rgba(0, 0, 0, 0.04);
-    border: none;
-  }
 `;
 
 export const RemarkWrapper = styled.div`
@@ -41,14 +40,18 @@ export const RemarkWrapper = styled.div`
     margin: 8px 4px;
     font-weight: 700;
   }
-  .ant-input {
-    background: rgba(0, 0, 0, 0.04);
-  }
   .ant-form-item-control-input ~ div {
     display: none !important;
   }
   textarea.ant-input {
     height: 32px;
+    border-radius: 4px;
     background: transparent;
+  }
+  .ant-input-affix-wrapper-disabled,
+  .ant-input-disabled {
+    border: none;
+    border-radius: 4px;
+    background: rgba(37, 33, 106, 0.04);
   }
 `;
