@@ -35,7 +35,7 @@ export interface ISurvey {
 
 export interface SurveyQuestionDto {
   questionVersionId: string;
-  sort: number;
+  sort?: number;
   remark?: string;
 }
 

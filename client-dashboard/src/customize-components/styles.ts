@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro';
 import templateVariable from '../app/template-variables.module.scss';
+import { Menu } from 'antd';
 
 export const ThreeDotsDropdownWrapper = styled.div`
   display: flex;
@@ -26,6 +27,7 @@ export const ThreeDotsDropdownWrapper = styled.div`
       display: flex;
       flex-flow: column;
       margin: auto;
+      color: ${templateVariable.primary_color};
       .dot {
         width: 4px;
         height: 4px;
@@ -37,6 +39,22 @@ export const ThreeDotsDropdownWrapper = styled.div`
       }
     }
     &.ant-dropdown-open {
+      color: ${templateVariable.primary_color};
+    }
+  }
+`;
+
+export const MenuDropDownWrapper = styled(Menu)`
+  &.ant-dropdown-menu .ant-dropdown-menu-item {
+    margin: 1rem 1.5rem;
+  }
+  svg {
+    color: ${templateVariable.primary_color};
+    margin-right: 1rem;
+  }
+  .ant-dropdown-menu-item-active {
+    background: transparent;
+    .ant-dropdown-menu-title-content {
       color: ${templateVariable.primary_color};
     }
   }

@@ -33,7 +33,7 @@ export const TemplateOption = () => {
   const [searchTxt, setSearchTxt] = useState<string>('');
   const { values, setFieldValue } = useFormikContext<IAddSurveyFormValues>();
 
-  const params = useParams<{ id?: string }>();
+  const params = useParams<{ projectId?: string }>();
 
   const debounceSearchText = useDebounce(searchTxt);
 
@@ -43,9 +43,9 @@ export const TemplateOption = () => {
       q: debounceSearchText,
       take: 10,
       isDeleted: false,
-      projectId: params.id as string,
+      projectId: params.projectId as string,
     }),
-    [debounceSearchText, params.id],
+    [debounceSearchText, params.projectId],
   );
 
   const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery(

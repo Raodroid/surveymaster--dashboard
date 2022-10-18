@@ -4,7 +4,10 @@ import { IGetParams, IQuestionCategory } from 'type';
 import { useQuery } from 'react-query';
 import { QuestionBankService } from 'services';
 import { useDebounce, onError } from 'utils';
-import { AddQuestionFormCategoryModalWrapper } from './style';
+import {
+  AddQuestionFormCategoryModalWrapper,
+  CategoryMenuWrapper,
+} from './style';
 import { DisplayQuestionList } from './DisplayQuestionList/DisplayQuestionList';
 import { useTranslation } from 'react-i18next';
 import HannahCustomSpin from '../../../../../../../components/HannahCustomSpin';
@@ -92,11 +95,7 @@ const AddQuestionFormCategoryModal: FC<ModalProps> = props => {
           parentRef={wrapperRef}
           spinning={getCategoryListQuery.isLoading}
         />
-        <Menu
-          style={{ width: '100%' }}
-          items={categoryData}
-          onSelect={handleSelect}
-        />
+        <CategoryMenuWrapper items={categoryData} onSelect={handleSelect} />
       </div>
       <DisplayQuestionList
         selectedCategoryId={selectedCategoryId}

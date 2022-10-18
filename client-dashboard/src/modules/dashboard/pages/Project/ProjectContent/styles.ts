@@ -67,18 +67,3 @@ export const ProjectTableWrapper = styled.div`
     cursor: pointer;
   }
 `;
-
-export const StyledProjectMenu = styled(Menu)`
-  .ant-dropdown-menu-title-content {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 4px;
-
-    svg {
-      color: var(--ant-primary-color);
-      width: 14px;
-      height: 14px;
-    }
-  }
-`;

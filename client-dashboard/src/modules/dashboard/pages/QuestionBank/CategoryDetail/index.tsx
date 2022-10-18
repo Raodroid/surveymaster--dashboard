@@ -28,6 +28,7 @@ import StyledPagination from '../../../components/StyledPagination';
 import qs from 'qs';
 import { PenFilled, TrashOutlined } from '../../../../../icons';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
+import { MenuDropDownWrapper } from '../../../../../customize-components/styles';
 
 const { Item } = Menu;
 
@@ -359,7 +360,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   }, [t, isDeleted, handleSelect, record]);
 
   const menu = (
-    <Menu onClick={({ key }) => handleSelect({ key, record })}>{items}</Menu>
+    <MenuDropDownWrapper onClick={({ key }) => handleSelect({ key, record })}>{items}</MenuDropDownWrapper>
   );
 
   useEffect(() => {

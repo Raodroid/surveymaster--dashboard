@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useRef } from 'react';
 import { Button, notification } from 'antd';
 import { ControlledInput } from '../../../../../../../common';
 import { INPUT_TYPES } from '../../../../../../../common/input/type';
@@ -22,6 +22,7 @@ import { generatePath, useParams } from 'react-router';
 import { TemplateOption } from './SurveyTemplateOption';
 import DisplayQuestionSurveyList from './DisplayQuestionSurveyList';
 import { useGetSurveyById } from '../../Survey/util';
+import HannahCustomSpin from '../../../../../../components/HannahCustomSpin';
 
 export enum SurveyTemplateEnum {
   NEW = 'NEW',
@@ -40,6 +41,10 @@ export type questionValueType = ISurveyQuestionDto & {
 export interface IAddSurveyFormValues extends IPostSurveyBodyDto {
   template: SurveyTemplateEnum;
   questions: questionValueType[];
+  questionIdMap?: Record<
+    string,
+    { questionTitle: string; versions: IQuestionVersion[] } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
+  >;
 }
 
 export const initNewQuestionOnAddSurveyForm = {
@@ -68,14 +73,41 @@ const transformQuestionData = (
   }));
 };
 
+const createQuestionMap = (
+  input: ISurvey,
+):
+  | Record<
+      string,
+      { questionTitle: string; versions: IQuestionVersion[] } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
+    >
+  | undefined => {
+  if (!input?.questions) return undefined;
+
+  const { questions } = input;
+
+  return questions?.reduce((res, q) => {
+    if (!q.questionVersion?.question?.versions) {
+      return res;
+    }
+
+    return {
+      ...res,
+      [q.questionVersionId]: {
+        questionTitle: q.questionVersion.title,
+        versions: q.questionVersion.question.versions,
+      },
+    };
+  }, {});
+};
+
 const SurveyForm: FC = () => {
-  const params = useParams<{ id?: string; detailId?: string }>();
-  const projectId = params.id || '';
+  const params = useParams<{ projectId?: string; surveyId?: string }>();
+  const projectId = params.projectId || '';
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { surveyData, isLoading } = useGetSurveyById(params?.detailId);
+  const { surveyData, isLoading } = useGetSurveyById(params?.surveyId);
 
   const initialValues = useMemo<IAddSurveyFormValues>(
     () => ({
@@ -84,6 +116,7 @@ const SurveyForm: FC = () => {
       template: SurveyTemplateEnum.NEW,
       remark: surveyData?.remark || '',
       questions: transformQuestionData(surveyData) || [],
+      questionIdMap: createQuestionMap(surveyData),
       projectId,
     }),
     [projectId, surveyData],
@@ -103,12 +136,12 @@ const SurveyForm: FC = () => {
       });
       navigate(
         generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
-          id: params.id,
-          surveyId: res.data.data.id,
+          projectId: params.projectId,
+          surveyId: res.data.id,
         }),
       );
     },
-    [isEditMode, navigate, params.id, queryClient, t],
+    [isEditMode, navigate, params, queryClient, t],
   );
 
   const addSurveyMutation = useMutation(
@@ -185,6 +218,8 @@ const SurveyForm: FC = () => {
     ],
   );
 
+  const wrapperRef = useRef<any>();
+
   return (
     <Formik
       initialValues={initialValues}
@@ -193,7 +228,11 @@ const SurveyForm: FC = () => {
       enableReinitialize={true}
     >
       {({ values, dirty, isValid, handleSubmit }) => (
-        <SurveyFormWrapper layout="vertical" onFinish={handleSubmit as any}>
+        <SurveyFormWrapper
+          layout="vertical"
+          onFinish={handleSubmit as any}
+          ref={wrapperRef}
+        >
           <div className={'SurveyFormWrapper__survey-info'}>
             <div
               className={
@@ -250,14 +289,13 @@ const SurveyForm: FC = () => {
               htmlType="submit"
               disabled={!isValid}
               loading={
-                addSurveyMutation.isLoading ||
-                updateSurveyMutation.isLoading ||
-                isLoading
+                addSurveyMutation.isLoading || updateSurveyMutation.isLoading
               }
             >
               {t('common.saveSurvey')}
             </Button>
           </div>
+          <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
         </SurveyFormWrapper>
       )}
     </Formik>

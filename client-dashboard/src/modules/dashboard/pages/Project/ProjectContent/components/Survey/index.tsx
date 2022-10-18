@@ -3,7 +3,6 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import useParseQueryString from 'hooks/useParseQueryString';
-import { ProjectTableWrapper } from '../../style';
 import { PenFilled, TrashOutlined } from 'icons';
 import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
@@ -12,8 +11,6 @@ import StyledPagination from 'modules/dashboard/components/StyledPagination';
 import moment from 'moment';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
-import { ColumnsType } from 'antd/lib/table/interface';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
@@ -22,6 +19,7 @@ import { ProjectService, SurveyService } from '../../../../../../../services';
 import {
   GetListQuestionDto,
   IGetParams,
+  IPostSurveyBodyDto,
   ISurvey,
 } from '../../../../../../../type';
 import { onError } from '../../../../../../../utils';
@@ -29,8 +27,7 @@ import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
-import { CustomSpinSuspense } from 'modules/common/styles';
-import { ProjectTableWrapper } from '../../styles';
+import { MenuDropDownWrapper } from '../../../../../../../customize-components/styles';
 
 const initParams: IGetParams = {
   q: '',
@@ -166,14 +163,13 @@ function Survey() {
           }
         >
           <SimpleBar style={{ height: '100%' }}>
-
-                <Table
-                  dataSource={surveys}
-                  columns={columns}
-                  onRow={onRow}
-                  pagination={false}
-                  rowKey={record => record.id as string}
-                />
+            <Table
+              dataSource={surveys}
+              columns={columns}
+              onRow={onRow}
+              pagination={false}
+              rowKey={record => record.id as string}
+            />
             <StyledPagination
               onChange={page => {
                 setParamsQuery(s => ({ ...s, page }));
@@ -189,7 +185,7 @@ function Survey() {
       </TableWrapper>
     </SurveyWrapper>
   );
-};
+}
 
 export default Survey;
 interface IDropDownMenu {
@@ -250,7 +246,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         case ACTION_ENUM.DUPLICATE_SURVEY: {
           await duplicateMutation.mutateAsync({
             name: `${record.name} (Copy)`,
-            projectId: params.id as string,
+            projectId: params.projectId as string,
             surveyId: record.id as string,
           });
           return;
@@ -260,7 +256,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           navigate(
             generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
               projectId: params?.projectId,
-              surveyId: record.displayId,
+              surveyId: record.id,
             }),
           );
           return;
@@ -271,7 +267,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   );
 
   const menu = (
-    <SurveyMenu
+    <MenuDropDownWrapper
       onClick={input => {
         handleSelect({ ...input, record }).then();
       }}
@@ -287,11 +283,3 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     />
   );
 };
-
-const SurveyMenu = styled(Menu)`
-  svg {
-    width: 14px;
-    height: 14px;
-    color: var(--ant-primary-color);
-  }
-`;

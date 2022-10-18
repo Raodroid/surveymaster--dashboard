@@ -27,11 +27,11 @@ import {
   StrictModeDroppable,
 } from '../../../../../../QuestionBank/EditQuestion/DisplayAnswerList/DragAnswerList';
 import moment from 'moment';
-import { MOMENT_FORMAT, ROUTE_PATH } from '../../../../../../../../../enums';
+import { MOMENT_FORMAT } from '../../../../../../../../../enums';
 import ThreeDotsDropdown from '../../../../../../../../../customize-components/ThreeDotsDropdown';
 import UncontrollInput from '../../../../../../../../common/input/uncontrolled-input/UncontrollInput';
 import { SuffixIcon } from '../../../../../../../../../icons/SuffixIcon';
-import { useMatch } from 'react-router-dom';
+import { MenuDropDownWrapper } from '../../../../../../../../../customize-components/styles';
 
 enum ACTION_ENUM {
   DELETE = 'DELETE',
@@ -49,7 +49,6 @@ const DragOption: FC<{
   opt: questionValueType;
   index: number;
   arrayHelpers: FieldArrayRenderProps;
-
   data: any;
   isLoading: boolean;
   fetchNextPage: any;
@@ -71,11 +70,13 @@ const DragOption: FC<{
   const { values, setValues, initialValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();
 
-  const { value, initialValue } = getFieldMeta(
-    `questions[${index}].questionVersionId`,
-  );
+  const { value } = getFieldMeta(`questions[${index}].questionVersionId`);
 
-  const isDirty = value !== initialValue;
+  const isDirty =
+    initialValues.questionIdMap &&
+    !Object.keys(initialValues.questionIdMap).some(
+      questionVersionId => questionVersionId === value, // check if the value was existed in survey
+    );
 
   const [questionOption, normalizeByQuestionId] = useMemo<
     [IOptionItem[], Record<string, IQuestion>]
@@ -273,16 +274,29 @@ const DragOption: FC<{
                         <span
                           className={'decline-change-btn'}
                           onClick={() => {
+                            const questionIdMap = initialValues.questionIdMap;
                             setValues(values => ({
                               ...values,
-                              questions: values.questions.map((q, idx) => {
-                                if (idx === index) {
+                              questions: values.questions.map(q => {
+                                if (!questionIdMap) return q;
+
+                                if (questionIdMap[q.questionVersionId])
+                                  return q;
+
+                                const key = Object.keys(questionIdMap).find(
+                                  questionVersionId => {
+                                    return questionIdMap[
+                                      questionVersionId
+                                    ].versions.some(ver => ver.id === value);
+                                  },
+                                );
+
+                                if (key) {
                                   return {
                                     ...q,
-                                    questionVersionId: initialValue as string,
+                                    questionVersionId: key as string,
                                     questionTitle:
-                                      initialValues.questions[index]
-                                        .questionTitle,
+                                      questionIdMap[key].questionTitle,
                                   };
                                 }
                                 return q;
@@ -470,7 +484,7 @@ const DragOption: FC<{
         ) : (
           <ThreeDotsDropdown
             overlay={
-              <Menu>
+              <MenuDropDownWrapper>
                 <Menu.Item
                   key={ACTION_ENUM.DELETE}
                   onClick={() => {
@@ -505,7 +519,7 @@ const DragOption: FC<{
                 >
                   <SuffixIcon /> {t('common.change')}
                 </Menu.Item>
-              </Menu>
+              </MenuDropDownWrapper>
             }
             trigger={['click']}
           />

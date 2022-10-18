@@ -14,17 +14,21 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
       }
 
       &.title-column {
+        .first,
+        .third {
+          margin: 0;
+          display: block;
+        }
         .second {
           .question-info-wrapper {
             align-items: center;
+            .question,
             .category,
             .question-type {
               margin: 0;
+              //margin-top: 25px;
             }
           }
-        }
-        .third {
-          margin-top: 25px;
         }
       }
 
@@ -45,11 +49,21 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
         }
       }
 
+      .first,
+      .forth {
+        display: flex;
+        &.marginTop {
+          margin-top: 25px;
+        }
+      }
+
       .first {
         width: 100px;
-        display: flex;
-        align-items: center;
         gap: 1.5rem;
+        justify-content: center;
+        svg {
+          transform: translateY(4px);
+        }
       }
       .second {
         width: 100%;
@@ -127,8 +141,6 @@ export const DisplayQuestionSurveyListWrapper = styled.div`
       }
       .forth {
         width: 30px;
-        display: flex;
-        align-items: center;
       }
     }
   }
