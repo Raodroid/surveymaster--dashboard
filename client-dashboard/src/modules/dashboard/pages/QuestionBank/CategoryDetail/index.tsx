@@ -131,7 +131,7 @@ const CategoryDetail = () => {
 
           const options = _.latestVersion.options;
 
-          if (!options) {
+          if (!options || !options.length) {
             return t(`questionType.${value}`);
           }
 
@@ -150,10 +150,10 @@ const CategoryDetail = () => {
               title={
                 options?.length === 1
                   ? '1 Answer'
-                  : `${options?.length} Answers`
+                  : `${options?.length} Answers:`
               }
             >
-              {t(`questionType.${value}`)}
+              <>{t(`questionType.${value}`)}</>
             </Popover>
           );
         },
