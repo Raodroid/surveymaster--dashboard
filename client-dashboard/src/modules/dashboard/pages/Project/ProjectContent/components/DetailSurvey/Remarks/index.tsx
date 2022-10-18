@@ -91,15 +91,22 @@ function Remarks(props: DetailSurveyProps) {
     mutationUpdateRemarks.mutateAsync(updateSurveyPayload);
   };
 
+  const initialValue = useMemo(() => {
+    return {
+      ...survey?.data,
+      createdAt: survey?.data?.createdAt?.slice(0, 10),
+    };
+  }, [survey]);
+
   return (
     <>
       <ProjectHeader routes={routes} />
 
       <RemarksWrapper className="height-100 overflow-hidden">
-        <CustomSpinSuspense spinning={!survey?.data}>
+        <CustomSpinSuspense spinning={!survey}>
           <Formik
             enableReinitialize={true}
-            initialValues={survey?.data}
+            initialValues={initialValue}
             onSubmit={handleSubmit}
           >
             {({ handleSubmit: handleFinish }) => (
@@ -109,7 +116,7 @@ function Remarks(props: DetailSurveyProps) {
                 className="height-100"
               >
                 <SimpleBar style={{ height: 'calc(100% - 76px)' }}>
-                  <Inputs hideRemarks />
+                  <Inputs hideDate />
                   <QuestionRemarks questions={survey?.data.questions} />
                 </SimpleBar>
                 <div className="footer flex-center">

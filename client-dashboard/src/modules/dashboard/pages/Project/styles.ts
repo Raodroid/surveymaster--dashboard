@@ -56,4 +56,8 @@ export const ProjectWrapper = styled(Content)`
       max-height: calc(100vh - 310px) !important;
     }
   }
+  .ant-spin-nested-loading,
+  .ant-spin-container {
+    height: 100%;
+  }
 `;

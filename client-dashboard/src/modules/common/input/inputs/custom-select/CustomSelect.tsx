@@ -77,34 +77,27 @@ const CustomSelect = (props: CustomSelectProps) => {
     });
   });
 
-  return (
-    <>
-      {!res.loading ? (
-        <SelectStyled
-          {...res}
-          value={value || undefined}
-          showSearch={showSearch}
-          onSearch={showSearch ? handleSearch : undefined}
-          options={options || fetchedOptions || []}
-          onClear={showSearch ? handleClear : undefined}
-          suffixIcon={
-            <ArrowDown
-              style={{ height: 5, color: templateVariable.primary_color }}
-            />
-          }
+  const selectProps = useMemo(() => {
+    const baseProps: CustomSelectProps & {
+      suffixIcon: any;
+    } = {
+      ...res,
+      value: value || undefined,
+      showSearch: showSearch,
+      onSearch: showSearch ? handleSearch : undefined,
+      options: options || fetchedOptions || [],
+      onClear: showSearch ? handleClear : undefined,
+      suffixIcon: (
+        <ArrowDown
+          style={{ height: 5, color: templateVariable.primary_color }}
         />
-      ) : (
-        <SelectStyled
-          {...res}
-          value={value || undefined}
-          showSearch={showSearch}
-          onSearch={showSearch ? handleSearch : undefined}
-          options={options || fetchedOptions || []}
-          onClear={showSearch ? handleClear : undefined}
-        />
-      )}
-    </>
-  );
+      ),
+    };
+    if (res.loading) delete baseProps.suffixIcon;
+    return baseProps;
+  }, [res, value, showSearch, options, fetchedOptions]);
+
+  return <SelectStyled {...selectProps} />;
 };
 
 export default memo(CustomSelect);
