@@ -11,16 +11,7 @@ import React, {
 } from 'react';
 import { CategoryDetailWrapper } from './style';
 import CategoryDetailHeader from './CategoryDetailHeader';
-import {
-  Menu,
-  MenuProps,
-  notification,
-  PaginationProps,
-  Table,
-  Button,
-  message,
-  Popconfirm,
-} from 'antd';
+import { Menu, notification, PaginationProps, Table, Popconfirm } from 'antd';
 import { GetListQuestionDto, IQuestion } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +26,6 @@ import { useNavigate } from 'react-router-dom';
 import StyledPagination from '../../../components/StyledPagination';
 import qs from 'qs';
 import { PenFilled, TrashOutlined } from '../../../../../icons';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
 
 const { Item } = Menu;
@@ -281,6 +271,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const handleSelect = useCallback(
     async (props: { record: IQuestion; key: string }) => {
       const { key, record } = props;
+      console.log('key =', key);
       switch (key) {
         case ACTION_ENUM.DELETE: {
           await deleteMutation.mutateAsync({ id: record.id as string });
@@ -318,11 +309,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           okText="Yes"
           cancelText="No"
         >
-          <Item
-            key={ACTION_ENUM.DUPLICATE}
-            icon={<PenFilled />}
-            onClick={({ domEvent }) => domEvent.stopPropagation()}
-          >
+          <Item key={ACTION_ENUM.DUPLICATE} icon={<PenFilled />}>
             {t('common.duplicate')}
           </Item>
         </Popconfirm>,
