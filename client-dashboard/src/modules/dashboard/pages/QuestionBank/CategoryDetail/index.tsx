@@ -281,19 +281,18 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const handleSelect = useCallback(
     async (props: { record: IQuestion; key: string }) => {
       const { key, record } = props;
-      console.log('\n ==> key =', key);
       switch (key) {
         case ACTION_ENUM.DELETE: {
           await deleteMutation.mutateAsync({ id: record.id as string });
-          return;
+          break;
         }
         case ACTION_ENUM.DUPLICATE: {
           await duplicateMutation.mutateAsync({ id: record.id as string });
-          return;
+          break;
         }
         case ACTION_ENUM.RESTORE: {
           await restoreMutation.mutateAsync({ id: record.id as string });
-          return;
+          break;
         }
       }
     },
@@ -318,9 +317,9 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           onConfirm={() => handleSelect({ record, key: ACTION_ENUM.DUPLICATE })}
           okText="Yes"
           cancelText="No"
-          key={ACTION_ENUM.DUPLICATE}
         >
           <Item
+            key={ACTION_ENUM.DUPLICATE}
             icon={<PenFilled />}
             onClick={({ domEvent }) => domEvent.stopPropagation()}
           >
@@ -344,21 +343,13 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
 
   useEffect(() => {
     if (setLoading) {
-      setLoading(deleteMutation.isLoading);
+      const isLoading =
+        duplicateMutation.isLoading ||
+        deleteMutation.isLoading ||
+        restoreMutation.isLoading;
+      setLoading(isLoading);
     }
-  }, [deleteMutation, setLoading]);
-
-  useEffect(() => {
-    if (setLoading) {
-      setLoading(restoreMutation.isLoading);
-    }
-  }, [restoreMutation, setLoading]);
-
-  useEffect(() => {
-    if (setLoading) {
-      setLoading(duplicateMutation.isLoading);
-    }
-  }, [duplicateMutation, setLoading]);
+  }, [deleteMutation, restoreMutation, duplicateMutation, setLoading]);
 
   return (
     <ThreeDotsDropdown
