@@ -25,7 +25,7 @@ export default class QuestionBankService {
   }
   static duplicateQuestion(props): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.delete(`/questions/${id}`);
+    return APIService.post(`/questions/${id}/duplicate`);
   }
   static restoreQuestionByQuestionId(props): Promise<AxiosResponse> {
     const { id } = props;

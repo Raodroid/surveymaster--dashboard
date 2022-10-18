@@ -318,9 +318,9 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           onConfirm={() => handleSelect({ record, key: ACTION_ENUM.DUPLICATE })}
           okText="Yes"
           cancelText="No"
+          key={ACTION_ENUM.DUPLICATE}
         >
           <Item
-            key={ACTION_ENUM.DUPLICATE}
             icon={<PenFilled />}
             onClick={({ domEvent }) => domEvent.stopPropagation()}
           >
@@ -339,7 +339,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   }, [t, isDeleted, handleSelect, record]);
 
   const menu = (
-    <Menu onSelect={({ key }) => handleSelect({ key, record })}>{items}</Menu>
+    <Menu onClick={({ key }) => handleSelect({ key, record })}>{items}</Menu>
   );
 
   useEffect(() => {
