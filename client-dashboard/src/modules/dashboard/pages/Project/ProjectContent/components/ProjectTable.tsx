@@ -100,11 +100,8 @@ function ProjectTable() {
     () => [
       {
         title: 'ID',
-        dataIndex: 'id',
+        dataIndex: 'displayId',
         key: 'id',
-        render: (_, record: ProjectColumnRecord) => (
-          <div>{record?.displayId}</div>
-        ),
       },
       {
         title: 'Project Title',
@@ -115,7 +112,6 @@ function ProjectTable() {
         title: 'N of Surveys',
         dataIndex: 'numberOfSurveys',
         key: 'numberOfSurveys',
-        render: (text: string) => <div>{text}</div>,
       },
       {
         title: 'Person In Charge',
@@ -123,8 +119,7 @@ function ProjectTable() {
         key: 'createdBy',
         render: (_, record: ProjectColumnRecord) => (
           <div>
-            {record?.personResponsible?.firstName}{' '}
-            {record?.personResponsible?.lastName}
+            {`${record?.personResponsible?.firstName} ${record?.personResponsible?.lastName}`}
           </div>
         ),
       },

@@ -19,7 +19,6 @@ import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
-import { CloseIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import useCheckScopeEntity, {
   ScopeActionArray,
@@ -30,6 +29,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
+import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
 import { useDebounce } from 'utils';
 import {
@@ -45,26 +45,21 @@ import {
   ResetUserPasswordModal,
 } from './modals';
 
-interface DataType {
+interface TeamMember extends UserPayload {
   key: string;
-  avatar?: string;
   name: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  userRoles: Record<string, any>[];
   deletedAt: Date;
 }
 
 const rowSelection = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+  onChange: (selectedRowKeys: React.Key[], selectedRows: TeamMember[]) => {
     console.log(
       `selectedRowKeys: ${selectedRowKeys}`,
       'selectedRows: ',
       selectedRows,
     );
   },
-  getCheckboxProps: (record: DataType) => ({
+  getCheckboxProps: (record: TeamMember) => ({
     disabled: record.name === 'Disabled User',
     name: record.name,
   }),
@@ -143,12 +138,12 @@ function TeamContent() {
     setShowResetPasswordModal(true);
   };
 
-  const columns: ColumnsType<DataType> = useMemo(
+  const columns: ColumnsType<TeamMember> = useMemo(
     () => [
       {
         title: '',
         dataIndex: 'avatar',
-        render: (src: string, record: DataType) =>
+        render: (src: string, record: TeamMember) =>
           src ? (
             <img
               src={src}
@@ -178,14 +173,14 @@ function TeamContent() {
       {
         title: 'Authentication',
         dataIndex: 'authentication',
-        render: (_, record: DataType) => {
+        render: (_, record: TeamMember) => {
           const list = Object.values(allRoles).filter(elm =>
-            record.userRoles.some(el => el.roleId === elm.id),
+            record.userRoles?.some(el => el.roleId === elm.id),
           );
 
           return (
             <div>
-              {list.map((elm: DataType, index: number) => (
+              {list.map((elm: TeamMember, index: number) => (
                 <span style={{ fontSize: 12 }}>
                   {elm.name} {index !== list.length - 1 && '| '}
                 </span>
@@ -197,7 +192,7 @@ function TeamContent() {
       {
         title: '',
         dataIndex: 'threeDots',
-        render: (_, record: DataType) => (
+        render: (_, record: TeamMember) => (
           <ThreeDotsDropdown
             overlay={
               <DropDownMenuStyled>
@@ -261,7 +256,7 @@ function TeamContent() {
     [profile, t, isAdminRole, canEdit, canRestore, canDelete, allRoles],
   );
 
-  const data: DataType[] = useMemo(
+  const data: TeamMember[] = useMemo(
     () =>
       teamMembers
         ? teamMembers.data.data.map(user => {

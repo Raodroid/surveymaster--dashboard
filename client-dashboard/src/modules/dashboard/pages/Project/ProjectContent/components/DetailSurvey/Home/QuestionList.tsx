@@ -18,51 +18,33 @@ interface IDetailSurveyQuestion extends IQuestion {
 const columns: ColumnsType<IDetailSurveyQuestion> = [
   {
     title: 'ID',
-    dataIndex: 'id',
+    dataIndex: ['questionVersion', 'question', 'displayId'],
     key: 'id',
-    render: (_, record: IDetailSurveyQuestion) => (
-      <div>{record?.questionVersion.question?.displayId}</div>
-    ),
   },
   {
     title: 'Question',
-    dataIndex: 'question',
+    dataIndex: ['questionVersion', 'title'],
     key: 'question',
-    render: (_, record: IDetailSurveyQuestion) => (
-      <div>{record?.questionVersion.title}</div>
-    ),
   },
   {
     title: 'Category',
-    dataIndex: 'category',
+    dataIndex: ['questionVersion', 'question', 'masterCategory', 'name'],
     key: 'category',
-    render: (_, record: IDetailSurveyQuestion) => (
-      <div>{record?.questionVersion.question?.masterCategory?.name}</div>
-    ),
   },
   {
     title: 'Sub Category',
-    dataIndex: 'subCategory',
+    dataIndex: ['questionVersion', 'question', 'masterSubCategory', 'name'],
     key: 'subCategory',
-    render: (_, record: IDetailSurveyQuestion) => (
-      <div>{record?.questionVersion.question?.masterSubCategory?.name}</div>
-    ),
   },
   {
     title: 'Variable Name',
-    dataIndex: 'variableName',
+    dataIndex: ['questionVersion', 'question', 'masterVariableName'],
     key: 'variableName',
-    render: (_, record: IDetailSurveyQuestion) => (
-      <div>{record?.questionVersion.question?.masterVariableName}</div>
-    ),
   },
   {
     title: 'Type',
-    dataIndex: 'type',
+    dataIndex: ['questionVersion', 'question', 'type'],
     key: 'type',
-    render: (_, record: IDetailSurveyQuestion) => (
-      <div>{record?.questionVersion.question?.type}</div>
-    ),
   },
 ];
 

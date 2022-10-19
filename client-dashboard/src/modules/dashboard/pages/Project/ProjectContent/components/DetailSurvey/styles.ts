@@ -17,7 +17,7 @@ export const InputsWrapper = styled.div`
   column-gap: 40px;
   grid-template-areas:
     'mainInfo-title divider surveyParams'
-    'surveyTitle    divider surveyId'
+    'title-wrapper    divider surveyId'
     'surveyRemarks  divider none';
 
   .mainInfo-title {
@@ -33,8 +33,13 @@ export const InputsWrapper = styled.div`
     margin: auto;
     margin-top: 0;
   }
-  .surveyTitle {
-    grid-area: surveyTitle;
+  .title-wrapper {
+    grid-area: title-wrapper;
+    gap: 24px;
+
+    .form-item-container {
+      flex: 1;
+    }
   }
   .surveyId {
     grid-area: surveyId;
@@ -42,7 +47,14 @@ export const InputsWrapper = styled.div`
   .surveyRemarks {
     grid-area: surveyRemarks;
     textarea {
-      height: 32px;
+      height: 108px;
+      border-radius: 4px;
     }
+  }
+  .ant-input-affix-wrapper-disabled,
+  .ant-input-disabled {
+    border: none;
+    border-radius: 4px;
+    background: rgba(37, 33, 106, 0.04);
   }
 `;

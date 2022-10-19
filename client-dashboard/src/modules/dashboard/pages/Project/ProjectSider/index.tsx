@@ -7,6 +7,7 @@ import { useMatch } from 'react-router-dom';
 import { projectRoutePath, useGetAllProjects } from '../util';
 import { AddNewProjectBtn, ProjectSiderWrapper } from './style';
 import Title from './Title';
+import SimpleBar from 'simplebar-react';
 
 const ProjectSider = () => {
   const wrapperRef = useRef<any>();
@@ -23,16 +24,18 @@ const ProjectSider = () => {
     <ProjectSiderWrapper ref={wrapperRef}>
       <div className="list flex-column">
         <CustomSpinSuspense spinning={isLoading}>
-          {projects.map(e => (
-            <Title
-              key={e.id}
-              title={e.name}
-              routePath={generatePath(projectRoutePath.SURVEY, {
-                projectId: e.id,
-              })}
-              id={e.id}
-            />
-          ))}
+          <SimpleBar style={{ height: '100%' }}>
+            {projects.map(e => (
+              <Title
+                key={e.id}
+                title={e.name}
+                routePath={generatePath(projectRoutePath.SURVEY, {
+                  projectId: e.id,
+                })}
+                id={e.id}
+              />
+            ))}
+          </SimpleBar>
         </CustomSpinSuspense>
       </div>
       <div className="add-new-project-btn-wrapper">

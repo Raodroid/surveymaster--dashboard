@@ -5,13 +5,17 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputsWrapper } from './styles';
 
-function Inputs(props: { disabled?: boolean; hideRemarks?: boolean }) {
-  const { disabled = false, hideRemarks = false } = props;
+function Inputs(props: {
+  disabled?: boolean;
+  hideRemarks?: boolean;
+  hideDate?: boolean;
+}) {
+  const { disabled = false, hideRemarks = false, hideDate = false } = props;
   const { t } = useTranslation();
   return (
     <InputsWrapper>
       <div className="mainInfo-title title">{t('common.mainInformation')}:</div>
-      <>
+      <div className="flex-j-between title-wrapper">
         <ControlledInput
           name="name"
           label="Survey Title"
@@ -19,13 +23,15 @@ function Inputs(props: { disabled?: boolean; hideRemarks?: boolean }) {
           disabled={disabled}
           inputType={INPUT_TYPES.INPUT}
         />
-        <ControlledInput
-          name="createdAt"
-          label="Date Created"
-          disabled={disabled}
-          inputType={INPUT_TYPES.INPUT}
-        />
-      </>
+        {!hideDate && (
+          <ControlledInput
+            name="createdAt"
+            label="Date Created"
+            disabled={disabled}
+            inputType={INPUT_TYPES.INPUT}
+          />
+        )}
+      </div>
       {!hideRemarks && (
         <ControlledInput
           name="remark"
