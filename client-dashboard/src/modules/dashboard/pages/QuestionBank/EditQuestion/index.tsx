@@ -21,7 +21,7 @@ import {
 import { ROUTE_PATH } from '../../../../../enums';
 import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import EditQuestionDetailForm from './EditQuestionDetailForm';
-import { useParams } from 'react-router';
+import { generatePath, useParams } from 'react-router';
 import { useGetQuestionByQuestionId } from '../util';
 import useParseQueryString from '../../../../../hooks/useParseQueryString';
 import DisplayAnswerList from './DisplayAnswerList';
@@ -137,7 +137,11 @@ const EditQuestion = () => {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getQuestionList');
         notification.success({ message: t('common.updateSuccess') });
-        navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
+        navigate(
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION, {
+            questionId: params.questionId,
+          }),
+        );
       },
       onError,
     },
