@@ -39,7 +39,7 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
     { onError, enabled: !!selectedCategoryId, refetchOnWindowFocus: false },
   );
 
-  const questions = useMemo(
+  const questions = useMemo<IQuestion[]>(
     () => _get(getQuestionByCategoryIdListQuery.data, 'data.data', []),
     [getQuestionByCategoryIdListQuery.data],
   );
@@ -80,33 +80,28 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
             id?: string;
           }
         >,
-        questionId,
+        chosenQuestionVersionId,
       ) => {
-        const questionIdMap = values.questionIdMap;
+        const question = questions.find(
+          (q: IQuestion) =>
+            q.latestCompletedVersion.id === chosenQuestionVersionId,
+        ) as IQuestion;
+
         if (
-          questionIdMap &&
-          Object.keys(questionIdMap).some(questionVersionId => {
-            const versions = questionIdMap[questionVersionId].versions;
-
-            if (questionVersionId === questionId) return true; //check if questionId was existed
-
-            return versions.some(ver => ver.id === questionId); // check if chosen version is in the same question but different version
-          })
+          values.questions.some(
+            q => q.id === question?.id, // check if chosen version is in the same question but different version
+          )
         ) {
           return result;
         }
 
-        const question: IQuestion = questions.find(
-          (q: IQuestion) => q.latestCompletedVersion.id === questionId,
-        );
-
         const transformData = {
           type: question.latestCompletedVersion.type,
-          questionVersionId: questionId,
+          questionVersionId: chosenQuestionVersionId,
           category: question.masterCategory?.name as string,
           remark: '',
           sort,
-          id: questionId,
+          id: question.latestCompletedVersion.questionId,
           questionTitle: question.latestCompletedVersion.title,
         };
         sort += 1;

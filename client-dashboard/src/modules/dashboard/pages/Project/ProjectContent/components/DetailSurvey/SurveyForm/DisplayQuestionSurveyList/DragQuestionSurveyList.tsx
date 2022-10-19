@@ -49,85 +49,49 @@ const DragOption: FC<{
   opt: questionValueType;
   index: number;
   arrayHelpers: FieldArrayRenderProps;
-  data: any;
   isLoading: boolean;
   fetchNextPage: any;
   hasNextPage?: boolean;
   setSearchTxt: (value: string) => void;
-  searchTxt: string;
+  questionOption: IOptionItem[];
+  normalizeByQuestionId: Record<string, IQuestion>;
 }> = props => {
   const {
     opt,
     index,
     arrayHelpers,
-    data,
     isLoading,
     fetchNextPage,
     hasNextPage,
     setSearchTxt,
+    questionOption,
+    normalizeByQuestionId,
   } = props;
   const { t } = useTranslation();
-  const { values, setValues, initialValues, getFieldMeta } =
+  const { setValues, initialValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();
 
-  const { value } = getFieldMeta(`questions[${index}].questionVersionId`);
+  const { value } = getFieldMeta<questionValueType>(`questions[${index}]`);
 
   const isDirty =
     initialValues.questionIdMap &&
     !Object.keys(initialValues.questionIdMap).some(
-      questionVersionId => questionVersionId === value, // check if the value was existed in survey
+      questionVersionId => questionVersionId === value.questionVersionId, // check if the value was existed in survey
     );
 
-  const [questionOption, normalizeByQuestionId] = useMemo<
-    [IOptionItem[], Record<string, IQuestion>]
-  >(() => {
-    if (!data) return [[], {}];
-
-    const currQuestionVersionId = values.questions[index].questionVersionId;
-
-    const options: IOptionItem[] = [];
+  const options = useMemo<IOptionItem[]>(() => {
+    const currQuestionVersionId = value.questionVersionId;
     if (currQuestionVersionId) {
-      options.push({
-        label: values.questions[index].questionTitle,
-        value: currQuestionVersionId,
-      });
+      return [
+        ...questionOption,
+        {
+          label: value.questionTitle,
+          value: currQuestionVersionId,
+        },
+      ];
     }
-
-    const normalizeByQuestionId: Record<string, IQuestion> = {};
-
-    return [
-      data.pages.reduce((current, page) => {
-        const nextPageData = page.data.data;
-        nextPageData.forEach((question: IQuestion) => {
-          const questionIdMap = values.questionIdMap;
-
-          const latestQuestionVersionId = question.latestCompletedVersion.id;
-
-          if (
-            questionIdMap &&
-            Object.keys(questionIdMap).some(questionVersionId => {
-              const versions = questionIdMap[questionVersionId].versions;
-
-              if (questionVersionId === latestQuestionVersionId) return true; //check if questionId was existed
-
-              return versions.some(ver => ver.id === latestQuestionVersionId); // check if chosen version is in the same question but different version
-            })
-          ) {
-            return current;
-          }
-
-          normalizeByQuestionId[latestQuestionVersionId as string] = question;
-
-          current.push({
-            label: question?.latestCompletedVersion?.title,
-            value: latestQuestionVersionId as string,
-          });
-        });
-        return current;
-      }, options),
-      normalizeByQuestionId,
-    ];
-  }, [data, index, values]);
+    return [...questionOption];
+  }, [questionOption, value]);
 
   const fetch = useCallback(
     async target => {
@@ -166,6 +130,7 @@ const DragOption: FC<{
                 type: chooseQuestion.latestCompletedVersion.type as string,
                 questionTitle: chooseQuestion.latestCompletedVersion
                   .title as string,
+                id: chooseQuestion.latestCompletedVersion.questionId,
               };
             }
             return q;
@@ -180,7 +145,7 @@ const DragOption: FC<{
   const [newVersions, historyVersions] = useMemo<
     [IQuestionVersion[] | undefined, IQuestionVersion[] | undefined]
   >(() => {
-    const versions = values.questions[index].versions;
+    const versions = value.versions;
 
     if (!versions) return [undefined, undefined];
 
@@ -190,8 +155,7 @@ const DragOption: FC<{
     let chosenValueIdx: undefined | number = undefined;
 
     versions?.forEach((ver, idx) => {
-      const isCurrentValue =
-        ver.id === values.questions[index].questionVersionId;
+      const isCurrentValue = ver.id === value.questionVersionId;
 
       if (chosenValueIdx !== undefined && idx > chosenValueIdx) {
         historyVersions.push(ver);
@@ -205,7 +169,7 @@ const DragOption: FC<{
     }, []);
 
     return [newVersions, historyVersions];
-  }, [index, values.questions]);
+  }, [value.questionVersionId, value.versions]);
 
   const [show, setShow] = useState(false);
 
@@ -233,12 +197,11 @@ const DragOption: FC<{
                 onPopupScroll={onScroll}
                 onChange={handleOnChange}
                 onSearch={value => {
-                  console.log({ value });
                   setSearchTxt(value);
                 }}
                 filterOption={false}
                 showSearch
-                options={questionOption}
+                options={options}
                 isFastField={false}
               />
             </div>
@@ -265,8 +228,7 @@ const DragOption: FC<{
         ) : (
           <>
             {newVersions.map((ver, idx) => {
-              const isCurrentValue =
-                ver.id === values.questions[index].questionVersionId;
+              const isCurrentValue = ver.id === value.questionVersionId;
 
               return isCurrentValue ? (
                 <div className={'question-info-wrapper'} key={ver.id}>
@@ -283,32 +245,40 @@ const DragOption: FC<{
                           className={'decline-change-btn'}
                           onClick={() => {
                             const questionIdMap = initialValues.questionIdMap;
+
                             setValues(values => ({
                               ...values,
-                              questions: values.questions.map(q => {
-                                if (!questionIdMap) return q;
+                              questions: !questionIdMap
+                                ? values.questions
+                                : values.questions.map(q => {
+                                    if (
+                                      q.questionVersionId !== //only care about the current value
+                                      value.questionVersionId
+                                    )
+                                      return q;
 
-                                if (questionIdMap[q.questionVersionId])
-                                  return q;
+                                    if (questionIdMap[q.questionVersionId])
+                                      //if true => nothing change here
+                                      return q;
 
-                                const key = Object.keys(questionIdMap).find(
-                                  questionVersionId => {
-                                    return questionIdMap[
-                                      questionVersionId
-                                    ].versions.some(ver => ver.id === value);
-                                  },
-                                );
+                                    const key = Object.keys(questionIdMap).find(
+                                      questionVersionId => {
+                                        return questionIdMap[
+                                          questionVersionId
+                                        ].versions.some(v => ver.id === v.id);
+                                      },
+                                    );
 
-                                if (key) {
-                                  return {
-                                    ...q,
-                                    questionVersionId: key as string,
-                                    questionTitle:
-                                      questionIdMap[key].questionTitle,
-                                  };
-                                }
-                                return q;
-                              }),
+                                    if (key) {
+                                      return {
+                                        ...q,
+                                        questionVersionId: key as string,
+                                        questionTitle:
+                                          questionIdMap[key].questionTitle,
+                                      };
+                                    }
+                                    return q;
+                                  }),
                             }));
                           }}
                         >
@@ -318,10 +288,8 @@ const DragOption: FC<{
                     </div>
                     <ControlledInput
                       disabled
-                      inputType={INPUT_TYPES.SELECT}
-                      name={`questions[${index}].questionVersionId`}
-                      options={questionOption}
-                      suffixIcon={null}
+                      inputType={INPUT_TYPES.INPUT}
+                      name={`questions[${index}].questionTitle`}
                     />
                     {!!historyVersions?.length && (
                       <span
@@ -345,7 +313,6 @@ const DragOption: FC<{
                   <div className={'category'}>
                     <ControlledInput
                       disabled
-                      suffixIcon={null}
                       inputType={INPUT_TYPES.INPUT}
                       name={`questions[${index}].category`}
                     />
@@ -377,7 +344,7 @@ const DragOption: FC<{
                     <UncontrollInput
                       disabled
                       inputType={INPUT_TYPES.INPUT}
-                      name={`questions[${index}].questionVersionId`}
+                      name={`questions[${index}].questionTitle`}
                       value={ver.title}
                     />
                   </div>
@@ -385,7 +352,6 @@ const DragOption: FC<{
                   <div className={'category'}>
                     <ControlledInput
                       disabled
-                      suffixIcon={null}
                       inputType={INPUT_TYPES.INPUT}
                       name={`questions[${index}].category`}
                     />
@@ -422,7 +388,7 @@ const DragOption: FC<{
                       <UncontrollInput
                         disabled
                         inputType={INPUT_TYPES.INPUT}
-                        name={`questions[${index}].questionVersionId`}
+                        name={`questions[${index}].questionTitle`}
                         value={ver.title}
                       />
                     </div>
@@ -430,7 +396,6 @@ const DragOption: FC<{
                     <div className={'category'}>
                       <ControlledInput
                         disabled
-                        suffixIcon={null}
                         inputType={INPUT_TYPES.INPUT}
                         name={`questions[${index}].category`}
                       />
@@ -561,6 +526,7 @@ const OptionList = React.memo(function QuoteListA(props: {
   const { t } = useTranslation();
 
   const [searchTxt, setSearchTxt] = useState<string>('');
+  const { values } = useFormikContext<IAddSurveyFormValues>();
 
   const debounceSearchText = useDebounce(searchTxt);
 
@@ -588,6 +554,40 @@ const OptionList = React.memo(function QuoteListA(props: {
       onError,
     },
   );
+
+  const [questionOption, normalizeByQuestionId] = useMemo<
+    [IOptionItem[], Record<string, IQuestion>]
+  >(() => {
+    if (!data) return [[], {}];
+
+    const normalizeByQuestionId: Record<string, IQuestion> = {};
+    return [
+      data.pages.reduce((current: IOptionItem[], page) => {
+        const nextPageData = page.data.data;
+        nextPageData.forEach((q: IQuestion) => {
+          const latestQuestionVersionId = q.latestCompletedVersion.id;
+          const latestQuestionId = q.id;
+          if (
+            values.questions.some(
+              q => q.id === latestQuestionId, // check if chosen version is in the same question but different version
+            )
+          ) {
+            return current;
+          }
+
+          normalizeByQuestionId[latestQuestionVersionId as string] = q;
+
+          current.push({
+            label: q?.latestCompletedVersion?.title,
+            value: latestQuestionVersionId as string,
+          });
+        });
+        return current;
+      }, []),
+      normalizeByQuestionId,
+    ];
+  }, [data, values]);
+
   return (
     <>
       <div className={'DisplayQuestionSurveyListWrapper__row title-column'}>
@@ -620,12 +620,12 @@ const OptionList = React.memo(function QuoteListA(props: {
             index={index}
             key={option.id}
             arrayHelpers={arrayHelpers}
-            data={data}
             isLoading={isLoading}
             fetchNextPage={fetchNextPage}
             hasNextPage={hasNextPage}
             setSearchTxt={setSearchTxt}
-            searchTxt={searchTxt}
+            questionOption={questionOption}
+            normalizeByQuestionId={normalizeByQuestionId}
           />
         );
       })}

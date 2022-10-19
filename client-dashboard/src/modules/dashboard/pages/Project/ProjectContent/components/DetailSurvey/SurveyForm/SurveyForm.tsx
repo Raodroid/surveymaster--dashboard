@@ -67,7 +67,7 @@ const transformQuestionData = (
     type: q.questionVersion?.type as string,
     remark: q.remark as string,
     questionVersionId: q.questionVersionId,
-    id: q.id,
+    id: q.questionVersion?.questionId,
     versions: q.questionVersion?.question?.versions,
     category: q.questionVersion?.question?.masterCategory?.name as string,
   }));
