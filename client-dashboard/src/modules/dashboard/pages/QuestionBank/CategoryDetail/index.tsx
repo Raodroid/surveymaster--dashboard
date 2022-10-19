@@ -11,7 +11,8 @@ import React, {
 } from 'react';
 import { CategoryDetailWrapper, QuestionTypePopover } from './style';
 import CategoryDetailHeader from './CategoryDetailHeader';
-import { Menu, notification, PaginationProps, Popover, Table } from 'antd';
+
+import { Menu, notification, PaginationProps, Popover, Table, Popconfirm } from 'antd';
 import { GetListQuestionDto, IQuestion } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
@@ -26,12 +27,14 @@ import { useNavigate } from 'react-router-dom';
 import StyledPagination from '../../../components/StyledPagination';
 import qs from 'qs';
 import { PenFilled, TrashOutlined } from '../../../../../icons';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
+
+const { Item } = Menu;
 
 enum ACTION_ENUM {
   DELETE = 'DELETE',
   RESTORE = 'RESTORE',
+  DUPLICATE = 'DUPLICATE',
 }
 
 interface ICategoryDetailContext {
@@ -286,66 +289,88 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     },
   );
 
+  const duplicateMutation = useMutation(
+    (data: { id: string }) => {
+      return QuestionBankService.duplicateQuestion(data);
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getQuestionList');
+        notification.success({ message: t('common.duplicateSuccess') });
+      },
+      onError,
+    },
+  );
+
   const handleSelect = useCallback(
-    async (props: {
-      record: IQuestion;
-      key: string;
-      keyPath: string[];
-      item: React.ReactInstance;
-    }) => {
+    async (props: { record: IQuestion; key: string }) => {
       const { key, record } = props;
+      console.log('key =', key);
       switch (key) {
         case ACTION_ENUM.DELETE: {
           await deleteMutation.mutateAsync({ id: record.id as string });
-          return;
+          break;
+        }
+        case ACTION_ENUM.DUPLICATE: {
+          await duplicateMutation.mutateAsync({ id: record.id as string });
+          break;
         }
         case ACTION_ENUM.RESTORE: {
           await restoreMutation.mutateAsync({ id: record.id as string });
-          return;
+          break;
         }
       }
     },
-    [deleteMutation, restoreMutation],
+    [deleteMutation, restoreMutation, duplicateMutation],
   );
 
   const items = useMemo(() => {
-    const baseMenu: ItemType[] = [];
+    const baseMenu: any = [];
     if (isDeleted) {
-      baseMenu.push({
-        icon: <PenFilled />,
-        label: t('common.restore'),
-        key: ACTION_ENUM.RESTORE,
-      });
+      baseMenu.push(
+        <Item key={ACTION_ENUM.RESTORE} icon={<PenFilled />}>
+          {t('common.restore')}
+        </Item>,
+      );
     } else {
-      baseMenu.push({
-        icon: <TrashOutlined />,
-        label: t('common.delete'),
-        key: ACTION_ENUM.DELETE,
-      });
+      baseMenu.push(
+        <Popconfirm
+          placement="right"
+          title={`${t('common.duplicate')} question [${
+            record?.latestVersion?.title
+          }]`}
+          onConfirm={() => handleSelect({ record, key: ACTION_ENUM.DUPLICATE })}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Item key={ACTION_ENUM.DUPLICATE} icon={<PenFilled />}>
+            {t('common.duplicate')}
+          </Item>
+        </Popconfirm>,
+      );
+
+      baseMenu.push(
+        <Item key={ACTION_ENUM.DELETE} icon={<TrashOutlined />}>
+          {t('common.delete')}
+        </Item>,
+      );
     }
     return baseMenu;
-  }, [t, isDeleted]);
+  }, [t, isDeleted, handleSelect, record]);
 
   const menu = (
-    <Menu
-      onClick={input => {
-        handleSelect({ ...input, record }).then();
-      }}
-      items={items}
-    />
+    <Menu onClick={({ key }) => handleSelect({ key, record })}>{items}</Menu>
   );
 
   useEffect(() => {
     if (setLoading) {
-      setLoading(deleteMutation.isLoading);
+      const isLoading =
+        duplicateMutation.isLoading ||
+        deleteMutation.isLoading ||
+        restoreMutation.isLoading;
+      setLoading(isLoading);
     }
-  }, [deleteMutation, setLoading]);
-
-  useEffect(() => {
-    if (setLoading) {
-      setLoading(restoreMutation.isLoading);
-    }
-  }, [restoreMutation, setLoading]);
+  }, [deleteMutation, restoreMutation, duplicateMutation, setLoading]);
 
   return (
     <ThreeDotsDropdown

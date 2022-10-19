@@ -23,6 +23,10 @@ export default class QuestionBankService {
     const { id } = props;
     return APIService.delete(`/questions/${id}`);
   }
+  static duplicateQuestion(props): Promise<AxiosResponse> {
+    const { id } = props;
+    return APIService.post(`/questions/${id}/duplicate`);
+  }
   static restoreQuestionByQuestionId(props): Promise<AxiosResponse> {
     const { id } = props;
     return APIService.post(`/questions/${id}/restore`);
