@@ -219,54 +219,6 @@ export const mockCategories: IPaginationResponse<IQuestionCategory> = {
   ],
 };
 
-export const mockQuestionList: IPaginationResponse<IQuestion> = {
-  hasNextPage: false,
-  hasPreviousPage: false,
-  itemCount: 2,
-  pageCount: 1,
-  page: 1,
-  take: 10,
-  data: [
-    {
-      id: '1',
-      displayId: '113-2121',
-      latestCompletedVersion: completedVersion,
-      latestVersion: draftVersion,
-      versions: [draftVersion, completedVersion],
-      masterCategoryId: '1',
-      masterCategory: mockCategories.data[0],
-      masterSubCategoryId: '1.1',
-      masterSubCategory:
-        mockCategories &&
-        mockCategories.data[0] &&
-        mockCategories.data[0].children &&
-        mockCategories.data[0].children[0],
-      masterVariableName: 'name',
-      masterCombineTokenString: 'name-1.1',
-      createdBy: mockUser,
-      createdAt: new Date(),
-    },
-    {
-      id: '2',
-      displayId: '113-2121',
-      latestCompletedVersion: completedVersion,
-      latestVersion: draftVersion,
-      versions: [draftVersion, completedVersion],
-      masterCategoryId: '1',
-      masterCategory: mockCategories.data[0],
-      masterSubCategoryId: '1.1',
-      masterSubCategory:
-        mockCategories &&
-        mockCategories.data[0] &&
-        mockCategories.data[0].children &&
-        mockCategories.data[0].children[0],
-      masterVariableName: 'name',
-      masterCombineTokenString: 'name-1.1',
-      createdBy: mockUser,
-      createdAt: new Date(),
-    },
-  ],
-};
 export const QuestionDetail: IQuestion = {
   id: '1',
   displayId: '113-2121',
@@ -353,7 +305,7 @@ export interface IGetParams {
   q?: string;
   take?: number;
   page?: number;
-  ids?: number;
+  ids?: number[] | string[];
   createdFrom?: string;
   createdTo?: string;
   isDeleted?: boolean;
@@ -364,4 +316,5 @@ export type GetListQuestionDto = IGetParams & {
   categoryIds?: string[];
   subCategoryIds?: string[];
   types?: QuestionType[];
+  hasLatestCompletedVersion?: boolean;
 };

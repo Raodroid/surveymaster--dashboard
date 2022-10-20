@@ -18,9 +18,10 @@ import { onError } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
 import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
-import { ProjectTableWrapper, StyledProjectMenu } from '../styles';
+import { ProjectTableWrapper } from '../styles';
 import { QsParams } from './Header/ProjectFilter';
 import SimpleBar from 'simplebar-react';
+import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
 
 const initParams: IGetParams = {
   q: '',
@@ -159,7 +160,7 @@ function ProjectTable() {
             )}
             <ThreeDotsDropdown
               overlay={
-                <StyledProjectMenu>
+                <MenuDropDownWrapper>
                   {qsParams?.isDeleted !== 'true' && (
                     <Menu.Item onClick={() => setShowDeleteProject(true)}>
                       <TrashOutlined /> {t('common.deleteProject')}
@@ -170,7 +171,7 @@ function ProjectTable() {
                       <Refresh /> {t('common.restoreProject')}
                     </Menu.Item>
                   )}
-                </StyledProjectMenu>
+                </MenuDropDownWrapper>
               }
               trigger={['click']}
             />
@@ -204,7 +205,7 @@ function ProjectTable() {
             dataSource={projects}
             columns={columns}
             onRow={onRow}
-            rowKey="id"
+            rowKey={record => record.id as string}
             // scroll={{ y: 100 }}
           />
           <StyledPagination

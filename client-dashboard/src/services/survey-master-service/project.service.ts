@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { CreateProject } from 'interfaces';
-import { IGetParams, mockSurveyList } from 'type';
+import { IGetParams } from 'type';
 import { UpdateProject } from '../../interfaces';
 import APIService from './base.service';
 

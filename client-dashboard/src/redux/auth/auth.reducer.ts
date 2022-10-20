@@ -120,7 +120,6 @@ export default class AuthReducer {
           ? jwt_decode(action.payload.idToken)
           : { defaultProfileId: null, sub: null };
 
-        console.log(idDecodeToken);
         return (
           state
             .set('isSigningIn', false)

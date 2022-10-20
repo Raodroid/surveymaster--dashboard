@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import moment from 'moment';
 import { QuestionType } from '../../../type';
+import { SurveyTemplateEnum } from '../../dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
 
 export const INVALID_FIELDS = {
   MIN_USERNAME: 'validation.messages.minUserName',
@@ -188,5 +189,40 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
           }),
         )
         .min(1),
+    }),
+});
+
+export const SURVEY_FORM_SCHEMA = Yup.object().shape({
+  template: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  name: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  remark: Yup.string(),
+  surveyId: Yup.string().when('template', {
+    is: SurveyTemplateEnum.DUPLICATE,
+    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  }),
+  questions: Yup.array()
+    .when('template', {
+      is: SurveyTemplateEnum.NEW,
+      then: Yup.array()
+        .of(
+          Yup.object().shape({
+            questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
+            remark: Yup.string(),
+            type: Yup.string().required(INVALID_FIELDS.REQUIRED),
+            category: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          }),
+        )
+        .min(1),
+    })
+    .when('template', {
+      is: SurveyTemplateEnum.JSON,
+      then: Yup.array().of(
+        Yup.object().shape({
+          questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          remark: Yup.string(),
+          type: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          category: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        }),
+      ),
     }),
 });

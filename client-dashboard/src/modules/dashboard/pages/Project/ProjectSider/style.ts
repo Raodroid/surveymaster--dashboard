@@ -136,3 +136,19 @@ export const AddNewProjectBtn = styled(Button)<{
     background: var(--ant-primary-color-deprecated-f-12);
   }
 `;
+
+export const TemplateOptionWrapper = styled.div`
+  .duplicate {
+  }
+  .survey-dropdown {
+    height: 250px;
+    overflow: scroll;
+    position: relative;
+    padding: 0 2rem 0 3rem;
+  }
+  .infinity-scroll {
+    position: absolute;
+    top: 32px;
+    width: calc(100% - 5rem);
+  }
+`;

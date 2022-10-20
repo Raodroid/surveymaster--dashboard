@@ -20,6 +20,21 @@
     "foods": "Foods"
   },
   "common": {
+    "showHistoryList": "Show History List",
+    "closeHistoryList": "Close History List",
+    "declineChange": "Decline change",
+    "surveyList": "Survey List",
+    "addNewSurvey": "Add New Survey",
+    "add": "Add",
+    "questions": "Questions",
+    "searchCategory": "Search Category",
+    "questionCategory": "Question Category",
+    "addAllQuestionsFromOneCategory": "Add All Questions from One Category",
+    "addOneMoreQuestion": "Add One More Question",
+    "surveyQuestionList": "Survey Question List",
+    "surveyRemarks": "Survey Remarks",
+    "surveyTitle": "Survey Title",
+    "saveSurvey": "Save Survey",
     "addNewProject": "Add New Project",
     "order": "Order",
     "duplicate": "Duplicate",
@@ -31,10 +46,8 @@
     "maxValue": "Max Value",
     "saveNewQuestionVersion": "Save New Question Version",
     "addNewQuestion": "Add New Question",
-    "addNewSurvey": "Add New Survey",
     "editQuestion": "Edit Question",
     "editSurvey": "Edit Survey",
-    "surveyList": "Survey List",
     "surveyQuestionsList": "Survey Questions List",
     "questionFieldType": "Question Field Type",
     "answerList": "Answer List",
@@ -405,5 +418,10 @@
     "SLIDER": "Slider",
     "TEXT_ENTRY": "Text Entry"
   },
-  "sign": "Lost your phone? Left yourself logged in on a public computer? Need a way to sign out everywhere except your current browser? This is for you."
+  "sign": "Lost your phone? Left yourself logged in on a public computer? Need a way to sign out everywhere except your current browser? This is for you.",
+  "surveyTemplateEnum": {
+    "NEW": "New Survey",
+    "DUPLICATE": "Duplicate Existing Survey",
+    "JSON": "Import from JSON file"
+  }
 }

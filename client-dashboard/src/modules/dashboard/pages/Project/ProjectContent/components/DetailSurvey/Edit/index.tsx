@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
 import { DetailSurveyProps, projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
+import SurveyForm from '../SurveyForm/SurveyForm';
+import { EditSurveyWrapper } from './style';
 
 function EditSurvey(props: DetailSurveyProps) {
   const { surveyData: survey, projectData: project } = props;
@@ -37,7 +39,9 @@ function EditSurvey(props: DetailSurveyProps) {
   return (
     <>
       <ProjectHeader routes={routes} />
-      <div>{t('common.editSurvey')}</div>
+      <EditSurveyWrapper>
+        <SurveyForm />
+      </EditSurveyWrapper>
     </>
   );
 }

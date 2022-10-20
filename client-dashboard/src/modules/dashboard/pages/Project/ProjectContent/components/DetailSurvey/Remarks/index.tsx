@@ -9,13 +9,14 @@ import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useParams } from 'react-router';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
-import { IPostSurveyBodyDto, SurveyQuestionDto } from 'type';
+import { IPostSurveyBodyDto } from 'type';
 import { onError } from 'utils';
 import { DetailSurveyProps, projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
 import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
+import { SurveyQuestionDto } from '../../../../../../../../interfaces';
 
 function Remarks(props: DetailSurveyProps) {
   const { surveyData: survey, projectData: project } = props;
@@ -71,7 +72,7 @@ function Remarks(props: DetailSurveyProps) {
     const updateSurveyPayload = {
       surveyId: payload.id,
       projectId: payload.projectId,
-      questions: payload.questions.map(
+      questions: payload?.questions?.map(
         (
           elm: SurveyQuestionDto & {
             surveyId?: string;

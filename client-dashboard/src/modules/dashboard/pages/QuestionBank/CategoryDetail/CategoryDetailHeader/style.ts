@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import templateVariable from '../../../../../../app/template-variables.module.scss';
 
 export const CategoryDetailHeaderWrapper = styled.div`
-  padding: 1rem;
+  padding: 1.5rem;
   display: flex;
   align-items: center;
   border-bottom: 1px solid ${templateVariable.border_color};

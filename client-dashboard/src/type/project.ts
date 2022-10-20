@@ -23,6 +23,7 @@ export interface ISurveyQuestion {
   questionVersionId: string;
   sort: number;
   survey?: ISurvey;
+  remark?: string;
   questionVersion?: IQuestionVersion;
 }
 
@@ -44,9 +45,9 @@ export interface ISurvey {
   deletedAt?: Date | string | null;
 }
 
-export interface SurveyQuestionDto {
+export interface ISurveyQuestionDto {
   questionVersionId: string;
-  sort: number;
+  sort?: number;
   remark?: string;
 }
 
@@ -54,14 +55,14 @@ export interface IPostSurveyBodyDto {
   name: string;
   projectId: string;
   remark?: string;
-  questions: SurveyQuestionDto[];
+  questions?: ISurveyQuestionDto[];
   surveyId?: string;
 }
 
 export interface IPutSurveyBodyDto {
   name: string;
   remark?: string;
-  questions: SurveyQuestionDto[];
+  questions: ISurveyQuestionDto[];
 }
 export interface IPutSurveyBodyDtoExtendId extends IPutSurveyBodyDto {
   id?: string;

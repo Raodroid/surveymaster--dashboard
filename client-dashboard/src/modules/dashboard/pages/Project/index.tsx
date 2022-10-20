@@ -1,7 +1,7 @@
 import { ROUTE_PATH } from 'enums';
 import { Navigate, Outlet, Route, Routes } from 'react-router';
 import ProjectContent from './ProjectContent';
-import AddSurvey from './ProjectContent/components/AddSurvey';
+import AddSurvey from './ProjectContent/components/DetailSurvey/Add';
 import DetailSurvey from './ProjectContent/components/DetailSurvey';
 import { AddProject, EditProject } from './ProjectContent/components/Project';
 import Survey from './ProjectContent/components/Survey';

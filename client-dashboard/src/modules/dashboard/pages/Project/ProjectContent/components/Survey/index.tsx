@@ -19,6 +19,7 @@ import { ProjectService, SurveyService } from '../../../../../../../services';
 import {
   GetListQuestionDto,
   IGetParams,
+  IPostSurveyBodyDto,
   ISurvey,
 } from '../../../../../../../type';
 import { onError } from '../../../../../../../utils';
@@ -26,6 +27,7 @@ import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
+import { MenuDropDownWrapper } from '../../../../../../../customize-components/styles';
 
 const initParams: IGetParams = {
   q: '',
@@ -166,8 +168,7 @@ function Survey() {
               columns={columns}
               onRow={onRow}
               pagination={false}
-              rowKey="displayId"
-              // scroll={{ y: 100 }}
+              rowKey={record => record.id as string}
             />
             <StyledPagination
               onChange={page => {
@@ -204,12 +205,12 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const params = useParams<{ projectId?: string }>();
 
   const duplicateMutation = useMutation(
-    (data: { id: string }) => {
+    (data: IPostSurveyBodyDto) => {
       return SurveyService.duplicateSurvey(data as any);
     },
     {
       onSuccess: async () => {
-        await queryClient.invalidateQueries('getProjects');
+        await queryClient.invalidateQueries('getSurveys');
         notification.success({ message: t('common.duplicateSuccess') });
       },
       onError,
@@ -243,7 +244,11 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       const { key, record } = props;
       switch (key) {
         case ACTION_ENUM.DUPLICATE_SURVEY: {
-          await duplicateMutation.mutateAsync({ id: record.id as string });
+          await duplicateMutation.mutateAsync({
+            name: `${record.name} (Copy)`,
+            projectId: params.projectId as string,
+            surveyId: record.id as string,
+          });
           return;
         }
         case ACTION_ENUM.EDIT: {
@@ -251,7 +256,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           navigate(
             generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
               projectId: params?.projectId,
-              surveyId: record.displayId,
+              surveyId: record.id,
             }),
           );
           return;
@@ -262,7 +267,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   );
 
   const menu = (
-    <SurveyMenu
+    <MenuDropDownWrapper
       onClick={input => {
         handleSelect({ ...input, record }).then();
       }}
@@ -278,11 +283,3 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     />
   );
 };
-
-const SurveyMenu = styled(Menu)`
-  svg {
-    width: 14px;
-    height: 14px;
-    color: var(--ant-primary-color);
-  }
-`;

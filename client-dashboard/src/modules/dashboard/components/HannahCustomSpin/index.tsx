@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Spin } from 'antd';
 import useWindowSize from '../../../common/hoc/useWindowSize';
-import ReactDOM from 'react-dom';
 
 const useSizeElement = (ref: any) => {
   const [height, setHeight] = useState<number | string>(0);
@@ -9,6 +8,7 @@ const useSizeElement = (ref: any) => {
   const { windowSize } = useWindowSize();
 
   useEffect(() => {
+    if (!ref?.current) return;
     setHeight(ref.current.offsetHeight);
     setWidth(ref.current.offsetWidth);
   }, [ref, windowSize.width, windowSize.height]);
