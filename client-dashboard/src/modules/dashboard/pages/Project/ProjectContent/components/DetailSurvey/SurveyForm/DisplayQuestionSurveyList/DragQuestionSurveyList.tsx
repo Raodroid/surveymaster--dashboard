@@ -157,6 +157,10 @@ const DragOption: FC<{
     versions?.forEach((ver, idx) => {
       const isCurrentValue = ver.id === value.questionVersionId;
 
+      if (ver.deletedAt && !isCurrentValue) {
+        return;
+      }
+
       if (chosenValueIdx !== undefined && idx > chosenValueIdx) {
         historyVersions.push(ver);
         return;

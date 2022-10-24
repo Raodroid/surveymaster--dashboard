@@ -67,6 +67,7 @@ export const transformQuestionData = (
 
 const stringToInt = input => {
   if (input && typeof input !== 'number') return parseInt(input);
+  if (typeof input === 'number') return input;
 };
 
 function transformData(input: IAddQuestionFormValue): IQuestionCreatePostDto {
