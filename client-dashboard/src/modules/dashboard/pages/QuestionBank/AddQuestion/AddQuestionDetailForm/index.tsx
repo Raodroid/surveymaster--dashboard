@@ -10,14 +10,18 @@ import { useFormikContext } from 'formik';
 const AddQuestionDetailForm = () => {
   const { t } = useTranslation();
 
-  const { setFieldValue } = useFormikContext();
+  const { setFieldValue, setValues } = useFormikContext();
 
   const handleTextFieldChange = value => {
     switch (value) {
       case QuestionType.SLIDER: {
-        setFieldValue('numberMax', 10);
-        setFieldValue('numberMin', 1);
-        setFieldValue('numberStep', 1);
+        setValues(oldValues => ({
+          ...oldValues,
+          numberMax: '10',
+          numberMin: '1',
+          numberStep: '1',
+        }));
+
         break;
       }
       case QuestionType.MULTIPLE_CHOICE:
