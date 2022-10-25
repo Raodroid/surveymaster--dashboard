@@ -1,0 +1,46 @@
+// #================#
+// # ==> CHECKBOX <== #
+// #================#
+.ant-checkbox-wrapper
+
+  span:nth-child(2)
+    color: $text-primary-color
+    font-size: 12px
+    font-weight: 500
+
+.ant-checkbox-disabled
+  .ant-checkbox-inner
+     &:after
+      background-image: url('../../assets/Icons/16px - Check mark - Grey@1.5x.svg') !important
+.ant-checkbox-inner
+  border-width: 2px
+  border-radius: 4px
+  &:after
+    color: red
+    display: block
+    content: ' '
+    background: none
+    background-image: url('../../assets/Icons/16px - Check mark - White@1.5x.svg') !important
+    background-repeat: no-repeat
+    height: 100%
+    width: 100%
+    top: 0
+    left: 1px
+    border: 0 !important
+    transform: unset !important
+  
+    
+
+  .ant-checkbox-inner
+    &:after
+      opacity: 1
+
+.ant-checkbox-checked
+  &:after
+    border-radius: 4px
+
+// .ant-checkbox-checked.ant-checkbox-disabled .ant-checkbox-inner
+//   border-color: transparent !important
+
+.ant-checkbox-wrapper + .ant-checkbox-wrapper
+  margin-left: 0

@@ -1,0 +1,80 @@
+.ant-input
+  display: inline-flex
+  height: 32px
+  border-radius: 6px
+  background: $primary-bg-input
+  color: $text-primary-color
+  font-size: 12px
+  font-weight: 600
+  letter-spacing: 0
+  line-height: 16px
+
+  &.ant-input-sm
+    height: 24px
+    font-size: 10px
+  &.ant-input-lg
+    height: 40px
+    font-size: 16px
+
+.ant-input-password
+  display: inline-flex
+  height: 32px
+  border: 1px solid $primary-border-input-color
+  border-radius: 6px
+  background: $primary-bg-input
+  color: $text-primary-color
+  font-size: 12px
+  font-weight: 600
+  letter-spacing: 0
+  line-height: 16px
+  .ant-input
+    height: 100%
+    &:focus,&:hover
+      border: 0
+      outline: 0
+      box-shadow: 0 0 0 0
+
+.ant-input-affix-wrapper
+  height: 32px
+  border-radius: 6px
+  display: flex
+  align-items: center
+  overflow: hidden
+  .ant-input-suffix
+    font-size: 12px
+
+.ant-form-item-explain div,
+.ant-form-item-label label
+  font-size: 12px
+  font-weight: 600
+
+.ant-form-item-feedback-icon
+  line-height: 0
+  margin: auto 6px
+
+.ant-form-item-has-error.ant-form-item-has-feedback .ant-form-item-children-icon
+  display: flex
+  align-items: center
+  justify-content: center
+
+
+.ant-form-item-feedback-icon-success
+  display: none
+
+.ant-input-group.ant-input-group-compact>.ant-cascader-picker:first-child .ant-input,
+.ant-input-group.ant-input-group-compact>.ant-select-auto-complete:first-child .ant-input,
+.ant-input-group.ant-input-group-compact>.ant-select:first-child>.ant-select-selector,
+.ant-input-group.ant-input-group-compact>:first-child
+  border-top-left-radius: 6px
+  border-bottom-left-radius: 6px
+
+.ant-input-group.ant-input-group-compact>.ant-cascader-picker-focused:last-child .ant-input,
+.ant-input-group.ant-input-group-compact>.ant-cascader-picker:last-child .ant-input,
+.ant-input-group.ant-input-group-compact>.ant-select:last-child>.ant-select-selector,
+.ant-input-group.ant-input-group-compact>:last-child
+  border-left: 0
+  border-top-right-radius: 6px
+  border-bottom-right-radius: 6px
+
+.ant-input-disabled
+  color: var(--text-color) !important

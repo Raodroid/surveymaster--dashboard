@@ -1,0 +1,41 @@
+.ant-picker
+  border-radius: 6px
+  display: inline-flex
+  height: 32px
+  border: 1px solid $primary-border-input-color
+  background: $primary-bg-input
+
+.ant-picker-input > input
+  color: $text-primary-color
+  font-size: 12px
+  font-weight: 600
+  line-height: 16px
+
+.ant-picker-calendar-date
+  color: $text-primary-color
+
+.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner
+  background: #fff
+  color: $text-primary-color
+
+.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before
+  width: calc(100% + 10px)
+  height: calc(100% + 10px)
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+  border-radius: 6px
+
+.ant-picker-cell:hover:not(.ant-picker-cell-selected):not(.ant-picker-cell-range-start):not(.ant-picker-cell-range-end):not(.ant-picker-cell-range-hover-start):not(.ant-picker-cell-range-hover-end) .ant-picker-cell-inner
+  background: none
+  position: relative
+  &:before
+    content: ''
+    position: absolute
+    border: 1px solid $border-color-hover
+    width: calc(100% + 10px)
+    height: calc(100% + 10px)
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    border-radius: 6px
