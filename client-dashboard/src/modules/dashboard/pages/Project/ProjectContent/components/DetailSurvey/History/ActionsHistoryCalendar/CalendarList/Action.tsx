@@ -1,6 +1,5 @@
 import { IAction } from 'interfaces';
 import moment from 'moment';
-import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHandleActionType } from '../../../utils';
 import { ActionWrapper } from './styles';
@@ -33,4 +32,4 @@ function Action(props: { action: IAction; today?: boolean }) {
   );
 }
 
-export default memo(Action);
+export default Action;

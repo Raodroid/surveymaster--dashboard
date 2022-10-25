@@ -1,3 +1,4 @@
+import { ConsoleSqlOutlined } from '@ant-design/icons';
 import useParseQueryString from 'hooks/useParseQueryString';
 import { IAction } from 'interfaces';
 import { useTranslation } from 'react-i18next';
