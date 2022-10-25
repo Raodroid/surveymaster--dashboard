@@ -55,6 +55,7 @@ function ProjectFilter() {
       <Dropdown
         overlay={<FilterOverlay counter={counter} setCounter={setCounter} />}
         trigger={['click']}
+        placement="bottomRight"
       >
         <ProjectFilterBtn type="primary" className="flex-j-end">
           <FilterOutlined />
