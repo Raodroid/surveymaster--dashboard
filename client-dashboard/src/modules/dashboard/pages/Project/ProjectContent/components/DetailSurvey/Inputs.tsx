@@ -4,6 +4,9 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputsWrapper } from './styles';
+import { useGetProjectByIdQuery } from '../../../util';
+import { useParams } from 'react-router';
+import { ProjectTypes } from '../../../../../../../type';
 
 function Inputs(props: {
   disabled?: boolean;
@@ -12,13 +15,24 @@ function Inputs(props: {
 }) {
   const { disabled = false, hideRemarks = false, hideDate = false } = props;
   const { t } = useTranslation();
+
+  const params = useParams<{ projectId?: string; surveyId?: string }>();
+  const { project } = useGetProjectByIdQuery(params?.projectId);
+
   return (
     <InputsWrapper>
-      <div className="mainInfo-title title">{t('common.mainInformation')}:</div>
+      <div className="mainInfo-title title">
+        {project.type === ProjectTypes.EXTERNAL && t('common.external')}{' '}
+        {t('common.mainInformation')}::
+      </div>
       <div className="flex-j-between title-wrapper">
         <ControlledInput
           name="name"
-          label="Survey Title"
+          label={
+            project.type === ProjectTypes.EXTERNAL
+              ? t('common.externalSurveyTitle')
+              : t('common.surveyTitle')
+          }
           className="surveyTitle"
           disabled={disabled}
           inputType={INPUT_TYPES.INPUT}
@@ -44,7 +58,10 @@ function Inputs(props: {
 
       <Divider type="vertical" className="divider" />
 
-      <div className="title surveyParams">{t('common.surveyParameters')}:</div>
+      <div className="title surveyParams">
+        {project.type === ProjectTypes.EXTERNAL && t('common.external')}{' '}
+        {t('common.surveyParameters')}::
+      </div>
       <ControlledInput
         name="displayId"
         label="ID"

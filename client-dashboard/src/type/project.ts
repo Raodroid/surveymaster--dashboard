@@ -1,20 +1,26 @@
-import {
-  completedVersion,
-  draftVersion,
-  IPaginationResponse,
-  IGetParams,
-  IQuestionVersion,
-  mockCategories,
-  mockUser,
-  QuestionType,
-  QuestionVersionStatus,
-} from 'type';
+import { IGetParams, IQuestionVersion } from 'type';
 import { UserPayload } from '../redux/user';
+
+export enum ProjectTypes {
+  INTERNAL = 'INTERNAL',
+  EXTERNAL = 'EXTERNAL',
+}
 
 export interface IProject {
   id: string;
-  name: string;
   displayId: string;
+  name: string;
+  type: ProjectTypes;
+  description: string;
+  personInCharge: string;
+  personResponsible: UserPayload;
+  createdBy: UserPayload;
+
+  updatedBy?: UserPayload;
+  deletedBy?: UserPayload;
+  createdAt: Date | string;
+  updatedAt?: Date | string | null;
+  deletedAt?: Date | string | null;
 }
 
 export interface ISurveyQuestion {
@@ -25,6 +31,7 @@ export interface ISurveyQuestion {
   survey?: ISurvey;
   remark?: string;
   questionVersion?: IQuestionVersion;
+  parameter?: string;
 }
 
 export interface ISurvey {
@@ -49,6 +56,7 @@ export interface ISurveyQuestionDto {
   questionVersionId: string;
   sort?: number;
   remark?: string;
+  parameter?: string;
 }
 
 export interface IPostSurveyBodyDto {
@@ -67,217 +75,6 @@ export interface IPutSurveyBodyDto {
 export interface IPutSurveyBodyDtoExtendId extends IPutSurveyBodyDto {
   id?: string;
 }
-
-export const mockSurveyDetail: ISurvey = {
-  id: '1',
-  displayId: '111-22',
-  projectId: 'p1',
-  name: 'Microbiome Donor Programme (AMD)',
-  remark:
-    'Quisque malesuada placerat nisl. Nulla facilisi. Pellentesque auctor neque nec urna. Pellentesque dapibus hendrerit tortor. Donec vitae sapien ut libero venenatis faucibus.',
-  project: {
-    id: 'p1',
-    displayId: '111-23',
-    name: 'FFQ',
-  },
-  numberOfQuestions: 3,
-  questions: [
-    {
-      id: '1',
-      questionVersionId: '1',
-      surveyId: '1',
-      sort: 1,
-      questionVersion: {
-        id: '1.1',
-        displayId: '291',
-        questionId: '1',
-        title: 'What is your name?',
-        type: QuestionType.TEXT_ENTRY,
-        latestCompletedVersionOfQuestionId: '1',
-        status: QuestionVersionStatus.COMPLETED,
-        question: {
-          id: '1',
-          displayId: '113-2121',
-          latestCompletedVersion: completedVersion,
-          latestVersion: draftVersion,
-          versions: [draftVersion, completedVersion],
-          masterCategoryId: '1',
-          masterCategory: mockCategories.data[0],
-          masterSubCategoryId: '1.1',
-          masterSubCategory:
-            mockCategories &&
-            mockCategories.data[0] &&
-            mockCategories.data[0].children &&
-            mockCategories.data[0].children[0],
-          masterVariableName: 'name',
-          masterCombineTokenString: 'name-1.1',
-          createdBy: mockUser,
-          createdAt: new Date(),
-        },
-        createdBy: mockUser,
-        createdAt: new Date(),
-      },
-    },
-    {
-      id: '2',
-      questionVersionId: '2',
-      surveyId: '1',
-      sort: 2,
-      questionVersion: {
-        id: '1.1',
-        displayId: '291',
-        questionId: '1',
-        title: 'What is your name?',
-        type: QuestionType.TEXT_ENTRY,
-        latestCompletedVersionOfQuestionId: '1',
-        status: QuestionVersionStatus.COMPLETED,
-        question: {
-          id: '1',
-          displayId: '113-2121',
-          latestCompletedVersion: completedVersion,
-          latestVersion: draftVersion,
-          versions: [draftVersion, completedVersion],
-          masterCategoryId: '1',
-          masterCategory: mockCategories.data[0],
-          masterSubCategoryId: '1.1',
-          masterSubCategory:
-            mockCategories &&
-            mockCategories.data[0] &&
-            mockCategories.data[0].children &&
-            mockCategories.data[0].children[0],
-          masterVariableName: 'name',
-          masterCombineTokenString: 'name-1.1',
-          createdBy: mockUser,
-          createdAt: new Date(),
-        },
-        createdBy: mockUser,
-        createdAt: new Date(),
-      },
-    },
-    {
-      id: '3',
-      questionVersionId: '2',
-      surveyId: '1',
-      sort: 3,
-      questionVersion: {
-        id: '1.1',
-        displayId: '291',
-        questionId: '1',
-        title: 'What is your name?',
-        type: QuestionType.TEXT_ENTRY,
-        latestCompletedVersionOfQuestionId: '1',
-        status: QuestionVersionStatus.COMPLETED,
-        question: {
-          id: '1',
-          displayId: '113-2121',
-          latestCompletedVersion: completedVersion,
-          latestVersion: draftVersion,
-          versions: [draftVersion, completedVersion],
-          masterCategoryId: '1',
-          masterCategory: mockCategories.data[0],
-          masterSubCategoryId: '1.1',
-          masterSubCategory:
-            mockCategories &&
-            mockCategories.data[0] &&
-            mockCategories.data[0].children &&
-            mockCategories.data[0].children[0],
-          masterVariableName: 'name',
-          masterCombineTokenString: 'name-1.1',
-          createdBy: mockUser,
-          createdAt: new Date(),
-        },
-        createdBy: mockUser,
-        createdAt: new Date(),
-      },
-    },
-  ],
-  createdBy: mockUser,
-  createdAt: new Date(),
-};
-
-export const mockSurveyList: IPaginationResponse<ISurvey> = {
-  hasNextPage: false,
-  hasPreviousPage: false,
-  itemCount: 2,
-  pageCount: 1,
-  page: 1,
-  take: 10,
-  data: [
-    {
-      id: '1',
-      displayId: '111-22',
-      projectId: 'p1',
-      name: 'Microbiome Donor Programme (AMD)',
-      remark:
-        'Quisque malesuada placerat nisl. Nulla facilisi. Pellentesque auctor neque nec urna. Pellentesque dapibus hendrerit tortor. Donec vitae sapien ut libero venenatis faucibus.',
-      project: {
-        id: 'p1',
-        displayId: '111-23',
-        name: 'FFQ',
-      },
-      numberOfQuestions: 3,
-      // questions: [
-      //   {
-      //     id: "1",
-      //     questionVersionId: "1",
-      //     surveyId: "1",
-      //     sort: 1
-      //   },
-      //   {
-      //     id: "2",
-      //     questionVersionId: "2",
-      //     surveyId: "1",
-      //     sort: 2
-      //   },
-      //   {
-      //     id: "3",
-      //     questionVersionId: "2",
-      //     surveyId: "1",
-      //     sort: 3
-      //   }
-      // ],
-      createdBy: mockUser,
-      createdAt: new Date(),
-    },
-    {
-      id: '2',
-      displayId: '111-23',
-      projectId: 'p1',
-      name: 'Microbiome Donor Version 2',
-      remark:
-        'Quisque malesuada placerat nisl. Nulla facilisi. Pellentesque auctor neque nec urna. Pellentesque dapibus hendrerit tortor. Donec vitae sapien ut libero venenatis faucibus.',
-      project: {
-        id: 'p1',
-        displayId: '111-23',
-        name: 'FFQ',
-      },
-      numberOfQuestions: 3,
-      // questions: [
-      //   {
-      //     id: "1",
-      //     questionVersionId: "1",
-      //     surveyId: "1",
-      //     sort: 1
-      //   },
-      //   {
-      //     id: "2",
-      //     questionVersionId: "2",
-      //     surveyId: "1",
-      //     sort: 2
-      //   },
-      //   {
-      //     id: "3",
-      //     questionVersionId: "2",
-      //     surveyId: "1",
-      //     sort: 3
-      //   }
-      // ],
-      createdBy: mockUser,
-      createdAt: new Date(),
-    },
-  ],
-};
-
 export type GetListSurveyDto = IGetParams & {
   projectId: string;
   minNumberOfQuestions?: number;

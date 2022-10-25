@@ -30,10 +30,6 @@ const initParams: IGetParams = {
   isDeleted: false,
 };
 
-interface ProjectColumnRecord extends IProject {
-  personResponsible: Record<string, any>;
-}
-
 const getProjects = (params: GetListQuestionDto) => {
   const newParams: GetListQuestionDto = {
     ...params,
@@ -85,7 +81,7 @@ function ProjectTable() {
 
   const total: number = _get(getProjectListQuery.data, 'data.itemCount', 0);
 
-  const projects = useMemo<ProjectColumnRecord[]>(
+  const projects = useMemo<IProject[]>(
     () => _get(getProjectListQuery.data, 'data.data'),
     [getProjectListQuery.data],
   );
@@ -97,7 +93,7 @@ function ProjectTable() {
     [],
   );
 
-  const columns: ColumnsType<ProjectColumnRecord> = useMemo(
+  const columns: ColumnsType<IProject> = useMemo(
     () => [
       {
         title: 'ID',
@@ -118,7 +114,7 @@ function ProjectTable() {
         title: 'Person In Charge',
         dataIndex: 'createdBy',
         key: 'createdBy',
-        render: (_, record: ProjectColumnRecord) => (
+        render: (_, record) => (
           <div>
             {`${record?.personResponsible?.firstName} ${record?.personResponsible?.lastName}`}
           </div>
@@ -137,7 +133,7 @@ function ProjectTable() {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',
-        render: (_, record: ProjectColumnRecord) => (
+        render: (_, record) => (
           <div
             className="flex-center actions"
             onClick={e => {
@@ -182,7 +178,7 @@ function ProjectTable() {
     [navigate, qsParams, t],
   );
 
-  const onRow = (record: ProjectColumnRecord) => {
+  const onRow = (record: IProject) => {
     return {
       onClick: () =>
         !qsParams?.isDeleted &&

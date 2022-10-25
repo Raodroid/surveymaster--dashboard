@@ -72,6 +72,9 @@ export const TitleStyled = styled.div`
     &:hover {
       background: var(--ant-primary-color-deprecated-l-35);
     }
+    svg {
+      margin-right: 7px;
+    }
     span {
       font-size: 14px;
       font-weight: bold;

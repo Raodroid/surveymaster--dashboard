@@ -1,11 +1,14 @@
 import styled from 'styled-components';
-import { Popover } from 'antd';
 
 export const CategoryDetailWrapper = styled.div`
-  overflow: scroll;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   .CategoryDetail {
     &__body {
       padding: 1.5rem;
+      height: 100%;
+      overflow: scroll;
       .ant-table-row {
         cursor: pointer;
         .ant-table-cell {

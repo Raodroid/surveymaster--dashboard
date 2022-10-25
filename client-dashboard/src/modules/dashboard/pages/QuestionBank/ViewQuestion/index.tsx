@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { ViewQuestionWrapper } from './style';
 import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
 import { useParams } from 'react-router';
@@ -27,6 +27,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from '../../../../../services';
 import { onError } from '../../../../../utils';
 import moment, { Moment } from 'moment';
+import HannahCustomSpin from '../../../components/HannahCustomSpin';
 
 const formSchema = Yup.object();
 
@@ -154,133 +155,128 @@ const ViewQuestion = () => {
 
   const onFinish = useCallback(values => {}, []);
 
+  const wrapperRef = useRef<any>();
+
   return (
-    <Spin
-      spinning={
-        isLoading ||
-        deleteQuestionVersionMutation.isLoading ||
-        markAsCompleteQuestionMutation.isLoading
-      }
-    >
-      <ViewQuestionWrapper className={'ViewQuestion'}>
-        <GeneralSectionHeader
-          title={'View Question'}
-          endingComponent={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+    <ViewQuestionWrapper className={'ViewQuestion'} ref={wrapperRef}>
+      <GeneralSectionHeader
+        title={'View Question'}
+        endingComponent={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Button
+              type={'primary'}
+              onClick={handleDeleteQuestionVersion}
+              loading={deleteQuestionVersionMutation.isLoading}
+            >
+              {t('common.deleteThisVersion')}
+            </Button>
+            {selectedVerQuestionData && isDraftVersion && (
               <Button
                 type={'primary'}
-                onClick={handleDeleteQuestionVersion}
-                loading={deleteQuestionVersionMutation.isLoading}
+                className={'info-btn'}
+                onClick={handleMaskAsCompleted}
+                loading={markAsCompleteQuestionMutation.isLoading}
               >
-                Delete this version
+                {t('direction.maskAsCompleted')}
               </Button>
-              {selectedVerQuestionData && isDraftVersion && (
-                <Button
-                  type={'primary'}
-                  className={'info-btn'}
-                  onClick={handleMaskAsCompleted}
-                  loading={markAsCompleteQuestionMutation.isLoading}
-                >
-                  {t('direction.maskAsCompleted')}
-                </Button>
-              )}
-              <PenFilled
-                onClick={handleEdit}
-                style={{
-                  color: templateVariable.primary_color,
-                  cursor: 'pointer',
-                }}
-              />
-            </div>
-          }
-        />
-        {selectedVerQuestionData && (
-          <Formik
-            enableReinitialize={true}
-            onSubmit={onFinish}
-            initialValues={initValue}
-            validationSchema={formSchema}
-            render={({ handleSubmit }) => (
-              <Form
-                id={'filter-form'}
-                layout={'vertical'}
-                onFinish={handleSubmit}
-                disabled
-              >
-                <div className="ViewQuestion__body">
-                  <div
-                    className={'ViewQuestion__body__section question-section'}
-                  >
-                    <div className={'question-section__row'}>
-                      <div className={'version-wrapper'}>
-                        {versions?.map(version => {
-                          const { displayId } = version;
-                          if (displayId === queryString?.version) {
-                            return (
-                              <span
-                                role={'button'}
-                                className={'ant-btn ant-btn-primary info-btn'}
-                              >
-                                <span>
-                                  {t('common.version')} {displayId}
-                                </span>
-                              </span>
-                            );
-                          }
+            )}
+            <PenFilled
+              onClick={handleEdit}
+              style={{
+                color: templateVariable.primary_color,
+                cursor: 'pointer',
+              }}
+            />
+          </div>
+        }
+      />
+      {selectedVerQuestionData && (
+        <Formik
+          enableReinitialize={true}
+          onSubmit={onFinish}
+          initialValues={initValue}
+          validationSchema={formSchema}
+          render={({ handleSubmit }) => (
+            <Form
+              id={'filter-form'}
+              layout={'vertical'}
+              onFinish={handleSubmit}
+              disabled
+            >
+              <div className="ViewQuestion__body">
+                <div className={'ViewQuestion__body__section question-section'}>
+                  <div className={'question-section__row'}>
+                    <div className={'version-wrapper'}>
+                      {versions?.map(version => {
+                        const { displayId } = version;
+                        if (displayId === queryString?.version) {
                           return (
                             <span
-                              className={'ant-btn ant-btn-default info-btn'}
-                              role="button"
-                              onClick={() => {
-                                handleChangeViewVersion(displayId);
-                              }}
+                              role={'button'}
+                              className={'ant-btn ant-btn-primary info-btn'}
                             >
                               <span>
                                 {t('common.version')} {displayId}
                               </span>
                             </span>
                           );
-                        }, [])}
-                      </div>
+                        }
+                        return (
+                          <span
+                            className={'ant-btn ant-btn-default info-btn'}
+                            role="button"
+                            onClick={() => {
+                              handleChangeViewVersion(displayId);
+                            }}
+                          >
+                            <span>
+                              {t('common.version')} {displayId}
+                            </span>
+                          </span>
+                        );
+                      }, [])}
                     </div>
-                    <div className={'question-section__row'}>
-                      <div className={'question-detail-wrapper'}>
-                        <div className={'question-section__row__title'}>
-                          {t('common.questionDetails')}
-                        </div>
-                        <div className={'question-section__row__content'}>
-                          <QuestionDetailForm />
-                        </div>
+                  </div>
+                  <div className={'question-section__row'}>
+                    <div className={'question-detail-wrapper'}>
+                      <div className={'question-section__row__title'}>
+                        {t('common.questionDetails')}
                       </div>
-                    </div>
-                    <div
-                      className={'border'}
-                      style={{ borderWidth: 0.5 }}
-                    ></div>
-                    <div className={'question-section__row'}>
-                      <div className={'answer-list-wrapper'}>
-                        <div className={'question-section__row__title'}>
-                          {t('common.answerList')}
-                        </div>
-                        <div className={'question-section__row__content'}>
-                          <DisplayAnswerList mode={'view'} />
-                        </div>
+                      <div className={'question-section__row__content'}>
+                        <QuestionDetailForm />
                       </div>
                     </div>
                   </div>
-                  <div className={'divider'} />
-                  <div
-                    className={'ViewQuestion__body__section category-section'}
-                  >
-                    <QuestionCategoryForm />
+                  <div className={'border'} style={{ borderWidth: 0.5 }}></div>
+                  <div className={'question-section__row'}>
+                    <div className={'answer-list-wrapper'}>
+                      <div className={'question-section__row__title'}>
+                        {t('common.answerList')}
+                      </div>
+                      <div className={'question-section__row__content'}>
+                        <DisplayAnswerList mode={'view'} />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </Form>
-            )}
-          />
-        )}
-      </ViewQuestionWrapper>
-    </Spin>
+                <div className={'divider'} />
+                <div className={'ViewQuestion__body__section category-section'}>
+                  <QuestionCategoryForm />
+                </div>
+              </div>
+            </Form>
+          )}
+        />
+      )}
+      <HannahCustomSpin
+        parentRef={wrapperRef}
+        spinning={
+          isLoading ||
+          deleteQuestionVersionMutation.isLoading ||
+          markAsCompleteQuestionMutation.isLoading
+        }
+      />
+    </ViewQuestionWrapper>
   );
 };
 

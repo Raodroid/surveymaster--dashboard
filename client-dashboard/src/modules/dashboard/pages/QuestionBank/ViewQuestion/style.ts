@@ -3,6 +3,8 @@ import { BaseSectionWrapper } from '../../../../common/styles';
 import templateVariable from '../../../../../app/template-variables.module.scss';
 
 export const ViewQuestionWrapper = styled(BaseSectionWrapper)`
+  display: flex;
+  flex-direction: column;
   .GeneralSectionHeader {
     border-bottom: 1px solid ${templateVariable.border_color};
   }

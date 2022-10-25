@@ -18,4 +18,5 @@ export const QuestionBankWrapper = styled(Content)`
 
 export const QuestionBankContentWrapper = styled(BaseSectionWrapper)`
   flex: 1;
+  overflow: hidden;
 `;

@@ -27,7 +27,7 @@ function Remarks(props: DetailSurveyProps) {
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: project?.data.name || '...',
+        name: project.name || '...',
         href: generatePath(projectRoutePath.SURVEY, {
           projectId: params?.projectId,
         }),

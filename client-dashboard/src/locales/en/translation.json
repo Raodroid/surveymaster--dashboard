@@ -20,11 +20,22 @@
     "foods": "Foods"
   },
   "common": {
+    "parameter": "Parameter",
+    "selectQuestion": "Select Question",
+    "addNewSurvey": "Add New Survey",
+    "browseLocalFile": "Browse Local File",
+    "dragYourCSV": "Drag your CSV file here to start uploading.",
+    "deleteThisVersion": "Delete this version",
+    "externalSurveyTitle": "External Survey Title",
+    "external": "External",
+    "surveyList": "Survey List",
+    "addNewExternalSurvey": "Add New External Survey",
+    "projectDescription": "Project Description",
+    "personInCharge": "Person In Charge",
+    "projectTitle": "Project Title",
     "showHistoryList": "Show History List",
     "closeHistoryList": "Close History List",
     "declineChange": "Decline change",
-    "surveyList": "Survey List",
-    "addNewSurvey": "Add New Survey",
     "add": "Add",
     "questions": "Questions",
     "searchCategory": "Search Category",
@@ -345,6 +356,7 @@
     "search": "Search",
     "searchQuestion": "Search Question",
     "category": "Category",
+    "addRow": "Add Row",
     "subCategory": "Sub Category",
     "variableName": "Variable Name",
     "answerType": "Answer Type",
@@ -423,5 +435,9 @@
     "NEW": "New Survey",
     "DUPLICATE": "Duplicate Existing Survey",
     "JSON": "Import from JSON file"
+  },
+  "projectType": {
+    "INTERNAL": "Internal",
+    "EXTERNAL": "External"
   }
 }

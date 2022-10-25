@@ -3,7 +3,7 @@ import { Spin } from 'antd';
 import useWindowSize from '../../../common/hoc/useWindowSize';
 
 const useSizeElement = (ref: any) => {
-  const [height, setHeight] = useState<number | string>(0);
+  const [height, setHeight] = useState<number | string>(200);
   const [width, setWidth] = useState<number | string>(0);
   const { windowSize } = useWindowSize();
 

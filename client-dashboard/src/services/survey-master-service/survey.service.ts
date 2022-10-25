@@ -3,13 +3,6 @@ import { IPostSurveyBodyDto } from 'type';
 import APIService from './base.service';
 
 export default class SurveyService {
-  // static getSurveys(
-  //   props: IGetParams & { projectId: string },
-  // ): Promise<AxiosResponse> {
-  //   const { projectId } = props;
-  //   return APIService.get(`/surveys/${projectId}`);
-  // }
-
   static getSurveys(params: any): Promise<AxiosResponse> {
     return APIService.get('surveys', { params });
   }

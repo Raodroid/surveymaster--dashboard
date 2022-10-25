@@ -103,7 +103,8 @@ const AddQuestion = () => {
   );
   const onFinish = useCallback(
     async (values: IAddQuestionFormValue) => {
-      await addQuestionMutation.mutateAsync(transformData(values));
+      console.log(transformData(values));
+      // await addQuestionMutation.mutateAsync(transformData(values));
     },
     [addQuestionMutation],
   );

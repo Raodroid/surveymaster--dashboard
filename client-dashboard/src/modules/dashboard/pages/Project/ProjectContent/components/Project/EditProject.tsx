@@ -1,49 +1,47 @@
 import { Button, Form, notification } from 'antd';
 import { Formik } from 'formik';
-import { UpdateProject } from 'interfaces/project';
+import { ProjectPayload } from 'interfaces/project';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
 import { onError } from 'utils/funcs';
-import { projectRoutePath } from '../../../util';
+import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import ProjectHeader from '../Header';
 import Inputs from './Inputs';
 import { AddProjectWrapper, EditProjectWrapper } from './styles';
+import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
 
 function EditProject() {
-  const params = useParams();
+  const params = useParams<{ projectId?: string }>();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const { data: project, isLoading } = useQuery(
-    ['getProject', params?.projectId],
-    () => ProjectService.getProjectById(params?.projectId),
-  );
+  const { project, isLoading } = useGetProjectByIdQuery(params?.projectId);
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: project?.data?.name || '...',
+        name: project.name || '...',
         href: generatePath(projectRoutePath.SURVEY, {
           projectId: params?.projectId,
         }),
       },
       {
-        name: 'Edit Project',
+        name: t('common.projectDescription'),
         href: projectRoutePath.PROJECT.EDIT,
       },
     ],
-    [params, project],
+    [params?.projectId, project.name, t],
   );
 
   const mutationEditProject = useMutation(ProjectService.updateProject, {
     onSuccess: () => {
-      queryClient.invalidateQueries('getProject');
+      queryClient.invalidateQueries('getProjectById');
       queryClient.invalidateQueries('getProjects');
       notification.success({ message: t('common.updateSuccess') });
       navigate(projectRoutePath.ROOT);
@@ -51,11 +49,14 @@ function EditProject() {
     onError,
   });
 
-  const handleSubmit = (payload: UpdateProject) => {
-    mutationEditProject.mutateAsync(payload);
+  const handleSubmit = (payload: ProjectPayload) => {
+    mutationEditProject.mutateAsync({
+      ...payload,
+      type: project.type,
+    });
   };
 
-  const initialValues = useMemo(() => project?.data, [project]);
+  const initialValues = useMemo(() => project, [project]);
 
   return (
     <EditProjectWrapper className="flex-column">
@@ -66,6 +67,7 @@ function EditProject() {
             enableReinitialize={true}
             initialValues={initialValues}
             onSubmit={handleSubmit}
+            validationSchema={PROJECT_FORM_SCHEMA}
           >
             {({ handleSubmit: handleFinish }) => (
               <Form

@@ -1,6 +1,6 @@
 import { Button, Form, notification } from 'antd';
 import { Formik } from 'formik';
-import { CreateProject } from 'interfaces/project';
+import { ProjectPayload } from 'interfaces/project';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,12 +13,14 @@ import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import Inputs from './Inputs';
 import { AddProjectWrapper } from './styles';
+import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
 
-const initialValues: CreateProject = {
+const initialValues: ProjectPayload = {
   name: '',
   id: '',
   description: '',
   personInCharge: '',
+  type: '',
 };
 
 function AddProject() {
@@ -36,13 +38,6 @@ function AddProject() {
     [],
   );
 
-  const createProjectSchema = Yup.object().shape({
-    name: Yup.string().required('Required!'),
-    id: Yup.string(),
-    description: Yup.string().required('Required!'),
-    personInCharge: Yup.string().required('Required!'),
-  });
-
   const mutationCreateProject = useMutation(ProjectService.createProject, {
     onSuccess: () => {
       queryClient.invalidateQueries('getProjects');
@@ -53,7 +48,7 @@ function AddProject() {
     onError,
   });
 
-  const handleSubmit = (payload: CreateProject) => {
+  const handleSubmit = (payload: ProjectPayload) => {
     mutationCreateProject.mutateAsync(payload);
   };
 
@@ -64,7 +59,7 @@ function AddProject() {
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
-          validationSchema={createProjectSchema}
+          validationSchema={PROJECT_FORM_SCHEMA}
         >
           {({ handleSubmit: handleFinish }) => (
             <Form layout="vertical" onFinish={handleFinish}>

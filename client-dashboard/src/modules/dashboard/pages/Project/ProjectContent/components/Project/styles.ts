@@ -27,8 +27,6 @@ export const AddProjectWrapper = styled.div`
   }
 `;
 
-export const AddProjectContentWrapper = styled.div``;
-
 export const InputsWrapper = styled.div`
   border-bottom: 1px solid #f3eef3;
   padding-bottom: 4px;
@@ -38,6 +36,7 @@ export const InputsWrapper = styled.div`
   grid-template-areas:
     'mainInfo-title divider projParams'
     'projTitle      divider projId'
+    'projType       divider personInCharge'
     'projDesc       divider personInCharge';
   .mainInfo-title {
     grid-area: mainInfo-title;
@@ -57,6 +56,9 @@ export const InputsWrapper = styled.div`
   }
   .projId {
     grid-area: projId;
+  }
+  .projType {
+    grid-area: projType;
   }
   .projDesc {
     grid-area: projDesc;
