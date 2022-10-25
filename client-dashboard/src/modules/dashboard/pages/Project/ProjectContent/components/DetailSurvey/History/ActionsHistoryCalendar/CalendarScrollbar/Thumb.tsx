@@ -5,9 +5,8 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useDebounce } from 'utils';
 import { ACTIONS_HISTORY_ID } from '.';
-import { MONTH_HEIGHT } from '..';
 import { QsParams } from '../../../../ProjectFilter';
-import { useGetSurveyDetail } from '../../../utils';
+import { MONTH_HEIGHT, useGetSurveyDetail } from '../../../utils';
 import { ThumbWrapper } from '../styles';
 
 const thumbId = 'actions-history-thumb';
@@ -45,7 +44,7 @@ function Thumb() {
 
   const numberOfDaysFromStartOfYear = useMemo(() => {
     if (!survey) return 0;
-    return moment(survey?.data.createdAt).startOf('month').dayOfYear();
+    return moment('2/9/2021').startOf('month').dayOfYear();
   }, [survey]);
 
   const numberOfDaysBetweenCreationDateToToday = useMemo(() => {

@@ -74,6 +74,8 @@ export const useGetAllActionsHistory = () => {
   return { histories: data, isGetHistoryLoading: isLoading };
 };
 
+export const MONTH_HEIGHT = 124;
+
 enum groupType {
   NORMAL = 'NORMAL',
   CHANGE = 'CHANGE',

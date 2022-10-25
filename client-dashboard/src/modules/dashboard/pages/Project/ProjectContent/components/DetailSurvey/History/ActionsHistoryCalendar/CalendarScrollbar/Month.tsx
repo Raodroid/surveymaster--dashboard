@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react';
-import { MONTH_HEIGHT } from '..';
+import { MONTH_HEIGHT } from '../../../utils';
 import { MonthWrapper } from '../styles';
 
 // %
