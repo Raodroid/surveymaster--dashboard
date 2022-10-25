@@ -44,7 +44,7 @@ function Thumb() {
 
   const numberOfDaysFromStartOfYear = useMemo(() => {
     if (!survey) return 0;
-    return moment('2/9/2021').startOf('month').dayOfYear();
+    return moment(survey?.data.createdAt).startOf('month').dayOfYear();
   }, [survey]);
 
   const numberOfDaysBetweenCreationDateToToday = useMemo(() => {
