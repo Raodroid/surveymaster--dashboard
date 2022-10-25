@@ -68,6 +68,20 @@ export interface IPutSurveyBodyDtoExtendId extends IPutSurveyBodyDto {
   id?: string;
 }
 
+export enum surveyActionType {
+  SURVEY_CLOSE = 'SURVEY_CLOSE',
+  SURVEY_CREATED = 'SURVEY_CREATED',
+  SURVEY_ACTIVATE = 'SURVEY_ACTIVATE',
+
+  ADD_QUESTION = 'ADD_QUESTION',
+  UPDATE_QUESTION = 'UPDATE_QUESTION',
+  REMOVE_QUESTION = 'REMOVE_QUESTION',
+
+  CHANGE_SURVEY_NAME = 'CHANGE_SURVEY_NAME',
+  CHANGE_SURVEY_REMARK = 'CHANGE_SURVEY_REMARK',
+  CHANGE_ORDER_QUESTION = 'CHANGE_ORDER_QUESTION',
+}
+
 export const mockSurveyDetail: ISurvey = {
   id: '1',
   displayId: '111-22',

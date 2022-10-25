@@ -43,7 +43,7 @@ const ProjectSider = () => {
           onClick={() => navigate(projectRoutePath.PROJECT.ADD)}
           type="default"
           className="new-project-btn"
-          isAddNewProjectPage={!!isActive}
+          style={{ background: `${!!isActive ? '' : 'transparent'}` }}
         >
           <PlusIcon />
           {t('common.addNewProject')}

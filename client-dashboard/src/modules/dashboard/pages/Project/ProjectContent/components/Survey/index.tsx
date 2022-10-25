@@ -25,7 +25,7 @@ import {
 import { onError } from '../../../../../../../utils';
 import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
-import { QsParams } from '../Header/ProjectFilter';
+import { QsParams } from '../ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
 import { MenuDropDownWrapper } from '../../../../../../../customize-components/styles';
 

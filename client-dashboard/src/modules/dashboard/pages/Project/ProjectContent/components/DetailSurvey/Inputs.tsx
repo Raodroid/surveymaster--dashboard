@@ -13,7 +13,7 @@ function Inputs(props: {
   const { disabled = false, hideRemarks = false, hideDate = false } = props;
   const { t } = useTranslation();
   return (
-    <InputsWrapper>
+    <InputsWrapper className="detail-survey-inputs-wrapper">
       <div className="mainInfo-title title">{t('common.mainInformation')}:</div>
       <div className="flex-j-between title-wrapper">
         <ControlledInput

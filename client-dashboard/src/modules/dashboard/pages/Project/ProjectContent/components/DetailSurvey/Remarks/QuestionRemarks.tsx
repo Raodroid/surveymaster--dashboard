@@ -9,7 +9,7 @@ const columns: ColumnsType<IQuestion> = [
   {
     title: '',
     dataIndex: 'remark',
-    key: 'remark',
+    key: 'id',
     render: (_, record: IQuestion, index: number) => <Remark index={index} />,
   },
 ];
@@ -25,6 +25,7 @@ function QuestionRemarks(props: { questions: IQuestion[] }) {
         columns={columns}
         pagination={false}
         showHeader={false}
+        rowKey="id"
       />
     </QuestionRemarksWrapper>
   );

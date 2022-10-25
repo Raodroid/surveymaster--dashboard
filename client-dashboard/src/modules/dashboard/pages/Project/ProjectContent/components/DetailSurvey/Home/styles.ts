@@ -12,7 +12,13 @@ export const DetailSurveyHomeWrapper = styled.div`
 `;
 
 export const QuestionListWrapper = styled.div`
-  padding: 28px 40px 40px;
+  padding: 20px 40px 40px;
+
+  .title-wrapper {
+    .title {
+      margin: 0;
+    }
+  }
 
   a,
   .ant-table-cell div,

@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "today": "Today",
     "showHistoryList": "Show History List",
     "closeHistoryList": "Close History List",
     "declineChange": "Decline change",
@@ -126,7 +127,7 @@
     "remarks": "Remarks",
     "remark": "Remark",
     "questionRemarks": "Question Remarks",
-    "actionHistory": "Action History",
+    "actionsHistory": "Actions History",
     "signOutAllOtherSessions": "Sign Out All Other Sessions",
     "dontReceiveCode": "Did not receive your code?",
     "alreadyHasAccount": "Already have an account",
@@ -423,5 +424,21 @@
     "NEW": "New Survey",
     "DUPLICATE": "Duplicate Existing Survey",
     "JSON": "Import from JSON file"
+  },
+  "actionType": {
+    "SURVEY_CREATED": "Survey Created",
+    "SURVEY_ACTIVATE": "Survey Activated",
+    "SURVEY_CLOSE": "Survey Closed",
+    "ADD_QUESTION": "Added New Question",
+    "UPDATE_QUESTION": "Updated Question",
+    "REMOVE_QUESTION": "Removed Question",
+    "CHANGE_SURVEY_NAME": "Changed Survey Name",
+    "CHANGE_SURVEY_REMARK": "Changed Survey Remark",
+    "CHANGE_ORDER_QUESTION": "Changed Order Question",
+    "noActionsYet": "No actions yet"
+  },
+  "actionGroupType": {
+    "change": "from \"{{params.oldSurvey.title}}\" to \"{{params.newSurvey.title}}\"",
+    "rest": "\"{{params.questionVersion.title}}\""
   }
 }

@@ -1,20 +1,24 @@
 import { Form } from 'antd';
 import { Formik } from 'formik';
+import useParseQueryString from 'hooks/useParseQueryString';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { generatePath, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
-import { DetailSurveyProps, projectSurveyParams } from '..';
+import { projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
+import { QsParams } from '../../ProjectFilter';
 import Inputs from '../Inputs';
+import { useGetSurveyDetail } from '../utils';
 import QuestionList from './QuestionList';
 import { DetailSurveyHomeWrapper } from './styles';
 
-function DetailSurveyHome(props: DetailSurveyProps) {
-  const { surveyData: survey, projectData: project } = props;
+function DetailSurveyHome() {
   const params = useParams<projectSurveyParams>();
+
+  const { project, survey, isSurveyLoading } = useGetSurveyDetail();
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
@@ -61,7 +65,7 @@ function DetailSurveyHome(props: DetailSurveyProps) {
   return (
     <DetailSurveyHomeWrapper className="flex-column">
       <ProjectHeader routes={routes} links={links} />
-      <CustomSpinSuspense spinning={!survey}>
+      <CustomSpinSuspense spinning={isSurveyLoading}>
         <div className="body height-100">
           <Formik
             initialValues={initialValue}

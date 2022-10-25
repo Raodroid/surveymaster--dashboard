@@ -128,10 +128,7 @@ export const TitleStyled = styled.div`
   }
 `;
 
-export const AddNewProjectBtn = styled(Button)<{
-  isAddNewProjectPage: boolean;
-}>`
-  background: ${p => !p.isAddNewProjectPage && 'transparent'};
+export const AddNewProjectBtn = styled(Button)`
   &:focus {
     background: var(--ant-primary-color-deprecated-f-12);
   }

@@ -1,5 +1,4 @@
 import { UserPayload } from '../redux/user';
-
 export interface UserUpdatedDto {
   // roles: number[]; Don't allow user update their role by this api
   firstName: string;

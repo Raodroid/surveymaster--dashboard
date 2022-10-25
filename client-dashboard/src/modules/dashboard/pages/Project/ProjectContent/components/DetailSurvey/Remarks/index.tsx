@@ -11,18 +11,20 @@ import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
 import { IPostSurveyBodyDto } from 'type';
 import { onError } from 'utils';
-import { DetailSurveyProps, projectSurveyParams } from '..';
+import { projectSurveyParams } from '..';
+import { SurveyQuestionDto } from '../../../../../../../../interfaces';
 import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
+import { useGetSurveyDetail } from '../utils';
 import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
-import { SurveyQuestionDto } from '../../../../../../../../interfaces';
 
-function Remarks(props: DetailSurveyProps) {
-  const { surveyData: survey, projectData: project } = props;
+function Remarks() {
   const params = useParams<projectSurveyParams>();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+
+  const { project, survey, isSurveyLoading } = useGetSurveyDetail();
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
@@ -104,7 +106,7 @@ function Remarks(props: DetailSurveyProps) {
       <ProjectHeader routes={routes} />
 
       <RemarksWrapper className="height-100 overflow-hidden">
-        <CustomSpinSuspense spinning={!survey}>
+        <CustomSpinSuspense spinning={isSurveyLoading}>
           <Formik
             enableReinitialize={true}
             initialValues={initialValue}

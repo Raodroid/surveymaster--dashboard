@@ -20,42 +20,24 @@ export type projectSurveyParams = {
 };
 
 function DetailSurvey() {
-  const params = useParams<projectSurveyParams>();
   const subRoute = (route: string) =>
     route.replace(projectRoutePath.DETAIL_SURVEY.ROOT, '');
-
-  const { data: project } = useQuery(
-    ['getProject', params.projectId],
-    () => ProjectService.getProjectById(params.projectId),
-    { refetchOnWindowFocus: false },
-  );
-
-  const { data: survey } = useQuery(
-    ['getSurvey', params.surveyId],
-    () => SurveyService.getSurveyById(params.surveyId),
-    { refetchOnWindowFocus: false },
-  );
 
   return (
     <DetailSurveyWrapper className="flex-column">
       <Routes>
-        <Route
-          path="/"
-          element={
-            <DetailSurveyHome surveyData={survey} projectData={project} />
-          }
-        />
+        <Route path="/" element={<DetailSurveyHome />} />
         <Route
           path={subRoute(projectRoutePath.DETAIL_SURVEY.EDIT)}
-          element={<EditSurvey surveyData={survey} projectData={project} />}
+          element={<EditSurvey />}
         />
         <Route
           path={subRoute(projectRoutePath.DETAIL_SURVEY.HISTORY)}
-          element={<ActionHistory surveyData={survey} projectData={project} />}
+          element={<ActionHistory />}
         />
         <Route
           path={subRoute(projectRoutePath.DETAIL_SURVEY.REMARKS)}
-          element={<Remarks surveyData={survey} projectData={project} />}
+          element={<Remarks />}
         />
       </Routes>
     </DetailSurveyWrapper>
