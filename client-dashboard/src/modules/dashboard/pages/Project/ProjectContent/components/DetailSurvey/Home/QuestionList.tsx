@@ -1,5 +1,6 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IQuestion, IQuestionVersion } from 'type';
 import { QuestionListWrapper } from './styles';
@@ -49,8 +50,11 @@ const columns: ColumnsType<IDetailSurveyQuestion> = [
 ];
 
 function QuestionList(props: { questions: IDetailSurveyQuestion[] }) {
-  const { questions } = props;
+  const { questions: questionData } = props;
   const { t } = useTranslation();
+  const questions = useMemo(() => {
+    return (questionData || []).sort((q1, q2) => q1.sort - q2.sort);
+  }, [questionData]);
 
   return (
     <QuestionListWrapper>

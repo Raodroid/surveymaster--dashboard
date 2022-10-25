@@ -6,6 +6,7 @@ import { Button, Form, notification } from 'antd';
 import QuestionCategoryForm from '../ViewQuestion/QuestionCategoryForm';
 import { useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
+import qs from 'qs';
 import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from '../../../../../services';
 import { onError } from '../../../../../utils';
@@ -134,13 +135,19 @@ const EditQuestion = () => {
       );
     },
     {
-      onSuccess: async () => {
+      onSuccess: async response => {
+        const data: IQuestionVersion = response.data;
         await queryClient.invalidateQueries('getQuestionList');
         notification.success({ message: t('common.updateSuccess') });
         navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION, {
-            questionId: params.questionId,
-          }),
+          `${generatePath(
+            ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION,
+            {
+              questionId: params.questionId,
+            },
+          )}?${qs.stringify({
+            version: data.displayId,
+          })}`,
         );
       },
       onError,

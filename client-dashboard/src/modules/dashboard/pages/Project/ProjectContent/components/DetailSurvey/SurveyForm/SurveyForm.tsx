@@ -62,15 +62,19 @@ const transformQuestionData = (
 
   const { questions } = input;
 
-  return questions?.map(q => ({
-    questionTitle: q.questionVersion?.title as string,
-    type: q.questionVersion?.type as string,
-    remark: q.remark as string,
-    questionVersionId: q.questionVersionId,
-    id: q.questionVersion?.questionId,
-    versions: q.questionVersion?.question?.versions,
-    category: q.questionVersion?.question?.masterCategory?.name as string,
-  }));
+  return (
+    questions
+      ?.sort((q1, q2) => q1.sort - q2.sort)
+      ?.map(q => ({
+        questionTitle: q.questionVersion?.title as string,
+        type: q.questionVersion?.type as string,
+        remark: q.remark as string,
+        questionVersionId: q.questionVersionId,
+        id: q.questionVersion?.questionId,
+        versions: q.questionVersion?.question?.versions,
+        category: q.questionVersion?.question?.masterCategory?.name as string,
+      })) || []
+  );
 };
 
 const createQuestionMap = (
