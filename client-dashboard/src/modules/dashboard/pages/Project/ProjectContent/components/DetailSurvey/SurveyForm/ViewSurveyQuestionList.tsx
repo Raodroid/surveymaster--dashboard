@@ -75,11 +75,12 @@ function ViewSurveyQuestionList(props: { questions?: ISurveyQuestion[] }) {
     columns,
   );
 
+  const dataSource = questions?.sort((a, b) => a.sort - b.sort);
+
   return (
     <>
-      {/*<div className="title">{t('common.surveyQuestionsList')}:</div>*/}
       <Table
-        dataSource={questions}
+        dataSource={dataSource}
         columns={columnsFiltered}
         pagination={false}
       />

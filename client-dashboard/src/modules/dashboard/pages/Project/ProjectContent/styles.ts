@@ -1,7 +1,6 @@
-import { Menu } from 'antd';
-import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import styled from 'styled-components';
 import { BaseSectionWrapper } from '../../../../common/styles';
+import { screenSize } from '../../../../../enums';
 
 export const ProjectContentWrapper = styled(BaseSectionWrapper)`
   width: 100%;
@@ -11,6 +10,10 @@ export const ProjectContentWrapper = styled(BaseSectionWrapper)`
   .title {
     font-weight: bold;
     margin-bottom: 20px;
+  }
+
+  @media only screen and ${screenSize.large} {
+    overflow: unset;
   }
 `;
 
