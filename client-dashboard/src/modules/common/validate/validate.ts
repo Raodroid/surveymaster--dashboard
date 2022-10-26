@@ -243,7 +243,7 @@ export const SURVEY_EXTERNAL_FORM_SCHEMA = Yup.object().shape({
       function (value, context) {
         const { selectedRowKeys } = context?.['from']?.[1]?.value;
         if (selectedRowKeys?.some(key => key === value?.id)) {
-          return !!value.questionVersionId;
+          return !!value.questionVersionId && !!value.parameter;
         }
         return true;
       },
