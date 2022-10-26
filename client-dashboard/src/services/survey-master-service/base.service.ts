@@ -77,29 +77,34 @@ APIService.interceptors.response.use(
     const originalRequest = error.config;
     const { message, statusCode } = error?.response?.data || {};
     if (statusCode === 401) {
-      if (message !== 'Token is expired or invalid') {
+      if (message !== 'jwt expired') {
         originalRequest.url.includes('logout')
           ? handleLogout()
           : store.dispatch(AuthAction.userSignOut());
         return Promise.reject(error);
       } else {
-        let data;
         try {
-          data = await CognitoService.refreshToken();
+          refreshTokenRequest = await CognitoService.refreshToken();
         } catch (err) {
           handleLogout();
+          refreshTokenRequest = null;
           return Promise.reject(err);
         }
-        const idToken = data?.AuthenticationResult?.IdToken;
-        const accessToken = data?.AuthenticationResult?.AccessToken;
-        originalRequest.headers.Authorization = `Bearer ${idToken}`;
-        isTokenExpired = false;
-        store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
-        return APIService(originalRequest).catch(err => {
-          isTokenExpired = true;
-          err?.response?.data.statusCode === 401 && handleLogout();
-          return Promise.reject(err);
-        });
+        const newToken = refreshTokenRequest;
+        refreshTokenRequest = null;
+        if (newToken) {
+          isTokenExpired = false;
+
+          const idToken = newToken?.AuthenticationResult?.IdToken;
+          const accessToken = newToken?.AuthenticationResult?.AccessToken;
+          originalRequest.headers.Authorization = `Bearer ${idToken}`;
+          store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
+          return APIService(originalRequest).catch(err => {
+            isTokenExpired = true;
+            err?.response?.data.statusCode === 401 && handleLogout();
+            return Promise.reject(err);
+          });
+        }
       }
     } else {
       originalRequest.url.includes('logout') && handleLogout();
