@@ -11,10 +11,41 @@ const APIService = axios.create({
   },
 });
 
+let refreshTokenRequest: any = null;
+let isTokenExpired = false;
+
 APIService.interceptors.request.use(
-  request => {
+  async request => {
     const state = store.getState();
     const token = AuthSelectors.getIdToken(state);
+
+    if (isTokenExpired) {
+      const refreshToken = async () => {
+        try {
+          return await CognitoService.refreshToken();
+        } catch (err) {
+          console.log(err);
+          handleLogout();
+          return null;
+        }
+      };
+
+      refreshTokenRequest = refreshTokenRequest
+        ? refreshTokenRequest
+        : refreshToken();
+
+      const newToken = await refreshTokenRequest;
+      refreshTokenRequest = null;
+
+      if (newToken) {
+        const idToken = newToken?.AuthenticationResult?.IdToken;
+        const accessToken = newToken?.AuthenticationResult?.AccessToken;
+        store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
+        isTokenExpired = false;
+        return request;
+      }
+      return handleLogout();
+    }
 
     if (!request.params) {
       request.params = {};
@@ -42,6 +73,7 @@ APIService.interceptors.response.use(
   },
   async function (error) {
     console.log({ error });
+    isTokenExpired = true;
     const originalRequest = error.config;
     const { message, statusCode } = error?.response?.data || {};
     if (statusCode === 401) {
@@ -61,8 +93,10 @@ APIService.interceptors.response.use(
         const idToken = data?.AuthenticationResult?.IdToken;
         const accessToken = data?.AuthenticationResult?.AccessToken;
         originalRequest.headers.Authorization = `Bearer ${idToken}`;
+        isTokenExpired = false;
         store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
         return APIService(originalRequest).catch(err => {
+          isTokenExpired = true;
           err?.response?.data.statusCode === 401 && handleLogout();
           return Promise.reject(err);
         });
