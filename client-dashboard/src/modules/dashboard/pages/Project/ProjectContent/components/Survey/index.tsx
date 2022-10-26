@@ -1,4 +1,4 @@
-import { Menu, notification, PaginationProps, Table } from 'antd';
+import { notification, PaginationProps, Table } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
-import styled from 'styled-components';
 import { ProjectService, SurveyService } from '../../../../../../../services';
 import {
   GetListQuestionDto,

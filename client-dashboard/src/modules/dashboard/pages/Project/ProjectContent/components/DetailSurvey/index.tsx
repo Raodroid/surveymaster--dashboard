@@ -5,11 +5,11 @@ import { SurveyService } from 'services';
 import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import EditSurvey from './Edit';
 import ActionHistory from './History';
-import DetailSurveyHome from './Home';
 import Remarks from './Remarks';
 import { DetailSurveyWrapper } from './styles';
 import { IProject } from '../../../../../../../type';
 import { onError } from '../../../../../../../utils';
+import ViewSurvey from './View';
 
 export interface DetailSurveyProps {
   surveyData: AxiosResponse<any, any> | undefined;
@@ -37,12 +37,7 @@ function DetailSurvey() {
   return (
     <DetailSurveyWrapper className="flex-column">
       <Routes>
-        <Route
-          path="/"
-          element={
-            <DetailSurveyHome surveyData={survey} projectData={project} />
-          }
-        />
+        <Route path="/" element={<ViewSurvey />} />
         <Route
           path={subRoute(projectRoutePath.DETAIL_SURVEY.EDIT)}
           element={<EditSurvey surveyData={survey} projectData={project} />}

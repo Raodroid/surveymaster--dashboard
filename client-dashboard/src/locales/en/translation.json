@@ -20,6 +20,8 @@
     "foods": "Foods"
   },
   "common": {
+    "confirmFile": "Confirm File",
+    "selectAnotherFile": "Select Another File",
     "parameter": "Parameter",
     "selectQuestion": "Select Question",
     "addNewSurvey": "Add New Survey",

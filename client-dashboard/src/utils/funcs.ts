@@ -12,6 +12,7 @@ import {
 } from 'react';
 import useWindowSize from 'modules/common/hoc/useWindowSize';
 import { mobileSize } from '../enums';
+import { ColumnsType } from 'antd/lib/table/interface';
 
 declare global {
   interface Navigator {
@@ -180,4 +181,35 @@ export const transformEnumToOption = (
     value: key,
     label: translatePathKey ? translatePathKey(key) : key,
   }));
+};
+
+export type IRenderColumnCondition = Array<{
+  condition: boolean;
+  indexArray: string[];
+}>;
+export const filterColumn = <T>(
+  renderColumnCondition: IRenderColumnCondition,
+  mainColumn: ColumnsType<T>,
+): ColumnsType<T> => {
+  const dataIndexNeedFilterOutMap: Record<string, boolean> =
+    renderColumnCondition.reduce((res: Record<string, boolean>, item) => {
+      const { condition, indexArray } = item;
+      if (!condition) return res;
+      indexArray.forEach(key => {
+        res[key] = true;
+      });
+      return res;
+    }, {});
+  return Object.keys(dataIndexNeedFilterOutMap).reduce(
+    (result: ColumnsType<T>, key) => {
+      return result.filter(c => {
+        const dataIndex = c['dataIndex'];
+        if (typeof dataIndex === 'string') {
+          return dataIndex !== key;
+        }
+        return !dataIndex.some(i => i === key);
+      });
+    },
+    mainColumn,
+  );
 };

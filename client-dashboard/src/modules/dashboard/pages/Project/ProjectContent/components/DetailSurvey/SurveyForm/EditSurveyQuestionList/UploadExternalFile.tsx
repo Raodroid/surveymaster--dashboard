@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Button, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +34,7 @@ const UploadExternalFile = () => {
   );
   const { setValues, values } = useFormikContext<IAddSurveyFormValues>();
 
-  const [displayParamerterTable, toggleDisplayParameterTable] = useToggle();
+  const [displayParameterTable, toggleDisplayParameterTable] = useToggle(true);
 
   const handleFiles = useCallback(
     (file: any) => {
@@ -91,7 +91,7 @@ const UploadExternalFile = () => {
 
   return (
     <>
-      {!displayParamerterTable && (
+      {!displayParameterTable && (
         <>
           <UploadExternalFileWrapper>
             {fileColumnTitle ? (
@@ -133,7 +133,7 @@ const UploadExternalFile = () => {
                 className={'info-btn'}
                 onClick={toggleDisplayParameterTable}
               >
-                Confirm File
+                {t('common.confirmFile')}
               </Button>
               <Button
                 type={'text'}
@@ -143,15 +143,13 @@ const UploadExternalFile = () => {
                   setFileColumnTitle(undefined);
                 }}
               >
-                Select Another File
+                {t('common.selectAnotherFile')}
               </Button>
             </>
           )}
         </>
       )}
-      {displayParamerterTable && fileColumnTitle && (
-        <DisplayAnswer data={fileColumnTitle} />
-      )}
+      {displayParameterTable && <DisplayAnswer />}
     </>
   );
 };
@@ -165,7 +163,7 @@ const initParams: GetListQuestionDto = {
   hasLatestCompletedVersion: true,
 };
 
-const DisplayAnswer: FC<{ data: string[] }> = props => {
+const DisplayAnswer = () => {
   const { t } = useTranslation();
 
   const [searchTxt, setSearchTxt] = useState<string>('');
@@ -261,6 +259,15 @@ const DisplayAnswer: FC<{ data: string[] }> = props => {
     {
       title: t('common.parameter'),
       dataIndex: 'parameter',
+      render: (value, record, index) => {
+        return (
+          <ControlledInput
+            style={{ width: '100%' }}
+            inputType={INPUT_TYPES.INPUT}
+            name={`questions[${index}].parameter`}
+          />
+        );
+      },
     },
     {
       title: t('common.category'),
