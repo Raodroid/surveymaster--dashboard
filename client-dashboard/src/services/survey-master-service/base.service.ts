@@ -24,8 +24,6 @@ APIService.interceptors.request.use(
         try {
           return await CognitoService.refreshToken();
         } catch (err) {
-          console.log('request', err);
-          isTokenExpired = true;
           handleLogout();
           return null;
         }
