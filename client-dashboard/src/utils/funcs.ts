@@ -142,6 +142,10 @@ export const useToggle = (
     setOpen(s => !s);
   }, []);
 
+  useEffect(() => {
+    if (initValue) setOpen(initValue);
+  }, [initValue]);
+
   return [open, toggle, setOpen];
 };
 

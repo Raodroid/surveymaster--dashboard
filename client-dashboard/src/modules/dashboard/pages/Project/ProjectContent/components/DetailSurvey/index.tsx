@@ -29,7 +29,7 @@ function DetailSurvey() {
   const { project } = useGetProjectByIdQuery(params.projectId);
 
   const { data: survey } = useQuery(
-    ['getSurvey', params.surveyId],
+    ['getSurveyById', params.surveyId],
     () => SurveyService.getSurveyById(params.surveyId),
     { refetchOnWindowFocus: false, onError },
   );
@@ -48,7 +48,7 @@ function DetailSurvey() {
         />
         <Route
           path={subRoute(projectRoutePath.DETAIL_SURVEY.REMARKS)}
-          element={<Remarks surveyData={survey} projectData={project} />}
+          element={<Remarks />}
         />
       </Routes>
     </DetailSurveyWrapper>

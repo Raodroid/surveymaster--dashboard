@@ -4,6 +4,7 @@ export const CategoryDetailWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
   .CategoryDetail {
     &__body {
       padding: 1.5rem;

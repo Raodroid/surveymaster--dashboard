@@ -224,6 +224,10 @@ const CategoryDetail = () => {
       value={{ params, setParams, loading, setLoading }}
     >
       <CategoryDetailWrapper ref={ref}>
+        <HannahCustomSpin
+          parentRef={ref}
+          spinning={loading || getQuestionListQuery.isLoading}
+        />
         <CategoryDetailHeader
           searchTxt={searchTxt}
           setSearchTxt={setSearchTxt}
@@ -235,10 +239,6 @@ const CategoryDetail = () => {
             columns={columns}
             onRow={handleClickRow}
             pagination={false}
-          />
-          <HannahCustomSpin
-            parentRef={ref}
-            spinning={loading || getQuestionListQuery.isLoading}
           />
         </div>
         <StyledPagination

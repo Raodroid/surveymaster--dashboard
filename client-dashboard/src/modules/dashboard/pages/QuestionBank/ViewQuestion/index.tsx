@@ -159,6 +159,14 @@ const ViewQuestion = () => {
 
   return (
     <ViewQuestionWrapper className={'ViewQuestion'} ref={wrapperRef}>
+      <HannahCustomSpin
+        parentRef={wrapperRef}
+        spinning={
+          isLoading ||
+          deleteQuestionVersionMutation.isLoading ||
+          markAsCompleteQuestionMutation.isLoading
+        }
+      />
       <GeneralSectionHeader
         title={'View Question'}
         endingComponent={
@@ -268,14 +276,6 @@ const ViewQuestion = () => {
           )}
         />
       )}
-      <HannahCustomSpin
-        parentRef={wrapperRef}
-        spinning={
-          isLoading ||
-          deleteQuestionVersionMutation.isLoading ||
-          markAsCompleteQuestionMutation.isLoading
-        }
-      />
     </ViewQuestionWrapper>
   );
 };

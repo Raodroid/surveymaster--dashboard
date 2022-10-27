@@ -17,6 +17,7 @@ export const QuestionBankSiderMainContentWrapper = styled.div`
     }
     &__body {
       height: 100%;
+      position: relative;
     }
   }
   .ant-menu-submenu-inline.ant-menu-submenu-open {

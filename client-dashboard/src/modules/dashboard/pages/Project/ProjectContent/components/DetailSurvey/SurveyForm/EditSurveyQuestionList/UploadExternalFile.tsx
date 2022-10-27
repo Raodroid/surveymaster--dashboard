@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Button, Table } from 'antd';
+import { Button, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { UploadExternalFileWrapper } from './style';
 import * as XLSX from 'xlsx';
@@ -15,6 +15,7 @@ import { useInfiniteQuery } from 'react-query';
 import { QuestionBankService } from 'services';
 import { ControlledInput } from '../../../../../../../../common';
 import { INPUT_TYPES } from '../../../../../../../../common/input/type';
+import styled from 'styled-components';
 
 const initNewRowValue = {
   id: '',
@@ -34,10 +35,12 @@ const UploadExternalFile = () => {
   );
   const { setValues, values } = useFormikContext<IAddSurveyFormValues>();
 
-  const [displayParameterTable, toggleDisplayParameterTable] = useToggle(true);
+  const [displayParameterTable, toggleDisplayParameterTable] = useToggle(
+    values.questions.length !== 0,
+  );
 
   const handleFiles = useCallback(
-    (file: any) => {
+    (file: File) => {
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);
       let data;
@@ -95,21 +98,26 @@ const UploadExternalFile = () => {
         <>
           <UploadExternalFileWrapper>
             {fileColumnTitle ? (
-              <div className={'display-file-data'}>
-                <div className={'display-file-data__table'}>
-                  {fileColumnTitle.map(x => (
-                    <div className={'display-file-data__table__column'} key={x}>
-                      <span className={'display-file-data__table__cell'}>
-                        {x}
-                      </span>
-                      <span className={'display-file-data__table__cell'} />
-                      <span className={'display-file-data__table__cell'} />
-                      <span className={'display-file-data__table__cell'} />
-                      <span className={'display-file-data__table__cell'} />
-                    </div>
-                  ))}
+              <>
+                <div className={'display-file-data'}>
+                  <div className={'display-file-data__table'}>
+                    {fileColumnTitle.map(x => (
+                      <div
+                        className={'display-file-data__table__column'}
+                        key={x}
+                      >
+                        <span className={'display-file-data__table__cell'}>
+                          {x}
+                        </span>
+                        <span className={'display-file-data__table__cell'} />
+                        <span className={'display-file-data__table__cell'} />
+                        <span className={'display-file-data__table__cell'} />
+                        <span className={'display-file-data__table__cell'} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              </>
             ) : (
               <Dragger
                 name={'file'}
@@ -149,7 +157,7 @@ const UploadExternalFile = () => {
           )}
         </>
       )}
-      {displayParameterTable && <DisplayAnswer />}
+      {displayParameterTable && <DisplayAnswer onChangeUploadFile={onChange} />}
     </>
   );
 };
@@ -163,7 +171,8 @@ const initParams: GetListQuestionDto = {
   hasLatestCompletedVersion: true,
 };
 
-const DisplayAnswer = () => {
+const DisplayAnswer = props => {
+  const { onChangeUploadFile } = props;
   const { t } = useTranslation();
 
   const [searchTxt, setSearchTxt] = useState<string>('');
@@ -251,7 +260,10 @@ const DisplayAnswer = () => {
   const handleAddRow = useCallback(() => {
     setValues(s => ({
       ...s,
-      questions: [...s.questions, initNewRowValue],
+      questions: [
+        ...s.questions,
+        { ...initNewRowValue, id: Math.random().toString() },
+      ],
     }));
   }, [setValues]);
 
@@ -283,6 +295,7 @@ const DisplayAnswer = () => {
     {
       title: t('common.question'),
       dataIndex: 'question',
+      width: '30%',
       render: (value, record, index) => {
         return (
           <DynamicSelect
@@ -313,7 +326,7 @@ const DisplayAnswer = () => {
   ];
 
   return (
-    <>
+    <DisplayAnswerWrapper>
       <Table
         rowSelection={rowSelection}
         columns={columns}
@@ -321,11 +334,15 @@ const DisplayAnswer = () => {
         pagination={false}
         rowKey={record => record.id as string}
       />
-
-      <Button type={'primary'} onClick={handleAddRow}>
-        {t('common.addRow')}{' '}
-      </Button>
-    </>
+      <div className={'DisplayAnswerWrapper__footer'}>
+        <Upload onChange={onChangeUploadFile} accept={'.csv'} multiple={false}>
+          <Button type={'primary'}>Click to Upload</Button>
+        </Upload>
+        <Button type={'primary'} onClick={handleAddRow}>
+          {t('common.addRow')}{' '}
+        </Button>
+      </div>
+    </DisplayAnswerWrapper>
   );
 };
 
@@ -383,10 +400,12 @@ const DynamicSelect = props => {
       const chooseQuestion = normalizeByQuestionId[value];
       if (chooseQuestion) {
         setValues(s => {
+          console.log(s);
           return {
             ...s,
             questions: s.questions.map((q, idx) => {
               if (idx === index) {
+                console.log(index);
                 return {
                   ...q,
                   category: chooseQuestion.masterCategory?.name as string,
@@ -424,3 +443,24 @@ const DynamicSelect = props => {
     />
   );
 };
+
+const DisplayAnswerWrapper = styled.div`
+  .DisplayAnswerWrapper {
+    &__footer {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1.5rem;
+      > * {
+        flex: 1;
+      }
+      .ant-upload-select,
+      .ant-btn {
+        width: 100%;
+      }
+    }
+  }
+
+  .ant-upload-list-text {
+    display: none;
+  }
+`;

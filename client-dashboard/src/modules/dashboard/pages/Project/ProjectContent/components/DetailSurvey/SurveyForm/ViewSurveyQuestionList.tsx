@@ -53,7 +53,7 @@ function ViewSurveyQuestionList(props: { questions?: ISurveyQuestion[] }) {
       },
       {
         title: t('common.remarks'),
-        dataIndex: ['questionVersion', 'remark'],
+        dataIndex: ['remark'],
       },
     ],
     [t],

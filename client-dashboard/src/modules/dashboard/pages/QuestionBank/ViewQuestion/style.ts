@@ -5,6 +5,7 @@ import templateVariable from '../../../../../app/template-variables.module.scss'
 export const ViewQuestionWrapper = styled(BaseSectionWrapper)`
   display: flex;
   flex-direction: column;
+  position: relative; //this setting is for HannahCustomSpin
   .GeneralSectionHeader {
     border-bottom: 1px solid ${templateVariable.border_color};
   }
