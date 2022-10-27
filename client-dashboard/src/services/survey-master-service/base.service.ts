@@ -24,7 +24,8 @@ APIService.interceptors.request.use(
         try {
           return await CognitoService.refreshToken();
         } catch (err) {
-          console.log(err);
+          console.log('request', err);
+          isTokenExpired = true;
           handleLogout();
           return null;
         }
@@ -38,10 +39,10 @@ APIService.interceptors.request.use(
       refreshTokenRequest = null;
 
       if (newToken) {
+        isTokenExpired = false;
         const idToken = newToken?.AuthenticationResult?.IdToken;
         const accessToken = newToken?.AuthenticationResult?.AccessToken;
         store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
-        isTokenExpired = false;
         return request;
       }
       return handleLogout();
@@ -72,8 +73,7 @@ APIService.interceptors.response.use(
     return response;
   },
   async function (error) {
-    console.log({ error });
-    isTokenExpired = true;
+    console.log('response', { error });
     const originalRequest = error.config;
     const { message, statusCode } = error?.response?.data || {};
     if (statusCode === 401) {
@@ -83,28 +83,8 @@ APIService.interceptors.response.use(
           : store.dispatch(AuthAction.userSignOut());
         return Promise.reject(error);
       } else {
-        try {
-          refreshTokenRequest = await CognitoService.refreshToken();
-        } catch (err) {
-          handleLogout();
-          refreshTokenRequest = null;
-          return Promise.reject(err);
-        }
-        const newToken = refreshTokenRequest;
-        refreshTokenRequest = null;
-        if (newToken) {
-          isTokenExpired = false;
-
-          const idToken = newToken?.AuthenticationResult?.IdToken;
-          const accessToken = newToken?.AuthenticationResult?.AccessToken;
-          originalRequest.headers.Authorization = `Bearer ${idToken}`;
-          store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
-          return APIService(originalRequest).catch(err => {
-            isTokenExpired = true;
-            err?.response?.data.statusCode === 401 && handleLogout();
-            return Promise.reject(err);
-          });
-        }
+        isTokenExpired = true;
+        return APIService(originalRequest);
       }
     } else {
       originalRequest.url.includes('logout') && handleLogout();
