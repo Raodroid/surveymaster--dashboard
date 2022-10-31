@@ -11,6 +11,7 @@ import { AuthAction, AuthSelectors } from 'redux/auth';
 import { UserService } from 'services';
 import { onError } from 'utils';
 import { UserFormWrapper } from '../../styles';
+import SimpleBar from 'simplebar-react';
 
 function UserForm() {
   const { t } = useTranslation();
@@ -43,7 +44,7 @@ function UserForm() {
 
   return (
     // <CustomSpinSuspense spinning={isLoading}>
-    <UserFormWrapper>
+    <UserFormWrapper className="user-form">
       {profile && (
         <Formik initialValues={profile} onSubmit={handleSubmit}>
           {({ handleSubmit: handleFinish, setFieldValue }) => {
@@ -77,38 +78,40 @@ function UserForm() {
                   </Button>
                 </div>
                 <div className="inputs-wrapper">
-                  <div className="flex-space-between name-wrapper">
+                  <SimpleBar style={{ maxHeight: '100%' }}>
+                    <div className="flex-j-between name-wrapper">
+                      <ControlledInput
+                        inputType={INPUT_TYPES.INPUT}
+                        type={'text'}
+                        name="firstName"
+                        label={t('common.firstName')}
+                      />
+                      <ControlledInput
+                        inputType={INPUT_TYPES.INPUT}
+                        type={'text'}
+                        name="lastName"
+                        label={t('common.lastName')}
+                      />
+                    </div>
                     <ControlledInput
                       inputType={INPUT_TYPES.INPUT}
                       type={'text'}
-                      name="firstName"
-                      label={t('common.firstName')}
+                      name="displayName"
+                      label={t('common.displayName')}
                     />
                     <ControlledInput
                       inputType={INPUT_TYPES.INPUT}
                       type={'text'}
-                      name="lastName"
-                      label={t('common.lastName')}
+                      name="departmentName"
+                      label={t('common.departmentName')}
                     />
-                  </div>
-                  <ControlledInput
-                    inputType={INPUT_TYPES.INPUT}
-                    type={'text'}
-                    name="displayName"
-                    label={t('common.displayName')}
-                  />
-                  <ControlledInput
-                    inputType={INPUT_TYPES.INPUT}
-                    type={'text'}
-                    name="departmentName"
-                    label={t('common.departmentName')}
-                  />
-                  {/* <ControlledInput
+                    {/* <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
                     type={'tel'}
                     name="phone"
                     label={t('common.phoneNumber')}
                   /> */}
+                  </SimpleBar>
                 </div>
                 <Button
                   type="primary"
