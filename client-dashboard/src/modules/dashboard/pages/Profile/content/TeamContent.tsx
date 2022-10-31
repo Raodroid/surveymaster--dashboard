@@ -41,7 +41,7 @@ import {
 import {
   ConfirmDeactivateUserModal,
   ConfirmRestoreUserModal,
-  InviteMemberModal,
+  UpdateMemberModal,
   ResetUserPasswordModal,
 } from './modals';
 
@@ -84,7 +84,6 @@ function TeamContent() {
     useState<boolean>(false);
   const [showConfirmRestoreModal, setShowConfirmRestoreModal] =
     useState<boolean>(false);
-  const [showInviteModal, setShowInviteModal] = useState<boolean>(false);
   const [showResetPasswordModal, setShowResetPasswordModal] =
     useState<boolean>(false);
   const [showEditPreferencesModal, setShowEditPreferencesModal] =
@@ -95,12 +94,11 @@ function TeamContent() {
   }, [currentRoles]);
 
   const productActionNeedToCheckedPermission: ScopeActionArray[] = [
-    { action: SCOPE_CONFIG.ACTION.CREATE },
     { action: SCOPE_CONFIG.ACTION.UPDATE },
     { action: SCOPE_CONFIG.ACTION.DELETE },
     { action: SCOPE_CONFIG.ACTION.RESTORE },
   ];
-  const [canCreate, canEdit, canDelete, canRestore] = useCheckScopeEntity(
+  const [canEdit, canDelete, canRestore] = useCheckScopeEntity(
     SCOPE_CONFIG.ENTITY.USERS,
     productActionNeedToCheckedPermission,
   );
@@ -153,7 +151,7 @@ function TeamContent() {
               alt=""
             />
           ) : (
-            <CustomFallbackStyled className="flex-j-center">
+            <CustomFallbackStyled className="flex-center">
               {record.firstName.slice(0, 1).toUpperCase()}
               {record.lastName.slice(0, 1).toUpperCase()}
             </CustomFallbackStyled>
@@ -230,7 +228,7 @@ function TeamContent() {
                       onClick={() => setShowConfirmDeactivateModal(true)}
                     >
                       <UserDeleteOutlined className="dropdown-icon" />{' '}
-                      {t('common.deactivateUser')}
+                      {t('common.removeFromTeam')}
                     </Menu.Item>
                   )}
                 {record.deletedAt && canRestore && (
@@ -277,7 +275,7 @@ function TeamContent() {
 
   return (
     <TeamContentStyled className="flex">
-      <div className="cell padding-24 name title">AMiLi</div>
+      <div className="cell padding-24 name title flex-a-center">AMiLi</div>
 
       <div className="cell flex-column table-wrapper">
         <div className="search padding-24 flex-center">
@@ -312,15 +310,11 @@ function TeamContent() {
           >
             {t('common.showInactivateUsers')}
           </Checkbox>
-          {canCreate && (
-            <Button
-              type="primary"
-              disabled={!isAdminRole}
-              onClick={() => setShowInviteModal(true)}
-            >
+          {/* {canCreate && (
+            <Button type="primary" disabled={!isAdminRole} onClick={() => {}}>
               {t('common.inviteMember')}
             </Button>
-          )}
+          )} */}
         </div>
 
         <Divider />
@@ -338,7 +332,7 @@ function TeamContent() {
               pagination={false}
             />
             <Pagination
-              className="flex-end pagination"
+              className="flex-j-end pagination"
               showSizeChanger={false}
               defaultCurrent={page}
               current={page}
@@ -349,11 +343,7 @@ function TeamContent() {
         </TableWrapperStyled>
       </div>
 
-      <InviteMemberModal
-        showModal={showInviteModal}
-        setShowModal={setShowInviteModal}
-      />
-      <InviteMemberModal
+      <UpdateMemberModal
         userData={
           teamMembers
             ? teamMembers.data.data.find(user => user.id === userId)
@@ -361,7 +351,6 @@ function TeamContent() {
         }
         showModal={showEditPreferencesModal}
         setShowModal={setShowEditPreferencesModal}
-        edit
       />
       <ResetUserPasswordModal
         userId={userId}

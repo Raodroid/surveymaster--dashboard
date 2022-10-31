@@ -35,6 +35,6 @@ export interface UpdateMember {
   email: string;
   displayName: string;
   description?: string;
-  roles: number[];
+  userRoles: number[];
   departmentName: string;
 }

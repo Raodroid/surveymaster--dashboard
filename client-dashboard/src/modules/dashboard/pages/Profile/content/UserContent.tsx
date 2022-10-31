@@ -15,7 +15,7 @@ function UserContent() {
   return (
     <UserContentStyled className="flex">
       <div className="cell setting">
-        <div className="password padding-24 flex-space-between">
+        <div className="password padding-24 flex-j-between flex-a-center">
           <span className="title">{t('common.password')}</span>
           <Button
             type="primary"
@@ -28,8 +28,8 @@ function UserContent() {
 
         <Divider />
 
-        <div className="notifications padding-24 flex-space-between custom-ant-hover">
-          <div className="wrapper">
+        <div className="notifications padding-24 flex-j-between flex-a-center custom-ant-hover">
+          <div className="wrapper flex-column">
             <span className="title">{t('common.notifications')}</span>
             <p>
               {t('common.sendNotifications')}{' '}
@@ -41,7 +41,7 @@ function UserContent() {
               </span>
             </p>
           </div>
-          <div className="wrapper flex-end switch-wrapper">
+          <div className="wrapper flex-j-end flex-a-center switch-wrapper">
             <span>{t('common.turnedOn')}</span>
             <Switch className="info-btn" />
           </div>
@@ -49,12 +49,12 @@ function UserContent() {
       </div>
 
       <div className="cell others">
-        <div className="padding-24 flex-space-between">
-          <div className="wrapper">
+        <div className="padding-24 flex-j-between">
+          <div className="wrapper flex-column">
             <span className="title">{t('common.signOutAllOtherSessions')}</span>
             <p>{t('sign')}</p>
           </div>
-          <div className="wrapper flex-end">
+          <div className="wrapper flex-j-end">
             <Button
               type="primary"
               className="btn"
@@ -67,7 +67,7 @@ function UserContent() {
 
         <Divider />
 
-        <div className="padding-24 flex-space-between">
+        <div className="padding-24 flex-j-between flex-a-center">
           <div className="title">{t('common.deactivateAccount')}</div>
           <Button type="primary" className="btn">
             {t('common.deactivate')}
@@ -76,10 +76,7 @@ function UserContent() {
 
         <Divider />
 
-        <div
-          className="padding-24 flex-space-between"
-          style={{ flex: 1 }}
-        ></div>
+        <div className="padding-24 flex-j-between" style={{ flex: 1 }}></div>
       </div>
 
       <ChangePasswordModal
