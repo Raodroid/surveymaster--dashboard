@@ -1,13 +1,13 @@
+import { Button } from 'antd';
 import { PlusIcon } from 'icons';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router';
-import { useMatch } from 'react-router-dom';
-import { projectRoutePath, useGetAllProjects } from '../util';
-import { AddNewProjectBtn, ProjectSiderWrapper } from './style';
-import Title from './Title';
 import SimpleBar from 'simplebar-react';
+import { projectRoutePath, useGetAllProjects } from '../util';
+import { CustomNavLink, ProjectSiderWrapper } from './style';
+import Title from './Title';
 
 const ProjectSider = () => {
   const wrapperRef = useRef<any>();
@@ -15,10 +15,6 @@ const ProjectSider = () => {
   const navigate = useNavigate();
 
   const { projects, isLoading } = useGetAllProjects();
-
-  const isActive = useMatch({
-    path: projectRoutePath.PROJECT.ADD,
-  });
 
   return (
     <ProjectSiderWrapper ref={wrapperRef}>
@@ -39,15 +35,12 @@ const ProjectSider = () => {
         </CustomSpinSuspense>
       </div>
       <div className="add-new-project-btn-wrapper">
-        <AddNewProjectBtn
-          onClick={() => navigate(projectRoutePath.PROJECT.ADD)}
-          type="default"
-          className="new-project-btn"
-          style={{ background: `${!!isActive ? '' : 'transparent'}` }}
-        >
-          <PlusIcon />
-          {t('common.addNewProject')}
-        </AddNewProjectBtn>
+        <CustomNavLink to={projectRoutePath.PROJECT.ADD}>
+          <Button type="default" className="new-project-btn">
+            <PlusIcon />
+            {t('common.addNewProject')}
+          </Button>
+        </CustomNavLink>
       </div>
     </ProjectSiderWrapper>
   );
