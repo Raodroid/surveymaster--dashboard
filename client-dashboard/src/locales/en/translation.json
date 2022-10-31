@@ -416,7 +416,8 @@
       "theDateOfBirthCanNotBeInTheFutureTime": "The Date of Birth can not be in the future.",
       "feedbackAppointment": "Please rate your coach",
       "onlySupportAlphabet": "Only support alphabet",
-      "incorrectAccount": "Failed to sign in: User does not exist or password is incorrect."
+      "incorrectAccount": "Failed to sign in: User does not exist or password is incorrect.",
+      "clickToUpload": "Click to Upload"
     }
   },
   "direction": {

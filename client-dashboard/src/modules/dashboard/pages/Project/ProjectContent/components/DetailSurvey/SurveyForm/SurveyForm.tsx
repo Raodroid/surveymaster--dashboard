@@ -30,6 +30,7 @@ import {
 } from '../../../../../../../common/validate/validate';
 import EditSurveyQuestionList from './EditSurveyQuestionList';
 import ViewSurveyQuestionList from './ViewSurveyQuestionList';
+import SimpleBar from 'simplebar-react';
 
 export enum SurveyTemplateEnum {
   NEW = 'NEW',
@@ -422,19 +423,21 @@ const QuestionSurveyList: FC<{ isExternalProject: boolean }> = props => {
   const isViewMode = !(isEditMode || isCreateMode);
 
   return (
-    <QuestionListWrapper className={'QuestionListWrapper'}>
-      <div className="QuestionListWrapper__header">
-        {isExternalProject && !surveyData.questions?.length
-          ? t('common.uploadFile')
-          : t('common.surveyQuestionList')}
-      </div>
+    <SimpleBar style={{ height: '100%' }}>
+      <QuestionListWrapper className={'QuestionListWrapper'}>
+        <div className="QuestionListWrapper__header">
+          {isExternalProject && !surveyData.questions?.length
+            ? t('common.uploadFile')
+            : t('common.surveyQuestionList')}
+        </div>
 
-      {!isViewMode && !isExternalProject && <EditSurveyQuestionList />}
-      {!isViewMode && isExternalProject && <UploadExternalFile />}
+        {!isViewMode && !isExternalProject && <EditSurveyQuestionList />}
+        {!isViewMode && isExternalProject && <UploadExternalFile />}
 
-      {isViewMode && (
-        <ViewSurveyQuestionList questions={surveyData.questions} />
-      )}
-    </QuestionListWrapper>
+        {isViewMode && (
+          <ViewSurveyQuestionList questions={surveyData.questions} />
+        )}
+      </QuestionListWrapper>
+    </SimpleBar>
   );
 };
