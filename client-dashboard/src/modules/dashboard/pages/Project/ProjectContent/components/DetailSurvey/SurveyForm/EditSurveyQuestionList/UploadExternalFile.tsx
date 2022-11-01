@@ -1,11 +1,11 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
-import { Button, Menu, Table, Upload } from 'antd';
+import { Badge, Button, Menu, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { UploadExternalFileWrapper } from './style';
 import * as XLSX from 'xlsx';
 import Dragger from 'antd/es/upload/Dragger';
-import { Refresh, RollbackOutlined, SuffixIcon, TrashOutlined } from 'icons';
+import { Refresh, RollbackOutlined, SuffixIcon } from 'icons';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { onError, useDebounce, useToggle } from 'utils';
 import { useFormikContext } from 'formik';
@@ -27,6 +27,7 @@ import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import SimpleBar from 'simplebar-react';
 import UncontrollInput from '../../../../../../../../common/input/uncontrolled-input/UncontrollInput';
 import moment from 'moment';
+import { MOMENT_FORMAT, size } from 'enums';
 
 const initNewRowValue = {
   id: '',
@@ -227,6 +228,10 @@ const initParams: GetListQuestionDto = {
   hasLatestCompletedVersion: true,
 };
 
+interface IExpandableTable extends questionValueType {
+  createdAt: string | Date | null;
+}
+
 const DisplayAnswer = props => {
   const { onChangeUploadFile } = props;
   const { t } = useTranslation();
@@ -362,7 +367,7 @@ const DisplayAnswer = props => {
     {
       title: t('common.question'),
       dataIndex: 'question',
-      width: '30%',
+      width: 300,
       render: (value, record, index) => {
         return (
           <DynamicSelect
@@ -393,6 +398,7 @@ const DisplayAnswer = props => {
     {
       title: '',
       dataIndex: 'action',
+      width: 60,
       render: (value, record, index) => (
         <ActionDropDown
           record={record}
@@ -403,7 +409,7 @@ const DisplayAnswer = props => {
     },
   ];
 
-  const expandTableColumn: ColumnsType<questionValueType> = useMemo(() => {
+  const expandTableColumn: ColumnsType<IExpandableTable> = useMemo(() => {
     const renderBlankKeys = ['action', 'remark', 'parameter'];
 
     return columns.map(col => {
@@ -412,12 +418,20 @@ const DisplayAnswer = props => {
         return {
           ...col,
           dataIndex: 'questionTitle',
-          render: value => (
-            <UncontrollInput
-              inputType={INPUT_TYPES.INPUT}
-              value={value}
-              disabled
-            />
+          render: (value, record) => (
+            <div className={'question-cell'}>
+              <Badge status={'warning'} />{' '}
+              <span style={{ fontSize: 12, fontWeight: 600 }}>
+                {moment(record.createdAt).format(
+                  MOMENT_FORMAT.FULL_DATE_FORMAT,
+                )}
+              </span>
+              <UncontrollInput
+                inputType={INPUT_TYPES.INPUT}
+                value={value}
+                disabled
+              />
+            </div>
           ),
         };
       }
@@ -437,7 +451,7 @@ const DisplayAnswer = props => {
         };
       }
       return col;
-    });
+    }) as ColumnsType<IExpandableTable>;
   }, [columns]);
 
   const expandedRowRender = (record: questionValueType) => {
@@ -446,11 +460,12 @@ const DisplayAnswer = props => {
     return (
       <Table
         dataSource={(newVersions || []).reduce(
-          (res: questionValueType[], v: IQuestionVersion) => {
+          (res: IExpandableTable[], v: IQuestionVersion) => {
             if (v.id === record.questionVersionId) return res;
             return [
               ...res,
               {
+                createdAt: v.createdAt,
                 questionVersionId: v.id as string,
                 parameter: record.parameter,
                 type: record.type,
@@ -464,6 +479,7 @@ const DisplayAnswer = props => {
         columns={expandTableColumn}
         showHeader={false}
         pagination={false}
+        rowClassName={() => 'padding-top'}
       />
     );
   };
@@ -472,7 +488,7 @@ const DisplayAnswer = props => {
     <SimpleBar style={{ height: '100%', width: '100%' }}>
       <DisplayAnswerWrapper>
         <Table
-          scroll={{ x: 500 }}
+          scroll={{ x: size.large }}
           rowSelection={rowSelection}
           columns={columns}
           dataSource={values.questions}
@@ -481,9 +497,23 @@ const DisplayAnswer = props => {
           expandable={{
             expandedRowRender,
             rowExpandable,
-            expandRowByClick: true,
+            expandRowByClick: false,
             expandIconColumnIndex: -1,
             defaultExpandAllRows: true,
+          }}
+          rowClassName={record => {
+            const isNewQuestion = !(
+              initialValues.questionIdMap &&
+              Object.keys(initialValues.questionIdMap).some(
+                questionVersionId =>
+                  initialValues?.questionIdMap?.[record.questionVersionId] ||
+                  initialValues?.questionIdMap?.[
+                    questionVersionId
+                  ].versions.some(ver => ver?.id === record.questionVersionId), // check if the value was existed in survey
+              )
+            );
+
+            return !isNewQuestion ? 'padding-top' : '';
           }}
         />
         <div className={'DisplayAnswerWrapper__footer'}>
@@ -516,9 +546,10 @@ const DynamicSelect = props => {
   const { t } = useTranslation();
   const { values, setValues, initialValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();
-  const { value: currQuestionVersionId } = getFieldMeta(
-    `questions[${index}].questionVersionId`,
-  );
+  const { value } = getFieldMeta<questionValueType>(`questions[${index}]`);
+
+  const currQuestionVersionId = value.questionVersionId;
+  const currQuestionVersionCreatedAt = value.createdAt;
   const options = useMemo<IOptionItem[]>(() => {
     const currQuestionVersionId = values.questions?.[index]?.questionVersionId;
     if (currQuestionVersionId) {
@@ -574,6 +605,7 @@ const DynamicSelect = props => {
                   id: chooseQuestion.latestCompletedVersion.questionId,
                   questionVersionId: chooseQuestion.latestCompletedVersion.id,
                   versions: chooseQuestion.versions,
+                  createdAt: chooseQuestion.createdAt,
                 };
               }
               return q;
@@ -586,32 +618,54 @@ const DynamicSelect = props => {
     [index, normalizeByQuestionId, setValues, setSearchTxt],
   );
 
-  const existed =
-    initialValues?.questionIdMap?.[currQuestionVersionId as string];
+  const isNewQuestion = !(
+    initialValues.questionIdMap &&
+    Object.keys(initialValues.questionIdMap).some(
+      questionVersionId =>
+        initialValues?.questionIdMap?.[currQuestionVersionId] ||
+        initialValues?.questionIdMap?.[questionVersionId].versions.some(
+          ver => ver?.id === currQuestionVersionId,
+        ), // check if the value was existed in survey
+    )
+  );
 
-  return existed ? (
-    <ControlledInput
-      inputType={INPUT_TYPES.INPUT}
-      style={{ width: '100%' }}
-      placeholder={t('common.selectQuestion')}
-      disabled
-      name={`questions[${index}].questionTitle`}
-    />
-  ) : (
-    <ControlledInput
-      inputType={INPUT_TYPES.SELECT}
-      style={{ width: '100%' }}
-      onPopupScroll={onScroll}
-      onSearch={value => {
-        setSearchTxt(value);
-      }}
-      filterOption={false}
-      showSearch
-      options={options}
-      placeholder={t('common.selectQuestion')}
-      onChange={handleOnChange}
-      name={`questions[${index}].questionVersionId`}
-    />
+  return (
+    <div className={'question-cell'}>
+      {!isNewQuestion && (
+        <>
+          <Badge status={'success'} />{' '}
+          <span style={{ fontSize: 12, fontWeight: 600, lineHeight: '2rem' }}>
+            {moment(currQuestionVersionCreatedAt).format(
+              MOMENT_FORMAT.FULL_DATE_FORMAT,
+            )}
+          </span>
+        </>
+      )}
+      {!isNewQuestion ? (
+        <ControlledInput
+          inputType={INPUT_TYPES.INPUT}
+          style={{ width: '100%' }}
+          placeholder={t('common.selectQuestion')}
+          disabled
+          name={`questions[${index}].questionTitle`}
+        />
+      ) : (
+        <ControlledInput
+          inputType={INPUT_TYPES.SELECT}
+          style={{ width: '100%' }}
+          onPopupScroll={onScroll}
+          onSearch={value => {
+            setSearchTxt(value);
+          }}
+          filterOption={false}
+          showSearch
+          options={options}
+          placeholder={t('common.selectQuestion')}
+          onChange={handleOnChange}
+          name={`questions[${index}].questionVersionId`}
+        />
+      )}
+    </div>
   );
 };
 
@@ -724,43 +778,64 @@ const ActionDropDown: FC<{
   //   [setValues],
   // );
 
+  const count = useMemo<number>(() => {
+    let result = 0;
+    if (hasNewVersion) {
+      result += 1;
+    }
+    if (isDirty) {
+      result += 1;
+    }
+    return result;
+  }, [hasNewVersion, isDirty]);
+
   return (
     <div
       onClick={e => {
         e.stopPropagation();
       }}
     >
-      <ThreeDotsDropdown
-        overlay={
-          <MenuDropDownWrapper>
-            {/*<Menu.Item*/}
-            {/*  key={ACTION_ENUM.DELETE}*/}
-            {/*  onClick={() => handleDelete(index)}*/}
-            {/*>*/}
-            {/*  <TrashOutlined /> {t('common.delete')}*/}
-            {/*</Menu.Item>*/}
-            {hasNewVersion && (
-              <Menu.Item
-                key={ACTION_ENUM.CHANGE}
-                onClick={() => handleChange(record, index)}
-              >
-                <SuffixIcon /> {t('common.change')}
-              </Menu.Item>
-            )}
-            {isDirty && (
-              <Menu.Item key={ACTION_ENUM.DECLINE} onClick={handleDecline}>
-                <Refresh /> {t('common.declineChange')}
-              </Menu.Item>
-            )}
-          </MenuDropDownWrapper>
-        }
-        trigger={['click']}
-      />
+      {!!count && (
+        <ThreeDotsDropdown
+          overlay={
+            <MenuDropDownWrapper>
+              {/*<Menu.Item*/}
+              {/*  key={ACTION_ENUM.DELETE}*/}
+              {/*  onClick={() => handleDelete(index)}*/}
+              {/*>*/}
+              {/*  <TrashOutlined /> {t('common.delete')}*/}
+              {/*</Menu.Item>*/}
+              {hasNewVersion && (
+                <Menu.Item
+                  key={ACTION_ENUM.CHANGE}
+                  onClick={() => handleChange(record, index)}
+                >
+                  <SuffixIcon /> {t('common.change')}
+                </Menu.Item>
+              )}
+              {isDirty && (
+                <Menu.Item key={ACTION_ENUM.DECLINE} onClick={handleDecline}>
+                  <Refresh /> {t('common.declineChange')}
+                </Menu.Item>
+              )}
+            </MenuDropDownWrapper>
+          }
+          trigger={['click']}
+        />
+      )}
     </div>
   );
 };
 
 const DisplayAnswerWrapper = styled.div`
+  tr.padding-top {
+    td {
+      padding-top: 2rem;
+    }
+    .question-cell {
+      transform: translateY(-1rem);
+    }
+  }
   .DisplayAnswerWrapper {
     &__footer {
       margin-top: 1rem;

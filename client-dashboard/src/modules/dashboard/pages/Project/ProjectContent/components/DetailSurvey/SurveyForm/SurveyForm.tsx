@@ -44,6 +44,7 @@ export type questionValueType = ISurveyQuestionDto & {
   id?: string;
   questionTitle: string;
   versions?: IQuestionVersion[];
+  createdAt?: string | Date | null;
 };
 
 export interface IAddSurveyFormValues extends IPostSurveyBodyDto {
@@ -52,7 +53,11 @@ export interface IAddSurveyFormValues extends IPostSurveyBodyDto {
   questions: questionValueType[];
   questionIdMap?: Record<
     string,
-    { questionTitle: string; versions: IQuestionVersion[] } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
+    {
+      questionTitle: string;
+      versions: IQuestionVersion[];
+      createdAt: string | Date | null;
+    } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
   >;
   selectedRowKeys?: string[];
 }
@@ -93,7 +98,11 @@ const createQuestionMap = (
 ):
   | Record<
       string,
-      { questionTitle: string; versions: IQuestionVersion[] } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
+      {
+        questionTitle: string;
+        versions: IQuestionVersion[];
+        createdAt: string | Date | null;
+      } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
     >
   | undefined => {
   if (!input?.questions) return undefined;
@@ -108,6 +117,7 @@ const createQuestionMap = (
     return {
       ...res,
       [q.questionVersionId]: {
+        createdAt: q.questionVersion.createdAt,
         questionTitle: q.questionVersion.title,
         versions: q.questionVersion.question.versions,
       },

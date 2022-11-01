@@ -240,7 +240,7 @@ const DragOption: FC<{
                     <div className={'question-label-info'}>
                       <span className={'status-question success-color'} />{' '}
                       <span>
-                        {moment(ver.updatedAt).format(
+                        {moment(ver.createdAt).format(
                           MOMENT_FORMAT.FULL_DATE_FORMAT,
                         )}
                       </span>
@@ -340,7 +340,7 @@ const DragOption: FC<{
                     <div className={'question-label-info'}>
                       <span className={'status-question warning-color'} />{' '}
                       <span>
-                        {moment(ver.updatedAt).format(
+                        {moment(ver.createdAt).format(
                           MOMENT_FORMAT.FULL_DATE_FORMAT,
                         )}
                       </span>
