@@ -81,7 +81,10 @@ export enum QuestionType {
   TIME_PICKER = 'TIME_PICKER',
   SLIDER = 'SLIDER',
   TEXT_ENTRY = 'TEXT_ENTRY',
-  // Will add more later
+  SIGNATURE = 'SIGNATURE',
+  // TEXT_GRAPHIC = 'TEXT_GRAPHIC',
+  // DATA_MATRIX = 'DATA_MATRIX',
+  // FORM_FIELD = 'FORM_FIELD',
 }
 
 export enum QuestionVersionStatus {

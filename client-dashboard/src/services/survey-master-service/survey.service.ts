@@ -6,6 +6,9 @@ export default class SurveyService {
   static getSurveys(params: any): Promise<AxiosResponse> {
     return APIService.get('surveys', { params });
   }
+  static getSurveyFile(surveyId: string): Promise<AxiosResponse> {
+    return APIService.get(`surveys/${surveyId}/file`);
+  }
 
   static getSurveyById(id: string | undefined): Promise<AxiosResponse> {
     return APIService.get(`surveys/${id}`);
