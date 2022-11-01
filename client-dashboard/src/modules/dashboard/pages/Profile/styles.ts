@@ -384,7 +384,7 @@ export const TableWrapperStyled = styled.div`
     overflow: hidden;
   }
   .ant-table {
-    padding: 12px;
+    padding: 12px 16px 12px 12px;
   }
   .ant-table-row,
   .ant-table-thead {
@@ -425,7 +425,7 @@ export const TableWrapperStyled = styled.div`
     background: var(--ant-primary-2);
   }
   .pagination {
-    margin: 12px 0;
+    margin: 12px 16px 12px 12px;
     padding: 0 12px;
   }
 `;
