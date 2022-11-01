@@ -4,28 +4,27 @@ import { SCOPE_CONFIG } from 'enums/user';
 import { Formik } from 'formik';
 import { InviteMember } from 'interfaces';
 import useCheckScopeEntity, {
-  ScopeActionArray,
+  ScopeActionArray
 } from 'modules/common/hoc/useCheckScopeEntity';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
-import { onError } from '../../../../../../utils/funcs';
-import InviteMemberInputs, {
-  useInviteMemberSchema,
-} from '../../content/forms/InviteMember';
 import SimpleBar from 'simplebar-react';
+import { onError } from '../../../../../../utils/funcs';
+import InviteMemberInputs from '../../content/forms/InviteMember';
 import { InviteMemberFormWrapper } from '../../styles';
+import { useInviteMemberSchema } from '../../utils';
 
 const initialValues = {
-  id: '',
   firstName: '',
   lastName: '',
   email: '',
   displayName: '',
   roles: [],
+  userRoles: [],
   departmentName: '',
 };
 
@@ -47,28 +46,26 @@ function TeamForm() {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
 
-  const createHandleStatus = useCallback(
-    (successMessage: string) => {
-      return {
-        onSuccess: () => {
-          notification.success({ message: t(`common.${successMessage}`) });
-          queryClient.invalidateQueries('getTeamMembers');
-        },
-        onError,
-      };
-    },
-    [t, queryClient],
-  );
-
   const mutationInviteMember = useMutation(
     (payload: InviteMember) => AdminService.inviteMember(payload),
-    createHandleStatus('inviteSuccess'),
+    {
+      onSuccess: () => {
+        notification.success({ message: t(`common.inviteSuccess`) });
+        queryClient.invalidateQueries('getTeamMembers');
+      },
+      onError,
+    },
   );
 
-  const handleFinish = (payload: InviteMember) => {
-    console.log(canCreate, isAdminRole);
+  const handleFinish = (payload: InviteMember, actions) => {
     if (!canCreate || !isAdminRole) return;
-    return mutationInviteMember.mutateAsync(payload);
+    const newPayload = { ...payload, roles: payload.userRoles };
+    delete newPayload.userRoles;
+    return mutationInviteMember.mutateAsync(newPayload, {
+      onSuccess: () => {
+        actions.resetForm();
+      },
+    });
   };
 
   return (
@@ -98,7 +95,7 @@ function TeamForm() {
                   className="submit-btn secondary-btn"
                   loading={mutationInviteMember.isLoading}
                 >
-                  {t('common.saveEdits')}
+                  {t('common.sendInvitation')}
                 </Button>
               </div>
 

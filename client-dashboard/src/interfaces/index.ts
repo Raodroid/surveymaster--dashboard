@@ -25,6 +25,7 @@ export interface InviteMember {
   displayName: string;
   description?: string;
   roles: number[];
+  userRoles: any;
   departmentName: string;
 }
 
@@ -35,6 +36,7 @@ export interface UpdateMember {
   email: string;
   displayName: string;
   description?: string;
-  userRoles: number[];
+  roles: number[];
+  userRoles: any;
   departmentName: string;
 }
