@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { BaseSectionWrapper } from '../../../../common/styles';
 import { screenSize } from '../../../../../enums';
@@ -131,11 +132,11 @@ export const TitleStyled = styled.div`
   }
 `;
 
-export const AddNewProjectBtn = styled(Button)<{
-  isAddNewProjectPage: boolean;
-}>`
-  background: ${p => !p.isAddNewProjectPage && 'transparent'};
-  &:focus {
+export const CustomNavLink = styled(NavLink)`
+  &:not(.active) .new-project-btn:not(:focus) {
+    background: transparent;
+  }
+  &.active .new-project-btn {
     background: var(--ant-primary-color-deprecated-f-12);
   }
 `;

@@ -181,7 +181,7 @@ function TeamContent() {
           return (
             <div>
               {list.map((elm: TeamMember, index: number) => (
-                <span style={{ fontSize: 12 }}>
+                <span style={{ fontSize: 12 }} key={elm.id}>
                   {elm.name} {index !== list.length - 1 && '| '}
                 </span>
               ))}
@@ -259,7 +259,7 @@ function TeamContent() {
   const data: TeamMember[] = useMemo(
     () =>
       teamMembers
-        ? teamMembers.data.data.map(user => {
+        ? teamMembers.data.data.map((user: TeamMember) => {
             return {
               key: user.id,
               avatar: user.avatar || '',
@@ -336,6 +336,7 @@ function TeamContent() {
               columns={columns}
               dataSource={data}
               pagination={false}
+              rowKey="key"
             />
             <Pagination
               className="flex-end pagination"

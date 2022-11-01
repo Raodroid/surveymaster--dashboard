@@ -1,14 +1,11 @@
 import { AxiosResponse } from 'axios';
-import { useQuery } from 'react-query';
-import { Route, Routes, useParams } from 'react-router';
-import { SurveyService } from 'services';
-import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
+import { Route, Routes } from 'react-router';
+import { IProject } from '../../../../../../../type';
+import { projectRoutePath } from '../../../util';
 import EditSurvey from './Edit';
 import ActionHistory from './History';
 import Remarks from './Remarks';
 import { DetailSurveyWrapper } from './styles';
-import { IProject } from '../../../../../../../type';
-import { onError } from '../../../../../../../utils';
 import ViewSurvey from './View';
 
 export interface DetailSurveyProps {
@@ -22,17 +19,8 @@ export type projectSurveyParams = {
 };
 
 function DetailSurvey() {
-  const params = useParams<projectSurveyParams>();
   const subRoute = (route: string) =>
     route.replace(projectRoutePath.DETAIL_SURVEY.ROOT, '');
-
-  const { project } = useGetProjectByIdQuery(params.projectId);
-
-  const { data: survey } = useQuery(
-    ['getSurveyById', params.surveyId],
-    () => SurveyService.getSurveyById(params.surveyId),
-    { refetchOnWindowFocus: false, onError },
-  );
 
   return (
     <DetailSurveyWrapper className="flex-column">
@@ -40,11 +28,11 @@ function DetailSurvey() {
         <Route path="/" element={<ViewSurvey />} />
         <Route
           path={subRoute(projectRoutePath.DETAIL_SURVEY.EDIT)}
-          element={<EditSurvey surveyData={survey} projectData={project} />}
+          element={<EditSurvey />}
         />
         <Route
           path={subRoute(projectRoutePath.DETAIL_SURVEY.HISTORY)}
-          element={<ActionHistory surveyData={survey} projectData={project} />}
+          element={<ActionHistory />}
         />
         <Route
           path={subRoute(projectRoutePath.DETAIL_SURVEY.REMARKS)}

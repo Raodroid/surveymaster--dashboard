@@ -60,4 +60,8 @@ export const ProjectWrapper = styled(Content)`
   .ant-spin-container {
     height: 100%;
   }
+  .ant-input-disabled,
+  .ant-input-affix-wrapper-disabled {
+    cursor: default;
+  }
 `;

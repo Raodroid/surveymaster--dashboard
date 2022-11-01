@@ -23,7 +23,7 @@ function Inputs(props: {
     <InputsWrapper>
       <div className="mainInfo-title title">
         {project.type === ProjectTypes.EXTERNAL && t('common.external')}{' '}
-        {t('common.mainInformation')}::
+        {t('common.mainInformation')}:
       </div>
       <div className="flex-j-between title-wrapper">
         <ControlledInput

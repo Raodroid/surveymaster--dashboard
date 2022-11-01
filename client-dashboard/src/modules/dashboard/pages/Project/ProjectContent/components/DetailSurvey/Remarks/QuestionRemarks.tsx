@@ -10,8 +10,8 @@ const columns: ColumnsType<ISurveyQuestion> = [
   {
     title: '',
     dataIndex: 'remark',
-    key: 'remark',
-    render: (_, record, index: number) => <Remark index={index} />,
+    key: 'id',
+    render: (_, record: IQuestion, index: number) => <Remark index={index} />,
   },
 ];
 
@@ -26,6 +26,7 @@ function QuestionRemarks() {
         columns={columns}
         pagination={false}
         showHeader={false}
+        rowKey="id"
       />
     </QuestionRemarksWrapper>
   );

@@ -19,7 +19,7 @@ import StyledPagination from '../../../../components/StyledPagination';
 import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper } from '../styles';
-import { QsParams } from './Header/ProjectFilter';
+import { QsParams } from './ProjectFilter';
 import SimpleBar from 'simplebar-react';
 import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
 

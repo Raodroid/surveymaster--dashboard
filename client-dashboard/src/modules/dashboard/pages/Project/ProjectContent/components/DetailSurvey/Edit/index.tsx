@@ -3,15 +3,17 @@ import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
-import { DetailSurveyProps, projectSurveyParams } from '..';
+import { projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
 import SurveyForm from '../SurveyForm/SurveyForm';
 import { EditSurveyWrapper } from './style';
+import { useGetSurveyDetail } from '../utils';
 
-function EditSurvey(props: DetailSurveyProps) {
-  const { surveyData: survey, projectData: project } = props;
+function EditSurvey() {
   const params = useParams<projectSurveyParams>();
   const { t } = useTranslation();
+  const { project, isProjectLoading, survey, isSurveyLoading } =
+    useGetSurveyDetail();
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [

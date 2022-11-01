@@ -1,61 +1,72 @@
-import { Divider, Form } from 'antd';
+import { Form } from 'antd';
 import { Formik } from 'formik';
+import useParseQueryString from 'hooks/useParseQueryString';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
-import moment from 'moment';
 import { useMemo } from 'react';
 import { generatePath, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
 import { projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
+import { QsParams } from '../../ProjectFilter';
 import Inputs from '../Inputs';
 import { useGetSurveyDetail } from '../utils';
-import ActionsHistory from './ActionsHistory';
 import QuestionList from './QuestionList';
-import { ActionsHistoryContentWrapper, ActionsHistoryWrapper } from './styles';
+import { DetailSurveyHomeWrapper } from './styles';
 
-function ActionHistory() {
+function DetailSurveyHome() {
   const params = useParams<projectSurveyParams>();
+
   const { project, survey, isSurveyLoading } = useGetSurveyDetail();
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: project.name || '...',
+        name: project?.data.name || '...',
         href: generatePath(projectRoutePath.SURVEY, {
-          projectId: params.projectId,
+          projectId: params?.projectId,
         }),
       },
       {
         name: survey?.data.name || '...',
-        href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
-          projectId: params.projectId,
-          surveyId: params.surveyId,
-        }),
-      },
-      {
-        name: 'Action History',
-        href: projectRoutePath.DETAIL_SURVEY.HISTORY,
+        href: projectRoutePath.DETAIL_SURVEY.ROOT,
       },
     ],
     [params, survey, project],
   );
 
+  const links: string[] = [
+    generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
+      projectId: params.projectId,
+      surveyId: params.surveyId,
+    }),
+
+    generatePath(projectRoutePath.DETAIL_SURVEY.HISTORY, {
+      projectId: params.projectId,
+      surveyId: params.surveyId,
+    }),
+
+    generatePath(projectRoutePath.DETAIL_SURVEY.REMARKS, {
+      projectId: params.projectId,
+      surveyId: params.surveyId,
+    }),
+  ];
+
   const initialValue = useMemo(() => {
     return {
       ...survey?.data,
-      createdAt: moment(survey?.data?.createdAt).format('DD.MM'),
+      createdAt: survey?.data?.createdAt?.slice(0, 10),
     };
   }, [survey]);
 
   const handleSubmit = () => {};
 
   return (
-    <>
-      <ProjectHeader routes={routes} />
-      <ActionsHistoryWrapper>
-        <CustomSpinSuspense spinning={isSurveyLoading}>
+    <DetailSurveyHomeWrapper className="flex-column">
+      <ProjectHeader routes={routes} links={links} />
+      <CustomSpinSuspense spinning={isSurveyLoading}>
+        <div className="body height-100">
           <Formik
             initialValues={initialValue}
             onSubmit={handleSubmit}
@@ -68,20 +79,16 @@ function ActionHistory() {
                 onFinish={handleFinish}
               >
                 <SimpleBar style={{ height: '100%' }}>
-                  <Inputs disabled hideRemarks />
-                  <ActionsHistoryContentWrapper>
-                    <ActionsHistory />
-                    <Divider type="vertical" className="divider" />
-                    <QuestionList questions={survey?.data.questions} />
-                  </ActionsHistoryContentWrapper>
+                  <Inputs disabled />
+                  <QuestionList questions={survey?.data.questions} />
                 </SimpleBar>
               </Form>
             )}
           </Formik>
-        </CustomSpinSuspense>
-      </ActionsHistoryWrapper>
-    </>
+        </div>
+      </CustomSpinSuspense>
+    </DetailSurveyHomeWrapper>
   );
 }
 
-export default ActionHistory;
+export default DetailSurveyHome;

@@ -25,7 +25,7 @@ import {
 import { onError, saveBlob } from 'utils';
 import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import ProjectHeader from '../Header';
-import { QsParams } from '../Header/ProjectFilter';
+import { QsParams } from '../ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
 import { MenuDropDownWrapper } from 'customize-components/styles';
 import { MOMENT_FORMAT } from 'enums';
