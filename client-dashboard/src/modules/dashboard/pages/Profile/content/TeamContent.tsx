@@ -312,11 +312,6 @@ function TeamContent() {
           >
             {t('common.showInactivateUsers')}
           </Checkbox>
-          {/* {canCreate && (
-            <Button type="primary" disabled={!isAdminRole} onClick={() => {}}>
-              {t('common.inviteMember')}
-            </Button>
-          )} */}
         </div>
 
         <Divider />

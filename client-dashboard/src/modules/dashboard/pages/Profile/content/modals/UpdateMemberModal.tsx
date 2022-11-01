@@ -13,7 +13,7 @@ import SimpleBar from 'simplebar-react';
 import { ProfileModal } from '.';
 import { onError } from '../../../../../../utils/funcs';
 import { useInviteMemberSchema } from '../../utils';
-import InviteMemberInputs from '../forms/InviteMember';
+import InviteMemberInputs from '../inputs/InviteMember';
 import { UpdateMemberModalStyled } from './styles';
 
 const initialValues = {

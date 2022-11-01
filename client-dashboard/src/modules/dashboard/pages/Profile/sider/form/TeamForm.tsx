@@ -4,7 +4,7 @@ import { SCOPE_CONFIG } from 'enums/user';
 import { Formik } from 'formik';
 import { InviteMember } from 'interfaces';
 import useCheckScopeEntity, {
-  ScopeActionArray
+  ScopeActionArray,
 } from 'modules/common/hoc/useCheckScopeEntity';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,7 @@ import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
 import SimpleBar from 'simplebar-react';
 import { onError } from '../../../../../../utils/funcs';
-import InviteMemberInputs from '../../content/forms/InviteMember';
+import InviteMemberInputs from '../../content/inputs/InviteMember';
 import { InviteMemberFormWrapper } from '../../styles';
 import { useInviteMemberSchema } from '../../utils';
 
