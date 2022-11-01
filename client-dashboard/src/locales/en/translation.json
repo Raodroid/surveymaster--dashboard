@@ -436,9 +436,9 @@
     "SLIDER": "Slider",
     "TEXT_ENTRY": "Text Entry",
     "SIGNATURE" : "Signature",
-     "TEXT_GRAPHIC" : "Text Graphic",
-     "DATA_MATRIX" : "Data Matrix",
-     "FORM_FIELD" : "Form Field"
+    "TEXT_GRAPHIC" : "Text Graphic",
+    "DATA_MATRIX" : "Data Matrix",
+    "FORM_FIELD" : "Form Field"
   },
   "sign": "Lost your phone? Left yourself logged in on a public computer? Need a way to sign out everywhere except your current browser? This is for you.",
   "surveyTemplateEnum": {
