@@ -3,7 +3,7 @@ import _get from 'lodash/get';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import ProjectService from '../../../../services/survey-master-service/project.service';
-import { IProject, ProjectTypes } from '../../../../type';
+import { IProject } from '../../../../type';
 import { onError } from '../../../../utils';
 
 export const useGetAllProjects = () => {

@@ -20,9 +20,10 @@ import {
   IGetParams,
   IPostSurveyBodyDto,
   ISurvey,
+  ProjectTypes,
 } from '../../../../../../../type';
 import { onError, saveBlob, useToggle } from '../../../../../../../utils';
-import { projectRoutePath } from '../../../util';
+import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
@@ -210,6 +211,10 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams<{ projectId?: string }>();
+  const { project, isLoading: isFetchingProject } = useGetProjectByIdQuery(
+    params?.projectId,
+  );
+  const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
   const duplicateMutation = useMutation(
     (data: IPostSurveyBodyDto) => {
@@ -225,6 +230,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   );
 
   const items = useMemo(() => {
+    if (isFetchingProject) return [];
     const baseMenu: ItemType[] = [
       {
         icon: <TrashOutlined />,
@@ -236,15 +242,18 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         label: t('common.edit'),
         key: ACTION_ENUM.EDIT,
       },
-      {
+    ];
+
+    if (!isExternalProject) {
+      baseMenu.push({
         icon: <ExportOutlined />,
         label: t('common.exportQualtricsJSON'),
         key: ACTION_ENUM.EXPORT,
-      },
-    ];
+      });
+    }
 
     return baseMenu;
-  }, [t]);
+  }, [isExternalProject, isFetchingProject, t]);
 
   const handleExport = useCallback(async () => {
     try {
