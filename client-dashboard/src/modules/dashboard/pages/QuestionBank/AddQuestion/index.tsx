@@ -98,16 +98,16 @@ const AddQuestion = () => {
         await queryClient.invalidateQueries('getQuestionList');
         notification.success({ message: t('common.createSuccess') });
 
-        const nextVersionDisPlayId = res.data.versions?.[0]?.displayId;
+        const nextVersionDisplayId = res.data.versions?.[0]?.displayId;
 
-        if (nextVersionDisPlayId) {
+        if (nextVersionDisplayId) {
           navigate(
             generatePath(
               ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION,
               {
                 questionId: res.data.id,
               },
-            ) + `?version=${nextVersionDisPlayId}`,
+            ) + `?version=${nextVersionDisplayId}`,
           );
         } else {
           navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
@@ -118,8 +118,7 @@ const AddQuestion = () => {
   );
   const onFinish = useCallback(
     async (values: IAddQuestionFormValue) => {
-      console.log(transformData(values));
-      // await addQuestionMutation.mutateAsync(transformData(values));
+      await addQuestionMutation.mutateAsync(transformData(values));
     },
     [addQuestionMutation],
   );

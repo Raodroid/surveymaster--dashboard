@@ -9,28 +9,27 @@ import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb
 import { CustomSpinSuspense } from 'modules/common/styles';
 import StyledPagination from 'modules/dashboard/components/StyledPagination';
 import moment from 'moment';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
-import { ProjectService, SurveyService } from '../../../../../../../services';
+import { ProjectService, SurveyService } from 'services';
 import {
   GetListQuestionDto,
   IGetParams,
   IPostSurveyBodyDto,
   ISurvey,
   ProjectTypes,
-} from '../../../../../../../type';
-import { onError, saveBlob, useToggle } from '../../../../../../../utils';
+} from 'type';
+import { onError, saveBlob } from 'utils';
 import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
-import { MenuDropDownWrapper } from '../../../../../../../customize-components/styles';
-import { MOMENT_FORMAT } from '../../../../../../../enums';
+import { MenuDropDownWrapper } from 'customize-components/styles';
+import { MOMENT_FORMAT } from 'enums';
 import { ExportOutlined } from '@ant-design/icons';
-import axios from 'axios';
 
 const initParams: IGetParams = {
   q: '',
