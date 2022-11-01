@@ -2,19 +2,19 @@ import { Button, Form, notification } from 'antd';
 import { MODAL_WIDTH } from 'enums';
 import { Formik } from 'formik';
 import { CloseIcon } from 'icons';
-import { InviteMember, UpdateMember } from 'interfaces';
+import { UpdateMember } from 'interfaces';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
-import * as Yup from 'yup';
+import SimpleBar from 'simplebar-react';
 import { ProfileModal } from '.';
 import { onError } from '../../../../../../utils/funcs';
-import InviteMemberInputs, {
-  useInviteMemberSchema,
-} from '../forms/InviteMember';
+import { useInviteMemberSchema } from '../../utils';
+import InviteMemberInputs from '../forms/InviteMember';
 import { UpdateMemberModalStyled } from './styles';
-import SimpleBar from 'simplebar-react';
 
 const initialValues = {
   id: '',
@@ -22,11 +22,12 @@ const initialValues = {
   lastName: '',
   email: '',
   displayName: '',
+  roles: [],
   userRoles: [],
   departmentName: '',
 };
 
-interface InviteModal extends Omit<ProfileModal, 'userId'> {
+interface UpdateModal extends Omit<ProfileModal, 'userId'> {
   userData?: {
     id: string;
     firstName: string;
@@ -34,16 +35,17 @@ interface InviteModal extends Omit<ProfileModal, 'userId'> {
     email: string;
     displayName: string;
     departmentName: string;
-    userRoles: number[];
+    userRoles: Record<string, any>;
   };
 }
 
-function UpdateMemberModal(props: InviteModal) {
+function UpdateMemberModal(props: UpdateModal) {
   const { showModal, setShowModal, userData } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { inviteMemberSchema } = useInviteMemberSchema();
+  const allRoles = useSelector(AuthSelectors.getAllRoles);
 
   const userInit = useMemo(() => {
     return userData
@@ -54,23 +56,20 @@ function UpdateMemberModal(props: InviteModal) {
           email: userData.email,
           displayName: userData.displayName,
           departmentName: userData.departmentName,
-          userRoles: userData.userRoles,
+          roles: userData.userRoles?.map(elm => elm.roleId),
+          userRoles: userData.userRoles?.map(elm => {
+            const roles = Object.values(allRoles);
+            const index = roles.findIndex(el => el.id === elm.roleId);
+            return {
+              ...elm,
+              key: elm.roleId,
+              id: elm.roleId,
+              name: roles[index].name,
+            };
+          }),
         }
       : initialValues;
-  }, [userData]);
-
-  // const InviteMemberSchema = Yup.object({
-  //   firstName: Yup.string().required(t('validation.messages.required')).trim(),
-  //   lastName: Yup.string().required(t('validation.messages.required')).trim(),
-  //   email: Yup.string()
-  //     .required(t('validation.messages.required'))
-  //     .email(t('validation.messages.emailInvalid'))
-  //     .trim(),
-  //   departmentName: Yup.string()
-  //     .required(t('validation.messages.required'))
-  //     .trim(),
-  //   roles: Yup.array().min(1, t('validation.messages.required')),
-  // });
+  }, [userData, allRoles]);
 
   const createHandleStatus = useCallback(
     (successMessage: string) => {
@@ -92,7 +91,12 @@ function UpdateMemberModal(props: InviteModal) {
   );
 
   const handleFinish = (payload: UpdateMember) => {
-    mutationUpdateMember.mutateAsync(payload);
+    let newPayload = { ...payload };
+    if (payload.userRoles !== userInit.userRoles) {
+      newPayload = { ...payload, roles: payload.userRoles };
+    }
+    delete newPayload.userRoles;
+    mutationUpdateMember.mutateAsync(newPayload);
   };
 
   return (

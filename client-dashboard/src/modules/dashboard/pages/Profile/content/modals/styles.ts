@@ -105,11 +105,6 @@ export const UpdateMemberModalStyled = styled(ModalStyled)`
       margin-bottom: 20px;
     }
   }
-  .form-item-container:last-child {
-    .ant-form-item {
-      margin-bottom: 2px;
-    }
-  }
   .ant-modal-body {
     padding: 0 0 40px;
     flex: 1;

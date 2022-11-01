@@ -44,6 +44,7 @@ import {
   UpdateMemberModal,
   ResetUserPasswordModal,
 } from './modals';
+import SimpleBar from 'simplebar-react';
 
 interface TeamMember extends UserPayload {
   key: string;
@@ -189,6 +190,7 @@ function TeamContent() {
       },
       {
         title: '',
+        width: 100,
         dataIndex: 'threeDots',
         render: (_, record: TeamMember) => (
           <ThreeDotsDropdown
@@ -321,24 +323,26 @@ function TeamContent() {
 
         <TableWrapperStyled>
           <CustomSpinSuspense spinning={isLoading}>
-            <Table
-              rowSelection={{
-                type: 'checkbox',
-                ...rowSelection,
-              }}
-              scroll={{ y: 'calc(100vh - 420px)' }}
-              columns={columns}
-              dataSource={data}
-              pagination={false}
-            />
-            <Pagination
-              className="flex-j-end pagination"
-              showSizeChanger={false}
-              defaultCurrent={page}
-              current={page}
-              total={teamMembers?.data?.pageCount * 10}
-              onChange={e => setPage(e)}
-            />
+            <SimpleBar style={{ maxHeight: '100%' }}>
+              <Table
+                rowSelection={{
+                  type: 'checkbox',
+                  ...rowSelection,
+                }}
+                scroll={{ y: 'fit-content' }}
+                columns={columns}
+                dataSource={data}
+                pagination={false}
+              />
+              <Pagination
+                className="flex-j-end pagination"
+                showSizeChanger={false}
+                defaultCurrent={page}
+                current={page}
+                total={teamMembers?.data?.pageCount * 10}
+                onChange={e => setPage(e)}
+              />
+            </SimpleBar>
           </CustomSpinSuspense>
         </TableWrapperStyled>
       </div>

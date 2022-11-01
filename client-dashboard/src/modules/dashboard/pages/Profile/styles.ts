@@ -110,7 +110,7 @@ export const ProfileStyled = styled.div`
 
 export const SiderWrapper = styled.div`
   background: white;
-  padding: 18px 0 24px;
+  padding: 18px 0 0;
   border-radius: 8px;
   width: 345px;
   flex-direction: column;
@@ -182,7 +182,7 @@ export const SiderWrapper = styled.div`
         padding: 0 24px;
       }
       & > .ant-btn {
-        margin: 0 24px;
+        margin: 0 24px 28px;
       }
     }
   }
@@ -370,13 +370,22 @@ export const TeamContentStyled = styled(ContentStyled)`
   }
   .table-wrapper {
     flex: 1;
+    overflow: hidden;
   }
 `;
 
 export const TableWrapperStyled = styled.div`
-  padding: 12px 12px 0;
   flex: 1;
   width: 100%;
+  overflow: hidden;
+  .ant-spin-nested-loading,
+  .ant-spin-container {
+    height: 100%;
+    overflow: hidden;
+  }
+  .ant-table {
+    padding: 12px;
+  }
   .ant-table-row,
   .ant-table-thead {
     height: 72px;
@@ -416,7 +425,8 @@ export const TableWrapperStyled = styled.div`
     background: var(--ant-primary-2);
   }
   .pagination {
-    margin-top: 10px;
+    margin: 12px 0;
+    padding: 0 12px;
   }
 `;
 
@@ -465,6 +475,7 @@ export const InviteMemberFormWrapper = styled.div`
   }
   .invitation-link {
     height: 32px;
+    margin-bottom: 28px;
     font-weight: 500;
   }
 `;
