@@ -1,7 +1,6 @@
 import { AxiosResponse } from 'axios';
-import { CreateProject } from 'interfaces';
+import { ProjectPayload } from 'interfaces';
 import { IGetParams } from 'type';
-import { UpdateProject } from '../../interfaces';
 import APIService from './base.service';
 
 export default class ProjectService {
@@ -13,11 +12,11 @@ export default class ProjectService {
     return APIService.get(`projects/${id}`);
   }
 
-  static createProject(payload: CreateProject): Promise<AxiosResponse> {
+  static createProject(payload: ProjectPayload): Promise<AxiosResponse> {
     return APIService.post('projects', payload);
   }
 
-  static updateProject(payload: UpdateProject): Promise<AxiosResponse> {
+  static updateProject(payload: ProjectPayload): Promise<AxiosResponse> {
     return APIService.put(`projects/${payload.id}`, payload);
   }
 

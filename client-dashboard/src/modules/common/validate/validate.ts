@@ -1,7 +1,10 @@
 import * as Yup from 'yup';
 import moment from 'moment';
-import { QuestionType } from '../../../type';
-import { SurveyTemplateEnum } from '../../dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
+import { ProjectTypes, QuestionType } from '../../../type';
+import {
+  questionValueType,
+  SurveyTemplateEnum,
+} from '../../dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
 
 export const INVALID_FIELDS = {
   MIN_USERNAME: 'validation.messages.minUserName',
@@ -192,14 +195,18 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
     }),
 });
 
-export const SURVEY_FORM_SCHEMA = Yup.object().shape({
-  template: Yup.string().required(INVALID_FIELDS.REQUIRED),
+const SURVEY_FORM_SCHEMA = {
   name: Yup.string().required(INVALID_FIELDS.REQUIRED),
   remark: Yup.string(),
+};
+
+export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
+  ...SURVEY_FORM_SCHEMA,
   surveyId: Yup.string().when('template', {
     is: SurveyTemplateEnum.DUPLICATE,
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
+  template: Yup.string().required(INVALID_FIELDS.REQUIRED),
   questions: Yup.array()
     .when('template', {
       is: SurveyTemplateEnum.NEW,
@@ -225,4 +232,28 @@ export const SURVEY_FORM_SCHEMA = Yup.object().shape({
         }),
       ),
     }),
+});
+export const SURVEY_EXTERNAL_FORM_SCHEMA = Yup.object().shape({
+  ...SURVEY_FORM_SCHEMA,
+  selectedRowKeys: Yup.array().of(Yup.string()).min(1),
+  questions: Yup.array().of(
+    Yup.object().test(
+      'questionNotValid',
+      'questions field is not valid',
+      function (value, context) {
+        const { selectedRowKeys } = context?.['from']?.[1]?.value;
+        if (selectedRowKeys?.some(key => key === value?.id)) {
+          return !!value.questionVersionId && !!value.parameter;
+        }
+        return true;
+      },
+    ),
+  ),
+});
+
+export const PROJECT_FORM_SCHEMA = Yup.object().shape({
+  name: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  description: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  personInCharge: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  type: Yup.string().required(INVALID_FIELDS.REQUIRED),
 });

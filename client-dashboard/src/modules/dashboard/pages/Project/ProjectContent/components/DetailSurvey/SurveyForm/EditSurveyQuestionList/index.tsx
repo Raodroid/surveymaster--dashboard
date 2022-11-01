@@ -10,10 +10,8 @@ import {
 } from '../SurveyForm';
 import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
 import { useToggle } from '../../../../../../../../../utils';
-import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../../../../enums';
 
-const DisplayQuestionSurveyList = () => {
+const EditQuestionSurveyList = () => {
   const { values } = useFormikContext<IAddSurveyFormValues>();
   const { t } = useTranslation();
   const [openLoadCategoryForm, toggleLoadCategoryForm] = useToggle();
@@ -53,7 +51,7 @@ const DisplayQuestionSurveyList = () => {
                 open={openLoadCategoryForm}
                 onCancel={toggleLoadCategoryForm}
               />
-            </div>{' '}
+            </div>
           </>
         )}
       />
@@ -61,4 +59,4 @@ const DisplayQuestionSurveyList = () => {
   );
 };
 
-export default memo(DisplayQuestionSurveyList);
+export default memo(EditQuestionSurveyList);

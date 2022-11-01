@@ -12,7 +12,14 @@ import React, {
 import { CategoryDetailWrapper, QuestionTypePopover } from './style';
 import CategoryDetailHeader from './CategoryDetailHeader';
 
-import { Menu, notification, PaginationProps, Popover, Table, Popconfirm } from 'antd';
+import {
+  Menu,
+  notification,
+  PaginationProps,
+  Popover,
+  Table,
+  Popconfirm,
+} from 'antd';
 import { GetListQuestionDto, IQuestion } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
@@ -51,7 +58,6 @@ const initParams: GetListQuestionDto = {
   page: 1,
   createdFrom: '',
   createdTo: '',
-  // isDeleted: BooleanEnum.FALSE,
 };
 
 export const CategoryDetailContext =
@@ -218,6 +224,10 @@ const CategoryDetail = () => {
       value={{ params, setParams, loading, setLoading }}
     >
       <CategoryDetailWrapper ref={ref}>
+        <HannahCustomSpin
+          parentRef={ref}
+          spinning={loading || getQuestionListQuery.isLoading}
+        />
         <CategoryDetailHeader
           searchTxt={searchTxt}
           setSearchTxt={setSearchTxt}
@@ -229,22 +239,17 @@ const CategoryDetail = () => {
             columns={columns}
             onRow={handleClickRow}
             pagination={false}
-            sticky={true}
-          />
-          <HannahCustomSpin
-            parentRef={ref}
-            spinning={loading || getQuestionListQuery.isLoading}
-          />
-          <StyledPagination
-            onChange={page => {
-              setParams(s => ({ ...s, page }));
-            }}
-            showSizeChanger
-            pageSize={params.take}
-            onShowSizeChange={onShowSizeChange}
-            total={total}
           />
         </div>
+        <StyledPagination
+          onChange={page => {
+            setParams(s => ({ ...s, page }));
+          }}
+          showSizeChanger
+          pageSize={params.take}
+          onShowSizeChange={onShowSizeChange}
+          total={total}
+        />
       </CategoryDetailWrapper>
     </CategoryDetailContext.Provider>
   );
@@ -306,7 +311,6 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const handleSelect = useCallback(
     async (props: { record: IQuestion; key: string }) => {
       const { key, record } = props;
-      console.log('key =', key);
       switch (key) {
         case ACTION_ENUM.DELETE: {
           await deleteMutation.mutateAsync({ id: record.id as string });
@@ -360,7 +364,9 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   }, [t, isDeleted, handleSelect, record]);
 
   const menu = (
-    <MenuDropDownWrapper onClick={({ key }) => handleSelect({ key, record })}>{items}</MenuDropDownWrapper>
+    <MenuDropDownWrapper onClick={({ key }) => handleSelect({ key, record })}>
+      {items}
+    </MenuDropDownWrapper>
   );
 
   useEffect(() => {

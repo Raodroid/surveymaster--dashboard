@@ -20,5 +20,5 @@ const transform = stringInput => {
   console.log(`t("common.${key}")`);
 };
 
-const input = 'Show History List';
+const input = 'Click to Upload';
 transform(input);

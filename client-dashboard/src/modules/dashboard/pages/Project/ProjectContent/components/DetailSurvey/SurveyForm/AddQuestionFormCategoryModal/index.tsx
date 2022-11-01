@@ -83,17 +83,16 @@ const AddQuestionFormCategoryModal: FC<ModalProps> = props => {
   return (
     <AddQuestionFormCategoryModalWrapper {...props} footer={false} centered>
       <div className={'category-column'} ref={wrapperRef}>
+        <HannahCustomSpin
+          parentRef={wrapperRef}
+          spinning={getCategoryListQuery.isLoading}
+        />
         <Input
           className={'search-input'}
           allowClear
           placeholder={`${t('common.searchCategory')}...`}
           value={searchTxt}
           onChange={handleTyping}
-        />
-
-        <HannahCustomSpin
-          parentRef={wrapperRef}
-          spinning={getCategoryListQuery.isLoading}
         />
         <CategoryMenuWrapper items={categoryData} onSelect={handleSelect} />
       </div>

@@ -12,6 +12,7 @@ export const AddQuestionFormCategoryModalWrapper = styled(Modal)`
   }
   .category-column {
     transition: width 0.3s ease-in;
+    position: relative;
   }
   .search-input {
     margin-bottom: 1rem;

@@ -20,3 +20,5 @@ export * from './TrashOutlined';
 export * from './DragIcon';
 export * from './Chat';
 export * from './Clock';
+export * from './Refresh';
+export * from './SuffixIcon';

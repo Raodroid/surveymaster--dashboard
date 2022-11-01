@@ -9,10 +9,10 @@ import {
   IQuestionVersion,
   ISurvey,
   ISurveyQuestionDto,
+  ProjectTypes,
   QuestionType,
 } from 'type';
-import { transformEnumToOption, onError } from 'utils';
-import { SURVEY_FORM_SCHEMA } from '../../../../../../../common/validate/validate';
+import { onError, transformEnumToOption } from 'utils';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from 'services';
 import { ROUTE_PATH } from 'enums';
@@ -20,9 +20,17 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import { QuestionListWrapper, SurveyFormWrapper } from './style';
 import { generatePath, useParams } from 'react-router';
 import { TemplateOption } from './SurveyTemplateOption';
-import DisplayQuestionSurveyList from './DisplayQuestionSurveyList';
 import { useGetSurveyById } from '../../Survey/util';
 import HannahCustomSpin from '../../../../../../components/HannahCustomSpin';
+import { useGetProjectByIdQuery } from '../../../../util';
+import UploadExternalFile from './EditSurveyQuestionList/UploadExternalFile';
+import {
+  SURVEY_EXTERNAL_FORM_SCHEMA,
+  SURVEY_INTERNAL_FORM_SCHEMA,
+} from '../../../../../../../common/validate/validate';
+import EditSurveyQuestionList from './EditSurveyQuestionList';
+import ViewSurveyQuestionList from './ViewSurveyQuestionList';
+import SimpleBar from 'simplebar-react';
 
 export enum SurveyTemplateEnum {
   NEW = 'NEW',
@@ -36,15 +44,22 @@ export type questionValueType = ISurveyQuestionDto & {
   id?: string;
   questionTitle: string;
   versions?: IQuestionVersion[];
+  createdAt?: string | Date | null;
 };
 
 export interface IAddSurveyFormValues extends IPostSurveyBodyDto {
-  template: SurveyTemplateEnum;
+  createdAt?: string | Date | null;
+  template: SurveyTemplateEnum | string;
   questions: questionValueType[];
   questionIdMap?: Record<
     string,
-    { questionTitle: string; versions: IQuestionVersion[] } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
+    {
+      questionTitle: string;
+      versions: IQuestionVersion[];
+      createdAt: string | Date | null;
+    } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
   >;
+  selectedRowKeys?: string[];
 }
 
 export const initNewQuestionOnAddSurveyForm = {
@@ -73,6 +88,7 @@ const transformQuestionData = (
         id: q.questionVersion?.questionId,
         versions: q.questionVersion?.question?.versions,
         category: q.questionVersion?.question?.masterCategory?.name as string,
+        parameter: q.parameter,
       })) || []
   );
 };
@@ -82,7 +98,11 @@ const createQuestionMap = (
 ):
   | Record<
       string,
-      { questionTitle: string; versions: IQuestionVersion[] } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
+      {
+        questionTitle: string;
+        versions: IQuestionVersion[];
+        createdAt: string | Date | null;
+      } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
     >
   | undefined => {
   if (!input?.questions) return undefined;
@@ -97,6 +117,7 @@ const createQuestionMap = (
     return {
       ...res,
       [q.questionVersionId]: {
+        createdAt: q.questionVersion.createdAt,
         questionTitle: q.questionVersion.title,
         versions: q.questionVersion.question.versions,
       },
@@ -111,10 +132,18 @@ const SurveyForm: FC = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { surveyData, isLoading } = useGetSurveyById(params?.surveyId);
+  const { surveyData, isLoading: isFetchingSurveyData } = useGetSurveyById(
+    params?.surveyId,
+  );
+  const { project, isLoading: isFetchingProject } = useGetProjectByIdQuery(
+    params?.projectId,
+  );
+
+  const isLoading = isFetchingProject || isFetchingSurveyData;
 
   const initialValues = useMemo<IAddSurveyFormValues>(
     () => ({
+      createdAt: surveyData.createdAt,
       surveyId: surveyData?.id || '',
       name: surveyData?.name || '',
       template: SurveyTemplateEnum.NEW,
@@ -122,14 +151,29 @@ const SurveyForm: FC = () => {
       questions: transformQuestionData(surveyData) || [],
       questionIdMap: createQuestionMap(surveyData),
       projectId,
+      selectedRowKeys: surveyData.questions?.map(
+        q => q.questionVersion?.questionId as string,
+      ),
     }),
     [projectId, surveyData],
   );
-  const editRouteMath = useMatch(
-    ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
-  );
+  const editSurveyRouteMath = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
+    end: true,
+    caseSensitive: true,
+  });
+  const createSurveyRouteMath = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY,
+    end: true,
+    caseSensitive: true,
+  });
 
-  const isEditMode = !!editRouteMath;
+  const isEditMode = !!editSurveyRouteMath;
+  const isCreateMode = !!createSurveyRouteMath;
+
+  const isViewMode = !(isEditMode || isCreateMode);
+
+  const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
   const onSuccess = useCallback(
     async res => {
@@ -180,11 +224,40 @@ const SurveyForm: FC = () => {
 
   const onSubmit = useCallback(
     async (values: IAddSurveyFormValues) => {
-      const { questions, template, ...rest } = values;
+      const { questions, selectedRowKeys, questionIdMap, template, ...rest } =
+        values;
 
       if (!values.projectId) {
         console.error('ProjectId is null');
         navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
+        return;
+      }
+
+      if (isExternalProject) {
+        const newValues = {
+          ...rest,
+          questions: questions.reduce((res: ISurveyQuestionDto[], q) => {
+            if (selectedRowKeys && !selectedRowKeys.some(key => key === q.id)) {
+              return res;
+            }
+            return [
+              ...res,
+              {
+                sort: res.length + 1,
+                remark: q.remark,
+                questionVersionId: q.questionVersionId,
+                parameter: q.parameter,
+              },
+            ];
+          }, []),
+        };
+
+        if (isEditMode) {
+          await updateSurveyMutation.mutateAsync(newValues);
+          return;
+        }
+        await addSurveyMutation.mutateAsync(newValues);
+        return;
       }
 
       const transformValue: IPostSurveyBodyDto = {
@@ -198,10 +271,12 @@ const SurveyForm: FC = () => {
           remark: q.remark,
         }));
         await updateSurveyMutation.mutateAsync(transformValue);
+        return;
       }
 
       if (values.template === SurveyTemplateEnum.DUPLICATE) {
         await duplicateSurveyMutation.mutateAsync(transformValue);
+        return;
       }
 
       if (values.template === SurveyTemplateEnum.NEW) {
@@ -211,12 +286,14 @@ const SurveyForm: FC = () => {
           remark: q.remark,
         }));
         await addSurveyMutation.mutateAsync(transformValue);
+        return;
       }
     },
     [
       addSurveyMutation,
       duplicateSurveyMutation,
       isEditMode,
+      isExternalProject,
       navigate,
       updateSurveyMutation,
     ],
@@ -225,98 +302,152 @@ const SurveyForm: FC = () => {
   const wrapperRef = useRef<any>();
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      validationSchema={SURVEY_FORM_SCHEMA}
-      enableReinitialize={true}
-    >
-      {({ values, dirty, isValid, handleSubmit }) => (
-        <SurveyFormWrapper
-          layout="vertical"
-          onFinish={handleSubmit as any}
-          ref={wrapperRef}
-        >
-          <div className={'SurveyFormWrapper__survey-info'}>
-            <div
-              className={
-                'SurveyFormWrapper__survey-info__survey-detail-section'
-              }
-            >
-              <div className="title mainInfo">
-                {t('common.mainInformation')}:
+    <>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        validationSchema={
+          isExternalProject
+            ? SURVEY_EXTERNAL_FORM_SCHEMA
+            : SURVEY_INTERNAL_FORM_SCHEMA
+        }
+        enableReinitialize={true}
+      >
+        {({ values, isValid, handleSubmit }) => (
+          <SurveyFormWrapper
+            layout="vertical"
+            onFinish={handleSubmit as any}
+            ref={wrapperRef}
+          >
+            <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
+            <>
+              <div className={'SurveyFormWrapper__survey-info'}>
+                <div
+                  className={
+                    'SurveyFormWrapper__survey-info__survey-detail-section'
+                  }
+                >
+                  <div className="title mainInfo">
+                    {isExternalProject && t('common.external')}{' '}
+                    {t('common.mainInformation')}:
+                  </div>
+
+                  {!isExternalProject && !isEditMode && (
+                    <ControlledInput
+                      disabled={isViewMode}
+                      inputType={INPUT_TYPES.SELECT}
+                      name={'template'}
+                      options={transformEnumToOption(SurveyTemplateEnum, type =>
+                        t(`surveyTemplateEnum.${type}`),
+                      )}
+                      dropdownRender={TemplateOption}
+                    />
+                  )}
+                  <ControlledInput
+                    inputType={INPUT_TYPES.INPUT}
+                    name="name"
+                    disabled={isViewMode}
+                    label={
+                      isExternalProject
+                        ? t('common.externalSurveyTitle')
+                        : t('common.surveyTitle')
+                    }
+                  />
+                  <ControlledInput
+                    inputType={INPUT_TYPES.INPUT}
+                    name="remark"
+                    label={t('common.surveyRemarks')}
+                    disabled={isViewMode}
+                  />
+                </div>
+                <div className="divider" />
+                <div
+                  className={'SurveyFormWrapper__survey-info__params-section'}
+                >
+                  <div className="title params">
+                    {isExternalProject && t('common.external')}{' '}
+                    {t('common.surveyParameters')}:
+                  </div>
+                  <ControlledInput
+                    inputType={INPUT_TYPES.INPUT}
+                    name="surveyId"
+                    label="ID"
+                    disabled
+                  />
+                </div>
               </div>
 
-              {!isEditMode && (
-                <ControlledInput
-                  inputType={INPUT_TYPES.SELECT}
-                  name={'template'}
-                  options={transformEnumToOption(SurveyTemplateEnum, type =>
-                    t(`surveyTemplateEnum.${type}`),
-                  )}
-                  dropdownRender={TemplateOption}
-                />
-              )}
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                name="name"
-                label={t('common.surveyTitle')}
-              />
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                name="remark"
-                label={t('common.surveyRemarks')}
-              />
-            </div>
-            <div className="divider" />
-            <div className={'SurveyFormWrapper__survey-info__params-section'}>
-              <div className="title params">
-                {t('common.surveyParameters')}:
+              <div className={'SurveyFormWrapper__question'}>
+                {(isExternalProject ||
+                  values?.template === SurveyTemplateEnum.NEW) && (
+                  <QuestionSurveyList isExternalProject={isExternalProject} />
+                )}
               </div>
-              <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                name="surveyId"
-                label="ID"
-                disabled
-              />
-            </div>
-          </div>
-          <div className={'SurveyFormWrapper__question'}>
-            {values?.template === SurveyTemplateEnum.NEW && (
-              <QuestionSurveyList />
-            )}
-          </div>
-          <div className={'SurveyFormWrapper__submit_btn'}>
-            <Button
-              type="primary"
-              className="info-btn"
-              htmlType="submit"
-              disabled={!isValid}
-              loading={
-                addSurveyMutation.isLoading || updateSurveyMutation.isLoading
-              }
-            >
-              {t('common.saveSurvey')}
-            </Button>
-          </div>
-          <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
-        </SurveyFormWrapper>
-      )}
-    </Formik>
+              <div className={'SurveyFormWrapper__submit_btn'}>
+                {!isViewMode && (
+                  <Button
+                    type="primary"
+                    className="info-btn"
+                    htmlType="submit"
+                    disabled={!isValid}
+                    loading={
+                      addSurveyMutation.isLoading ||
+                      updateSurveyMutation.isLoading
+                    }
+                  >
+                    {t('common.saveSurvey')}
+                  </Button>
+                )}
+              </div>
+            </>
+          </SurveyFormWrapper>
+        )}
+      </Formik>
+    </>
   );
 };
 
 export default SurveyForm;
 
-function QuestionSurveyList() {
+const QuestionSurveyList: FC<{ isExternalProject: boolean }> = props => {
+  const { isExternalProject } = props;
   const { t } = useTranslation();
+  const params = useParams<{ surveyId?: string }>();
+  const { surveyData } = useGetSurveyById(params?.surveyId);
+
+  const editSurveyRouteMath = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
+    end: true,
+    caseSensitive: true,
+  });
+
+  const createSurveyRouteMath = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY,
+    end: true,
+    caseSensitive: true,
+  });
+
+  const isEditMode = !!editSurveyRouteMath;
+  const isCreateMode = !!createSurveyRouteMath;
+
+  const isViewMode = !(isEditMode || isCreateMode);
 
   return (
-    <QuestionListWrapper className={'QuestionListWrapper'}>
-      <div className="QuestionListWrapper__header">
-        {t('common.surveyQuestionList')}:
-      </div>
-      <DisplayQuestionSurveyList />
-    </QuestionListWrapper>
+    <SimpleBar style={{ height: '100%' }}>
+      <QuestionListWrapper className={'QuestionListWrapper'}>
+        <div className="QuestionListWrapper__header">
+          {isExternalProject && !surveyData.questions?.length
+            ? t('common.uploadFile')
+            : t('common.surveyQuestionList')}
+        </div>
+
+        {!isViewMode && !isExternalProject && <EditSurveyQuestionList />}
+        {!isViewMode && isExternalProject && <UploadExternalFile />}
+
+        {isViewMode && (
+          <ViewSurveyQuestionList questions={surveyData.questions} />
+        )}
+      </QuestionListWrapper>
+    </SimpleBar>
   );
-}
+};

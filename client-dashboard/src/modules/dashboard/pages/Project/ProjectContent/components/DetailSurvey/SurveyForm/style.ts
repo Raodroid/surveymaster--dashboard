@@ -58,6 +58,13 @@ export const QuestionListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${templateVariable.section_spacing};
+
+  .ant-table-cell {
+    .ant-form-item {
+      margin-bottom: 0 !important;
+    }
+  }
+
   .QuestionListWrapper {
     &__header {
       font-weight: bold;

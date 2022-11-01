@@ -5,5 +5,5 @@ export const DEFAULT_THEME_COLOR = {
   SECONDARY: '#25216a',
   ERROR: templateVariable.danger_color,
   SUCCESS: templateVariable.success_color,
-  WARNING: templateVariable.success_color,
+  WARNING: templateVariable.warning_color,
 };

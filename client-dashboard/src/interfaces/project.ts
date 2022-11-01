@@ -1,18 +1,12 @@
 import { UserPayload } from 'redux/user';
-import { IProject, ISurveyQuestion } from 'type';
+import { IProject, ISurveyQuestion, ProjectTypes } from 'type';
 
-export interface CreateProject {
+export interface ProjectPayload {
   name?: string;
   id?: string;
   description?: string;
   personInCharge?: string;
-}
-
-export interface UpdateProject {
-  name?: string;
-  id?: string;
-  description?: string;
-  personInCharge?: string;
+  type: ProjectTypes | string;
 }
 
 export interface ISurvey {

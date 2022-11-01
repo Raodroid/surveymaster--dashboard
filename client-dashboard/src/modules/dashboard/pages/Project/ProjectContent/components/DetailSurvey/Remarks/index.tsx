@@ -2,38 +2,46 @@ import { Button, Form, notification } from 'antd';
 import { Formik } from 'formik';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
-import { useMemo } from 'react';
+import {
+  projectRoutePath,
+  useGetProjectByIdQuery,
+} from 'modules/dashboard/pages/Project/util';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useParams } from 'react-router';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
-import { IPostSurveyBodyDto } from 'type';
+import { IPostSurveyBodyDto, ISurvey } from 'type';
 import { onError } from 'utils';
-import { DetailSurveyProps, projectSurveyParams } from '..';
+import { projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
 import Inputs from '../Inputs';
 import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
-import { SurveyQuestionDto } from '../../../../../../../../interfaces';
+import { useNavigate } from 'react-router-dom';
+import { useGetSurveyById } from '../../Survey/util';
+import moment from 'moment';
+import { MOMENT_FORMAT } from '../../../../../../../../enums';
 
-function Remarks(props: DetailSurveyProps) {
-  const { surveyData: survey, projectData: project } = props;
+function Remarks() {
   const params = useParams<projectSurveyParams>();
+  const { surveyData: survey } = useGetSurveyById(params.surveyId);
+  const { project } = useGetProjectByIdQuery(params.projectId);
+
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: project?.data.name || '...',
+        name: project.name || '...',
         href: generatePath(projectRoutePath.SURVEY, {
           projectId: params?.projectId,
         }),
       },
       {
-        name: survey?.data.name || '...',
+        name: survey?.name || '...',
         href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
           projectId: params?.projectId,
           surveyId: params?.surveyId,
@@ -51,51 +59,47 @@ function Remarks(props: DetailSurveyProps) {
     (payload: IPostSurveyBodyDto) => SurveyService.updateSurvey(payload),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('getSurvey');
+        queryClient.invalidateQueries('getSurveyById');
         notification.success({ message: t('common.updateSuccess') });
-        // navigate(
-        //   generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
-        //     projectId: params?.projectId,
-        //     surveyId: params?.surveyId,
-        //   }),
-        // );
+        navigate(
+          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+            projectId: params?.projectId,
+            surveyId: params?.surveyId,
+          }),
+        );
       },
       onError,
     },
   );
 
-  const handleSubmit = (
-    payload: IPostSurveyBodyDto & {
-      id: string;
-    },
-  ) => {
-    const updateSurveyPayload = {
-      surveyId: payload.id,
-      projectId: payload.projectId,
-      questions: payload?.questions?.map(
-        (
-          elm: SurveyQuestionDto & {
-            surveyId?: string;
-          },
-        ) => {
+  const handleSubmit = useCallback(
+    (payload: ISurvey) => {
+      const updateSurveyPayload = {
+        surveyId: payload.id,
+        projectId: payload.projectId,
+        questions: payload?.questions?.map(elm => {
           return {
             questionVersionId: elm.questionVersionId,
             remark: elm.remark,
             sort: elm.sort,
-            surveyId: payload.surveyId,
+            surveyId: params.surveyId,
+            parameter: elm.parameter,
           };
-        },
-      ),
-      name: payload.name,
-      remark: payload.remark,
-    };
-    mutationUpdateRemarks.mutateAsync(updateSurveyPayload);
-  };
+        }),
+        name: payload.name,
+        remark: payload.remark,
+      };
+      mutationUpdateRemarks.mutateAsync(updateSurveyPayload);
+    },
+    [mutationUpdateRemarks, params.surveyId],
+  );
 
-  const initialValue = useMemo(() => {
+  const initialValue = useMemo<ISurvey>(() => {
     return {
-      ...survey?.data,
-      createdAt: survey?.data?.createdAt?.slice(0, 10),
+      ...survey,
+      createdAt: moment(survey?.createdAt).format(
+        MOMENT_FORMAT.FULL_DATE_FORMAT,
+      ),
     };
   }, [survey]);
 
@@ -110,15 +114,15 @@ function Remarks(props: DetailSurveyProps) {
             initialValues={initialValue}
             onSubmit={handleSubmit}
           >
-            {({ handleSubmit: handleFinish }) => (
+            {({ handleSubmit }) => (
               <Form
                 layout="vertical"
-                onFinish={handleFinish}
+                onFinish={handleSubmit}
                 className="height-100"
               >
                 <SimpleBar style={{ height: 'calc(100% - 76px)' }}>
                   <Inputs hideDate />
-                  <QuestionRemarks questions={survey?.data.questions} />
+                  <QuestionRemarks />
                 </SimpleBar>
                 <div className="footer flex-center">
                   <Button
