@@ -41,7 +41,7 @@ APIService.interceptors.response.use(
     return response;
   },
   async function (error) {
-    console.log({ error });
+    console.error({ error });
     const originalRequest = error.config;
     const { message, statusCode } = error?.response?.data || {};
     if (statusCode === 401) {

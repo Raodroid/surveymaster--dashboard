@@ -9,7 +9,7 @@ import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb
 import { CustomSpinSuspense } from 'modules/common/styles';
 import StyledPagination from 'modules/dashboard/components/StyledPagination';
 import moment from 'moment';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
@@ -21,12 +21,15 @@ import {
   IPostSurveyBodyDto,
   ISurvey,
 } from '../../../../../../../type';
-import { onError } from '../../../../../../../utils';
+import { onError, saveBlob, useToggle } from '../../../../../../../utils';
 import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
 import { MenuDropDownWrapper } from '../../../../../../../customize-components/styles';
+import { MOMENT_FORMAT } from '../../../../../../../enums';
+import { ExportOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const initParams: IGetParams = {
   q: '',
@@ -39,6 +42,7 @@ function Survey() {
   const params = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const qsParams = useParseQueryString<QsParams>();
+  const { t } = useTranslation();
 
   const [paramsQuery, setParamsQuery] =
     useState<GetListQuestionDto>(initParams);
@@ -103,7 +107,7 @@ function Survey() {
         key: 'displayId',
       },
       {
-        title: 'Survey Title',
+        title: t('common.surveyTitle'),
         dataIndex: 'name',
         key: 'name',
       },
@@ -113,16 +117,19 @@ function Survey() {
         key: 'numberOfQuestions',
       },
       {
-        title: 'Date of Creation',
+        title: t('common.dateOfCreation'),
         dataIndex: 'createdAt',
         key: 'createdAt',
         render: (text: Date) => {
-          const str = text.toString();
-          return <div>{str.slice(0, 10)}</div>;
+          return text ? (
+            <div>{moment(text).format(MOMENT_FORMAT.FULL_DATE_FORMAT)}</div>
+          ) : (
+            '--'
+          );
         },
       },
       {
-        title: 'Actions',
+        title: t('common.actions'),
         dataIndex: 'actions',
         key: 'actions',
         width: 100,
@@ -136,7 +143,7 @@ function Survey() {
         ),
       },
     ],
-    [],
+    [t],
   );
 
   const onRow = record => {
@@ -194,6 +201,7 @@ interface IDropDownMenu {
 enum ACTION_ENUM {
   DUPLICATE_SURVEY = 'DUPLICATE_SURVEY',
   EDIT = 'EDIT',
+  EXPORT = 'EXPORT',
 }
 
 const DropDownMenu: FC<IDropDownMenu> = props => {
@@ -228,10 +236,34 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         label: t('common.edit'),
         key: ACTION_ENUM.EDIT,
       },
+      {
+        icon: <ExportOutlined />,
+        label: t('common.exportQualtricsJSON'),
+        key: ACTION_ENUM.EXPORT,
+      },
     ];
 
     return baseMenu;
   }, [t]);
+
+  const handleExport = useCallback(async () => {
+    try {
+      const response = await SurveyService.getSurveyFile(record.id as string);
+      const data: {
+        SurveyElements: any[];
+        SurveyEntry: { SurveyName: string };
+      } = _get(response, 'data', {});
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: 'application/octet-stream',
+      });
+      saveBlob(
+        blob,
+        `${data.SurveyEntry.SurveyName}-${moment().format('DD/MM/YYYY')}.qsf`,
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  }, [record.id]);
 
   const handleSelect = useCallback(
     async (props: {
@@ -260,9 +292,12 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           );
           return;
         }
+        case ACTION_ENUM.EXPORT: {
+          await handleExport();
+        }
       }
     },
-    [duplicateMutation, navigate, params],
+    [duplicateMutation, handleExport, navigate, params.projectId],
   );
 
   const menu = (

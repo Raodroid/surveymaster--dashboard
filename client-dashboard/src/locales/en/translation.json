@@ -35,6 +35,8 @@
     "projectDescription": "Project Description",
     "personInCharge": "Person In Charge",
     "projectTitle": "Project Title",
+    "exportQualtricsJSON": "Export Qualtrics JSON",
+    "dateOfCreation": "Date of Creation",
     "showHistoryList": "Show History List",
     "closeHistoryList": "Close History List",
     "declineChange": "Decline change",
@@ -55,6 +57,7 @@
     "answer": "Answer",
     "addOneMoreAnswer": "Add one more answer",
     "step": "Step",
+    "gridLine": "Grid Line",
     "minValue": "Min Value",
     "maxValue": "Max Value",
     "saveNewQuestionVersion": "Save New Question Version",
@@ -431,7 +434,11 @@
     "DATE_PICKER": "Date Picker",
     "TIME_PICKER": "Time Picker",
     "SLIDER": "Slider",
-    "TEXT_ENTRY": "Text Entry"
+    "TEXT_ENTRY": "Text Entry",
+    "SIGNATURE" : "Signature",
+     "TEXT_GRAPHIC" : "Text Graphic",
+     "DATA_MATRIX" : "Data Matrix",
+     "FORM_FIELD" : "Form Field"
   },
   "sign": "Lost your phone? Left yourself logged in on a public computer? Need a way to sign out everywhere except your current browser? This is for you.",
   "surveyTemplateEnum": {

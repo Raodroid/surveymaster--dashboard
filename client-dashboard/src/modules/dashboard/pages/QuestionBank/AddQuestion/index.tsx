@@ -18,6 +18,7 @@ import {
 import { ROUTE_PATH } from '../../../../../enums';
 import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
+import { generatePath } from 'react-router';
 
 export interface IAddQuestionFormValue extends BaseQuestionVersionDto {
   masterCategoryId: string;
@@ -93,10 +94,24 @@ const AddQuestion = () => {
       return QuestionBankService.addQuestion(data);
     },
     {
-      onSuccess: async () => {
+      onSuccess: async res => {
         await queryClient.invalidateQueries('getQuestionList');
         notification.success({ message: t('common.createSuccess') });
-        navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
+
+        const nextVersionDisPlayId = res.data.versions?.[0]?.displayId;
+
+        if (nextVersionDisPlayId) {
+          navigate(
+            generatePath(
+              ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION,
+              {
+                questionId: res.data.id,
+              },
+            ) + `?version=${nextVersionDisPlayId}`,
+          );
+        } else {
+          navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
+        }
       },
       onError,
     },

@@ -64,7 +64,7 @@ const DisplayAnswerList: FC<IDisplayAnswerList> = props => {
           <ControlledInput
             inputType={INPUT_TYPES.NUMBER}
             name="numberStep"
-            label={t('common.step')}
+            label={t('common.gridLine')}
           />
           <ControlledInput
             inputType={INPUT_TYPES.NUMBER}
