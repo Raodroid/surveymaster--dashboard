@@ -71,23 +71,16 @@ function UpdateMemberModal(props: UpdateModal) {
       : initialValues;
   }, [userData, allRoles]);
 
-  const createHandleStatus = useCallback(
-    (successMessage: string) => {
-      return {
-        onSuccess: () => {
-          setShowModal(false);
-          notification.success({ message: t(`common.${successMessage}`) });
-          queryClient.invalidateQueries('getTeamMembers');
-        },
-        onError,
-      };
-    },
-    [setShowModal, t, queryClient],
-  );
-
   const mutationUpdateMember = useMutation(
     (payload: UpdateMember) => AdminService.updateMember(payload),
-    createHandleStatus('updateSuccess'),
+    {
+      onSuccess: () => {
+        setShowModal(false);
+        notification.success({ message: t('common.updateSuccess') });
+        queryClient.invalidateQueries('getTeamMembers');
+      },
+      onError,
+    },
   );
 
   const handleFinish = (payload: UpdateMember) => {

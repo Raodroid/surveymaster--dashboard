@@ -50,7 +50,7 @@ function TeamForm() {
     (payload: InviteMember) => AdminService.inviteMember(payload),
     {
       onSuccess: () => {
-        notification.success({ message: t(`common.inviteSuccess`) });
+        notification.success({ message: t('common.inviteSuccess') });
         queryClient.invalidateQueries('getTeamMembers');
       },
       onError,

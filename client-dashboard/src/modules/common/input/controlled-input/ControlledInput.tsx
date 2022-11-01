@@ -24,8 +24,6 @@ const ControlledInput = (props: ControlledInputProps) => {
   const { touched, error } = meta;
   const inputRef = useRef<any>();
 
-  console.log('name', { name });
-
   useEffect(() => {
     const handleClick = () =>
       setValue(inputType === INPUT_TYPES.SELECT ? [] : '');
