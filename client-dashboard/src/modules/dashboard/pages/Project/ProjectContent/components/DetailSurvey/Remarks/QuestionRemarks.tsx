@@ -1,17 +1,19 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ISurvey, ISurveyQuestion } from 'type';
 import Remark from './Remark';
 import { QuestionRemarksWrapper } from './styles';
-import { useFormikContext } from 'formik';
 
 const columns: ColumnsType<ISurveyQuestion> = [
   {
     title: '',
     dataIndex: 'remark',
     key: 'id',
-    render: (_, record: IQuestion, index: number) => <Remark index={index} />,
+    render: (_, record: ISurveyQuestion, index: number) => (
+      <Remark index={index} />
+    ),
   },
 ];
 

@@ -3,17 +3,17 @@ import { ColumnsType } from 'antd/lib/table';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import React from 'react';
-import { IQuestionVersionOption } from 'type';
+import { IQuestionVersionOption, ISurveyQuestion } from 'type';
 import { QuestionListWrapper, QuestionWrapper } from './styles';
 import SimpleBar from 'simplebar-react';
 import { useTranslation } from 'react-i18next';
 
-const columns: ColumnsType<IQuestionVersionOption> = [
+const columns: ColumnsType<ISurveyQuestion> = [
   {
     title: '',
     dataIndex: 'remark',
     key: 'id',
-    render: (_, record: IQuestionVersionOption, index: number) => (
+    render: (_, record: ISurveyQuestion, index: number) => (
       <QuestionWrapper>
         <ControlledInput
           name={`questions[${index}].questionVersion.title`}
@@ -25,7 +25,7 @@ const columns: ColumnsType<IQuestionVersionOption> = [
   },
 ];
 
-function QuestionList(props: { questions: IQuestionVersionOption[] }) {
+function QuestionList(props: { questions?: ISurveyQuestion[] }) {
   const { questions } = props;
   const { t } = useTranslation();
 

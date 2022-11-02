@@ -22,7 +22,7 @@ function ActionHistory() {
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: project.name || '...',
+        name: project?.data?.name || '...',
         href: generatePath(projectRoutePath.SURVEY, {
           projectId: params.projectId,
         }),

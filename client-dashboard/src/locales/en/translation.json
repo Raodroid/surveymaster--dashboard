@@ -449,22 +449,18 @@
   },
   "projectType": {
     "INTERNAL": "Internal",
-    "EXTERNAL": "External",
-    "actionType": {
-      "SURVEY_CREATED": "Survey Created",
-      "SURVEY_ACTIVATE": "Survey Activated",
-      "SURVEY_CLOSE": "Survey Closed",
-      "ADD_QUESTION": "Added New Question",
-      "UPDATE_QUESTION": "Updated Question",
-      "REMOVE_QUESTION": "Removed Question",
-      "CHANGE_SURVEY_NAME": "Changed Survey Name",
-      "CHANGE_SURVEY_REMARK": "Changed Survey Remark",
-      "CHANGE_ORDER_QUESTION": "Changed Order Question",
-      "noActionsYet": "No actions yet"
-    },
-    "actionGroupType": {
-      "change": "from \"{{params.oldSurvey.title}}\" to \"{{params.newSurvey.title}}\"",
-      "rest": "\"{{params.questionVersion.title}}\""
-    }
+    "EXTERNAL": "External"
+  },
+  "actionType": {
+    "SURVEY_CREATED": "Survey Created",
+    "SURVEY_ACTIVATE": "Survey Activated",
+    "SURVEY_CLOSE": "Survey Closed",
+    "ADD_QUESTION": "Added New Question \"{{params.questionVersion.title}}\"",
+    "UPDATE_QUESTION": "Updated Question \"{{params.questionVersion.title}}\"",
+    "REMOVE_QUESTION": "Removed Question \"{{params.questionVersion.title}}\"",
+    "CHANGE_SURVEY_NAME": "Changed Survey Name from \"{{params.oldSurvey.title}}\" to \"{{params.newSurvey.title}}\"",
+    "CHANGE_SURVEY_REMARK": "Changed Survey Remark from \"{{params.oldSurvey.remark}}\" to \"{{params.newSurvey.remark}}\"",
+    "CHANGE_ORDER_QUESTION": "Changed Question Order",
+    "noActionsYet": "No actions yet"
   }
 }

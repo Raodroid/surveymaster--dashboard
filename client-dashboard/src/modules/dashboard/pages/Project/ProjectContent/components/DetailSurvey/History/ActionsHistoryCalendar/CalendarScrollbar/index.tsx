@@ -20,7 +20,9 @@ function CalendarScrollbar() {
   const months = useMemo(() => {
     if (!survey) return [];
 
-    const dateStart = moment(survey?.data.createdAt);
+    const dateStart = moment(survey?.data.createdAt)
+      .startOf('month')
+      .startOf('day');
     const dateEnd = moment();
     const months: string[] = [];
     while (dateEnd.isSameOrAfter(dateStart)) {

@@ -6,41 +6,39 @@ import {
   projectRoutePath,
   useGetProjectByIdQuery,
 } from 'modules/dashboard/pages/Project/util';
+import moment from 'moment';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
 import { IPostSurveyBodyDto, ISurvey } from 'type';
 import { onError } from 'utils';
 import { projectSurveyParams } from '..';
-import { SurveyQuestionDto } from '../../../../../../../../interfaces';
+import { MOMENT_FORMAT } from '../../../../../../../../enums';
 import ProjectHeader from '../../Header';
+import { useGetSurveyById } from '../../Survey/util';
 import Inputs from '../Inputs';
-import { useGetSurveyDetail } from '../utils';
 import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
-import { useNavigate } from 'react-router-dom';
-import { useGetSurveyById } from '../../Survey/util';
-import moment from 'moment';
-import { MOMENT_FORMAT } from '../../../../../../../../enums';
 
 function Remarks() {
-  const params = useParams<projectSurveyParams>();
-  const { surveyData: survey } = useGetSurveyById(params.surveyId);
-  const { project } = useGetProjectByIdQuery(params.projectId);
-
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const params = useParams<projectSurveyParams>();
 
-  const { project, survey, isSurveyLoading } = useGetSurveyDetail();
+  const { surveyData: survey, isLoading: isSurveyLoading } = useGetSurveyById(
+    params.surveyId,
+  );
+  const { project } = useGetProjectByIdQuery(params.projectId);
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: project.name || '...',
+        name: project?.name || '...',
         href: generatePath(projectRoutePath.SURVEY, {
           projectId: params?.projectId,
         }),
