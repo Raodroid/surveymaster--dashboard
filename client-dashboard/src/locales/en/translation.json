@@ -37,6 +37,7 @@
     "projectTitle": "Project Title",
     "exportQualtricsJSON": "Export Qualtrics JSON",
     "dateOfCreation": "Date of Creation",
+    "today": "Today",
     "showHistoryList": "Show History List",
     "closeHistoryList": "Close History List",
     "declineChange": "Decline change",
@@ -142,7 +143,7 @@
     "remarks": "Remarks",
     "remark": "Remark",
     "questionRemarks": "Question Remarks",
-    "actionHistory": "Action History",
+    "actionsHistory": "Actions History",
     "signOutAllOtherSessions": "Sign Out All Other Sessions",
     "dontReceiveCode": "Did not receive your code?",
     "alreadyHasAccount": "Already have an account",
@@ -435,10 +436,10 @@
     "TIME_PICKER": "Time Picker",
     "SLIDER": "Slider",
     "TEXT_ENTRY": "Text Entry",
-    "SIGNATURE" : "Signature",
-    "TEXT_GRAPHIC" : "Text Graphic",
-    "DATA_MATRIX" : "Data Matrix",
-    "FORM_FIELD" : "Form Field"
+    "SIGNATURE": "Signature",
+    "TEXT_GRAPHIC": "Text Graphic",
+    "DATA_MATRIX": "Data Matrix",
+    "FORM_FIELD": "Form Field"
   },
   "sign": "Lost your phone? Left yourself logged in on a public computer? Need a way to sign out everywhere except your current browser? This is for you.",
   "surveyTemplateEnum": {
@@ -449,5 +450,17 @@
   "projectType": {
     "INTERNAL": "Internal",
     "EXTERNAL": "External"
+  },
+  "actionType": {
+    "SURVEY_CREATED": "Survey Created",
+    "SURVEY_ACTIVATE": "Survey Activated",
+    "SURVEY_CLOSE": "Survey Closed",
+    "ADD_QUESTION": "Added New Question \"{{params.questionVersion.title}}\"",
+    "UPDATE_QUESTION": "Updated Question \"{{params.questionVersion.title}}\"",
+    "REMOVE_QUESTION": "Removed Question \"{{params.questionVersion.title}}\"",
+    "CHANGE_SURVEY_NAME": "Changed Survey Name from \"{{params.oldSurvey.title}}\" to \"{{params.newSurvey.title}}\"",
+    "CHANGE_SURVEY_REMARK": "Changed Survey Remark from \"{{params.oldSurvey.remark}}\" to \"{{params.newSurvey.remark}}\"",
+    "CHANGE_ORDER_QUESTION": "Changed Question Order",
+    "noActionsYet": "No actions yet"
   }
 }

@@ -1,9 +1,14 @@
 import { AxiosResponse } from 'axios';
-import { IPostSurveyBodyDto } from 'type';
+import { IGetParams, IPostSurveyBodyDto } from 'type';
 import APIService from './base.service';
 
+interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
+  projectId?: string;
+  isDeleted?: string | boolean;
+}
+
 export default class SurveyService {
-  static getSurveys(params: any): Promise<AxiosResponse> {
+  static getSurveys(params: GetSurveyParams): Promise<AxiosResponse> {
     return APIService.get('surveys', { params });
   }
   static getSurveyFile(surveyId: string): Promise<AxiosResponse> {
@@ -25,5 +30,19 @@ export default class SurveyService {
   static updateSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
     const { surveyId } = props;
     return APIService.put(`/surveys/${surveyId}  `, props);
+  }
+
+  static getSurveyHistories(
+    params: IGetParams & { surveyId?: string },
+  ): Promise<AxiosResponse> {
+    const { surveyId } = params;
+    return APIService.get(`surveys/${surveyId}/histories`, { params });
+  }
+
+  static getAllSurveyHistories(
+    params: IGetParams & { surveyId?: string },
+  ): Promise<AxiosResponse> {
+    const { surveyId } = params;
+    return APIService.get(`surveys/${surveyId}/histories`, { params });
   }
 }

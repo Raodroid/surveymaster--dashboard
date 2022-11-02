@@ -1,5 +1,6 @@
 import { NotificationType } from 'aws-sdk/clients/budgets';
 import { UserUpdatedDto } from 'interfaces';
+import { IGetParams } from 'type';
 import APIService from './base.service';
 
 export default class UserService {
@@ -22,5 +23,12 @@ export default class UserService {
       disabledNotificationTypes,
       isDisableEmailNotification,
     });
+  }
+
+  static getUserById(params: {
+    userId: string;
+    roles: number[];
+  }): Promise<any> {
+    return APIService.get(`users/${params.userId}`, { params: params });
   }
 }

@@ -14,7 +14,7 @@ export const Chat = props => {
       <g
         id="UI-design"
         stroke="none"
-        stroke-width="1"
+        strokeWidth="1"
         fill="none"
         fillRule="evenodd"
       >

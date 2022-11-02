@@ -22,8 +22,8 @@ function Inputs(props: {
   return (
     <InputsWrapper>
       <div className="mainInfo-title title">
-        {project.type === ProjectTypes.EXTERNAL && t('common.external')}{' '}
-        {t('common.mainInformation')}::
+        {project.type === ProjectTypes.EXTERNAL ? t('common.external') : null}{' '}
+        {t('common.mainInformation')}:
       </div>
       <div className="flex-j-between title-wrapper">
         <ControlledInput
@@ -37,16 +37,16 @@ function Inputs(props: {
           disabled={disabled}
           inputType={INPUT_TYPES.INPUT}
         />
-        {!hideDate && (
+        {!hideDate ? (
           <ControlledInput
             name="createdAt"
             label="Date Created"
             disabled={disabled}
             inputType={INPUT_TYPES.INPUT}
           />
-        )}
+        ) : null}
       </div>
-      {!hideRemarks && (
+      {!hideRemarks ? (
         <ControlledInput
           name="remark"
           label="Survey Remarks"
@@ -54,13 +54,13 @@ function Inputs(props: {
           disabled={disabled}
           inputType={INPUT_TYPES.TEXTAREA}
         />
-      )}
+      ) : null}
 
       <Divider type="vertical" className="divider" />
 
       <div className="title surveyParams">
-        {project.type === ProjectTypes.EXTERNAL && t('common.external')}{' '}
-        {t('common.surveyParameters')}::
+        {project.type === ProjectTypes.EXTERNAL ? t('common.external') : null}{' '}
+        {t('common.surveyParameters')}:
       </div>
       <ControlledInput
         name="displayId"

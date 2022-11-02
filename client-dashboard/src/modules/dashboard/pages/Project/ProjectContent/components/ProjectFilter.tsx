@@ -13,7 +13,7 @@ import {
   ProjectFilterBtn,
   ProjectFilterOverlayWrapper,
   ProjectFilterWrapper,
-} from './styles';
+} from './Header/styles';
 import qs from 'qs';
 
 export interface IFilter {
@@ -37,6 +37,7 @@ export interface QsParams {
 
 function ProjectFilter() {
   const [counter, setCounter] = useState(0);
+  const { t } = useTranslation();
   const qsParams = useParseQueryString<QsParams>();
 
   useEffect(() => {
@@ -54,10 +55,11 @@ function ProjectFilter() {
       <Dropdown
         overlay={<FilterOverlay counter={counter} setCounter={setCounter} />}
         trigger={['click']}
+        placement="bottomRight"
       >
         <ProjectFilterBtn type="primary" className="flex-j-end">
           <FilterOutlined />
-          Filter
+          {t('common.filters')}
           <div className="counter flex-center">
             {counter}
             <ArrowDown />

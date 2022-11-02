@@ -5,15 +5,13 @@ import { SearchIcon } from 'icons/SearchIcon';
 import StyledBreadcrumb, {
   IBreadcrumbItem,
 } from 'modules/common/commonComponent/StyledBreadcrumb';
+import qs from 'qs';
 import { useCallback, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
-import { useDebounce } from 'utils';
 import { projectRoutePath } from '../../../util';
-import ProjectFilter from './ProjectFilter';
+import ProjectFilter from '../ProjectFilter';
 import { HeaderStyled } from './styles';
-import { useEffect } from 'react';
-import qs from 'qs';
 
 function ProjectHeader(props: {
   routes?: IBreadcrumbItem[];
@@ -24,7 +22,6 @@ function ProjectHeader(props: {
   const searchRef = useRef<InputRef>(null);
 
   const [inputSearch, setInputSearch] = useState<string>('');
-  const debounce = useDebounce(inputSearch);
 
   const { pathname } = useLocation();
   const navigate = useNavigate();

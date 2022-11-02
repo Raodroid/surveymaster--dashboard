@@ -1,5 +1,5 @@
 import { UserPayload } from 'redux/user';
-import { IProject, ISurveyQuestion, ProjectTypes } from 'type';
+import { ISurvey, ProjectTypes } from 'type';
 
 export interface ProjectPayload {
   name?: string;
@@ -7,24 +7,6 @@ export interface ProjectPayload {
   description?: string;
   personInCharge?: string;
   type: ProjectTypes | string;
-}
-
-export interface ISurvey {
-  id?: string;
-  displayId: string;
-  projectId: string;
-  name: string;
-  remark?: string;
-  project?: IProject;
-  questions?: ISurveyQuestion[];
-  numberOfQuestions: number;
-
-  createdBy: UserPayload;
-  updatedBy?: UserPayload;
-  deletedBy?: UserPayload;
-  createdAt: Date | string;
-  updatedAt?: Date | string | null;
-  deletedAt?: Date | string | null;
 }
 
 export interface SurveyQuestionDto {
@@ -44,4 +26,17 @@ export interface PutSurveyBodyDto {
   name: string;
   remark?: string;
   questions: SurveyQuestionDto[];
+}
+
+export interface IAction {
+  actionType: string;
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  deletedAt: string;
+  id: string;
+  surveyId: string;
+  params: string;
+  survey?: ISurvey;
+  owner: UserPayload;
 }
