@@ -158,7 +158,7 @@ const ViewQuestion = () => {
   const wrapperRef = useRef<any>();
 
   return (
-    <ViewQuestionWrapper className={'ViewQuestion'} ref={wrapperRef}>
+    <ViewQuestionWrapper className={'QuestionContent'} ref={wrapperRef}>
       <HannahCustomSpin
         parentRef={wrapperRef}
         spinning={
@@ -204,15 +204,19 @@ const ViewQuestion = () => {
           onSubmit={onFinish}
           initialValues={initValue}
           validationSchema={formSchema}
-          render={({ handleSubmit }) => (
+        >
+          {({ handleSubmit }) => (
             <Form
               id={'filter-form'}
               layout={'vertical'}
               onFinish={handleSubmit}
               disabled
+              className={'QuestionContent__body'}
             >
-              <div className="ViewQuestion__body">
-                <div className={'ViewQuestion__body__section question-section'}>
+              <div className="QuestionContent__body__content-wrapper">
+                <div
+                  className={'QuestionContent__body__section question-section'}
+                >
                   <div className={'question-section__row'}>
                     <div className={'version-wrapper'}>
                       {versions?.map(version => {
@@ -268,13 +272,15 @@ const ViewQuestion = () => {
                   </div>
                 </div>
                 <div className={'divider'} />
-                <div className={'ViewQuestion__body__section category-section'}>
+                <div
+                  className={'QuestionContent__body__section category-section'}
+                >
                   <QuestionCategoryForm />
                 </div>
               </div>
             </Form>
           )}
-        />
+        </Formik>
       )}
     </ViewQuestionWrapper>
   );

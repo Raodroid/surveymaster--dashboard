@@ -194,10 +194,12 @@ const EditQuestion = () => {
               id={'edit-question-form'}
               layout={'vertical'}
               onFinish={handleSubmit}
-              className={'EditQuestion__body'}
+              className={'QuestionContent__body'}
             >
-              <div className={'EditQuestion__body__content-wrapper'}>
-                <div className={'EditQuestion__body__section question-section'}>
+              <div className={'QuestionContent__body__content-wrapper'}>
+                <div
+                  className={'QuestionContent__body__section question-section'}
+                >
                   <div className={'question-section__row'}>
                     <div className={'question-detail-wrapper'}>
                       <div className={'question-section__row__title'}>
@@ -220,7 +222,9 @@ const EditQuestion = () => {
                   </div>
                 </div>
                 <div className={'divider'} />
-                <div className={'EditQuestion__body__section category-section'}>
+                <div
+                  className={'QuestionContent__body__section category-section'}
+                >
                   <div className={'category-section__row__title'}>
                     {t('common.questionParameters')}
                   </div>
@@ -228,8 +232,8 @@ const EditQuestion = () => {
                 </div>
               </div>
             </Form>
-            <div className={'EditQuestion__footer'}>
-              <div className={'EditQuestion__footer__submit-btn-wrapper'}>
+            <div className={'QuestionContent__footer'}>
+              <div className={'QuestionContent__footer__submit-btn-wrapper'}>
                 <Button
                   form={'edit-question-form'}
                   htmlType={'submit'}
