@@ -30,7 +30,7 @@ import { SurveyWrapper, TableWrapper } from './style';
 import { MenuDropDownWrapper } from 'customize-components/styles';
 import { MOMENT_FORMAT, SCOPE_CONFIG } from 'enums';
 import { CopyOutlined, ExportOutlined } from '@ant-design/icons';
-import { useCheckScopeEntity } from '../../../../../../common/hoc';
+import { useCheckScopeEntityDefault } from '../../../../../../common/hoc';
 
 const initParams: IGetParams = {
   q: '',
@@ -216,7 +216,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   );
   const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
-  const { canUpdate, canRead } = useCheckScopeEntity(
+  const { canUpdate, canRead } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTIONS,
   );
 
@@ -244,7 +244,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         key: ACTION_ENUM.EDIT,
       });
       baseMenu.push({
-       icon: <FileIconOutlined />,
+        icon: <FileIconOutlined />,
         label: t('common.duplicateSurvey'),
         key: ACTION_ENUM.DUPLICATE_SURVEY,
       });

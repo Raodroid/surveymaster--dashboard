@@ -3,7 +3,7 @@ import { ROUTE_PATH } from '../../../../../enums';
 import BaseMenu from '../BaseMenu';
 import { SCOPE_CONFIG } from '../../../../../enums/user';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { useCheckScopeEntity } from '../../../../common/hoc';
+import { useCheckScopeEntityDefault } from '../../../../common/hoc';
 
 export const mainMenuItem = [
   {
@@ -17,10 +17,10 @@ export const mainMenuItem = [
 ];
 
 const MainMenu = () => {
-  const { canRead: canReadQuestion } = useCheckScopeEntity(
+  const { canRead: canReadQuestion } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTIONS,
   );
-  const { canRead: canReadProject } = useCheckScopeEntity(
+  const { canRead: canReadProject } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.PROJECTS,
   );
   const menuItems = useMemo<ItemType[]>(() => {

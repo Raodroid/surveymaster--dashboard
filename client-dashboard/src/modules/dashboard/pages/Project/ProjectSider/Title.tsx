@@ -7,7 +7,7 @@ import { generatePath, useNavigate, useParams } from 'react-router';
 import { projectRoutePath, useGetProjectByIdQuery } from '../util';
 import { TitleStyled } from './style';
 import { ProjectTypes } from '../../../../../type';
-import { useCheckScopeEntity } from '../../../../common/hoc';
+import { useCheckScopeEntityDefault } from '../../../../common/hoc';
 import { SCOPE_CONFIG } from '../../../../../enums';
 
 interface TitleProps {
@@ -24,7 +24,7 @@ function Title(props: TitleProps) {
 
   const { project, isLoading } = useGetProjectByIdQuery(params.projectId);
 
-  const { canCreate, canRead } = useCheckScopeEntity(
+  const { canCreate, canRead } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTIONS,
   );
 

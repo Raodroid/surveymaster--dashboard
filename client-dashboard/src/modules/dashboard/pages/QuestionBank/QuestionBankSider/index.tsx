@@ -2,11 +2,13 @@ import React, { memo } from 'react';
 import { QuestionBankSiderWrapper } from './style';
 import QuestionBankSiderMainContent from './main-content';
 import QuestionBankSiderFooter from './footer';
-import { useCheckScopeEntity } from '../../../../common/hoc';
-import { SCOPE_CONFIG } from '../../../../../enums/user';
+import { useCheckScopeEntityDefault } from '../../../../common/hoc';
+import { SCOPE_CONFIG } from 'enums';
 
 const QuestionBankSider = () => {
-  const { canCreate } = useCheckScopeEntity(SCOPE_CONFIG.ENTITY.QUESTIONS);
+  const { canCreate } = useCheckScopeEntityDefault(
+    SCOPE_CONFIG.ENTITY.QUESTIONS,
+  );
   return (
     <QuestionBankSiderWrapper>
       <div className={'question-bank__body'}>

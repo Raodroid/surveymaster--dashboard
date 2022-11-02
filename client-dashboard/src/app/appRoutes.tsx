@@ -7,7 +7,7 @@ import { useScrollbarContext } from '../scrollbarContext/useScrollBar';
 import { ProtectedRoutes } from './protected.route';
 import { NoAuthenticationRoutes } from './public.route';
 import { UnProtectedRoutes } from './unProtected.route';
-import { useCheckScopeEntity } from '../modules/common/hoc';
+import { useCheckScopeEntityDefault } from '../modules/common/hoc';
 import { SCOPE_CONFIG } from '../enums/user';
 
 const Home = lazy(() => import('modules/dashboard/pages/Home'));
@@ -38,7 +38,7 @@ export const ScrollToTop = props => {
 };
 
 const AppRoutes = () => {
-  const { canRead: canReadQuestion } = useCheckScopeEntity(
+  const { canRead: canReadQuestion } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTIONS,
   );
   return (

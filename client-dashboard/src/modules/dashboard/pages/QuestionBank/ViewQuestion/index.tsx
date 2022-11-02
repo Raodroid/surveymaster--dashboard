@@ -22,14 +22,14 @@ import {
   IQuestionVersion,
   QuestionType,
   QuestionVersionStatus,
-} from '../../../../../type';
+} from 'type';
 import { useMutation, useQueryClient } from 'react-query';
-import { QuestionBankService } from '../../../../../services';
+import { QuestionBankService } from 'services';
 import { onError } from '../../../../../utils';
 import moment, { Moment } from 'moment';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
-import { SCOPE_CONFIG } from '../../../../../enums/user';
-import { useCheckScopeEntity } from '../../../../common/hoc';
+import { SCOPE_CONFIG } from 'enums';
+import { useCheckScopeEntityDefault } from '../../../../common/hoc';
 
 const formSchema = Yup.object();
 
@@ -48,7 +48,7 @@ const ViewQuestion = () => {
   const queryString = useParseQueryString<{ version?: string }>();
   const params = useParams<{ questionId?: string }>();
 
-  const { canDelete, canUpdate } = useCheckScopeEntity(
+  const { canDelete, canUpdate } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTIONS,
   );
 

@@ -8,13 +8,13 @@ import { ProjectContentWrapper } from './ProjectContent/styles';
 import ProjectSider from './ProjectSider';
 import { ProjectWrapper } from './styles';
 import { projectRoutePath } from './util';
-import { useCheckScopeEntity } from '../../../common/hoc';
+import { useCheckScopeEntityDefault } from '../../../common/hoc';
 import { SCOPE_CONFIG } from 'enums';
 
 const Project = () => {
   const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');
 
-  const { canRead: canReadSurvey } = useCheckScopeEntity(
+  const { canRead: canReadSurvey } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.SURVEYS,
   );
 

@@ -20,7 +20,7 @@ import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
 import { SearchIcon } from 'icons/SearchIcon';
-import { useCheckScopeEntity } from 'modules/common/hoc/useCheckScopeEntity';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc/useCheckScopeEntityDefault';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -92,9 +92,8 @@ function TeamContent() {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
 
-  const { canCreate, canUpdate, canDelete, canRestore } = useCheckScopeEntity(
-    SCOPE_CONFIG.ENTITY.USERS,
-  );
+  const { canCreate, canUpdate, canDelete, canRestore } =
+    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
 
   useEffect(() => {
     if (!searchDebounce) setFilter('');

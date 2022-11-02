@@ -36,7 +36,10 @@ import qs from 'qs';
 import { PenFilled, TrashOutlined } from '../../../../../icons';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
 import { MenuDropDownWrapper } from '../../../../../customize-components/styles';
-import { ScopeActionArray, useCheckScopeEntity } from '../../../../common/hoc';
+import {
+  ScopeActionArray,
+  useCheckScopeEntityDefault,
+} from '../../../../common/hoc';
 import { SCOPE_CONFIG } from '../../../../../enums/user';
 
 const { Item } = Menu;
@@ -271,7 +274,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const context = useContext(CategoryDetailContext);
   const setLoading = context?.setLoading;
 
-  const { canCreate, canDelete, canUpdate } = useCheckScopeEntity(
+  const { canCreate, canDelete, canUpdate } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTIONS,
   );
 
