@@ -7,6 +7,8 @@ import { useScrollbarContext } from '../scrollbarContext/useScrollBar';
 import { ProtectedRoutes } from './protected.route';
 import { NoAuthenticationRoutes } from './public.route';
 import { UnProtectedRoutes } from './unProtected.route';
+import { useCheckScopeEntity } from '../modules/common/hoc';
+import { SCOPE_CONFIG } from '../enums/user';
 
 const Home = lazy(() => import('modules/dashboard/pages/Home'));
 const Project = lazy(() => import('modules/dashboard/pages/Project'));
@@ -36,6 +38,9 @@ export const ScrollToTop = props => {
 };
 
 const AppRoutes = () => {
+  const { canRead: canReadQuestion } = useCheckScopeEntity(
+    SCOPE_CONFIG.ENTITY.QUESTIONS,
+  );
   return (
     <ScrollToTop>
       <Suspense fallback={<CustomSpinSuspense />}>
@@ -55,24 +60,26 @@ const AppRoutes = () => {
                 element={<Profile />}
               />
             </Route>
-            <Route
-              path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}
-              element={<QuestionBank />}
-            >
-              <Route index element={<CategoryDetail />} />
+            {canReadQuestion && (
               <Route
-                path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.EDIT_QUESTION}
-                element={<EditQuestion />}
-              />
-              <Route
-                path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION}
-                element={<ViewQuestion />}
-              />
-              <Route
-                path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ADD_QUESTION}
-                element={<AddQuestion />}
-              />
-            </Route>
+                path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}
+                element={<QuestionBank />}
+              >
+                <Route index element={<CategoryDetail />} />
+                <Route
+                  path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.EDIT_QUESTION}
+                  element={<EditQuestion />}
+                />
+                <Route
+                  path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION}
+                  element={<ViewQuestion />}
+                />
+                <Route
+                  path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ADD_QUESTION}
+                  element={<AddQuestion />}
+                />
+              </Route>
+            )}
             <Route path="*" element={<Navigate to={'/app'} replace />} />
           </Route>
           <Route path="*" element={<UnProtectedRoutes />}>

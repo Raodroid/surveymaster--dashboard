@@ -20,9 +20,7 @@ import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
 import { SearchIcon } from 'icons/SearchIcon';
-import useCheckScopeEntity, {
-  ScopeActionArray,
-} from 'modules/common/hoc/useCheckScopeEntity';
+import { useCheckScopeEntity } from 'modules/common/hoc/useCheckScopeEntity';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -94,15 +92,8 @@ function TeamContent() {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
 
-  const productActionNeedToCheckedPermission: ScopeActionArray[] = [
-    { action: SCOPE_CONFIG.ACTION.CREATE },
-    { action: SCOPE_CONFIG.ACTION.UPDATE },
-    { action: SCOPE_CONFIG.ACTION.DELETE },
-    { action: SCOPE_CONFIG.ACTION.RESTORE },
-  ];
-  const [canCreate, canEdit, canDelete, canRestore] = useCheckScopeEntity(
+  const { canCreate, canUpdate, canDelete, canRestore } = useCheckScopeEntity(
     SCOPE_CONFIG.ENTITY.USERS,
-    productActionNeedToCheckedPermission,
   );
 
   useEffect(() => {
@@ -196,7 +187,7 @@ function TeamContent() {
           <ThreeDotsDropdown
             overlay={
               <DropDownMenuStyled>
-                {canEdit && (
+                {canUpdate && (
                   <Menu.Item
                     key="editPreferences"
                     disabled={!isAdminRole}
@@ -208,7 +199,7 @@ function TeamContent() {
                     {t('common.editPreferences')}
                   </Menu.Item>
                 )}
-                {profile && record.key !== profile.id && canEdit && (
+                {profile && record.key !== profile.id && canUpdate && (
                   <Menu.Item
                     key="resetUserPassword"
                     disabled={!isAdminRole}
@@ -253,7 +244,7 @@ function TeamContent() {
         ),
       },
     ],
-    [profile, t, isAdminRole, canEdit, canRestore, canDelete, allRoles],
+    [profile, t, isAdminRole, canUpdate, canRestore, canDelete, allRoles],
   );
 
   const data: TeamMember[] = useMemo(

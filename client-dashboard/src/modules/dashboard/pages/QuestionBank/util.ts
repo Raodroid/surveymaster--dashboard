@@ -7,6 +7,7 @@ import { IOptionItem, IQuestion, IQuestionCategory } from '../../../../type';
 
 export const useGetQuestionByQuestionId = (
   questionId?: string,
+  permission?: boolean,
 ): [IQuestion, boolean] => {
   const { data, isLoading } = useQuery(
     ['getQuestionQuery', questionId],

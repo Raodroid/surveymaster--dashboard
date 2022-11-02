@@ -5,14 +5,14 @@ import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { useGetQuestionByQuestionId } from '../util';
-import { Button, Form, notification, Spin } from 'antd';
+import { Button, Form, notification } from 'antd';
 import QuestionCategoryForm from './QuestionCategoryForm';
 import { useTranslation } from 'react-i18next';
 import QuestionDetailForm from './QuestionDetailForm';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import useParseQueryString from 'hooks/useParseQueryString';
-import { PenFilled, TrashOutlined } from 'icons';
+import { PenFilled } from 'icons';
 import templateVariable from 'app/template-variables.module.scss';
 import qs from 'qs';
 import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
@@ -28,6 +28,8 @@ import { QuestionBankService } from '../../../../../services';
 import { onError } from '../../../../../utils';
 import moment, { Moment } from 'moment';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
+import { SCOPE_CONFIG } from '../../../../../enums/user';
+import { useCheckScopeEntity } from '../../../../common/hoc';
 
 const formSchema = Yup.object();
 
@@ -45,6 +47,11 @@ const ViewQuestion = () => {
   const queryClient = useQueryClient();
   const queryString = useParseQueryString<{ version?: string }>();
   const params = useParams<{ questionId?: string }>();
+
+  const { canDelete, canUpdate } = useCheckScopeEntity(
+    SCOPE_CONFIG.ENTITY.QUESTIONS,
+  );
+
   const [questionData, isLoading] = useGetQuestionByQuestionId(
     params.questionId as string,
   );
@@ -171,14 +178,16 @@ const ViewQuestion = () => {
         title={'View Question'}
         endingComponent={
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Button
-              type={'primary'}
-              onClick={handleDeleteQuestionVersion}
-              loading={deleteQuestionVersionMutation.isLoading}
-            >
-              {t('common.deleteThisVersion')}
-            </Button>
-            {selectedVerQuestionData && isDraftVersion && (
+            {canDelete && (
+              <Button
+                type={'primary'}
+                onClick={handleDeleteQuestionVersion}
+                loading={deleteQuestionVersionMutation.isLoading}
+              >
+                {t('common.deleteThisVersion')}
+              </Button>
+            )}
+            {canUpdate && selectedVerQuestionData && isDraftVersion && (
               <Button
                 type={'primary'}
                 className={'info-btn'}
@@ -188,13 +197,15 @@ const ViewQuestion = () => {
                 {t('direction.maskAsCompleted')}
               </Button>
             )}
-            <PenFilled
-              onClick={handleEdit}
-              style={{
-                color: templateVariable.primary_color,
-                cursor: 'pointer',
-              }}
-            />
+            {canUpdate && (
+              <PenFilled
+                onClick={handleEdit}
+                style={{
+                  color: templateVariable.primary_color,
+                  cursor: 'pointer',
+                }}
+              />
+            )}
           </div>
         }
       />
