@@ -94,6 +94,10 @@ export default class AuthReducer {
       case AuthAction.TYPES.RESEND_CODE.FAILURE:
         return AuthReducer.handleResendCode(state, action);
 
+      // Update accessToken
+      case AuthAction.TYPES.UPDATE_TOKENS:
+        return AuthReducer.handleUpdateTokens(state, action);
+
       // Sync actions
       default:
         return state;
@@ -331,6 +335,20 @@ export default class AuthReducer {
 
       case AuthAction.TYPES.RESEND_CODE.FAILURE: {
         return state.set('isResend', false).set('error', action.error);
+      }
+      default:
+        return state;
+    }
+  };
+
+  static handleUpdateTokens = (
+    state: RecordOf<AuthState>,
+    action: StandardAction,
+  ): RecordOf<AuthState> => {
+    switch (action.type) {
+      case AuthAction.TYPES.UPDATE_TOKENS: {
+        const { accessToken, idToken } = action.payload;
+        return state.set('idToken', idToken).set('accessToken', accessToken);
       }
       default:
         return state;
