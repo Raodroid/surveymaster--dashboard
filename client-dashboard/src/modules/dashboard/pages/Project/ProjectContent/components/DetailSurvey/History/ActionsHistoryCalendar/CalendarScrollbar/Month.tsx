@@ -30,12 +30,13 @@ function Month(props: { month: string; renderLines?: boolean }) {
   return (
     <MonthWrapper height={MONTH_HEIGHT}>
       {month}
-      {renderLines &&
-        Array(getRandomInRange(5, 8))
-          .fill(1)
-          .map((elm, index: number) => (
-            <div key={index} className="line" style={generateStyle()}></div>
-          ))}
+      {renderLines
+        ? Array(getRandomInRange(5, 8))
+            .fill(1)
+            .map((elm, index: number) => (
+              <div key={index} className="line" style={generateStyle()}></div>
+            ))
+        : null}
     </MonthWrapper>
   );
 }

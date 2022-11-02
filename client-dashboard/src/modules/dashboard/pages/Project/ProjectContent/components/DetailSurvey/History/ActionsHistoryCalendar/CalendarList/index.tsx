@@ -74,13 +74,14 @@ function CalendarList() {
               paddingRight: 10,
             }}
           >
-            {actionsFiltered &&
-              actionsFiltered.map(action => (
-                <Action key={action.id} action={action} />
-              ))}
-            {actionsFiltered && actionsFiltered.length === 0 && (
+            {actionsFiltered
+              ? actionsFiltered.map(action => (
+                  <Action key={action.id} action={action} />
+                ))
+              : null}
+            {actionsFiltered && actionsFiltered.length === 0 ? (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-            )}
+            ) : null}
           </SimpleBar>
         </div>
         <Divider className="list-divider" />

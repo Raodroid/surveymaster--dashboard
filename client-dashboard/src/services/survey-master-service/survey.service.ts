@@ -8,13 +8,6 @@ interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
 }
 
 export default class SurveyService {
-  // static getSurveys(
-  //   props: IGetParams & { projectId: string },
-  // ): Promise<AxiosResponse> {
-  //   const { projectId } = props;
-  //   return APIService.get(`/surveys/${projectId}`);
-  // }
-
   static getSurveys(params: GetSurveyParams): Promise<AxiosResponse> {
     return APIService.get('surveys', { params });
   }

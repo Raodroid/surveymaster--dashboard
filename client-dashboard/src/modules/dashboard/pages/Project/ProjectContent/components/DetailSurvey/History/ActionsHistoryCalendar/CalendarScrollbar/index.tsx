@@ -44,7 +44,7 @@ function CalendarScrollbar() {
       <div className="height-100 flex-column calendar-wrapper">
         <Input disabled name="today" value="Today" />
         <MothsWrapper id={ACTIONS_HISTORY_ID.MONTHS_WRAPPER}>
-          {survey && <Thumb />}
+          {survey ? <Thumb /> : null}
 
           <div className="months" id={ACTIONS_HISTORY_ID.MONTHS}>
             {months.map((month: string, index: number) => {
