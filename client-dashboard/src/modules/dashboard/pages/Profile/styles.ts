@@ -377,14 +377,22 @@ export const TeamContentStyled = styled(ContentStyled)`
 export const TableWrapperStyled = styled.div`
   flex: 1;
   width: 100%;
+  padding-top: 6px;
   overflow: hidden;
   .ant-spin-nested-loading,
   .ant-spin-container {
     height: 100%;
     overflow: hidden;
   }
+  .ant-spin-container {
+    display: flex;
+    flex-direction: column;
+    .table-wrapper {
+      flex: 1;
+    }
+  }
   .ant-table {
-    padding: 12px 16px 12px 12px;
+    padding: 12px 16px 0 12px;
   }
   .ant-table-row,
   .ant-table-thead {
@@ -402,7 +410,6 @@ export const TableWrapperStyled = styled.div`
   .ant-table-body {
     overflow-y: auto !important;
   }
-
   .ant-table-thead {
     .ant-table-cell {
       border: none;

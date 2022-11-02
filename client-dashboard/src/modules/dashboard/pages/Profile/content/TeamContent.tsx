@@ -318,26 +318,28 @@ function TeamContent() {
 
         <TableWrapperStyled>
           <CustomSpinSuspense spinning={isLoading}>
-            <SimpleBar style={{ maxHeight: '100%' }}>
-              <Table
-                rowSelection={{
-                  type: 'checkbox',
-                  ...rowSelection,
-                }}
-                scroll={{ y: 'fit-content' }}
-                columns={columns}
-                dataSource={data}
-                pagination={false}
-              />
-              <Pagination
-                className="flex-j-end pagination"
-                showSizeChanger={false}
-                defaultCurrent={page}
-                current={page}
-                total={teamMembers?.data?.pageCount * 10}
-                onChange={e => setPage(e)}
-              />
-            </SimpleBar>
+            <div className="table-wrapper">
+              <SimpleBar style={{ maxHeight: '100%' }}>
+                <Table
+                  rowSelection={{
+                    type: 'checkbox',
+                    ...rowSelection,
+                  }}
+                  scroll={{ y: 'fit-content' }}
+                  columns={columns}
+                  dataSource={data}
+                  pagination={false}
+                />
+              </SimpleBar>
+            </div>
+            <Pagination
+              className="flex-j-end pagination"
+              showSizeChanger={false}
+              defaultCurrent={page}
+              current={page}
+              total={teamMembers?.data?.pageCount * 10}
+              onChange={e => setPage(e)}
+            />
           </CustomSpinSuspense>
         </TableWrapperStyled>
       </div>
