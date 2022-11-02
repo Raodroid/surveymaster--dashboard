@@ -18,25 +18,13 @@ export interface UserUpdatedDto {
   departmentName?: string;
 }
 
-export interface InviteMember {
-  firstName: string;
-  lastName: string;
-  email: string;
-  displayName: string;
+export interface PostPutMember {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  displayName?: string;
   description?: string;
-  roles: number[];
-  userRoles: any;
-  departmentName: string;
-}
-
-export interface UpdateMember {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  displayName: string;
-  description?: string;
-  roles: number[];
-  userRoles: any;
-  departmentName: string;
+  roles?: number[];
+  departmentName?: string;
 }

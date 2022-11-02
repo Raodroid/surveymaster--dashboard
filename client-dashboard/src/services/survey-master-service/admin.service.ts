@@ -1,4 +1,4 @@
-import { InviteMember, UpdateMember } from 'interfaces';
+import { PostPutMember } from 'interfaces';
 import { IGetParams } from 'type';
 import APIService from './base.service';
 
@@ -15,11 +15,11 @@ export default class AdminService {
     return APIService.patch(`users/${userId}/password`, payload);
   }
 
-  static inviteMember(payload: InviteMember): Promise<any> {
+  static inviteMember(payload: PostPutMember): Promise<any> {
     return APIService.post(`users`, payload);
   }
 
-  static updateMember(payload: UpdateMember): Promise<any> {
+  static updateMember(payload: PostPutMember): Promise<any> {
     return APIService.put(`/users/${payload.id}`, payload);
   }
 

@@ -2,7 +2,7 @@ import { Button, Divider, Form, notification } from 'antd';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
 import { Formik } from 'formik';
-import { InviteMember } from 'interfaces';
+import { PostPutMember } from 'interfaces';
 import useCheckScopeEntity, {
   ScopeActionArray,
 } from 'modules/common/hoc/useCheckScopeEntity';
@@ -14,9 +14,9 @@ import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
 import SimpleBar from 'simplebar-react';
 import { onError } from '../../../../../../utils/funcs';
-import InviteMemberInputs from '../../content/inputs/InviteMember';
+import InviteMemberInputs from '../../content/inputs/InviteMemberInputs';
 import { InviteMemberFormWrapper } from '../../styles';
-import { useInviteMemberSchema } from '../../utils';
+import { inviteMemberSchema } from '../../utils';
 
 const initialValues = {
   firstName: '',
@@ -24,7 +24,6 @@ const initialValues = {
   email: '',
   displayName: '',
   roles: [],
-  userRoles: [],
   departmentName: '',
 };
 
@@ -32,7 +31,6 @@ function TeamForm() {
   const { t } = useTranslation();
   const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
   const queryClient = useQueryClient();
-  const { inviteMemberSchema } = useInviteMemberSchema();
 
   const productActionNeedToCheckedPermission: ScopeActionArray[] = [
     { action: SCOPE_CONFIG.ACTION.CREATE },
@@ -47,7 +45,7 @@ function TeamForm() {
   }, [currentRoles]);
 
   const mutationInviteMember = useMutation(
-    (payload: InviteMember) => AdminService.inviteMember(payload),
+    (payload: PostPutMember) => AdminService.inviteMember(payload),
     {
       onSuccess: () => {
         notification.success({ message: t('common.inviteSuccess') });
@@ -57,11 +55,9 @@ function TeamForm() {
     },
   );
 
-  const handleFinish = (payload: InviteMember, actions) => {
+  const handleFinish = (payload: PostPutMember, actions) => {
     if (!canCreate || !isAdminRole) return;
-    const newPayload = { ...payload, roles: payload.userRoles };
-    delete newPayload.userRoles;
-    return mutationInviteMember.mutateAsync(newPayload, {
+    return mutationInviteMember.mutateAsync(payload, {
       onSuccess: () => {
         actions.resetForm();
       },
@@ -71,9 +67,9 @@ function TeamForm() {
   return (
     <InviteMemberFormWrapper>
       <Formik
+        onSubmit={handleFinish}
         enableReinitialize={true}
         initialValues={initialValues}
-        onSubmit={handleFinish}
         validationSchema={inviteMemberSchema}
       >
         {({ handleSubmit: handleFinish }) => (

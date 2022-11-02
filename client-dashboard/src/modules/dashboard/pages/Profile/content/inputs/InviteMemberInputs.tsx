@@ -56,7 +56,7 @@ function InviteMemberInputs(props: { edit: boolean }) {
         mode="multiple"
         inputType={INPUT_TYPES.SELECT}
         type={'text'}
-        name="userRoles"
+        name="roles"
         label={t('common.authentication')}
         options={optionsList}
       />
