@@ -96,7 +96,7 @@ export const SetUpPreferencesModalStyled = styled(ModalStyled)`
   }
 `;
 
-export const InviteMemberModalStyled = styled(ModalStyled)`
+export const UpdateMemberModalStyled = styled(ModalStyled)`
   .ant-modal-content {
     height: 100%;
   }
@@ -105,13 +105,8 @@ export const InviteMemberModalStyled = styled(ModalStyled)`
       margin-bottom: 20px;
     }
   }
-  .form-item-container:last-child {
-    .ant-form-item {
-      margin-bottom: 2px;
-    }
-  }
   .ant-modal-body {
-    padding: 40px 0;
+    padding: 0 0 40px;
     flex: 1;
     overflow-y: hidden;
     display: flex;
@@ -136,10 +131,8 @@ export const InviteMemberModalStyled = styled(ModalStyled)`
       fill: var(--ant-primary-color);
     }
   }
-  .input-wrapper {
-    max-height: calc(90vh - 364px);
-    overflow-y: auto;
-    padding: 0 40px;
+  .input-wrapper > div {
+    padding: 40px 40px 0;
   }
 `;
 

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 export { default as ChangePasswordModal } from './ChangePasswordModal';
-export { default as InviteMemberModal } from './InviteMemberModal';
+export { default as UpdateMemberModal } from './UpdateMemberModal';
 export { default as ResetUserPasswordModal } from './ResetUserPassword';
 export { default as SetUpPreferencesModal } from './SetUpPreferencesModal';
 export { default as ConfirmDeactivateUserModal } from './ConfirmDeactivateUser';

@@ -2,38 +2,7 @@ import { Menu } from 'antd';
 import styled from 'styled-components';
 import { screenSize } from './../../../../enums/screenSize';
 
-export const FlexBox = styled.div`
-  .flex {
-    display: flex;
-  }
-  .flex-center {
-    display: flex;
-    align-items: center;
-  }
-  .flex-space-between {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .flex-end {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  .flex-column {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-direction: column;
-  }
-  .flex-j-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-`;
-
-export const ProfileStyled = styled(FlexBox)`
+export const ProfileStyled = styled.div`
   .custom-ant-hover {
     --ant-primary-color-hover: #40a9ff;
   }
@@ -65,7 +34,11 @@ export const ProfileStyled = styled(FlexBox)`
 
   .inputs-wrapper {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
+    > div {
+      padding-right: 12px;
+      margin-right: -12px;
+    }
   }
   .buttons {
     --ant-primary-color-deprecated-f-12: rgba(24, 144, 255, 0.12);
@@ -115,7 +88,6 @@ export const ProfileStyled = styled(FlexBox)`
     height: 76px;
   }
   .submit-btn {
-    margin-top: auto;
     // width: 100%;
     // background: #25216a;
     // color: white;
@@ -138,7 +110,7 @@ export const ProfileStyled = styled(FlexBox)`
 
 export const SiderWrapper = styled.div`
   background: white;
-  padding: 18px 0 24px;
+  padding: 18px 0 0;
   border-radius: 8px;
   width: 345px;
   flex-direction: column;
@@ -198,7 +170,6 @@ export const SiderWrapper = styled.div`
   }
   .form {
     overflow-y: hidden;
-    padding: 0 24px;
     flex: 1;
     .ant-spin-nested-loading {
       height: 100%;
@@ -206,13 +177,24 @@ export const SiderWrapper = styled.div`
     > div {
       height: 100%;
     }
+    .user-form .ant-form {
+      & > div {
+        padding: 0 24px;
+      }
+      & > .ant-btn {
+        margin: 0 24px 28px;
+      }
+    }
   }
   .form,
   .ant-form {
     display: flex;
     flex-direction: column;
     height: 100%;
-    overflow: hidden;
+
+    label {
+      padding-left: 4px;
+    }
   }
   .avatar {
     .ant-upload {
@@ -277,6 +259,9 @@ export const UserContentStyled = styled(ContentStyled)`
     min-width: 180px;
     min-height: 36px;
     padding: 4px;
+  }
+  .wrapper {
+    gap: 6px;
   }
   .notifications {
     --ant-primary-color: #1890ff;
@@ -385,13 +370,30 @@ export const TeamContentStyled = styled(ContentStyled)`
   }
   .table-wrapper {
     flex: 1;
+    overflow: hidden;
   }
 `;
 
 export const TableWrapperStyled = styled.div`
-  padding: 12px 12px 0;
   flex: 1;
   width: 100%;
+  padding-top: 6px;
+  overflow: hidden;
+  .ant-spin-nested-loading,
+  .ant-spin-container {
+    height: 100%;
+    overflow: hidden;
+  }
+  .ant-spin-container {
+    display: flex;
+    flex-direction: column;
+    .table-wrapper {
+      flex: 1;
+    }
+  }
+  .ant-table {
+    padding: 12px 16px 0 12px;
+  }
   .ant-table-row,
   .ant-table-thead {
     height: 72px;
@@ -408,7 +410,6 @@ export const TableWrapperStyled = styled.div`
   .ant-table-body {
     overflow-y: auto !important;
   }
-
   .ant-table-thead {
     .ant-table-cell {
       border: none;
@@ -431,7 +432,8 @@ export const TableWrapperStyled = styled.div`
     background: var(--ant-primary-2);
   }
   .pagination {
-    margin-top: 10px;
+    margin: 12px 16px 12px 12px;
+    padding: 0 12px;
   }
 `;
 
@@ -439,7 +441,7 @@ export const DropDownMenuStyled = styled(Menu)`
   .ant-dropdown-menu-title-content {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 14px;
     font-size: 12px;
   }
   .dropdown-icon {
@@ -453,4 +455,38 @@ export const CustomFallbackStyled = styled.div`
   height: 40px;
   border-radius: 12px;
   border: 1px solid gray;
+`;
+
+export const InviteMemberFormWrapper = styled.div`
+  .input-wrapper {
+    flex: 1;
+    overflow: hidden;
+    > div {
+      padding: 0 24px;
+    }
+  }
+  .ant-form {
+    gap: 12px;
+    height: 100%;
+  }
+  .footer {
+    gap: 24px;
+    > div {
+      width: 100%;
+    }
+  }
+  .submit-btn,
+  .invitation-link {
+    margin: 0 24px;
+    flex: 1;
+  }
+  .invitation-link {
+    height: 32px;
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+  .title {
+    margin: 0 24px 24px;
+    font-weight: 600;
+  }
 `;

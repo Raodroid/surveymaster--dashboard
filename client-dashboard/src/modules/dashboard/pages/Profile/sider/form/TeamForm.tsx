@@ -1,62 +1,99 @@
-import { Button, Form } from 'antd';
+import { Button, Divider, Form, notification } from 'antd';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
+import { SCOPE_CONFIG } from 'enums/user';
 import { Formik } from 'formik';
-import { ControlledInput } from 'modules/common';
-import { INPUT_TYPES } from 'modules/common/input/type';
+import { PostPutMember } from 'interfaces';
+import useCheckScopeEntity, {
+  ScopeActionArray,
+} from 'modules/common/hoc/useCheckScopeEntity';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
+import { AdminService } from 'services';
+import SimpleBar from 'simplebar-react';
+import { onError } from '../../../../../../utils/funcs';
+import InviteMemberInputs from '../../content/inputs/InviteMemberInputs';
+import { InviteMemberFormWrapper } from '../../styles';
+import { inviteMemberSchema, postPutInitialValues } from '../../utils';
 
 function TeamForm() {
   const { t } = useTranslation();
-  const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
-  const isAdminRole = useMemo(() => {
-    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
-  }, [currentRoles]);
+  const queryClient = useQueryClient();
+
+  // const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
+  // const isAdminRole = useMemo(() => {
+  //   return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
+  // }, [currentRoles]);
+
+  const mutationInviteMember = useMutation(
+    (payload: PostPutMember) => AdminService.inviteMember(payload),
+    {
+      onSuccess: () => {
+        notification.success({ message: t('common.inviteSuccess') });
+        queryClient.invalidateQueries('getTeamMembers');
+      },
+      onError,
+    },
+  );
+
+  const handleFinish = (payload: PostPutMember, actions) => {
+    return mutationInviteMember.mutateAsync(payload, {
+      onSuccess: () => {
+        actions.resetForm();
+      },
+    });
+  };
+
   return (
-    <Formik initialValues={{ teamName: 'Amili' }} onSubmit={() => {}}>
-      {({ handleSubmit, setFieldValue }) => (
-        <Form layout="vertical" disabled={!isAdminRole} onFinish={handleSubmit}>
-          <div className="avatar">
-            <ControlledInput
-              inputType={INPUT_TYPES.IMAGE_UPLOAD}
-              name="avatar"
-              label={t('common.photo')}
-              className="custom-upload"
-              id="custom-upload-avatar"
-            />
-          </div>
-          <div className="buttons flex">
-            <Button className="info-btn">
-              <label htmlFor="custom-upload-avatar" className="flex-center">
-                {t('common.uploadNewPhoto')}
-              </label>
-            </Button>
-            <Button
-              className="info-btn"
-              onClick={() => setFieldValue('avatar', null)}
-            >
-              {t('common.removePhoto')}
-            </Button>
-          </div>
-          <ControlledInput
-            inputType={INPUT_TYPES.INPUT}
-            type={'text'}
-            name="teamName"
-            label="Team Name"
-          />
-          <Button
-            type="primary"
-            disabled={!isAdminRole}
-            className="submit-btn secondary-btn"
-            htmlType="submit"
+    <InviteMemberFormWrapper>
+      <Formik
+        onSubmit={handleFinish}
+        enableReinitialize={true}
+        initialValues={postPutInitialValues}
+        validationSchema={inviteMemberSchema}
+      >
+        {({ handleSubmit: handleFinish }) => (
+          <Form
+            layout="vertical"
+            onFinish={handleFinish}
+            className="flex-column"
           >
-            {t('common.saveEdits')}
-          </Button>
-        </Form>
-      )}
-    </Formik>
+            <div className="title">{t('common.inviteNewMember')}</div>
+            <div className="input-wrapper">
+              <SimpleBar style={{ maxHeight: '100%' }}>
+                <InviteMemberInputs edit={false} />
+              </SimpleBar>
+            </div>
+            <div className="flex-center footer flex-column">
+              <div className="flex">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="submit-btn secondary-btn"
+                  loading={mutationInviteMember.isLoading}
+                >
+                  {t('common.sendInvitation')}
+                </Button>
+              </div>
+
+              <Divider />
+
+              <div className="flex">
+                <Button
+                  type="primary"
+                  className="invitation-link info-btn"
+                  // loading={mutationInviteMember.isLoading}
+                >
+                  {t('common.copyInvitationLink')}
+                </Button>
+              </div>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </InviteMemberFormWrapper>
   );
 }
 

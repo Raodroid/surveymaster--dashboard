@@ -2,7 +2,7 @@ import { Radio } from 'antd';
 import {
   PROFILE_TAB,
   ROUTE_PATH,
-  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT
+  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
 } from 'enums';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,7 +29,7 @@ function Sider(props: SiderProps) {
 
   return (
     <SiderWrapper className="sider flex">
-      {isAdminRole && (
+      {isAdminRole ? (
         <div className="tabs flex">
           <Radio.Group value={tab}>
             <Radio.Button
@@ -48,7 +48,7 @@ function Sider(props: SiderProps) {
             </Radio.Button>
           </Radio.Group>
         </div>
-      )}
+      ) : null}
 
       <div className="form">
         {tab === PROFILE_TAB.USER ? <UserForm /> : <TeamForm />}

@@ -22,7 +22,7 @@ function ConfirmRestoreUserModal(props: ProfileModal) {
     },
     {
       onSuccess: () => {
-        notification.success({ message: t('common.updateSuccess') });
+        notification.success({ message: t('common.restoreSuccess') });
         queryClient.invalidateQueries('getTeamMembers');
         setShowModal(false);
       },

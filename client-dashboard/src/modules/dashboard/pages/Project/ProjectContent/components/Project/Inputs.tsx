@@ -41,11 +41,10 @@ function Inputs() {
   );
 
   const optionsList = useMemo(() => {
-    if (teamMembers && teamMembers.data && teamMembers.data.data) {
+    if (teamMembers?.data?.data)
       return teamMembers.data.data.map(elm => {
         return { label: elm.firstName + ' ' + elm.lastName, value: elm.id };
       });
-    }
   }, [teamMembers]);
 
   return (
