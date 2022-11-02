@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import templateVariable from '../../../../../app/template-variables.module.scss';
 
 interface IMobileMenuWrapper {
   isOpen?: boolean;
@@ -8,7 +9,7 @@ export const MobileMenuWrapper = styled.div<IMobileMenuWrapper>`
   top: 0;
   left: 0;
   width: 100vw;
-  background: ${p => (p.isOpen ? 'white' : 'transparent')};
+  background: ${p => (p.isOpen ? 'white' : templateVariable.app_bg_color)};
   transition: background 0.2s ease-in;
 
   .mobile-nav {

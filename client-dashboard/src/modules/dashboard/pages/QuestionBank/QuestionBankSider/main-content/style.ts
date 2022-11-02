@@ -9,6 +9,12 @@ export const QuestionBankSiderMainContentWrapper = styled.div`
     &__title {
       margin-bottom: ${templateVariable.element_spacing};
       cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: all 0.3s;
+      :hover {
+        background: var(--ant-primary-color-active-deprecated-d-02);
+      }
       h4 {
         font-size: 16px;
         font-weight: 600;

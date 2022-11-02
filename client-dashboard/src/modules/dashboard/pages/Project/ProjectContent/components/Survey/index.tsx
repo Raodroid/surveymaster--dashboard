@@ -3,7 +3,7 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import useParseQueryString from 'hooks/useParseQueryString';
-import { PenFilled } from 'icons';
+import { FileIconOutlined, PenFilled, TrashOutlined } from 'icons';
 import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
@@ -244,7 +244,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         key: ACTION_ENUM.EDIT,
       });
       baseMenu.push({
-        icon: <CopyOutlined />,
+       icon: <FileIconOutlined />,
         label: t('common.duplicateSurvey'),
         key: ACTION_ENUM.DUPLICATE_SURVEY,
       });

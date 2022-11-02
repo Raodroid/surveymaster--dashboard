@@ -22,3 +22,4 @@ export * from './Chat';
 export * from './Clock';
 export * from './Refresh';
 export * from './SuffixIcon';
+export * from './FileIconOutlined';
