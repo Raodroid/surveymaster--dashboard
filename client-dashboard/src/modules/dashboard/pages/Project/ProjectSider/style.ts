@@ -84,7 +84,6 @@ export const TitleStyled = styled.div`
     background: #fbf0f7;
   }
   .wrapper {
-    height: 76px;
     gap: 4px;
     flex-direction: column;
     padding: 4px;

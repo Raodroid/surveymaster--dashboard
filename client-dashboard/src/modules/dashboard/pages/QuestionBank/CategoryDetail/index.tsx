@@ -36,6 +36,8 @@ import qs from 'qs';
 import { PenFilled, TrashOutlined } from '../../../../../icons';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
 import { MenuDropDownWrapper } from '../../../../../customize-components/styles';
+import { ScopeActionArray, useCheckScopeEntity } from '../../../../common/hoc';
+import { SCOPE_CONFIG } from '../../../../../enums/user';
 
 const { Item } = Menu;
 
@@ -269,6 +271,10 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const context = useContext(CategoryDetailContext);
   const setLoading = context?.setLoading;
 
+  const { canCreate, canDelete, canUpdate } = useCheckScopeEntity(
+    SCOPE_CONFIG.ENTITY.QUESTIONS,
+  );
+
   const deleteMutation = useMutation(
     (data: { id: string }) => {
       return QuestionBankService.deleteQuestion(data);
@@ -331,37 +337,46 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
 
   const items = useMemo(() => {
     const baseMenu: any = [];
-    if (isDeleted) {
-      baseMenu.push(
-        <Item key={ACTION_ENUM.RESTORE} icon={<PenFilled />}>
-          {t('common.restore')}
-        </Item>,
-      );
-    } else {
-      baseMenu.push(
-        <Popconfirm
-          placement="right"
-          title={`${t('common.duplicate')} question [${
-            record?.latestVersion?.title
-          }]`}
-          onConfirm={() => handleSelect({ record, key: ACTION_ENUM.DUPLICATE })}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Item key={ACTION_ENUM.DUPLICATE} icon={<PenFilled />}>
-            {t('common.duplicate')}
-          </Item>
-        </Popconfirm>,
-      );
 
-      baseMenu.push(
-        <Item key={ACTION_ENUM.DELETE} icon={<TrashOutlined />}>
-          {t('common.delete')}
-        </Item>,
-      );
+    if (isDeleted) {
+      if (canUpdate) {
+        baseMenu.push(
+          <Item key={ACTION_ENUM.RESTORE} icon={<PenFilled />}>
+            {t('common.restore')}
+          </Item>,
+        );
+      }
+    } else {
+      if (canCreate) {
+        baseMenu.push(
+          <Popconfirm
+            placement="right"
+            title={`${t('common.duplicate')} question [${
+              record?.latestVersion?.title
+            }]`}
+            onConfirm={() =>
+              handleSelect({ record, key: ACTION_ENUM.DUPLICATE })
+            }
+            okText="Yes"
+            cancelText="No"
+          >
+            <Item key={ACTION_ENUM.DUPLICATE} icon={<PenFilled />}>
+              {t('common.duplicate')}
+            </Item>
+          </Popconfirm>,
+        );
+      }
+      if (canDelete) {
+        baseMenu.push(
+          <Item key={ACTION_ENUM.DELETE} icon={<TrashOutlined />}>
+            {t('common.delete')}
+          </Item>,
+        );
+      }
     }
+
     return baseMenu;
-  }, [t, isDeleted, handleSelect, record]);
+  }, [isDeleted, canUpdate, t, canCreate, canDelete, record, handleSelect]);
 
   const menu = (
     <MenuDropDownWrapper onClick={({ key }) => handleSelect({ key, record })}>
@@ -378,6 +393,8 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       setLoading(isLoading);
     }
   }, [deleteMutation, restoreMutation, duplicateMutation, setLoading]);
+
+  if (items.length === 0) return null;
 
   return (
     <ThreeDotsDropdown

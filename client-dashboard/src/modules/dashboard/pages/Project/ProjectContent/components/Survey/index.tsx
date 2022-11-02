@@ -28,8 +28,9 @@ import ProjectHeader from '../Header';
 import { QsParams } from '../Header/ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
 import { MenuDropDownWrapper } from 'customize-components/styles';
-import { MOMENT_FORMAT } from 'enums';
-import { ExportOutlined } from '@ant-design/icons';
+import { MOMENT_FORMAT, SCOPE_CONFIG } from 'enums';
+import { CopyOutlined, ExportOutlined } from '@ant-design/icons';
+import { useCheckScopeEntity } from '../../../../../../common/hoc';
 
 const initParams: IGetParams = {
   q: '',
@@ -215,6 +216,10 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   );
   const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
+  const { canUpdate, canRead } = useCheckScopeEntity(
+    SCOPE_CONFIG.ENTITY.QUESTIONS,
+  );
+
   const duplicateMutation = useMutation(
     (data: IPostSurveyBodyDto) => {
       return SurveyService.duplicateSurvey(data as any);
@@ -230,20 +235,22 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
 
   const items = useMemo(() => {
     if (isFetchingProject) return [];
-    const baseMenu: ItemType[] = [
-      {
-        icon: <FileIconOutlined />,
-        label: t('common.duplicateSurvey'),
-        key: ACTION_ENUM.DUPLICATE_SURVEY,
-      },
-      {
+    const baseMenu: ItemType[] = [];
+
+    if (canUpdate) {
+      baseMenu.push({
         icon: <PenFilled />,
         label: t('common.edit'),
         key: ACTION_ENUM.EDIT,
-      },
-    ];
+      });
+      baseMenu.push({
+       icon: <FileIconOutlined />,
+        label: t('common.duplicateSurvey'),
+        key: ACTION_ENUM.DUPLICATE_SURVEY,
+      });
+    }
 
-    if (!isExternalProject) {
+    if (!isExternalProject && canRead) {
       baseMenu.push({
         icon: <ExportOutlined />,
         label: t('common.exportQualtricsJSON'),
@@ -252,7 +259,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     }
 
     return baseMenu;
-  }, [isExternalProject, isFetchingProject, t]);
+  }, [canRead, canUpdate, isExternalProject, isFetchingProject, t]);
 
   const handleExport = useCallback(async () => {
     try {
@@ -316,6 +323,8 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       items={items}
     />
   );
+
+  if (items.length === 0) return null;
 
   return (
     <ThreeDotsDropdown

@@ -7,6 +7,8 @@ import { generatePath, useNavigate, useParams } from 'react-router';
 import { projectRoutePath, useGetProjectByIdQuery } from '../util';
 import { TitleStyled } from './style';
 import { ProjectTypes } from '../../../../../type';
+import { useCheckScopeEntity } from '../../../../common/hoc';
+import { SCOPE_CONFIG } from '../../../../../enums';
 
 interface TitleProps {
   title: string;
@@ -21,6 +23,10 @@ function Title(props: TitleProps) {
   const params = useParams<{ projectId?: string }>();
 
   const { project, isLoading } = useGetProjectByIdQuery(params.projectId);
+
+  const { canCreate, canRead } = useCheckScopeEntity(
+    SCOPE_CONFIG.ENTITY.QUESTIONS,
+  );
 
   const isActive = useMemo(() => {
     return params?.projectId === userId;
@@ -44,27 +50,31 @@ function Title(props: TitleProps) {
         {title}
       </Button>
       <div className={`wrapper flex ${!isActive ? 'hide' : ''}`}>
-        <Button
-          className="flex-center primary"
-          type="primary"
-          onClick={() => {
-            navigate(
-              generatePath(projectRoutePath.ADD_NEW_SURVEY, {
-                projectId: params.projectId,
-              }),
-            );
-          }}
-        >
-          <PlusIcon className="plus-icon" />{' '}
-          {isLoading
-            ? 'Add'
-            : project.type === ProjectTypes.INTERNAL
-            ? t('common.addNewSurvey')
-            : t('common.addNewExternalSurvey')}
-        </Button>
-        <Button className="flex-center" onClick={() => navigate(route_path)}>
-          <UnorderedListOutlined /> {t('common.surveyList')}
-        </Button>
+        {canCreate && (
+          <Button
+            className="flex-center primary"
+            type="primary"
+            onClick={() => {
+              navigate(
+                generatePath(projectRoutePath.ADD_NEW_SURVEY, {
+                  projectId: params.projectId,
+                }),
+              );
+            }}
+          >
+            <PlusIcon className="plus-icon" />{' '}
+            {isLoading
+              ? 'Add'
+              : project.type === ProjectTypes.INTERNAL
+              ? t('common.addNewSurvey')
+              : t('common.addNewExternalSurvey')}
+          </Button>
+        )}
+        {canRead && (
+          <Button className="flex-center" onClick={() => navigate(route_path)}>
+            <UnorderedListOutlined /> {t('common.surveyList')}
+          </Button>
+        )}
       </div>
     </TitleStyled>
   );
