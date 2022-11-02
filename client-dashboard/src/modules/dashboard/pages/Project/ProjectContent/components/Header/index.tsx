@@ -59,6 +59,7 @@ function ProjectHeader(props: {
         <>
           <Form className="flex search-form" onFinish={handleSearch}>
             <Input
+              placeholder={'Search...'}
               ref={searchRef}
               value={inputSearch}
               allowClear

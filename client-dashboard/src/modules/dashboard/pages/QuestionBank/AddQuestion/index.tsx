@@ -140,10 +140,12 @@ const AddQuestion = () => {
               id={'add-question-form'}
               layout={'vertical'}
               onFinish={handleSubmit}
-              className={'AddQuestion__body'}
+              className={'QuestionContent__body'}
             >
-              <div className={'AddQuestion__body__content-wrapper'}>
-                <div className={'AddQuestion__body__section question-section'}>
+              <div className={'QuestionContent__body__content-wrapper'}>
+                <div
+                  className={'QuestionContent__body__section question-section'}
+                >
                   <div className={'question-section__row'}>
                     <div className={'question-detail-wrapper'}>
                       <div className={'question-section__row__title'}>
@@ -167,13 +169,15 @@ const AddQuestion = () => {
                 </div>
 
                 <div className={'divider'} />
-                <div className={'AddQuestion__body__section category-section'}>
+                <div
+                  className={'QuestionContent__body__section category-section'}
+                >
                   <QuestionCategoryForm />
                 </div>
               </div>
             </Form>
-            <div className={'AddQuestion__footer'}>
-              <div className={'AddQuestion__footer__submit-btn-wrapper'}>
+            <div className={'QuestionContent__footer'}>
+              <div className={'QuestionContent__footer__submit-btn-wrapper'}>
                 <Button
                   form={'add-question-form'}
                   htmlType={'submit'}

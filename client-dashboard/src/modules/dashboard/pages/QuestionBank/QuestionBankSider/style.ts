@@ -10,9 +10,11 @@ export const QuestionBankSiderWrapper = styled(BaseSectionWrapper)`
   height: 100%;
 
   .question-bank {
-    &__body,
-    &__footer {
+    &__body {
       padding: 1.125rem;
+    }
+    &__footer {
+      padding: 1.5rem;
     }
 
     &__body {
