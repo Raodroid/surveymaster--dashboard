@@ -11,19 +11,9 @@ import { AdminService } from 'services';
 import SimpleBar from 'simplebar-react';
 import { ProfileModal } from '.';
 import { onError } from '../../../../../../utils/funcs';
-import { inviteMemberSchema } from '../../utils';
+import { inviteMemberSchema, postPutInitialValues } from '../../utils';
 import InviteMemberInputs from '../inputs/InviteMemberInputs';
 import { UpdateMemberModalStyled } from './styles';
-
-const initialValues = {
-  id: '',
-  firstName: '',
-  lastName: '',
-  email: '',
-  displayName: '',
-  roles: [],
-  departmentName: '',
-};
 
 interface UpdateModal extends Omit<ProfileModal, 'userId'> {
   userData?: UserPayload;
@@ -34,7 +24,7 @@ function UpdateMemberModal(props: UpdateModal) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const userInit = useMemo(() => {
+  const userInit = useMemo<PostPutMember>(() => {
     return userData
       ? {
           id: userData.id,
@@ -45,7 +35,7 @@ function UpdateMemberModal(props: UpdateModal) {
           departmentName: userData.departmentName,
           roles: userData.userRoles?.map(elm => elm.roleId),
         }
-      : initialValues;
+      : postPutInitialValues;
   }, [userData]);
 
   const mutationUpdateMember = useMutation(

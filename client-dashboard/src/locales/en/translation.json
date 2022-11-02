@@ -210,6 +210,7 @@
     "action": "Action",
     "showInactivateUsers": "Show inactivate users",
     "inviteMember": "Invite Member",
+    "inviteNewMember": "Invite New Member",
     "editPreferences": "Edit Preferences",
     "passwordConfirm": "Confirm Password",
     "confirmNewPassword": "Confirm New Password",

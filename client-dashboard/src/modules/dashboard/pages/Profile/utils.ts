@@ -1,3 +1,4 @@
+import { PostPutMember } from 'interfaces';
 import * as Yup from 'yup';
 import { INVALID_FIELDS } from './../../../common/validate/validate';
 
@@ -11,3 +12,13 @@ export const inviteMemberSchema = Yup.object({
   departmentName: Yup.string().required(INVALID_FIELDS.REQUIRED).trim(),
   roles: Yup.array().min(1, INVALID_FIELDS.REQUIRED),
 });
+
+export const postPutInitialValues: PostPutMember = {
+  id: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  displayName: '',
+  roles: [],
+  departmentName: '',
+};

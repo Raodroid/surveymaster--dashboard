@@ -16,33 +16,16 @@ import SimpleBar from 'simplebar-react';
 import { onError } from '../../../../../../utils/funcs';
 import InviteMemberInputs from '../../content/inputs/InviteMemberInputs';
 import { InviteMemberFormWrapper } from '../../styles';
-import { inviteMemberSchema } from '../../utils';
-
-const initialValues = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  displayName: '',
-  roles: [],
-  departmentName: '',
-};
+import { inviteMemberSchema, postPutInitialValues } from '../../utils';
 
 function TeamForm() {
   const { t } = useTranslation();
-  const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
   const queryClient = useQueryClient();
 
-  const productActionNeedToCheckedPermission: ScopeActionArray[] = [
-    { action: SCOPE_CONFIG.ACTION.CREATE },
-  ];
-  const [canCreate] = useCheckScopeEntity(
-    SCOPE_CONFIG.ENTITY.USERS,
-    productActionNeedToCheckedPermission,
-  );
-
-  const isAdminRole = useMemo(() => {
-    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
-  }, [currentRoles]);
+  // const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
+  // const isAdminRole = useMemo(() => {
+  //   return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
+  // }, [currentRoles]);
 
   const mutationInviteMember = useMutation(
     (payload: PostPutMember) => AdminService.inviteMember(payload),
@@ -56,7 +39,6 @@ function TeamForm() {
   );
 
   const handleFinish = (payload: PostPutMember, actions) => {
-    if (!canCreate || !isAdminRole) return;
     return mutationInviteMember.mutateAsync(payload, {
       onSuccess: () => {
         actions.resetForm();
@@ -69,7 +51,7 @@ function TeamForm() {
       <Formik
         onSubmit={handleFinish}
         enableReinitialize={true}
-        initialValues={initialValues}
+        initialValues={postPutInitialValues}
         validationSchema={inviteMemberSchema}
       >
         {({ handleSubmit: handleFinish }) => (
@@ -78,6 +60,7 @@ function TeamForm() {
             onFinish={handleFinish}
             className="flex-column"
           >
+            <div className="title">{t('common.inviteNewMember')}</div>
             <div className="input-wrapper">
               <SimpleBar style={{ maxHeight: '100%' }}>
                 <InviteMemberInputs edit={false} />
