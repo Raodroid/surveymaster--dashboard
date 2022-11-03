@@ -28,7 +28,6 @@ import {
   SURVEY_EXTERNAL_FORM_SCHEMA,
   SURVEY_INTERNAL_FORM_SCHEMA,
 } from '../../../../../../../common/validate/validate';
-import EditSurveyQuestionList from './EditSurveyQuestionList';
 import ViewSurveyQuestionList from './ViewSurveyQuestionList';
 import SimpleBar from 'simplebar-react';
 
@@ -441,7 +440,7 @@ const QuestionSurveyList: FC<{ isExternalProject: boolean }> = props => {
             : t('common.surveyQuestionList')}
         </div>
 
-        {!isViewMode && !isExternalProject && <EditSurveyQuestionList />}
+        {!isViewMode && !isExternalProject && <UploadExternalFile />}
         {!isViewMode && isExternalProject && <UploadExternalFile />}
 
         {isViewMode && (

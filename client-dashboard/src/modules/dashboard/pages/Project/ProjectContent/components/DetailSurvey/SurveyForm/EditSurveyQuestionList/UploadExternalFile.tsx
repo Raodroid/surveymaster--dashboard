@@ -2,10 +2,16 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { Badge, Button, Menu, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { UploadExternalFileWrapper } from './style';
+import { GroupSurveyButtonWrapper, UploadExternalFileWrapper } from './style';
 import * as XLSX from 'xlsx';
 import Dragger from 'antd/es/upload/Dragger';
-import { Refresh, RollbackOutlined, SuffixIcon } from 'icons';
+import {
+  DragIcon,
+  Refresh,
+  RollbackOutlined,
+  SuffixIcon,
+  TrashOutlined,
+} from 'icons';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { onError, useDebounce, useToggle } from 'utils';
 import { useFormikContext } from 'formik';
@@ -15,6 +21,7 @@ import {
   IOptionItem,
   IQuestion,
   IQuestionVersion,
+  ProjectTypes,
   QuestionVersionStatus,
 } from 'type';
 import { useInfiniteQuery } from 'react-query';
@@ -28,6 +35,16 @@ import SimpleBar from 'simplebar-react';
 import UncontrollInput from '../../../../../../../../common/input/uncontrolled-input/UncontrollInput';
 import moment from 'moment';
 import { MOMENT_FORMAT, size } from 'enums';
+import { SortableHandle } from 'react-sortable-hoc';
+import { DragTable } from '../../../../../../../components/DragTable/DragTable';
+import {
+  filterColumn,
+  IRenderColumnCondition,
+} from '../../../../../../../../../utils';
+import templateVariable from '../../../../../../../../../app/template-variables.module.scss';
+import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
+import { useGetProjectByIdQuery } from '../../../../../util';
+import { useParams } from 'react-router';
 
 const initNewRowValue = {
   id: '',
@@ -42,7 +59,7 @@ const initNewRowValue = {
 
 const storeResultX = {};
 
-const determineVersion = (
+export const determineVersionOfSurveyQuestion = (
   record: questionValueType,
 ): IQuestionVersion[][] | undefined[] => {
   const versions = record.versions;
@@ -85,7 +102,41 @@ const determineVersion = (
   return result;
 };
 
+const GroupSurveyButton = () => {
+  const { setValues } = useFormikContext<IAddSurveyFormValues>();
+  const { t } = useTranslation();
+  const [openLoadCategoryForm, toggleLoadCategoryForm] = useToggle();
+
+  const handleAddRow = useCallback(() => {
+    setValues(s => ({
+      ...s,
+      questions: [
+        ...s.questions,
+        { ...initNewRowValue, id: Math.random().toString() },
+      ],
+    }));
+  }, [setValues]);
+
+  return (
+    <GroupSurveyButtonWrapper>
+      <Button onClick={toggleLoadCategoryForm}>
+        {t('common.addAllQuestionsFromOneCategory')}
+      </Button>
+      <Button type={'primary'} onClick={handleAddRow}>
+        {t('common.addRow')}
+      </Button>
+      <AddQuestionFormCategoryModal
+        open={openLoadCategoryForm}
+        onCancel={toggleLoadCategoryForm}
+      />
+    </GroupSurveyButtonWrapper>
+  );
+};
+
 const UploadExternalFile = () => {
+  const params = useParams<{ projectId?: string; surveyId?: string }>();
+  const { project } = useGetProjectByIdQuery(params.projectId);
+  const isExternalProject = project.type === ProjectTypes.EXTERNAL;
   const { t } = useTranslation();
   const [fileColumnTitle, setFileColumnTitle] = useState<string[] | undefined>(
     undefined,
@@ -151,7 +202,7 @@ const UploadExternalFile = () => {
 
   return (
     <>
-      {!displayParameterTable && (
+      {!displayParameterTable && isExternalProject && (
         <>
           <UploadExternalFileWrapper>
             {fileColumnTitle ? (
@@ -214,6 +265,7 @@ const UploadExternalFile = () => {
           )}
         </>
       )}
+      {!displayParameterTable && !isExternalProject && <GroupSurveyButton />}
       {displayParameterTable && <DisplayAnswer onChangeUploadFile={onChange} />}
     </>
   );
@@ -232,8 +284,17 @@ interface IExpandableTable extends questionValueType {
   createdAt: string | Date | null;
 }
 
+const DragHandle = SortableHandle(() => (
+  <DragIcon
+    style={{ cursor: 'grab', color: templateVariable.text_primary_color }}
+  />
+));
+
 const DisplayAnswer = props => {
   const { onChangeUploadFile } = props;
+  const params = useParams<{ projectId?: string; surveyId?: string }>();
+  const { project } = useGetProjectByIdQuery(params.projectId);
+  const isExternalProject = project.type === ProjectTypes.EXTERNAL;
   const { t } = useTranslation();
 
   const [searchTxt, setSearchTxt] = useState<string>('');
@@ -329,91 +390,147 @@ const DisplayAnswer = props => {
   }, [setValues]);
 
   const rowExpandable = (record: questionValueType) => {
-    const [newVersions] = determineVersion(record);
+    const [newVersions] = determineVersionOfSurveyQuestion(record);
 
     if (!newVersions) return false;
     return newVersions.length !== 1;
   };
-  const columns: ColumnsType<questionValueType> = [
-    {
-      title: t('common.parameter'),
-      dataIndex: 'parameter',
-      width: 200,
-      render: (value, record, index) => {
-        return (
-          <>
+  const columns: ColumnsType<questionValueType> = useMemo(
+    () => [
+      {
+        title: t('common.parameter'),
+        dataIndex: 'parameter',
+        width: 200,
+        render: (value, record, index) => {
+          return (
+            <>
+              <ControlledInput
+                style={{ width: '100%' }}
+                inputType={INPUT_TYPES.INPUT}
+                name={`questions[${index}].parameter`}
+              />
+            </>
+          );
+        },
+      },
+      {
+        title: t('common.order'),
+        dataIndex: 'order',
+        width: 100,
+        render: (value, record, index) => {
+          return (
+            <span
+              style={{
+                display: 'inline-flex',
+                gap: '1.5rem',
+                alignItems: 'center',
+              }}
+            >
+              <DragHandle />
+              <span>{index}</span>
+            </span>
+          );
+        },
+      },
+
+      {
+        title: t('common.category'),
+        dataIndex: 'category',
+        width: 100,
+      },
+      {
+        title: t('common.type'),
+        dataIndex: 'type',
+        width: 150,
+        render: value => {
+          return value ? t(`questionType.${value}`) : '';
+        },
+      },
+      {
+        title: t('common.question'),
+        dataIndex: 'question',
+        width: 300,
+        render: (value, record, index) => {
+          return (
+            <DynamicSelect
+              index={index}
+              setSearchTxt={setSearchTxt}
+              normalizeByQuestionId={normalizeByQuestionId}
+              questionOption={questionOption}
+              hasNextPage={hasNextPage}
+              fetchNextPage={fetchNextPage}
+              isLoading={isLoading}
+            />
+          );
+        },
+      },
+      {
+        title: t('common.remark'),
+        dataIndex: 'remark',
+        render: (value, record, index) => {
+          return (
             <ControlledInput
               style={{ width: '100%' }}
               inputType={INPUT_TYPES.INPUT}
-              name={`questions[${index}].parameter`}
+              name={`questions[${index}].remark`}
             />
-          </>
-        );
+          );
+        },
       },
-    },
-    {
-      title: t('common.category'),
-      dataIndex: 'category',
-      width: 70,
-    },
-    {
-      title: t('common.type'),
-      dataIndex: 'type',
-      width: 100,
-      render: value => {
-        return value ? t(`questionType.${value}`) : '';
-      },
-    },
-    {
-      title: t('common.question'),
-      dataIndex: 'question',
-      width: 300,
-      render: (value, record, index) => {
-        return (
-          <DynamicSelect
+      {
+        title: '',
+        dataIndex: 'action',
+        width: 60,
+        render: (value, record, index) => (
+          <ActionDropDown
+            record={record}
+            rowExpandable={rowExpandable}
             index={index}
-            setSearchTxt={setSearchTxt}
-            normalizeByQuestionId={normalizeByQuestionId}
-            questionOption={questionOption}
-            hasNextPage={hasNextPage}
-            fetchNextPage={fetchNextPage}
-            isLoading={isLoading}
           />
-        );
+        ),
       },
-    },
-    {
-      title: t('common.remark'),
-      dataIndex: 'remark',
-      render: (value, record, index) => {
-        return (
-          <ControlledInput
-            style={{ width: '100%' }}
-            inputType={INPUT_TYPES.INPUT}
-            name={`questions[${index}].remark`}
-          />
-        );
+    ],
+    [
+      fetchNextPage,
+      hasNextPage,
+      isLoading,
+      normalizeByQuestionId,
+      questionOption,
+      t,
+    ],
+  );
+
+  const renderColumnCondition: IRenderColumnCondition = useMemo(
+    () => [
+      {
+        condition: !isExternalProject,
+        indexArray: ['parameter'],
       },
-    },
-    {
-      title: '',
-      dataIndex: 'action',
-      width: 60,
-      render: (value, record, index) => (
-        <ActionDropDown
-          record={record}
-          rowExpandable={rowExpandable}
-          index={index}
-        />
-      ),
-    },
-  ];
+      {
+        condition: isExternalProject,
+        indexArray: ['order'],
+      },
+    ],
+    [isExternalProject],
+  );
+
+  const columnsFiltered = useMemo(
+    () => filterColumn<questionValueType>(renderColumnCondition, columns),
+    [columns, renderColumnCondition],
+  );
 
   const expandTableColumn: ColumnsType<IExpandableTable> = useMemo(() => {
     const renderBlankKeys = ['action', 'remark', 'parameter'];
 
-    return columns.map(col => {
+    return columnsFiltered.map(col => {
       const dataIndex = col?.['dataIndex'];
+      if (dataIndex === 'order') {
+        return {
+          ...col,
+          width: 60,
+          render: () => null,
+        };
+      }
       if (dataIndex === 'question') {
         return {
           ...col,
@@ -452,10 +569,11 @@ const DisplayAnswer = props => {
       }
       return col;
     }) as ColumnsType<IExpandableTable>;
-  }, [columns]);
+  }, [columnsFiltered]);
 
   const expandedRowRender = (record: questionValueType) => {
-    const [newVersions, historyVersions] = determineVersion(record);
+    const [newVersions, historyVersions] =
+      determineVersionOfSurveyQuestion(record);
 
     return (
       <Table
@@ -484,13 +602,68 @@ const DisplayAnswer = props => {
     );
   };
 
+  const dataSource = useMemo(
+    () => values.questions.map((q, index) => ({ ...q, index })),
+    [values.questions],
+  );
+
+  const setDataTable = (questions: questionValueType[]) => {
+    setValues(s => ({
+      ...s,
+      questions,
+    }));
+  };
+
+  const renderRowClassName = useCallback(
+    record => {
+      if (!record) return '';
+      const isNewQuestion = !(
+        initialValues.questionIdMap &&
+        Object.keys(initialValues.questionIdMap).some(
+          questionVersionId =>
+            !!initialValues?.questionIdMap?.[record.questionVersionId] ||
+            initialValues?.questionIdMap?.[questionVersionId].versions.some(
+              ver => ver?.id === record.questionVersionId,
+            ), // check if the value was existed in survey
+        )
+      );
+
+      return !isNewQuestion ? 'padding-top' : '';
+    },
+    [initialValues.questionIdMap],
+  );
+
+  if (!isExternalProject) {
+    return (
+      <DisplayAnswerWrapper>
+        <DragTable
+          scroll={{ x: size.large }}
+          columns={columnsFiltered}
+          dataSource={dataSource}
+          setDataTable={setDataTable}
+          pagination={false}
+          expandable={{
+            expandedRowRender,
+            rowExpandable,
+            expandRowByClick: false,
+            expandIconColumnIndex: -1,
+            defaultExpandAllRows: true,
+          }}
+          renderRowClassName={renderRowClassName}
+        />
+
+        <GroupSurveyButton />
+      </DisplayAnswerWrapper>
+    );
+  }
+
   return (
     <SimpleBar style={{ height: '100%', width: '100%' }}>
       <DisplayAnswerWrapper>
         <Table
           scroll={{ x: size.large }}
           rowSelection={rowSelection}
-          columns={columns}
+          columns={columnsFiltered}
           dataSource={values.questions}
           pagination={false}
           rowKey={record => record.id as string}
@@ -501,20 +674,7 @@ const DisplayAnswer = props => {
             expandIconColumnIndex: -1,
             defaultExpandAllRows: true,
           }}
-          rowClassName={record => {
-            const isNewQuestion = !(
-              initialValues.questionIdMap &&
-              Object.keys(initialValues.questionIdMap).some(
-                questionVersionId =>
-                  initialValues?.questionIdMap?.[record.questionVersionId] ||
-                  initialValues?.questionIdMap?.[
-                    questionVersionId
-                  ].versions.some(ver => ver?.id === record.questionVersionId), // check if the value was existed in survey
-              )
-            );
-
-            return !isNewQuestion ? 'padding-top' : '';
-          }}
+          rowClassName={renderRowClassName}
         />
         <div className={'DisplayAnswerWrapper__footer'}>
           <Upload
@@ -528,12 +688,12 @@ const DisplayAnswer = props => {
             {t('common.addRow')}
           </Button>
         </div>
-      </DisplayAnswerWrapper>{' '}
+      </DisplayAnswerWrapper>
     </SimpleBar>
   );
 };
 
-const DynamicSelect = props => {
+export const DynamicSelect = props => {
   const {
     setSearchTxt,
     normalizeByQuestionId,
@@ -740,7 +900,7 @@ const ActionDropDown: FC<{
 
   const handleChange = useCallback(
     (record, index) => {
-      const [newVersions] = determineVersion(record);
+      const [newVersions] = determineVersionOfSurveyQuestion(record);
       if (!newVersions) return;
 
       setValues(values => ({
@@ -760,23 +920,23 @@ const ActionDropDown: FC<{
     [setValues],
   );
 
-  // const handleDelete = useCallback(
-  //   index => {
-  //     setValues(values => ({
-  //       ...values,
-  //       questions: values.questions.reduce(
-  //         (res: questionValueType[], q, idx) => {
-  //           if (idx === index) {
-  //             return res;
-  //           }
-  //           return [...res, q];
-  //         },
-  //         [],
-  //       ),
-  //     }));
-  //   },
-  //   [setValues],
-  // );
+  const handleDelete = useCallback(
+    index => {
+      setValues(values => ({
+        ...values,
+        questions: values.questions.reduce(
+          (res: questionValueType[], q, idx) => {
+            if (idx === index) {
+              return res;
+            }
+            return [...res, q];
+          },
+          [],
+        ),
+      }));
+    },
+    [setValues],
+  );
 
   const count = useMemo<number>(() => {
     let result = 0;
@@ -799,12 +959,12 @@ const ActionDropDown: FC<{
         <ThreeDotsDropdown
           overlay={
             <MenuDropDownWrapper>
-              {/*<Menu.Item*/}
-              {/*  key={ACTION_ENUM.DELETE}*/}
-              {/*  onClick={() => handleDelete(index)}*/}
-              {/*>*/}
-              {/*  <TrashOutlined /> {t('common.delete')}*/}
-              {/*</Menu.Item>*/}
+              <Menu.Item
+                key={ACTION_ENUM.DELETE}
+                onClick={() => handleDelete(index)}
+              >
+                <TrashOutlined /> {t('common.delete')}
+              </Menu.Item>
               {hasNewVersion && (
                 <Menu.Item
                   key={ACTION_ENUM.CHANGE}
