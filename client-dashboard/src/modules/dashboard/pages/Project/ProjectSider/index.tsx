@@ -1,5 +1,7 @@
 import { Button } from 'antd';
+import { SCOPE_CONFIG } from 'enums';
 import { PlusIcon } from 'icons';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +16,8 @@ const ProjectSider = () => {
   const { t } = useTranslation();
 
   const { projects, isLoading } = useGetAllProjects();
+
+  const { canCreate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
 
   return (
     <ProjectSiderWrapper ref={wrapperRef}>
@@ -33,14 +37,16 @@ const ProjectSider = () => {
           </SimpleBar>
         </CustomSpinSuspense>
       </div>
-      <div className="add-new-project-btn-wrapper">
-        <CustomNavLink to={projectRoutePath.PROJECT.ADD}>
-          <Button type="default" className="new-project-btn">
-            <PlusIcon />
-            {t('common.addNewProject')}
-          </Button>
-        </CustomNavLink>
-      </div>
+      {canCreate ? (
+        <div className="add-new-project-btn-wrapper">
+          <CustomNavLink to={projectRoutePath.PROJECT.ADD}>
+            <Button type="default" className="new-project-btn">
+              <PlusIcon />
+              {t('common.addNewProject')}
+            </Button>
+          </CustomNavLink>
+        </div>
+      ) : null}
     </ProjectSiderWrapper>
   );
 };

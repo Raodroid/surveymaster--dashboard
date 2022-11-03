@@ -92,7 +92,7 @@ function TeamContent() {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
 
-  const { canCreate, canUpdate, canDelete, canRestore } =
+  const { canCreate, canUpdate, canDelete, canRestore, canRead } =
     useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
 
   useEffect(() => {
@@ -111,8 +111,8 @@ function TeamContent() {
   );
 
   const { data: teamMembers, isLoading } = useQuery(
-    ['getTeamMembers', filter, isDeleted, page],
-    () => AdminService.getTeamMembers(baseParams),
+    ['getTeamMembers', filter, isDeleted, page, canRead],
+    () => (canRead ? AdminService.getTeamMembers(baseParams) : () => {}),
     {
       refetchOnWindowFocus: false,
     },
@@ -250,7 +250,7 @@ function TeamContent() {
   const data: TeamMember[] = useMemo(
     () =>
       teamMembers
-        ? teamMembers.data.data.map((user: TeamMember) => {
+        ? teamMembers?.data.data.map((user: TeamMember) => {
             return {
               key: user.id,
               avatar: user.avatar || '',
@@ -328,7 +328,7 @@ function TeamContent() {
               showSizeChanger={false}
               defaultCurrent={page}
               current={page}
-              total={teamMembers?.data?.pageCount * 10}
+              total={teamMembers?.data.pageCount * 10}
               onChange={e => setPage(e)}
             />
           </CustomSpinSuspense>
@@ -338,7 +338,7 @@ function TeamContent() {
       <UpdateMemberModal
         userData={
           teamMembers
-            ? teamMembers.data.data.find(user => user.id === userId)
+            ? teamMembers?.data.data.find(user => user.id === userId)
             : {}
         }
         showModal={showEditPreferencesModal}

@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import { ProjectPayload } from 'interfaces/project';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
@@ -14,6 +14,8 @@ import ProjectHeader from '../Header';
 import Inputs from './Inputs';
 import { AddProjectWrapper, EditProjectWrapper } from './styles';
 import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc';
+import { SCOPE_CONFIG } from 'enums';
 
 function EditProject() {
   const params = useParams<{ projectId?: string }>();
@@ -22,6 +24,12 @@ function EditProject() {
   const { t } = useTranslation();
 
   const { project, isLoading } = useGetProjectByIdQuery(params?.projectId);
+
+  const { canUpdate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+
+  useEffect(() => {
+    if (!canUpdate) navigate('/');
+  }, [canUpdate, navigate]);
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
@@ -61,36 +69,40 @@ function EditProject() {
   return (
     <EditProjectWrapper className="flex-column">
       <ProjectHeader routes={routes} />
-      <CustomSpinSuspense spinning={isLoading}>
-        <AddProjectWrapper>
-          <Formik
-            enableReinitialize={true}
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            validationSchema={PROJECT_FORM_SCHEMA}
-          >
-            {({ handleSubmit: handleFinish }) => (
-              <Form
-                layout="vertical"
-                className="flex-column"
-                onFinish={handleFinish}
-              >
-                <Inputs />
-                <div className="footer">
-                  <Button
-                    type="primary"
-                    className="info-btn"
-                    htmlType="submit"
-                    loading={mutationEditProject.isLoading}
-                  >
-                    {t('common.saveEdits')}
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </AddProjectWrapper>
-      </CustomSpinSuspense>
+      {canUpdate ? (
+        <CustomSpinSuspense spinning={isLoading}>
+          <AddProjectWrapper>
+            <Formik
+              enableReinitialize={true}
+              initialValues={initialValues}
+              onSubmit={handleSubmit}
+              validationSchema={PROJECT_FORM_SCHEMA}
+            >
+              {({ handleSubmit: handleFinish }) => (
+                <Form
+                  layout="vertical"
+                  className="flex-column"
+                  onFinish={handleFinish}
+                >
+                  <Inputs />
+                  {canUpdate ? (
+                    <div className="footer">
+                      <Button
+                        type="primary"
+                        className="info-btn"
+                        htmlType="submit"
+                        loading={mutationEditProject.isLoading}
+                      >
+                        {t('common.saveEdits')}
+                      </Button>
+                    </div>
+                  ) : null}
+                </Form>
+              )}
+            </Formik>
+          </AddProjectWrapper>
+        </CustomSpinSuspense>
+      ) : null}
     </EditProjectWrapper>
   );
 }

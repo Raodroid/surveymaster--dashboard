@@ -22,6 +22,8 @@ import { ProjectTableWrapper } from '../styles';
 import { QsParams } from './ProjectFilter';
 import SimpleBar from 'simplebar-react';
 import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc';
+import { SCOPE_CONFIG } from 'enums';
 
 const initParams: IGetParams = {
   q: '',
@@ -54,6 +56,9 @@ function ProjectTable() {
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [showRestoreProject, setShowRestoreProject] = useState(false);
 
+  const { canDelete, canRestore, canRead, canUpdate } =
+    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+
   const formatQsParams = useMemo(() => {
     const formatQs: QsParams = {
       ...qsParams,
@@ -67,12 +72,14 @@ function ProjectTable() {
 
   const getProjectListQuery = useQuery(
     ['getProjects', params, formatQsParams],
-    () =>
-      getProjects({
-        ...params,
-        ...formatQsParams,
-        isDeleted: formatQsParams.isDeleted === 'true' ? true : false,
-      }),
+    canRead
+      ? () =>
+          getProjects({
+            ...params,
+            ...formatQsParams,
+            isDeleted: formatQsParams.isDeleted === 'true' ? true : false,
+          })
+      : () => {},
     {
       onError,
       refetchOnWindowFocus: false,
@@ -141,7 +148,7 @@ function ProjectTable() {
               setProjectId(record.id);
             }}
           >
-            {qsParams?.isDeleted !== 'true' && (
+            {qsParams?.isDeleted !== 'true' && canUpdate ? (
               <Button
                 onClick={() =>
                   navigate(
@@ -153,20 +160,20 @@ function ProjectTable() {
               >
                 <PenFilled />
               </Button>
-            )}
+            ) : null}
             <ThreeDotsDropdown
               overlay={
                 <MenuDropDownWrapper>
-                  {qsParams?.isDeleted !== 'true' && (
+                  {qsParams?.isDeleted !== 'true' && canDelete ? (
                     <Menu.Item onClick={() => setShowDeleteProject(true)}>
                       <TrashOutlined /> {t('common.deleteProject')}
                     </Menu.Item>
-                  )}
-                  {qsParams?.isDeleted === 'true' && (
+                  ) : null}
+                  {qsParams?.isDeleted === 'true' && canRestore ? (
                     <Menu.Item onClick={() => setShowRestoreProject(true)}>
                       <Refresh /> {t('common.restoreProject')}
                     </Menu.Item>
-                  )}
+                  ) : null}
                 </MenuDropDownWrapper>
               }
               trigger={['click']}
@@ -175,7 +182,7 @@ function ProjectTable() {
         ),
       },
     ],
-    [navigate, qsParams, t],
+    [navigate, qsParams, t, canRestore, canDelete, canUpdate],
   );
 
   const onRow = (record: IProject) => {
