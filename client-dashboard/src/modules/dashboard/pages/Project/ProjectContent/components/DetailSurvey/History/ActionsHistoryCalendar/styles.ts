@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 export const ActionsHistoryCalendarContentWrapper = styled.div`
   gap: 24px;
-  max-height: 478px;
+  min-height: 478px;
+  max-height: min(1200px, calc(100vh - 432px));
 `;
 
 export const CalendarScrollbarWrapper = styled.div`
@@ -24,10 +25,14 @@ export const CalendarScrollbarWrapper = styled.div`
     }
   }
 
+  .input-wrapper {
+    height: 24px;
+  }
+
   .ant-input-disabled {
     border: none;
-    width: 52px;
     padding: 0;
+    height: 24px;
     text-align: center;
     margin: 0 auto;
   }
@@ -52,10 +57,9 @@ export const CalendarScrollbarWrapper = styled.div`
   }
 `;
 
-export const MothsWrapper = styled.div`
+export const MonthsWrapper = styled.div`
   position: relative;
   overflow: hidden;
-  max-height: 422px;
 
   .months {
     position: relative;
@@ -90,7 +94,7 @@ export const ThumbWrapper = styled.div`
     content: '';
     width: 100%;
     background: rgba(255, 255, 255, 0.8);
-    height: 478px;
+    height: 90vh;
     position: absolute;
   }
 

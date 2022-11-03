@@ -14,7 +14,6 @@ export const ActionsHistoryWrapper = styled.div`
       height: calc(100% + 6px);
     }
   }
-
 `;
 
 export const ActionsHistoryContentWrapper = styled.div`
@@ -26,6 +25,8 @@ export const ActionsHistoryContentWrapper = styled.div`
   grid-template-areas: 'actionsHistory  divider surveyQuestionList';
 
   .actionsHistory {
+    width: 100%;
+    overflow: hidden;
     grid-area: actionsHistory;
   }
 

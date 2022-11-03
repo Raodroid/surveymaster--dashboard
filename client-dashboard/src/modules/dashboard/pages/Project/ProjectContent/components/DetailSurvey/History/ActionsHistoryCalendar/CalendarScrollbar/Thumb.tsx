@@ -11,7 +11,7 @@ import { ThumbWrapper } from '../styles';
 
 const thumbId = 'actions-history-thumb';
 
-const MAX_MONTHS_HEIGHT = 422;
+const MIN_MONTHS_HEIGHT = 478 - 56;
 const MAX_WHEEL_STEP_DISTANCE = 6;
 const MAX_ARROW_KEY_STEP_DISTANCE = 2;
 
@@ -35,12 +35,18 @@ function Thumb() {
   const [months, setMonths] = useState<HTMLElement | null>();
   const [thumb, setThumb] = useState<HTMLElement | null>();
 
+  const monthsHeight = useMemo(() => {
+    return Math.max(
+      MIN_MONTHS_HEIGHT,
+      Math.min(window.innerHeight - 488, 1200 - 56),
+    );
+  }, [window.innerHeight]);
+
   const maxScrollDistance = useMemo(() => {
     if (!months) return 0;
-    if (months.offsetHeight >= MAX_MONTHS_HEIGHT)
-      return MAX_MONTHS_HEIGHT - MONTH_HEIGHT;
+    if (months.offsetHeight >= monthsHeight) return monthsHeight - MONTH_HEIGHT;
     return months.offsetHeight - MONTH_HEIGHT;
-  }, [months]);
+  }, [months, monthsHeight]);
 
   const numberOfDaysFromStartOfYear = useMemo(() => {
     if (!survey) return 0;
@@ -74,11 +80,11 @@ function Thumb() {
       calcDay(top);
       setTopThumb(top);
       thumb.style.top = top + 'px';
-      if (months.offsetHeight >= MAX_MONTHS_HEIGHT) {
+      if (months.offsetHeight >= monthsHeight) {
         months.style.top = -top * (maxInnerDistance / maxScrollDistance) + 'px';
       }
     },
-    [calcDay, maxInnerDistance, maxScrollDistance, months, thumb],
+    [calcDay, maxInnerDistance, maxScrollDistance, months, thumb, monthsHeight],
   );
 
   const handleScroll = useCallback(
@@ -95,7 +101,7 @@ function Thumb() {
         calcDay(maxScrollDistance);
         setTopThumb(maxScrollDistance);
         thumb.style.top = maxScrollDistance + 'px';
-        if (months.offsetHeight >= MAX_MONTHS_HEIGHT)
+        if (months.offsetHeight >= monthsHeight)
           months.style.top = -maxInnerDistance + 'px';
         return;
       }
@@ -120,6 +126,7 @@ function Thumb() {
       months,
       calcDay,
       topThumb,
+      monthsHeight,
       maxInnerDistance,
       maxScrollDistance,
       setDayAndThumbPosition,
@@ -141,7 +148,7 @@ function Thumb() {
         const top = Math.max(element.offsetTop - pos1, 0);
         const topValue = Math.min(
           top,
-          Math.min(MAX_MONTHS_HEIGHT, months.offsetHeight) - MONTH_HEIGHT,
+          Math.min(monthsHeight, months.offsetHeight) - MONTH_HEIGHT,
         );
 
         setDayAndThumbPosition(topValue);
@@ -165,7 +172,7 @@ function Thumb() {
         element.onmousedown = dragMouseDown;
       }
     },
-    [months, setDayAndThumbPosition],
+    [months, setDayAndThumbPosition, monthsHeight],
   );
   handleDragThumb(thumb);
 
@@ -215,15 +222,15 @@ function Thumb() {
     if (!months) setMonths(document.getElementById(ACTIONS_HISTORY_ID.MONTHS));
     if (months)
       setMaxInnerDistance(
-        months.offsetHeight >= MAX_MONTHS_HEIGHT
-          ? months.offsetHeight - MAX_MONTHS_HEIGHT
+        months.offsetHeight >= monthsHeight
+          ? months.offsetHeight - monthsHeight
           : months.offsetHeight,
       );
     if (!monthsWrapper)
       setMonthsWrapper(
         document.getElementById(ACTIONS_HISTORY_ID.MONTHS_WRAPPER),
       );
-  }, [months, thumb, monthsWrapper]);
+  }, [months, thumb, monthsWrapper, monthsHeight]);
 
   useEffect(() => {
     if (!thumb || !months || !maxInnerDistance || !qsParams) return;
@@ -240,7 +247,7 @@ function Thumb() {
     calcDay(top);
     setTopThumb(top);
     thumb.style.top = top + 'px';
-    if (months.offsetHeight >= MAX_MONTHS_HEIGHT) {
+    if (months.offsetHeight >= monthsHeight) {
       months.style.top = -top * (maxInnerDistance / maxScrollDistance) + 'px';
     }
   }, [
@@ -249,6 +256,7 @@ function Thumb() {
     calcDay,
     qsParams,
     isMounted,
+    monthsHeight,
     maxInnerDistance,
     maxScrollDistance,
     numberOfDaysBetweenCreationDateToToday,

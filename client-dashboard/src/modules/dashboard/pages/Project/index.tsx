@@ -1,6 +1,5 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router';
 import ProjectContent from './ProjectContent';
-import AddSurvey from './ProjectContent/components/DetailSurvey/Add';
 import DetailSurvey from './ProjectContent/components/DetailSurvey';
 import { AddProject, EditProject } from './ProjectContent/components/Project';
 import Survey from './ProjectContent/components/Survey';
@@ -10,6 +9,7 @@ import { ProjectWrapper } from './styles';
 import { projectRoutePath } from './util';
 import { useCheckScopeEntityDefault } from '../../../common/hoc';
 import { SCOPE_CONFIG } from 'enums';
+import AddSurvey from './ProjectContent/components/DetailSurvey/Add';
 
 const Project = () => {
   const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');

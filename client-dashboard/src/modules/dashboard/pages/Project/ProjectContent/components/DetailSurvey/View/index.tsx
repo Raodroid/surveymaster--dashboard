@@ -8,7 +8,7 @@ import ProjectHeader from '../../Header';
 import { projectSurveyParams } from '../index';
 import { useGetSurveyById } from '../../Survey/util';
 
-function AddSurvey() {
+function ViewSurvey() {
   const params = useParams<projectSurveyParams>();
 
   const { project } = useGetProjectByIdQuery(params.projectId);
@@ -58,4 +58,4 @@ function AddSurvey() {
   );
 }
 
-export default AddSurvey;
+export default ViewSurvey;
