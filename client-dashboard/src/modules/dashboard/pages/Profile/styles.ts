@@ -486,7 +486,7 @@ export const InviteMemberFormWrapper = styled.div`
     font-weight: 500;
   }
   .title {
-    margin: 0 24px 24px;
+    margin: 0 28px 12px;
     font-weight: 600;
   }
 `;

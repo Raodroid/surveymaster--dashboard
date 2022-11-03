@@ -29,6 +29,7 @@ import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
+import SimpleBar from 'simplebar-react';
 import { useDebounce } from 'utils';
 import {
   CustomFallbackStyled,
@@ -39,10 +40,9 @@ import {
 import {
   ConfirmDeactivateUserModal,
   ConfirmRestoreUserModal,
-  UpdateMemberModal,
   ResetUserPasswordModal,
+  UpdateMemberModal,
 } from './modals';
-import SimpleBar from 'simplebar-react';
 
 interface TeamMember extends UserPayload {
   key: string;

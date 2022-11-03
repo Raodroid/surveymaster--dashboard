@@ -1,16 +1,8 @@
 import { Button, Divider, Form, notification } from 'antd';
-import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
-import { SCOPE_CONFIG } from 'enums/user';
 import { Formik } from 'formik';
 import { PostPutMember } from 'interfaces';
-import useCheckScopeEntity, {
-  ScopeActionArray,
-} from 'modules/common/hoc/useCheckScopeEntity';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
-import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
 import SimpleBar from 'simplebar-react';
 import { onError } from '../../../../../../utils/funcs';
