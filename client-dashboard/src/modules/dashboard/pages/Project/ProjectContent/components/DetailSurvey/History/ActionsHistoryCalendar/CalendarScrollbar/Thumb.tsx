@@ -11,7 +11,10 @@ import { ThumbWrapper } from '../styles';
 
 const thumbId = 'actions-history-thumb';
 
-const MIN_MONTHS_HEIGHT = 478 - 56;
+const INPUTS_HEIGHT = 56;
+const MIN_ACTIONS_HISTORY_HEIGHT = 478;
+const MAX_ACTIONS_HISTORY_HEIGHT = 1200;
+const MIN_MONTHS_HEIGHT = MIN_ACTIONS_HISTORY_HEIGHT - INPUTS_HEIGHT;
 const MAX_WHEEL_STEP_DISTANCE = 6;
 const MAX_ARROW_KEY_STEP_DISTANCE = 2;
 
@@ -38,7 +41,10 @@ function Thumb() {
   const monthsHeight = useMemo(() => {
     return Math.max(
       MIN_MONTHS_HEIGHT,
-      Math.min(window.innerHeight - 488, 1200 - 56),
+      Math.min(
+        window.innerHeight - 488,
+        MAX_ACTIONS_HISTORY_HEIGHT - INPUTS_HEIGHT,
+      ),
     );
   }, [window.innerHeight]);
 
