@@ -1,7 +1,7 @@
 import useParseQueryString from 'hooks/useParseQueryString';
 import moment from 'moment';
 import qs from 'qs';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useDebounce } from 'utils';
 import { ACTIONS_HISTORY_ID } from '.';
@@ -31,7 +31,7 @@ function Thumb() {
 
   const [isMounted, setIsMounted] = useState(false);
 
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const mousePos = useRef({ x: 0, y: 0 });
   const [topThumb, setTopThumb] = useState(0);
 
   const [monthsWrapper, setMonthsWrapper] = useState<HTMLElement | null>();
@@ -187,13 +187,15 @@ function Thumb() {
       const rects = monthsWrapper?.getBoundingClientRect();
       if (!months || !rects || !thumb) return;
       if (e.keyCode !== 38 && e.keyCode !== 40) return;
-      if (rects.left > mousePos.x || mousePos.x > rects.right) return;
-      if (rects.top > mousePos.y || mousePos.y > rects.bottom) return;
+      if (rects.left > mousePos.current.x || mousePos.current.x > rects.right)
+        return;
+      if (rects.top > mousePos.current.y || mousePos.current.y > rects.bottom)
+        return;
 
       const direction = e.keyCode === 38 ? DIRECTION.UP : DIRECTION.DOWN;
       handleScroll(e, MAX_ARROW_KEY_STEP_DISTANCE, direction);
     },
-    [thumb, months, mousePos, monthsWrapper, handleScroll],
+    [thumb, months, monthsWrapper, handleScroll],
   );
 
   const handleScrollByWheel = useCallback(
@@ -210,7 +212,8 @@ function Thumb() {
   );
 
   useEffect(() => {
-    const handleMouseMove = e => setMousePos({ x: e.clientX, y: e.clientY });
+    const handleMouseMove = e =>
+      (mousePos.current = { x: e.clientX, y: e.clientY });
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('keydown', handleScrollByArrowKey);
