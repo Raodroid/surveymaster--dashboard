@@ -228,7 +228,7 @@ const EditQuestion = () => {
                   <div className={'category-section__row__title'}>
                     {t('common.questionParameters')}
                   </div>
-                  <QuestionCategoryForm disabled />
+                  <QuestionCategoryForm />
                 </div>
               </div>
             </Form>

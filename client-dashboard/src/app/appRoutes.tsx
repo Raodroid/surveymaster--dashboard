@@ -9,6 +9,8 @@ import { NoAuthenticationRoutes } from './public.route';
 import { UnProtectedRoutes } from './unProtected.route';
 import { useCheckScopeEntityDefault } from '../modules/common/hoc';
 import { SCOPE_CONFIG } from '../enums/user';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '../redux/auth';
 
 const Home = lazy(() => import('modules/dashboard/pages/Home'));
 const Project = lazy(() => import('modules/dashboard/pages/Project'));
@@ -41,6 +43,10 @@ const AppRoutes = () => {
   const { canRead: canReadQuestion } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTIONS,
   );
+  const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);
+
+  const canReadQuestionFinal = isFetching ? true : canReadQuestion;
+
   return (
     <ScrollToTop>
       <Suspense fallback={<CustomSpinSuspense />}>
@@ -60,7 +66,7 @@ const AppRoutes = () => {
                 element={<Profile />}
               />
             </Route>
-            {canReadQuestion && (
+            {canReadQuestionFinal && (
               <Route
                 path={ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT}
                 element={<QuestionBank />}

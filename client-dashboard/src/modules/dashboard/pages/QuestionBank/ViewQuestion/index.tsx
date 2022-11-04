@@ -286,7 +286,7 @@ const ViewQuestion = () => {
                 <div
                   className={'QuestionContent__body__section category-section'}
                 >
-                  <QuestionCategoryForm />
+                  <QuestionCategoryForm disabled />
                 </div>
               </div>
             </Form>

@@ -12,18 +12,21 @@ const QuestionCategoryForm = props => {
   const { values, setFieldValue } = useFormikContext<IAddQuestionFormValue>();
   const { categories, isLoading, categoryOptions } = useGetAllCategories();
 
+  const className = disabled ? 'view-mode' : undefined;
+
   return (
     <>
       {disabled && (
         <ControlledInput
-          disabled={disabled}
+          // disabled={disabled}
+          className={className}
           inputType={INPUT_TYPES.INPUT}
           name="id"
           label={t('common.question') + ' ID'}
         />
       )}
       <ControlledInput
-        disabled={disabled}
+        className={className}
         inputType={INPUT_TYPES.SELECT}
         options={categoryOptions}
         name="masterCategoryId"
@@ -33,10 +36,12 @@ const QuestionCategoryForm = props => {
           setFieldValue('masterSubCategoryId', '');
         }}
       />
-
       <ControlledInput
         loading={isLoading}
-        disabled={disabled || !values.masterCategoryId}
+        // disabled={disabled || !values.masterCategoryId}
+        className={
+          disabled || !values.masterCategoryId ? 'view-mode' : undefined
+        }
         label={t('common.masterQuestionSubCategory')}
         inputType={INPUT_TYPES.SELECT}
         name="masterSubCategoryId"
@@ -50,16 +55,16 @@ const QuestionCategoryForm = props => {
           }));
         })()}
       />
-
       <ControlledInput
-        disabled={disabled}
+        // disabled={disabled}
+        className={className}
         label={t('common.masterVariableName')}
         inputType={INPUT_TYPES.INPUT}
         name="masterVariableName"
       />
       {disabled && (
         <ControlledInput
-          disabled={disabled}
+          className={className}
           label={t('common.masterCombineToken')}
           inputType={INPUT_TYPES.INPUT}
           name="masterCombineToken"
@@ -67,7 +72,7 @@ const QuestionCategoryForm = props => {
       )}
       {disabled && (
         <ControlledInput
-          disabled={disabled}
+          className={className}
           label={t('common.version') + ' ID'}
           inputType={INPUT_TYPES.INPUT}
           name="masterCombineToken"
