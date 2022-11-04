@@ -492,12 +492,7 @@ const DisplayAnswer = props => {
       },
     ],
     [
-      fetchNextPage,
-      hasNextPage,
-      isLoading,
-      normalizeByQuestionId,
-      questionOption,
-      t,
+     
     ],
   );
 
@@ -703,6 +698,8 @@ export const DynamicSelect = props => {
     isLoading,
     index,
   } = props;
+  useEffect(() => {
+  }, [])
   const { t } = useTranslation();
   const { values, setValues, initialValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();

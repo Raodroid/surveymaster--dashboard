@@ -8,6 +8,53 @@ import type { SortableContainerProps, SortEnd } from 'react-sortable-hoc';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { TableProps } from 'antd/lib/table';
 
+const ThemeContext = React.createContext<{
+  onSortEnd: ({ oldIndex, newIndex }: SortEnd) => void;
+  dataSource: any;
+  renderRowClassName?: (value: any) => string;
+} | null>(null);
+
+const DraggableContainer = (props: SortableContainerProps) => (
+  <ThemeContext.Consumer>
+    {value => (
+      <SortableBody
+        useDragHandle
+        disableAutoscroll
+        helperClass="row-dragging"
+        onSortEnd={value?.onSortEnd}
+        {...props}
+      />
+    )}
+  </ThemeContext.Consumer>
+);
+
+const DraggableBodyRow: React.FC<any> = ({
+  // className,
+  style,
+  ...restProps
+}) => {
+  // function findIndex base on Table rowKey props and should always be a right array index
+  const currentRecord = restProps.children?.[0]?.props.record;
+
+  return (
+    <ThemeContext.Consumer>
+      {value => (
+        <SortableItem
+          index={value?.dataSource?.findIndex(
+            x => x['index'] === restProps['data-row-key'],
+          )}
+          {...restProps}
+          className={
+            value?.renderRowClassName
+              ? value.renderRowClassName(currentRecord)
+              : ''
+          }
+        />
+      )}
+    </ThemeContext.Consumer>
+  );
+};
+
 const SortableItem = SortableElement(
   (props: React.HTMLAttributes<HTMLTableRowElement>) => {
     return <tr {...props} />;
@@ -18,12 +65,14 @@ const SortableBody = SortableContainer(
     <tbody {...props} />
   ),
 );
-export const DragTable: React.FC<
-  TableProps<any> & {
-    setDataTable: (value) => void;
-    renderRowClassName?: (value) => string;
-  }
-> = props => {
+
+interface HanhTableProps<RecordType> extends TableProps<RecordType>  {
+  setDataTable: (value) => void;
+  renderRowClassName?: (value) => string;
+};
+
+
+export const DragTable: React.FC<HanhTableProps<any>> = props => {
   const {
     dataSource,
     setDataTable,
@@ -44,49 +93,26 @@ export const DragTable: React.FC<
     }
   };
 
-  const DraggableContainer = (props: SortableContainerProps) => (
-    <SortableBody
-      useDragHandle
-      disableAutoscroll
-      helperClass="row-dragging"
-      onSortEnd={onSortEnd}
-      {...props}
-    />
-  );
-
-  const DraggableBodyRow: React.FC<any> = ({
-    // className,
-    style,
-    ...restProps
-  }) => {
-    // function findIndex base on Table rowKey props and should always be a right array index
-
-    const index = dataSource?.findIndex(
-      x => x['index'] === restProps['data-row-key'],
-    );
-    const currentRecord = restProps.children?.[0]?.props.record;
-
-    return (
-      <SortableItem
-        index={index}
-        {...restProps}
-        className={renderRowClassName ? renderRowClassName(currentRecord) : ''}
-      />
-    );
-  };
-
   return (
-    <Table
-      pagination={false}
-      dataSource={dataSource}
-      rowKey="index"
-      {...rest}
-      components={{
-        body: {
-          wrapper: DraggableContainer,
-          row: DraggableBodyRow,
-        },
+    <ThemeContext.Provider
+      value={{
+        onSortEnd,
+        dataSource,
+        renderRowClassName,
       }}
-    />
+    >
+      <Table
+        pagination={false}
+        dataSource={dataSource}
+        rowKey="index"
+        {...rest}
+        components={{
+          body: {
+            wrapper: DraggableContainer,
+            row: DraggableBodyRow,
+          },
+        }}
+      />
+    </ThemeContext.Provider>
   );
 };

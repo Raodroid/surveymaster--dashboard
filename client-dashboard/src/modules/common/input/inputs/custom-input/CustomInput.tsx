@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Input } from 'antd';
 import { InputProps } from 'antd/lib/input';
 import { OnchangeType } from '../../type';
@@ -11,6 +11,7 @@ const CustomInput = (props: CustomInputProps) => {
   };
   const customProps: { onChange?: typeof customOnChange } = {};
   if (props.onChange) customProps.onChange = customOnChange;
+
   return (
     <Input
       {...props}
