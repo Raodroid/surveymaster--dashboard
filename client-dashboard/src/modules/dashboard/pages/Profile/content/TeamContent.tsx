@@ -12,25 +12,31 @@ import {
   Input,
   InputRef,
   Menu,
-  Pagination,
+  PaginationProps,
   Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
+import useParseQueryString from 'hooks/useParseQueryString';
 import { SearchIcon } from 'icons/SearchIcon';
+import _get from 'lodash/get';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc/useCheckScopeEntityDefault';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import StyledPagination from 'modules/dashboard/components/StyledPagination';
+import qs from 'qs';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
 import SimpleBar from 'simplebar-react';
-import { useDebounce } from 'utils';
+import { GetListQuestionDto, IGetParams } from 'type';
+import { QsParams } from '../../Project/ProjectContent/components/ProjectFilter';
 import {
   CustomFallbackStyled,
   DropDownMenuStyled,
@@ -64,20 +70,27 @@ const rowSelection = {
   }),
 };
 
+const initParams: IGetParams = {
+  q: '',
+  page: 1,
+  take: 10,
+  isDeleted: false,
+};
+
 function TeamContent() {
   const { t } = useTranslation();
   const profile = useSelector(AuthSelectors.getProfile);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
-  const searchRef = useRef<InputRef>(null);
   const [userId, setUserId] = useState<string>('');
   const allRoles = useSelector(AuthSelectors.getAllRoles);
   const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
 
-  const [search, setSearch] = useState<string>('');
-  const [filter, setFilter] = useState<string>('');
-  const searchDebounce = useDebounce(search);
-  const [page, setPage] = useState<number>(1);
-  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+  const searchRef = useRef<InputRef>(null);
+  const qsParams = useParseQueryString<QsParams>();
+
+  const [params, setParams] = useState<GetListQuestionDto>(initParams);
 
   const [showConfirmDeactivateModal, setShowConfirmDeactivateModal] =
     useState<boolean>(false);
@@ -92,31 +105,52 @@ function TeamContent() {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
 
-  const { canCreate, canUpdate, canDelete, canRestore, canRead } =
+  const { canUpdate, canDelete, canRestore, canRead } =
     useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
-
-  useEffect(() => {
-    if (!searchDebounce) setFilter('');
-  }, [searchDebounce]);
 
   const baseParams = useMemo(
     () => ({
-      page: page,
-      take: 10,
+      ...params,
+      ...qsParams,
       roles: Object.values(allRoles).map(elm => elm.id),
-      isDeleted: isDeleted,
-      q: filter,
+      isDeleted: qsParams.isDeleted === 'true' ? true : false,
     }),
-    [filter, page, isDeleted, allRoles],
+    [allRoles, params, qsParams],
   );
 
   const { data: teamMembers, isLoading } = useQuery(
-    ['getTeamMembers', filter, isDeleted, page, canRead],
+    ['getTeamMembers', baseParams, canRead],
     () => (canRead ? AdminService.getTeamMembers(baseParams) : () => {}),
     {
       refetchOnWindowFocus: false,
     },
   );
+
+  const total: number = _get(teamMembers, 'data.itemCount', 0);
+
+  const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
+    (current, pageSize) => {
+      setParams(s => ({ ...s, take: pageSize }));
+    },
+    [],
+  );
+
+  const handleSearch = useCallback(() => {
+    navigate(
+      pathname +
+        '?' +
+        qs.stringify({ ...qsParams, q: searchRef.current?.input?.value }),
+    );
+  }, [navigate, pathname, qsParams]);
+
+  const handleSubmitBtn = useCallback(() => {
+    console.log(searchRef.current?.input?.value);
+    if (!searchRef.current?.input?.value && !qsParams.q) {
+      searchRef.current?.focus();
+      return;
+    }
+    handleSearch();
+  }, [searchRef, handleSearch, qsParams]);
 
   const handleEditPreferences = (id: string) => {
     setUserId(id);
@@ -271,68 +305,69 @@ function TeamContent() {
       <div className="cell padding-24 name title flex-a-center">AMiLi</div>
 
       <div className="cell flex-column table-wrapper">
-        <div className="search padding-24 flex-center">
-          <Button
-            className="search-btn"
-            onClick={() => {
-              if (search.trim()) {
-                setFilter(search);
-              } else {
-                searchRef.current?.focus();
-              }
-            }}
-          >
-            <SearchIcon />
-          </Button>
-          <Form
-            onFinish={() => setFilter(search)}
-            className="search-form flex-center"
-          >
-            <Input
-              value={search}
-              ref={searchRef}
-              allowClear
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search Team Member..."
-            />
-          </Form>
-          <Checkbox
-            className="show-inactivate-users-checkbox"
-            checked={isDeleted}
-            onChange={() => setIsDeleted(!isDeleted)}
-          >
-            {t('common.showInactivateUsers')}
-          </Checkbox>
-        </div>
-
-        <Divider />
-
-        <TableWrapperStyled>
-          <CustomSpinSuspense spinning={isLoading}>
-            <div className="table-wrapper">
-              <SimpleBar style={{ maxHeight: '100%' }}>
-                <Table
-                  rowSelection={{
-                    type: 'checkbox',
-                    ...rowSelection,
-                  }}
-                  scroll={{ y: 'fit-content' }}
-                  columns={columns}
-                  dataSource={data}
-                  pagination={false}
+        {canRead ? (
+          <>
+            <div className="search padding-24 flex-center">
+              <Form onFinish={handleSearch} className="search-form flex-center">
+                <Button className="search-btn" onClick={handleSubmitBtn}>
+                  <SearchIcon />
+                </Button>
+                <Input
+                  ref={searchRef}
+                  allowClear
+                  placeholder="Search Team Member..."
                 />
-              </SimpleBar>
+              </Form>
+              <Checkbox
+                className="show-inactivate-users-checkbox"
+                checked={qsParams.isDeleted === 'true' ? true : false}
+                onChange={() =>
+                  navigate(
+                    pathname +
+                      '?' +
+                      qs.stringify({
+                        ...qsParams,
+                        isDeleted: qsParams.isDeleted === 'true' ? false : true,
+                      }),
+                  )
+                }
+              >
+                {t('common.showInactivateUsers')}
+              </Checkbox>
             </div>
-            <Pagination
-              className="flex-j-end pagination"
-              showSizeChanger={false}
-              defaultCurrent={page}
-              current={page}
-              total={teamMembers?.data.pageCount * 10}
-              onChange={e => setPage(e)}
-            />
-          </CustomSpinSuspense>
-        </TableWrapperStyled>
+
+            <Divider />
+
+            <TableWrapperStyled>
+              <CustomSpinSuspense spinning={isLoading}>
+                <div className="table-wrapper">
+                  <SimpleBar style={{ maxHeight: '100%' }}>
+                    <Table
+                      rowSelection={{
+                        type: 'checkbox',
+                        ...rowSelection,
+                      }}
+                      scroll={{ y: 'fit-content' }}
+                      columns={columns}
+                      dataSource={data}
+                      pagination={false}
+                    />
+                  </SimpleBar>
+                </div>
+                <StyledPagination
+                  onChange={page => {
+                    setParams(s => ({ ...s, page }));
+                  }}
+                  showSizeChanger
+                  pageSize={params.take}
+                  onShowSizeChange={onShowSizeChange}
+                  defaultCurrent={1}
+                  total={total}
+                />
+              </CustomSpinSuspense>
+            </TableWrapperStyled>
+          </>
+        ) : null}
       </div>
 
       <UpdateMemberModal
