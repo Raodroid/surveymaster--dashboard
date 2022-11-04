@@ -11,10 +11,40 @@ const APIService = axios.create({
   },
 });
 
+let refreshTokenRequest: any = null;
+let isTokenExpired = false;
+
 APIService.interceptors.request.use(
-  request => {
+  async request => {
     const state = store.getState();
     const token = AuthSelectors.getIdToken(state);
+
+    if (isTokenExpired) {
+      const refreshToken = async () => {
+        try {
+          return await CognitoService.refreshToken();
+        } catch (err) {
+          handleLogout();
+          return null;
+        }
+      };
+
+      refreshTokenRequest = refreshTokenRequest
+        ? refreshTokenRequest
+        : refreshToken();
+
+      const newToken = await refreshTokenRequest;
+      refreshTokenRequest = null;
+
+      if (newToken) {
+        isTokenExpired = false;
+        const idToken = newToken?.AuthenticationResult?.IdToken;
+        const accessToken = newToken?.AuthenticationResult?.AccessToken;
+        store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
+        return request;
+      }
+      return handleLogout();
+    }
 
     if (!request.params) {
       request.params = {};
@@ -41,31 +71,18 @@ APIService.interceptors.response.use(
     return response;
   },
   async function (error) {
-    console.error({ error });
+    console.log('response', { error });
     const originalRequest = error.config;
     const { message, statusCode } = error?.response?.data || {};
     if (statusCode === 401) {
-      if (message !== 'Token is expired or invalid') {
+      if (message !== 'jwt expired') {
         originalRequest.url.includes('logout')
           ? handleLogout()
           : store.dispatch(AuthAction.userSignOut());
         return Promise.reject(error);
       } else {
-        let data;
-        try {
-          data = await CognitoService.refreshToken();
-        } catch (err) {
-          handleLogout();
-          return Promise.reject(err);
-        }
-        const idToken = data?.AuthenticationResult?.IdToken;
-        const accessToken = data?.AuthenticationResult?.AccessToken;
-        originalRequest.headers.Authorization = `Bearer ${idToken}`;
-        store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
-        return APIService(originalRequest).catch(err => {
-          err?.response?.data.statusCode === 401 && handleLogout();
-          return Promise.reject(err);
-        });
+        isTokenExpired = true;
+        return APIService(originalRequest);
       }
     } else {
       originalRequest.url.includes('logout') && handleLogout();
