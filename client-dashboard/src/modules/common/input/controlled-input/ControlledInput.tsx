@@ -3,7 +3,7 @@ import { FastField, Field, useField } from 'formik';
 import { Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import UncontrollInput from '../uncontrolled-input/UncontrollInput';
-import { ControlledInputProps } from '../type';
+import { ControlledInputProps, INPUT_TYPES } from '../type';
 
 const ControlledInput = (props: ControlledInputProps) => {
   const {
@@ -25,7 +25,8 @@ const ControlledInput = (props: ControlledInputProps) => {
   const inputRef = useRef<any>();
 
   useEffect(() => {
-    const handleClick = () => setValue('');
+    const handleClick = () =>
+      setValue(inputType === INPUT_TYPES.SELECT ? [] : '');
     const elm = inputRef.current.querySelector(
       'div.form-item-container .anticon-close-circle',
     );
