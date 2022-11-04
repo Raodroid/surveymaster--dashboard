@@ -300,6 +300,8 @@ const SurveyForm: FC = () => {
 
   const wrapperRef = useRef<any>();
 
+  const className = isViewMode ? 'view-mode' : undefined;
+
   return (
     <>
       <Formik
@@ -333,7 +335,7 @@ const SurveyForm: FC = () => {
 
                   {!isExternalProject && !isEditMode && (
                     <ControlledInput
-                      disabled={isViewMode}
+                      className={className}
                       inputType={INPUT_TYPES.SELECT}
                       name={'template'}
                       options={transformEnumToOption(SurveyTemplateEnum, type =>
@@ -345,7 +347,7 @@ const SurveyForm: FC = () => {
                   <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
                     name="name"
-                    disabled={isViewMode}
+                    className={className}
                     label={
                       isExternalProject
                         ? t('common.externalSurveyTitle')
@@ -356,7 +358,7 @@ const SurveyForm: FC = () => {
                     inputType={INPUT_TYPES.INPUT}
                     name="remark"
                     label={t('common.surveyRemarks')}
-                    disabled={isViewMode}
+                    className={className}
                   />
                 </div>
                 <div className="divider" />
@@ -367,11 +369,12 @@ const SurveyForm: FC = () => {
                     {isExternalProject && t('common.external')}{' '}
                     {t('common.surveyParameters')}:
                   </div>
+
                   <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
                     name="surveyId"
                     label="ID"
-                    disabled
+                    className={'view-mode'}
                   />
                 </div>
               </div>

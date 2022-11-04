@@ -13,6 +13,7 @@ const QuestionDetailForm = () => {
     <QuestionDetailFormWrapper className={'QuestionDetailForm'}>
       <div className={'QuestionDetailForm__row'}>
         <ControlledInput
+          className={'view-mode'}
           inputType={INPUT_TYPES.SELECT}
           name="type"
           label={t('common.questionFieldType')}
@@ -21,12 +22,14 @@ const QuestionDetailForm = () => {
           )}
         />
         <ControlledInput
+          className={'view-mode'}
           inputType={INPUT_TYPES.DAY_PICKER}
           name="createdAt"
           label={t('common.dateCreated')}
         />
       </div>
       <ControlledInput
+        className={'view-mode'}
         inputType={INPUT_TYPES.INPUT}
         name="title"
         label={t('common.question')}
