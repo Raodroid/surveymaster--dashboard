@@ -41,6 +41,9 @@ APIService.interceptors.request.use(
         const idToken = newToken?.AuthenticationResult?.IdToken;
         const accessToken = newToken?.AuthenticationResult?.AccessToken;
         store.dispatch(AuthAction.updateTokens({ idToken, accessToken }));
+
+        if (!request.headers) return handleLogout();
+        request.headers.Authorization = `Bearer ${idToken}`;
         return request;
       }
       return handleLogout();
