@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useRef } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Button, notification } from 'antd';
 import { ControlledInput } from '../../../../../../../common';
 import { INPUT_TYPES } from '../../../../../../../common/input/type';
@@ -137,6 +137,10 @@ const SurveyForm: FC = () => {
   const { project, isLoading: isFetchingProject } = useGetProjectByIdQuery(
     params?.projectId,
   );
+
+  useEffect(() => {
+    console.log(params?.surveyId);
+  }, [params?.surveyId]);
 
   const isLoading = isFetchingProject || isFetchingSurveyData;
 
@@ -443,8 +447,7 @@ const QuestionSurveyList: FC<{ isExternalProject: boolean }> = props => {
             : t('common.surveyQuestionList')}
         </div>
 
-        {!isViewMode && !isExternalProject && <UploadExternalFile />}
-        {!isViewMode && isExternalProject && <UploadExternalFile />}
+        {!isViewMode && <UploadExternalFile />}
 
         {isViewMode && (
           <ViewSurveyQuestionList questions={surveyData.questions} />

@@ -65,7 +65,6 @@ export const DragTable: React.FC<
       x => x['index'] === restProps['data-row-key'],
     );
     const currentRecord = restProps.children?.[0]?.props.record;
-    if (renderRowClassName) console.log(renderRowClassName(currentRecord));
 
     return (
       <SortableItem

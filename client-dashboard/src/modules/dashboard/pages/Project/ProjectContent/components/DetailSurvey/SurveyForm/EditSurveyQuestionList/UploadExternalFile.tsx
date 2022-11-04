@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Badge, Button, Menu, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -266,7 +266,12 @@ const UploadExternalFile = () => {
         </>
       )}
       {!displayParameterTable && !isExternalProject && <GroupSurveyButton />}
-      {displayParameterTable && <DisplayAnswer onChangeUploadFile={onChange} />}
+      {displayParameterTable && (
+        <DisplayAnswer
+          onChangeUploadFile={onChange}
+          isExternalProject={isExternalProject}
+        />
+      )}
     </>
   );
 };
@@ -291,10 +296,7 @@ const DragHandle = SortableHandle(() => (
 ));
 
 const DisplayAnswer = props => {
-  const { onChangeUploadFile } = props;
-  const params = useParams<{ projectId?: string; surveyId?: string }>();
-  const { project } = useGetProjectByIdQuery(params.projectId);
-  const isExternalProject = project.type === ProjectTypes.EXTERNAL;
+  const { onChangeUploadFile, isExternalProject } = props;
   const { t } = useTranslation();
 
   const [searchTxt, setSearchTxt] = useState<string>('');
@@ -467,15 +469,13 @@ const DisplayAnswer = props => {
       {
         title: t('common.remark'),
         dataIndex: 'remark',
-        render: (value, record, index) => {
-          return (
-            <ControlledInput
-              style={{ width: '100%' }}
-              inputType={INPUT_TYPES.INPUT}
-              name={`questions[${index}].remark`}
-            />
-          );
-        },
+        render: (value, record, index) => (
+          <ControlledInput
+            style={{ width: '100%' }}
+            inputType={INPUT_TYPES.INPUT}
+            name={`questions[${index}].remark`}
+          />
+        ),
       },
       {
         title: '',
@@ -486,6 +486,7 @@ const DisplayAnswer = props => {
             record={record}
             rowExpandable={rowExpandable}
             index={index}
+            isExternalProject={isExternalProject}
           />
         ),
       },
@@ -572,8 +573,7 @@ const DisplayAnswer = props => {
   }, [columnsFiltered]);
 
   const expandedRowRender = (record: questionValueType) => {
-    const [newVersions, historyVersions] =
-      determineVersionOfSurveyQuestion(record);
+    const [newVersions] = determineVersionOfSurveyQuestion(record);
 
     return (
       <Table
@@ -839,23 +839,31 @@ const ActionDropDown: FC<{
   record: questionValueType;
   index: number;
   rowExpandable;
+  isExternalProject: boolean;
 }> = props => {
   const { t } = useTranslation();
-  const { record, rowExpandable, index } = props;
+  const { record, rowExpandable, index, isExternalProject } = props;
   const hasNewVersion = rowExpandable(record);
   const { initialValues, setValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();
   const { value } = getFieldMeta<questionValueType>(`questions[${index}]`);
 
-  const isDirty =
-    initialValues.questionIdMap &&
-    Object.keys(initialValues.questionIdMap).some(
-      questionVersionId =>
-        !initialValues?.questionIdMap?.[value.questionVersionId] &&
-        initialValues?.questionIdMap?.[questionVersionId].versions.some(
-          ver => ver?.id === value.questionVersionId,
-        ), // check if the value was existed in survey
-    );
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
+
+  const isDirty = useMemo(
+    () =>
+      initialValues.questionIdMap &&
+      Object.keys(initialValues.questionIdMap).some(
+        questionVersionId =>
+          !initialValues?.questionIdMap?.[value.questionVersionId] &&
+          initialValues?.questionIdMap?.[questionVersionId].versions.some(
+            ver => ver?.id === value.questionVersionId,
+          ), // check if the value was existed in survey
+      ),
+    [initialValues.questionIdMap, value.questionVersionId],
+  );
 
   const handleDecline = useCallback(() => {
     const questionIdMap = initialValues.questionIdMap;
@@ -946,8 +954,11 @@ const ActionDropDown: FC<{
     if (isDirty) {
       result += 1;
     }
+    if (!isExternalProject) {
+      result += 1;
+    }
     return result;
-  }, [hasNewVersion, isDirty]);
+  }, [hasNewVersion, isDirty, isExternalProject]);
 
   return (
     <div
@@ -959,12 +970,14 @@ const ActionDropDown: FC<{
         <ThreeDotsDropdown
           overlay={
             <MenuDropDownWrapper>
-              <Menu.Item
-                key={ACTION_ENUM.DELETE}
-                onClick={() => handleDelete(index)}
-              >
-                <TrashOutlined /> {t('common.delete')}
-              </Menu.Item>
+              {!isExternalProject && (
+                <Menu.Item
+                  key={ACTION_ENUM.DELETE}
+                  onClick={() => handleDelete(index)}
+                >
+                  <TrashOutlined /> {t('common.delete')}
+                </Menu.Item>
+              )}
               {hasNewVersion && (
                 <Menu.Item
                   key={ACTION_ENUM.CHANGE}
