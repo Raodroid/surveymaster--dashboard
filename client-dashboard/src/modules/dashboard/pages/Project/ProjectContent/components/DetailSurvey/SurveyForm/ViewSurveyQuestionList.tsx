@@ -75,7 +75,10 @@ function ViewSurveyQuestionList(props: { questions?: ISurveyQuestion[] }) {
     columns,
   );
 
-  const dataSource = questions?.sort((a, b) => a.sort - b.sort);
+  const dataSource = useMemo(
+    () => questions?.sort((a, b) => a.sort - b.sort),
+    [questions],
+  );
 
   return (
     <>
