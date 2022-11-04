@@ -1,9 +1,11 @@
 import { Button, Menu, PaginationProps, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
+import { SCOPE_CONFIG } from 'enums';
 import { PenFilled, TrashOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import _get from 'lodash/get';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import moment from 'moment';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -12,7 +14,9 @@ import { useQuery } from 'react-query';
 import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
+import SimpleBar from 'simplebar-react';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
+import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import { onError } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
@@ -20,8 +24,6 @@ import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper } from '../styles';
 import { QsParams } from './ProjectFilter';
-import SimpleBar from 'simplebar-react';
-import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
 
 const initParams: IGetParams = {
   q: '',
@@ -54,6 +56,9 @@ function ProjectTable() {
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [showRestoreProject, setShowRestoreProject] = useState(false);
 
+  const { canDelete, canRestore, canRead, canUpdate } =
+    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+
   const formatQsParams = useMemo(() => {
     const formatQs: QsParams = {
       ...qsParams,
@@ -67,12 +72,14 @@ function ProjectTable() {
 
   const getProjectListQuery = useQuery(
     ['getProjects', params, formatQsParams],
-    () =>
-      getProjects({
-        ...params,
-        ...formatQsParams,
-        isDeleted: formatQsParams.isDeleted === 'true' ? true : false,
-      }),
+    canRead
+      ? () =>
+          getProjects({
+            ...params,
+            ...formatQsParams,
+            isDeleted: formatQsParams.isDeleted === 'true' ? true : false,
+          })
+      : () => {},
     {
       onError,
       refetchOnWindowFocus: false,
@@ -141,7 +148,7 @@ function ProjectTable() {
               setProjectId(record.id);
             }}
           >
-            {qsParams?.isDeleted !== 'true' && (
+            {qsParams?.isDeleted !== 'true' && canUpdate ? (
               <Button
                 onClick={() =>
                   navigate(
@@ -153,20 +160,20 @@ function ProjectTable() {
               >
                 <PenFilled />
               </Button>
-            )}
+            ) : null}
             <ThreeDotsDropdown
               overlay={
                 <MenuDropDownWrapper>
-                  {qsParams?.isDeleted !== 'true' && (
+                  {qsParams?.isDeleted !== 'true' && canDelete ? (
                     <Menu.Item onClick={() => setShowDeleteProject(true)}>
                       <TrashOutlined /> {t('common.deleteProject')}
                     </Menu.Item>
-                  )}
-                  {qsParams?.isDeleted === 'true' && (
+                  ) : null}
+                  {qsParams?.isDeleted === 'true' && canRestore ? (
                     <Menu.Item onClick={() => setShowRestoreProject(true)}>
                       <Refresh /> {t('common.restoreProject')}
                     </Menu.Item>
-                  )}
+                  ) : null}
                 </MenuDropDownWrapper>
               }
               trigger={['click']}
@@ -175,7 +182,7 @@ function ProjectTable() {
         ),
       },
     ],
-    [navigate, qsParams, t],
+    [navigate, qsParams, t, canRestore, canDelete, canUpdate],
   );
 
   const onRow = (record: IProject) => {
@@ -202,7 +209,6 @@ function ProjectTable() {
             columns={columns}
             onRow={onRow}
             rowKey={record => record.id as string}
-            // scroll={{ y: 100 }}
           />
           <StyledPagination
             onChange={page => {
