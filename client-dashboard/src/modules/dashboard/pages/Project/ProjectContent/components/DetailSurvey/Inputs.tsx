@@ -20,7 +20,7 @@ function Inputs(props: {
   const { project } = useGetProjectByIdQuery(params?.projectId);
 
   return (
-    <InputsWrapper>
+    <InputsWrapper className="detail-survey-inputs-wrapper">
       <div className="mainInfo-title title">
         {project.type === ProjectTypes.EXTERNAL ? t('common.external') : null}{' '}
         {t('common.mainInformation')}:

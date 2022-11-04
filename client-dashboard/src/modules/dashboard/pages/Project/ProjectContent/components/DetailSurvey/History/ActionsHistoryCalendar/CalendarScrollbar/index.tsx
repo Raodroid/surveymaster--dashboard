@@ -4,7 +4,7 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import moment from 'moment';
 import { memo, useMemo } from 'react';
 import { useGetAllActionsHistory, useGetSurveyDetail } from '../../../utils';
-import { CalendarScrollbarWrapper, MothsWrapper } from '../styles';
+import { CalendarScrollbarWrapper, MonthsWrapper } from '../styles';
 import Month from './Month';
 import Thumb from './Thumb';
 
@@ -42,8 +42,10 @@ function CalendarScrollbar() {
   return (
     <CalendarScrollbarWrapper>
       <div className="height-100 flex-column calendar-wrapper">
-        <Input disabled name="today" value="Today" />
-        <MothsWrapper id={ACTIONS_HISTORY_ID.MONTHS_WRAPPER}>
+        <div className="input-wrapper flex-center">
+          <Input disabled name="today" value="Today" />
+        </div>
+        <MonthsWrapper id={ACTIONS_HISTORY_ID.MONTHS_WRAPPER}>
           {survey ? <Thumb /> : null}
 
           <div className="months" id={ACTIONS_HISTORY_ID.MONTHS}>
@@ -62,7 +64,7 @@ function CalendarScrollbar() {
               return <Month {...props} />;
             })}
           </div>
-        </MothsWrapper>
+        </MonthsWrapper>
         <ControlledInput
           disabled
           name="createdAt"

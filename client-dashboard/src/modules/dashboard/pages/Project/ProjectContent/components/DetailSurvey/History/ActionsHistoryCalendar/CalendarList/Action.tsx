@@ -27,7 +27,7 @@ function Action(props: { action: IAction; today?: boolean }) {
           {action.owner.firstName + ' ' + action.owner.lastName}
         </span>
       </div>
-      <div className="action">{actionText}</div>
+      <div className={`action ${today ? 'today' : ''}`}>{actionText}</div>
     </ActionWrapper>
   );
 }
