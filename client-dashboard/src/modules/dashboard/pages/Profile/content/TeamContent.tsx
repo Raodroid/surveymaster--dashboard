@@ -144,7 +144,6 @@ function TeamContent() {
   }, [navigate, pathname, qsParams]);
 
   const handleSubmitBtn = useCallback(() => {
-    console.log(searchRef.current?.input?.value);
     if (!searchRef.current?.input?.value && !qsParams.q) {
       searchRef.current?.focus();
       return;
