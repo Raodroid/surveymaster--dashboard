@@ -14,7 +14,7 @@ import AddSurvey from './ProjectContent/components/DetailSurvey/Add';
 const Project = () => {
   const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');
 
-  const { canRead: canReadSurvey } = useCheckScopeEntityDefault(
+  const { canRead, canCreate, canUpdate } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.SURVEYS,
   );
 
@@ -33,26 +33,30 @@ const Project = () => {
           }
         >
           <Route path="/" element={<ProjectContent />} />
-          {canReadSurvey && (
+          {canRead && (
             <Route
               path={subRoute(projectRoutePath.SURVEY)}
               element={<Survey />}
             />
           )}
-          {canReadSurvey && (
+          {canRead && (
             <Route
               path={subRoute(projectRoutePath.ADD_NEW_SURVEY)}
               element={<AddSurvey />}
             />
           )}
-          <Route
-            path={subRoute(projectRoutePath.PROJECT.ADD)}
-            element={<AddProject />}
-          />
-          <Route
-            path={subRoute(projectRoutePath.PROJECT.EDIT)}
-            element={<EditProject />}
-          />
+          {canCreate && (
+            <Route
+              path={subRoute(projectRoutePath.PROJECT.ADD)}
+              element={<AddProject />}
+            />
+          )}
+          {canUpdate && (
+            <Route
+              path={subRoute(projectRoutePath.PROJECT.EDIT)}
+              element={<EditProject />}
+            />
+          )}
           <Route
             path={subRoute(projectRoutePath.DETAIL_SURVEY.ROOT + '/*')}
             element={<DetailSurvey />}

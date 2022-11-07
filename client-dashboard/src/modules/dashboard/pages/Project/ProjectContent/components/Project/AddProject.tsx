@@ -1,21 +1,20 @@
 import { Button, Form, notification } from 'antd';
+import { SCOPE_CONFIG } from 'enums';
 import { Formik } from 'formik';
 import { ProjectPayload } from 'interfaces/project';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
-import { useEffect, useMemo } from 'react';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
 import { onError } from 'utils/funcs';
-import * as Yup from 'yup';
+import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
 import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import Inputs from './Inputs';
 import { AddProjectWrapper } from './styles';
-import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
-import { useCheckScopeEntityDefault } from 'modules/common/hoc';
-import { SCOPE_CONFIG } from 'enums';
 
 const initialValues: ProjectPayload = {
   name: '',
@@ -31,10 +30,6 @@ function AddProject() {
   const queryClient = useQueryClient();
 
   const { canCreate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
-
-  useEffect(() => {
-    if (!canCreate) navigate('/');
-  }, [canCreate, navigate]);
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [

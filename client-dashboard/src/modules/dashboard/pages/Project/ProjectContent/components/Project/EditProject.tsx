@@ -15,7 +15,7 @@ import Inputs from './Inputs';
 import { AddProjectWrapper, EditProjectWrapper } from './styles';
 import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
-import { SCOPE_CONFIG } from 'enums';
+import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 
 function EditProject() {
   const params = useParams<{ projectId?: string }>();
@@ -28,7 +28,7 @@ function EditProject() {
   const { canUpdate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
 
   useEffect(() => {
-    if (!canUpdate) navigate('/');
+    if (!canUpdate) navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
   }, [canUpdate, navigate]);
 
   const routes: IBreadcrumbItem[] = useMemo(
@@ -85,18 +85,16 @@ function EditProject() {
                   onFinish={handleFinish}
                 >
                   <Inputs />
-                  {canUpdate ? (
-                    <div className="footer">
-                      <Button
-                        type="primary"
-                        className="info-btn"
-                        htmlType="submit"
-                        loading={mutationEditProject.isLoading}
-                      >
-                        {t('common.saveEdits')}
-                      </Button>
-                    </div>
-                  ) : null}
+                  <div className="footer">
+                    <Button
+                      type="primary"
+                      className="info-btn"
+                      htmlType="submit"
+                      loading={mutationEditProject.isLoading}
+                    >
+                      {t('common.saveEdits')}
+                    </Button>
+                  </div>
                 </Form>
               )}
             </Formik>
