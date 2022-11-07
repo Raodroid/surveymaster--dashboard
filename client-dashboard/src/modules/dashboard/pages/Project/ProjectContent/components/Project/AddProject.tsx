@@ -29,16 +29,18 @@ function AddProject() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { canCreate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+  const { canCreate } = useCheckScopeEntityDefault(
+    SCOPE_CONFIG.ENTITY.PROJECTS,
+  );
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: 'Add New Project',
+        name: t('common.addNewProject'),
         href: projectRoutePath.PROJECT.ADD,
       },
     ],
-    [],
+    [t],
   );
 
   const mutationCreateProject = useMutation(ProjectService.createProject, {
@@ -57,31 +59,33 @@ function AddProject() {
 
   return (
     <>
-      <ProjectHeader routes={routes} />
       {canCreate ? (
-        <AddProjectWrapper>
-          <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            validationSchema={PROJECT_FORM_SCHEMA}
-          >
-            {({ handleSubmit: handleFinish }) => (
-              <Form layout="vertical" onFinish={handleFinish}>
-                <Inputs />
-                <div className="footer">
-                  <Button
-                    type="primary"
-                    className="info-btn"
-                    htmlType="submit"
-                    loading={mutationCreateProject.isLoading}
-                  >
-                    {t('common.saveProject')}
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </AddProjectWrapper>
+        <>
+          <ProjectHeader routes={routes} />
+          <AddProjectWrapper>
+            <Formik
+              initialValues={initialValues}
+              onSubmit={handleSubmit}
+              validationSchema={PROJECT_FORM_SCHEMA}
+            >
+              {({ handleSubmit: handleFinish }) => (
+                <Form layout="vertical" onFinish={handleFinish}>
+                  <Inputs />
+                  <div className="footer">
+                    <Button
+                      type="primary"
+                      className="info-btn"
+                      htmlType="submit"
+                      loading={mutationCreateProject.isLoading}
+                    >
+                      {t('common.saveProject')}
+                    </Button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </AddProjectWrapper>
+        </>
       ) : null}
     </>
   );

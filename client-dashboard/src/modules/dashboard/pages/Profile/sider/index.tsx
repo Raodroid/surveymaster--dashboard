@@ -1,11 +1,8 @@
 import { Radio } from 'antd';
 import {
   PROFILE_TAB,
-  ROUTE_PATH,
-  SCOPE_CONFIG,
-  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
+  ROUTE_PATH, STAFF_ADMIN_DASHBOARD_ROLE_LIMIT
 } from 'enums';
-import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';

@@ -17,26 +17,30 @@ const ProjectSider = () => {
 
   const { projects, isLoading } = useGetAllProjects();
 
-  const { canCreate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+  const { canCreate, canRead } = useCheckScopeEntityDefault(
+    SCOPE_CONFIG.ENTITY.PROJECTS,
+  );
 
   return (
     <ProjectSiderWrapper ref={wrapperRef}>
-      <div className="list flex-column">
-        <CustomSpinSuspense spinning={isLoading}>
-          <SimpleBar style={{ height: '100%' }}>
-            {projects.map(e => (
-              <Title
-                key={e.id}
-                title={e.name}
-                routePath={generatePath(projectRoutePath.SURVEY, {
-                  projectId: e.id,
-                })}
-                id={e.id}
-              />
-            ))}
-          </SimpleBar>
-        </CustomSpinSuspense>
-      </div>
+      {canRead ? (
+        <div className="list flex-column">
+          <CustomSpinSuspense spinning={isLoading}>
+            <SimpleBar style={{ height: '100%' }}>
+              {projects.map(e => (
+                <Title
+                  key={e.id}
+                  title={e.name}
+                  routePath={generatePath(projectRoutePath.SURVEY, {
+                    projectId: e.id,
+                  })}
+                  id={e.id}
+                />
+              ))}
+            </SimpleBar>
+          </CustomSpinSuspense>
+        </div>
+      ) : null}
       {canCreate ? (
         <div className="add-new-project-btn-wrapper">
           <CustomNavLink to={projectRoutePath.PROJECT.ADD}>

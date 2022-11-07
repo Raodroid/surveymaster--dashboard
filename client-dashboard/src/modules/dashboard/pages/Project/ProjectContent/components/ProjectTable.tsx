@@ -56,8 +56,9 @@ function ProjectTable() {
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [showRestoreProject, setShowRestoreProject] = useState(false);
 
-  const { canDelete, canRestore, canRead, canUpdate } =
-    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+  const { canDelete, canRestore, canUpdate } = useCheckScopeEntityDefault(
+    SCOPE_CONFIG.ENTITY.PROJECTS,
+  );
 
   const formatQsParams = useMemo(() => {
     const formatQs: QsParams = {
@@ -72,14 +73,12 @@ function ProjectTable() {
 
   const getProjectListQuery = useQuery(
     ['getProjects', params, formatQsParams],
-    canRead
-      ? () =>
-          getProjects({
-            ...params,
-            ...formatQsParams,
-            isDeleted: formatQsParams.isDeleted === 'true' ? true : false,
-          })
-      : () => {},
+    () =>
+      getProjects({
+        ...params,
+        ...formatQsParams,
+        isDeleted: formatQsParams.isDeleted === 'true' ? true : false,
+      }),
     {
       onError,
       refetchOnWindowFocus: false,

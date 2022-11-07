@@ -1,4 +1,5 @@
-import { ROUTE_PATH } from 'enums';
+import { useCheckScopeEntityDefault } from './../../../common/hoc/useCheckScopeEntityDefault';
+import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import _get from 'lodash/get';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
@@ -7,12 +8,15 @@ import { IProject } from '../../../../type';
 import { onError } from '../../../../utils';
 
 export const useGetAllProjects = () => {
+  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECTS);
   const getAllProjectQuery = useQuery(
-    ['getAllProjects'],
-    () =>
-      ProjectService.getProjects({
-        selectAll: true,
-      }),
+    ['getAllProjects', canRead],
+    canRead
+      ? () =>
+          ProjectService.getProjects({
+            selectAll: true,
+          })
+      : () => {},
     {
       onError,
       refetchOnWindowFocus: false,
