@@ -8,14 +8,14 @@ import { useNavigate } from 'react-router-dom';
 import AddQuestionDetailForm from './AddQuestionDetailForm';
 import { Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
-import { QuestionBankService } from '../../../../../services';
-import { onError } from '../../../../../utils';
+import { QuestionBankService } from 'services';
+import { onError } from 'utils';
 import {
   BaseQuestionVersionDto,
   IQuestionCreatePostDto,
   QuestionType,
-} from '../../../../../type';
-import { ROUTE_PATH } from '../../../../../enums';
+} from 'type';
+import { ROUTE_PATH } from 'enums';
 import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
 import { generatePath } from 'react-router';

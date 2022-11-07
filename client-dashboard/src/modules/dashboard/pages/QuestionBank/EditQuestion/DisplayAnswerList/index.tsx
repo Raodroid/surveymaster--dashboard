@@ -1,25 +1,25 @@
-import React, { FC, memo } from 'react';
+import React, { memo } from 'react';
 import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '../../../../../common/input/type';
-import {
-  BaseQuestionVersionDto,
-  IQuestionVersionOption,
-  QuestionType,
-} from '../../../../../../type';
+import { BaseQuestionVersionDto, QuestionType } from '../../../../../../type';
 import { useTranslation } from 'react-i18next';
 import { DisplayAnswerListWrapper } from './style';
-import { FieldArray, useFormikContext } from 'formik';
-import { Button } from 'antd';
-import DragAnswerList from './DragAnswerList';
+import { useFormikContext } from 'formik';
+import AnswerList from './AnswerList';
+import { useMatch } from 'react-router-dom';
+import { ROUTE_PATH } from '../../../../../../enums';
 
-interface IDisplayAnswerList {
-  mode?: 'view' | 'edit';
-}
-
-const DisplayAnswerList: FC<IDisplayAnswerList> = props => {
-  const { mode = 'edit' } = props;
+const DisplayAnswerList = () => {
   const { values } = useFormikContext<BaseQuestionVersionDto>();
   const { t } = useTranslation();
+
+  const isViewMode = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION,
+    end: true,
+    caseSensitive: true,
+  });
+
+  const className = !!isViewMode ? 'view-mode' : undefined;
 
   switch (values.type) {
     case QuestionType.DATE_PICKER:
@@ -29,35 +29,7 @@ const DisplayAnswerList: FC<IDisplayAnswerList> = props => {
       return null;
     case QuestionType.RADIO_BUTTONS:
     case QuestionType.MULTIPLE_CHOICE:
-      return (
-        <DisplayAnswerListWrapper className={'DisplayAnswerListWrapper'}>
-          <FieldArray
-            name="options"
-            render={arrayHelpers => (
-              <>
-                <DragAnswerList
-                  options={values.options as IQuestionVersionOption[]}
-                  arrayHelpers={arrayHelpers}
-                />
-                {mode === 'edit' && (
-                  <Button
-                    style={{ width: '100%', marginTop: '1.5rem' }}
-                    type={'primary'}
-                    onClick={() =>
-                      arrayHelpers.push({
-                        text: '',
-                        id: Math.random(),
-                      })
-                    }
-                  >
-                    {t('common.addOneMoreAnswer')}
-                  </Button>
-                )}
-              </>
-            )}
-          />
-        </DisplayAnswerListWrapper>
-      );
+      return <AnswerList />;
     case QuestionType.SLIDER:
       return (
         <DisplayAnswerListWrapper className={'DisplayAnswerListWrapper'}>
@@ -65,16 +37,19 @@ const DisplayAnswerList: FC<IDisplayAnswerList> = props => {
             inputType={INPUT_TYPES.NUMBER}
             name="numberStep"
             label={t('common.gridLine')}
+            className={className}
           />
           <ControlledInput
             inputType={INPUT_TYPES.NUMBER}
             name="numberMax"
             label={t('common.maxValue')}
+            className={className}
           />
           <ControlledInput
             inputType={INPUT_TYPES.NUMBER}
             name="numberMin"
             label={t('common.minValue')}
+            className={className}
           />
         </DisplayAnswerListWrapper>
       );

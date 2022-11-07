@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
-import { Input, Menu, MenuProps, ModalProps, Spin } from 'antd';
+import { Input, MenuProps, ModalProps } from 'antd';
 import { IGetParams, IQuestionCategory } from 'type';
 import { useQuery } from 'react-query';
 import { QuestionBankService } from 'services';
