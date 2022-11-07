@@ -139,7 +139,7 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
           {t('common.add')} {selectedQuestionIdList.length}{' '}
           {t(
             `common.${
-              !selectedQuestionIdList.length ? 'question' : 'questions'
+              selectedQuestionIdList.length === 1 ? 'question' : 'questions'
             }`,
           )}
         </Button>

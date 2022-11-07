@@ -3,7 +3,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import React from 'react';
-import { IQuestionVersionOption, ISurveyQuestion } from 'type';
+import { ISurveyQuestion } from 'type';
 import { QuestionListWrapper, QuestionWrapper } from './styles';
 import SimpleBar from 'simplebar-react';
 import { useTranslation } from 'react-i18next';

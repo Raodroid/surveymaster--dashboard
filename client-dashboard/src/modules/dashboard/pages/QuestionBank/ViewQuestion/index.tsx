@@ -277,7 +277,7 @@ const ViewQuestion = () => {
                         {t('common.answerList')}
                       </div>
                       <div className={'question-section__row__content'}>
-                        <DisplayAnswerList mode={'view'} />
+                        <DisplayAnswerList />
                       </div>
                     </div>
                   </div>
