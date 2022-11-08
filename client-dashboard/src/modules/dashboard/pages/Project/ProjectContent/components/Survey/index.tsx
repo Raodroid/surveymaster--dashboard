@@ -132,7 +132,7 @@ function Survey() {
         title: t('common.actions'),
         dataIndex: 'actions',
         key: 'actions',
-        width: 100,
+        // width: 100,
         render: (_, record: ISurvey) => (
           <div
             className="flex-center actions"

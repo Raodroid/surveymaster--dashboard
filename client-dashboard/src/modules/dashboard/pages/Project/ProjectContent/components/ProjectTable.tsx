@@ -131,7 +131,7 @@ function ProjectTable() {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',
-        width: 100,
+        // width: 100,
         render: (_, record) => (
           <div
             className="flex-center actions"
