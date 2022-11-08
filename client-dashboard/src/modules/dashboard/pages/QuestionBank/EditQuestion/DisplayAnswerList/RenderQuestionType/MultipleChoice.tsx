@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { DragTable } from '../../../../components/DragTable/DragTable';
+import { DragTable } from '../../../../../components/DragTable/DragTable';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
 import { SortableHandle } from 'react-sortable-hoc';
@@ -8,12 +8,15 @@ import templateVariable from 'app/template-variables.module.scss';
 import { useFormikContext } from 'formik';
 import { BaseQuestionVersionDto, IQuestionVersionOption } from 'type';
 import { Button } from 'antd';
-import { INPUT_TYPES } from '../../../../../common/input/type';
-import { ControlledInput } from '../../../../../common';
+import { INPUT_TYPES } from '../../../../../../common/input/type';
+import { ControlledInput } from '../../../../../../common';
 import SimpleBar from 'simplebar-react';
 import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../enums';
-import { filterColumn, IRenderColumnCondition } from '../../../../../../utils';
+import { ROUTE_PATH } from '../../../../../../../enums';
+import {
+  filterColumn,
+  IRenderColumnCondition,
+} from '../../../../../../../utils';
 import { AnswerListWrapper } from './style';
 
 const DragHandle = SortableHandle(() => (
@@ -22,7 +25,7 @@ const DragHandle = SortableHandle(() => (
   />
 ));
 
-const AnswerList = () => {
+const MultipleChoice = () => {
   const { t } = useTranslation();
   const { values, setValues } = useFormikContext<BaseQuestionVersionDto>();
 
@@ -87,7 +90,7 @@ const AnswerList = () => {
         ),
       },
     ],
-    [handleDeleteRow, isViewMode, t],
+    [className, handleDeleteRow, isViewMode, t],
   );
 
   const renderColumnCondition: IRenderColumnCondition = [
@@ -130,7 +133,7 @@ const AnswerList = () => {
   );
 };
 
-export default AnswerList;
+export default MultipleChoice;
 
 const initNewRowValue = {
   id: '',

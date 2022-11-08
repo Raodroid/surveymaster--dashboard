@@ -3,11 +3,13 @@ import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '../../../../../common/input/type';
 import { BaseQuestionVersionDto, QuestionType } from '../../../../../../type';
 import { useTranslation } from 'react-i18next';
-import { DisplayAnswerListWrapper } from './style';
+import { DisplayAnswerListWrapper } from './RenderQuestionType/style';
 import { useFormikContext } from 'formik';
-import AnswerList from './AnswerList';
+import MultipleChoice from './RenderQuestionType/MultipleChoice';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../enums';
+import DateTimePicker from './RenderQuestionType/DateTimePicker';
+import Datamatrix from './RenderQuestionType/Datamatrix';
 
 const DisplayAnswerList = () => {
   const { values } = useFormikContext<BaseQuestionVersionDto>();
@@ -23,13 +25,15 @@ const DisplayAnswerList = () => {
 
   switch (values.type) {
     case QuestionType.DATE_PICKER:
+      return <DateTimePicker type={'Date'} />;
+    case QuestionType.TIME_PICKER:
+      return <DateTimePicker type={'Time'} />;
     case QuestionType.PHOTO:
     case QuestionType.TEXT_ENTRY:
-    case QuestionType.TIME_PICKER:
       return null;
     case QuestionType.RADIO_BUTTONS:
     case QuestionType.MULTIPLE_CHOICE:
-      return <AnswerList />;
+      return <MultipleChoice />;
     case QuestionType.SLIDER:
       return (
         <DisplayAnswerListWrapper className={'DisplayAnswerListWrapper'}>
@@ -53,6 +57,8 @@ const DisplayAnswerList = () => {
           />
         </DisplayAnswerListWrapper>
       );
+    case QuestionType.DATA_MATRIX:
+      return <Datamatrix />;
 
     default:
       return null;

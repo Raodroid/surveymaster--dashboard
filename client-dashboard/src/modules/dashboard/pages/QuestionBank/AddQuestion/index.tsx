@@ -63,6 +63,19 @@ export const transformQuestionData = (
     result.numberMin = stringToInt(result.numberMin);
     result.numberStep = stringToInt(result.numberStep);
   }
+
+  if (result.type !== QuestionType.TIME_PICKER) {
+    delete result.timeFormat;
+  }
+  if (result.type !== QuestionType.DATE_PICKER) {
+    delete result.dateFormat;
+  }
+  if (result.type !== QuestionType.DATA_MATRIX) {
+    delete result.dataMatrix;
+  }
+
+  console.log({ result });
+
   return result;
 };
 

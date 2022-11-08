@@ -112,6 +112,7 @@ const EditQuestion = () => {
       numberStep: currentVersionQuestionData?.numberStep || 1,
       numberMax: currentVersionQuestionData?.numberMax || 10,
       numberMin: currentVersionQuestionData?.numberMin || 1,
+      dataMatrix: currentVersionQuestionData?.dataMatrix,
     };
     if (
       currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED

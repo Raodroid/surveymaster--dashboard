@@ -1,10 +1,7 @@
 import * as Yup from 'yup';
 import moment from 'moment';
-import { ProjectTypes, QuestionType } from '../../../type';
-import {
-  questionValueType,
-  SurveyTemplateEnum,
-} from '../../dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
+import { QuestionType } from '../../../type';
+import { SurveyTemplateEnum } from '../../dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
 
 export const INVALID_FIELDS = {
   MIN_USERNAME: 'validation.messages.minUserName',
@@ -172,6 +169,27 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
 
+  dateFormat: Yup.string().when('type', {
+    is: QuestionType.DATE_PICKER,
+    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  }),
+  timeFormat: Yup.string().when('type', {
+    is: QuestionType.TIME_PICKER,
+    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  }),
+  dataMatrix: Yup.object().when('type', {
+    is: QuestionType.DATA_MATRIX,
+    then: Yup.object().shape({
+      rows: Yup.array()
+        .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+        .required(INVALID_FIELDS.REQUIRED)
+        .min(1),
+      columns: Yup.array()
+        .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+        .required(INVALID_FIELDS.REQUIRED)
+        .min(1),
+    }),
+  }),
   options: Yup.array()
     .when('type', {
       is: QuestionType.MULTIPLE_CHOICE,
