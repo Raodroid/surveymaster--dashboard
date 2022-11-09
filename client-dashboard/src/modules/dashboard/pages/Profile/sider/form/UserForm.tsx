@@ -3,7 +3,6 @@ import { Formik } from 'formik';
 import { UserUpdatedDto } from 'interfaces';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import { phonePrefix } from 'modules/common/validate/validate';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';

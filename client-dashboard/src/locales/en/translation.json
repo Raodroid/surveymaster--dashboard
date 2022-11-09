@@ -20,6 +20,9 @@
     "foods": "Foods"
   },
   "common": {
+    "field": "Field",
+    "fieldList": "Field List",
+    "optionList": "Option List",
     "enterColumnName": "Enter column name",
     "enterRowName": "Enter row name",
     "addColumn": "Add column",

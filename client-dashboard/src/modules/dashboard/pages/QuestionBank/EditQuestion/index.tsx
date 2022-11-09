@@ -27,6 +27,7 @@ import { useGetQuestionByQuestionId } from '../util';
 import useParseQueryString from '../../../../../hooks/useParseQueryString';
 import DisplayAnswerList from './DisplayAnswerList';
 import { transformQuestionData } from '../AddQuestion';
+import DisplayTitle from './DisplayTitle';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;
@@ -43,7 +44,6 @@ function transformData(
   questionData?: IQuestionVersion,
 ): transformDataType | undefined {
   if (!questionData) return undefined;
-  transformQuestionData(input);
 
   const {
     id,
@@ -66,7 +66,7 @@ function transformData(
 
   return {
     id: id as string,
-    version: rest,
+    version: newValue,
   } as IQuestionVersionPutUpdateDtoExtendId;
 }
 
@@ -113,6 +113,8 @@ const EditQuestion = () => {
       numberMax: currentVersionQuestionData?.numberMax || 10,
       numberMin: currentVersionQuestionData?.numberMin || 1,
       dataMatrix: currentVersionQuestionData?.dataMatrix,
+      timeFormat: currentVersionQuestionData?.timeFormat,
+      dateFormat: currentVersionQuestionData?.dateFormat,
     };
     if (
       currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED
@@ -214,7 +216,7 @@ const EditQuestion = () => {
                   <div className={'question-section__row'}>
                     <div className={'answer-list-wrapper'}>
                       <div className={'question-section__row__title'}>
-                        {t('common.answerList')}
+                        <DisplayTitle />
                       </div>
                       <div className={'question-section__row__content'}>
                         <DisplayAnswerList />

@@ -10,6 +10,7 @@ import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../enums';
 import DateTimePicker from './RenderQuestionType/DateTimePicker';
 import Datamatrix from './RenderQuestionType/Datamatrix';
+import Photo from './RenderQuestionType/Photo';
 
 const DisplayAnswerList = () => {
   const { values } = useFormikContext<BaseQuestionVersionDto>();
@@ -29,6 +30,7 @@ const DisplayAnswerList = () => {
     case QuestionType.TIME_PICKER:
       return <DateTimePicker type={'Time'} />;
     case QuestionType.PHOTO:
+      return <Photo />;
     case QuestionType.TEXT_ENTRY:
       return null;
     case QuestionType.RADIO_BUTTONS:
@@ -57,6 +59,8 @@ const DisplayAnswerList = () => {
           />
         </DisplayAnswerListWrapper>
       );
+    case QuestionType.FORM_FIELD:
+      return <MultipleChoice />;
     case QuestionType.DATA_MATRIX:
       return <Datamatrix />;
 

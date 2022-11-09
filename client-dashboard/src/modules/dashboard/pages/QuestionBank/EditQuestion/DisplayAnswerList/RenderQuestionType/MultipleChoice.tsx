@@ -6,10 +6,12 @@ import { SortableHandle } from 'react-sortable-hoc';
 import { DragIcon, TrashOutlined } from 'icons';
 import templateVariable from 'app/template-variables.module.scss';
 import { useFormikContext } from 'formik';
-import { BaseQuestionVersionDto, IQuestionVersionOption } from 'type';
+import {
+  BaseQuestionVersionDto,
+  IQuestionVersionOption,
+  QuestionType,
+} from 'type';
 import { Button } from 'antd';
-import { INPUT_TYPES } from '../../../../../../common/input/type';
-import { ControlledInput } from '../../../../../../common';
 import SimpleBar from 'simplebar-react';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../../enums';
@@ -18,6 +20,8 @@ import {
   IRenderColumnCondition,
 } from '../../../../../../../utils';
 import { AnswerListWrapper } from './style';
+import { INPUT_TYPES } from '../../../../../../common/input/type';
+import { ControlledInput } from '../../../../../../common';
 
 const DragHandle = SortableHandle(() => (
   <DragIcon
@@ -63,7 +67,10 @@ const MultipleChoice = () => {
         },
       },
       {
-        title: t('common.question'),
+        title:
+          values.type === QuestionType.FORM_FIELD
+            ? t('common.field')
+            : t('common.question'),
         dataIndex: 'question',
         render: (value, record, index) => {
           return (
@@ -90,7 +97,7 @@ const MultipleChoice = () => {
         ),
       },
     ],
-    [className, handleDeleteRow, isViewMode, t],
+    [className, handleDeleteRow, isViewMode, t, values.type],
   );
 
   const renderColumnCondition: IRenderColumnCondition = [

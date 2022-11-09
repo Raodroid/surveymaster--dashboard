@@ -169,27 +169,33 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
 
-  dateFormat: Yup.string().when('type', {
-    is: QuestionType.DATE_PICKER,
-    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
-  }),
-  timeFormat: Yup.string().when('type', {
-    is: QuestionType.TIME_PICKER,
-    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
-  }),
-  dataMatrix: Yup.object().when('type', {
-    is: QuestionType.DATA_MATRIX,
-    then: Yup.object().shape({
-      rows: Yup.array()
-        .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
-        .required(INVALID_FIELDS.REQUIRED)
-        .min(1),
-      columns: Yup.array()
-        .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
-        .required(INVALID_FIELDS.REQUIRED)
-        .min(1),
+  dateFormat: Yup.string()
+    .nullable()
+    .when('type', {
+      is: QuestionType.DATE_PICKER,
+      then: Yup.string().required(INVALID_FIELDS.REQUIRED),
     }),
-  }),
+  timeFormat: Yup.string()
+    .nullable()
+    .when('type', {
+      is: QuestionType.TIME_PICKER,
+      then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+    }),
+  dataMatrix: Yup.object()
+    .nullable()
+    .when('type', {
+      is: QuestionType.DATA_MATRIX,
+      then: Yup.object().shape({
+        rows: Yup.array()
+          .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+          .required(INVALID_FIELDS.REQUIRED)
+          .min(1),
+        columns: Yup.array()
+          .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+          .required(INVALID_FIELDS.REQUIRED)
+          .min(1),
+      }),
+    }),
   options: Yup.array()
     .when('type', {
       is: QuestionType.MULTIPLE_CHOICE,
@@ -207,6 +213,27 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
         .of(
           Yup.object().shape({
             text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          }),
+        )
+        .min(1),
+    })
+    .when('type', {
+      is: QuestionType.FORM_FIELD,
+      then: Yup.array()
+        .of(
+          Yup.object().shape({
+            text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          }),
+        )
+        .min(1),
+    })
+    .when('type', {
+      is: QuestionType.PHOTO,
+      then: Yup.array()
+        .of(
+          Yup.object().shape({
+            text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+            imageUrl: Yup.string().required(INVALID_FIELDS.REQUIRED),
           }),
         )
         .min(1),

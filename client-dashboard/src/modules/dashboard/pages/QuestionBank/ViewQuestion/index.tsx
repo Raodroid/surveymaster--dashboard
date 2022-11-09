@@ -16,6 +16,7 @@ import { PenFilled } from 'icons';
 import templateVariable from 'app/template-variables.module.scss';
 import qs from 'qs';
 import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
+import DisplayTitle from '../EditQuestion/DisplayTitle';
 import {
   BaseQuestionVersionDto,
   IBaseQuestionOptionsVersionDto,
@@ -274,7 +275,7 @@ const ViewQuestion = () => {
                   <div className={'question-section__row'}>
                     <div className={'answer-list-wrapper'}>
                       <div className={'question-section__row__title'}>
-                        {t('common.answerList')}
+                        <DisplayTitle />
                       </div>
                       <div className={'question-section__row__content'}>
                         <DisplayAnswerList />

@@ -19,6 +19,7 @@ import { ROUTE_PATH } from 'enums';
 import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
 import { generatePath } from 'react-router';
+import DisplayTitle from '../EditQuestion/DisplayTitle';
 
 export interface IAddQuestionFormValue extends BaseQuestionVersionDto {
   masterCategoryId: string;
@@ -42,9 +43,11 @@ export const transformQuestionData = (
 ): BaseQuestionVersionDto => {
   const result = { ...input };
   if (
-    ![QuestionType.MULTIPLE_CHOICE, QuestionType.RADIO_BUTTONS].includes(
-      result.type,
-    )
+    ![
+      QuestionType.MULTIPLE_CHOICE,
+      QuestionType.RADIO_BUTTONS,
+      QuestionType.FORM_FIELD,
+    ].includes(result.type)
   ) {
     delete result?.options;
   } else {
@@ -63,7 +66,7 @@ export const transformQuestionData = (
     result.numberMin = stringToInt(result.numberMin);
     result.numberStep = stringToInt(result.numberStep);
   }
-
+  debugger;
   if (result.type !== QuestionType.TIME_PICKER) {
     delete result.timeFormat;
   }
@@ -73,8 +76,6 @@ export const transformQuestionData = (
   if (result.type !== QuestionType.DATA_MATRIX) {
     delete result.dataMatrix;
   }
-
-  console.log({ result });
 
   return result;
 };
@@ -172,7 +173,7 @@ const AddQuestion = () => {
                   <div className={'question-section__row'}>
                     <div className={'answer-list-wrapper'}>
                       <div className={'question-section__row__title'}>
-                        {t('common.answerList')}
+                        <DisplayTitle />
                       </div>
                       <div className={'question-section__row__content'}>
                         <DisplayAnswerList />

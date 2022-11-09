@@ -48,6 +48,8 @@ export interface IQuestionVersion {
   numberMin?: number;
   numberMax?: number;
   dataMatrix?: IDataMatrixInfo;
+  timeFormat?: TimeFormat;
+  dateFormat?: DateFormat;
   numberValidationMax?: number;
   numberValidationMin?: number;
   textValidationMax?: number;
@@ -83,7 +85,8 @@ export enum QuestionType {
   TEXT_ENTRY = 'TEXT_ENTRY',
   SIGNATURE = 'SIGNATURE',
   DATA_MATRIX = 'DATA_MATRIX',
-  // FORM_FIELD = 'FORM_FIELD',
+  FORM_FIELD = 'FORM_FIELD',
+  TEXT_GRAPHIC = 'TEXT_GRAPHIC',
 }
 
 export enum TimeFormat {
