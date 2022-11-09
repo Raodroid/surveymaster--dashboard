@@ -147,7 +147,7 @@ const initNewRowValue = {
 };
 
 const GroupSurveyButton = () => {
-  const { setValues } = useFormikContext<BaseQuestionVersionDto>();
+  const { setValues, values } = useFormikContext<BaseQuestionVersionDto>();
   const { t } = useTranslation();
 
   const handleAddRow = useCallback(() => {
@@ -166,7 +166,9 @@ const GroupSurveyButton = () => {
 
   return (
     <Button type={'primary'} onClick={handleAddRow} style={{ width: `100%` }}>
-      {t('common.addOneMoreQuestion')}
+      {values.type === QuestionType.FORM_FIELD
+        ? t('common.addOneMoreField')
+        : t('common.addOneMoreQuestion')}
     </Button>
   );
 };

@@ -5,11 +5,19 @@ import styled from 'styled-components';
 import { formatBytes } from '../../../../../../../utils';
 import { useField } from 'formik';
 
+const getFileNameFormURL = fileName => {
+  if (!fileName) return undefined;
+  const redundant = fileName?.match(/^https:\/\/.+\/.+\//g);
+  return fileName.substring(redundant?.[0].length);
+};
+
 const TextGraphic = () => {
   const [, meta] = useField('image');
   const { value } = meta;
 
-  console.log(value);
+  const imageSize = value?.size;
+  const imageName = value?.name || getFileNameFormURL(value);
+
   return (
     <TextGraphicWrapper>
       <ControlledInput
@@ -18,9 +26,11 @@ const TextGraphic = () => {
         subPath={'question'}
       />
       <div className={'TextGraphicWrapper__info'}>
-        <span className={'img-name'}>{value?.name}</span>
+        {!!imageName && <span className={'img-name'}>{imageName}</span>}
         <br />
-        <span className={'img-size'}>{formatBytes(value?.size)}</span>
+        {!!imageSize && (
+          <span className={'img-size'}>{formatBytes(imageSize)}</span>
+        )}
       </div>
     </TextGraphicWrapper>
   );

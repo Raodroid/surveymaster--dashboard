@@ -69,6 +69,7 @@ const Photo = () => {
               index={index}
               handleDeleteRow={handleDeleteRow}
               record={record}
+              isViewMode={!!isViewMode}
             />
           );
         },
@@ -102,17 +103,19 @@ const Photo = () => {
   };
 
   return (
-    <SimpleBar>
-      <PhotoWrapper>
-        <DragTable
-          columns={columnsFiltered}
-          dataSource={dataSource}
-          setDataTable={setDataTable}
-          pagination={false}
-        />
-        {!isViewMode && <GroupSurveyButton />}
-      </PhotoWrapper>
-    </SimpleBar>
+    <>
+      <SimpleBar>
+        <PhotoWrapper>
+          <DragTable
+            columns={columnsFiltered}
+            dataSource={dataSource}
+            setDataTable={setDataTable}
+            pagination={false}
+          />
+        </PhotoWrapper>
+      </SimpleBar>
+      {!isViewMode && <GroupSurveyButton />}
+    </>
   );
 };
 
@@ -176,6 +179,12 @@ const GroupSurveyButton = () => {
   );
 };
 
+const getFileNameFormURL = fileName => {
+  if (!fileName) return undefined;
+  const redundant = fileName.match(/^https:\/\/.+\/.+\//g);
+  return fileName.substring(redundant?.[0].length);
+};
+
 const DisplayPhotoAnswer: FC<{
   index: number;
   className?: string;
@@ -183,9 +192,13 @@ const DisplayPhotoAnswer: FC<{
   record: IQuestionVersionOption & {
     imageURL?: { name: string; size?: number };
   };
+  isViewMode?: boolean;
 }> = props => {
-  const { index, className, handleDeleteRow, record } = props;
-  console.log(record);
+  const { index, className, handleDeleteRow, record, isViewMode } = props;
+  const imageSize = (record?.imageUrl as any)?.size || 0;
+  const imageName =
+    (record?.imageUrl as any)?.name || getFileNameFormURL(record?.imageUrl);
+
   return (
     <DisplayPhotoAnswerWrapper>
       <div className={'DisplayPhotoAnswerWrapper__image'}>
@@ -194,19 +207,20 @@ const DisplayPhotoAnswer: FC<{
           name={`options[${index}].imageUrl`}
           className={className}
           subPath={'question'}
-          // onChange={handleChange}
         />
       </div>
       <div className={'DisplayPhotoAnswerWrapper__info'}>
         <div className={'DisplayPhotoAnswerWrapper__info__top'}>
-          <span className={'img-name'}>{(record?.imageUrl as any)?.name}</span>
-          <span className={'img-size'}>
-            {formatBytes((record?.imageUrl as any)?.size || 0)}
-          </span>
-          <TrashOutlined
-            className={'trash-icon'}
-            onClick={() => handleDeleteRow(record)}
-          />
+          {!!imageName && <span className={'img-name'}>{imageName}</span>}
+          {!!imageSize && (
+            <span className={'img-size'}>{formatBytes(imageSize)}</span>
+          )}
+          {!isViewMode && (
+            <TrashOutlined
+              className={'trash-icon'}
+              onClick={() => handleDeleteRow(record)}
+            />
+          )}
         </div>
         <div className={'DisplayPhotoAnswerWrapper__info__bottom'}>
           <ControlledInput
@@ -240,6 +254,7 @@ const DisplayPhotoAnswerWrapper = styled.div`
         display: flex;
         flex-direction: column;
         margin-bottom: 1rem;
+        min-height: 1.5rem;
         .img-name {
           font-size: 12px;
           white-space: nowrap;

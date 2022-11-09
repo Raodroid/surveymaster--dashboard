@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Upload } from 'antd';
 import notification from 'customize-components/CustomNotification';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/lib/upload';
@@ -22,7 +22,7 @@ function getBase64(img, callback) {
 
 const CustomImageUpload = (props: CustomUploadProps) => {
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>(props.value);
+  const [imageUrl, setImageUrl] = useState<string>('');
   const { t } = useTranslation();
 
   const customRequest = async options => {
@@ -34,7 +34,7 @@ const CustomImageUpload = (props: CustomUploadProps) => {
       const res = await UploadService.getPreSignedUrlUpload(
         moduleName,
         nameImage,
-        type,
+        // type,
         subPath,
       );
       const { data } = res;
@@ -107,6 +107,10 @@ const CustomImageUpload = (props: CustomUploadProps) => {
   const customProps: { onChange?: typeof handleChange } = {};
   if (props.onChange) customProps.onChange = handleChange;
 
+  useEffect(() => {
+    setImageUrl(props.value);
+  }, [props.value]);
+
   return (
     <>
       <Upload
@@ -119,11 +123,11 @@ const CustomImageUpload = (props: CustomUploadProps) => {
         showUploadList={false}
         beforeUpload={beforeUpload}
       >
-        {image ? (
+        {image && !isLoading ? (
           <img
             src={image}
             alt="avatar"
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
           uploadButton

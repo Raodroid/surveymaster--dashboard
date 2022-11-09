@@ -102,6 +102,7 @@ const EditQuestion = () => {
         id: opt.sort,
         sort: opt.sort,
         text: opt.text,
+        imageUrl: opt.imageUrl,
       })) || [
         {
           id: Math.random(),

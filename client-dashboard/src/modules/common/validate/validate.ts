@@ -239,7 +239,12 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
         .of(
           Yup.object().shape({
             text: Yup.string().required(INVALID_FIELDS.REQUIRED),
-            imageUrl: Yup.object().required(INVALID_FIELDS.REQUIRED),
+            imageUrl: Yup.mixed()
+              .required(INVALID_FIELDS.REQUIRED)
+              .test('fileFormat', 'PDF only', value => {
+                return typeof value === 'string' || typeof value === 'object';
+                // return value && ['application/pdf'].includes(value.type);
+              }),
           }),
         )
         .min(1),
@@ -308,3 +313,19 @@ export const PROJECT_FORM_SCHEMA = Yup.object().shape({
   personInCharge: Yup.string().required(INVALID_FIELDS.REQUIRED),
   type: Yup.string().required(INVALID_FIELDS.REQUIRED),
 });
+
+//
+// import { mixed, InferType } from 'yup';
+//
+// let objectIdSchema = yup
+//   .mixed((input): input is ObjectId => input instanceof ObjectId)
+//   .transform((value: any, input, ctx) => {
+//     if (ctx.typeCheck(value)) return value;
+//     return new ObjectId(value);
+//   });
+//
+// await objectIdSchema.validate(ObjectId('507f1f77bcf86cd799439011')); // ObjectId("507f1f77bcf86cd799439011")
+//
+// await objectIdSchema.validate('507f1f77bcf86cd799439011'); // ObjectId("507f1f77bcf86cd799439011")
+//
+// InferType<typeof objectIdSchema>; // ObjectId

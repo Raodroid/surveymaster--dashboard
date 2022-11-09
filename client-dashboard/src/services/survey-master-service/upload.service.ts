@@ -5,12 +5,12 @@ export default class UploadService {
   static getPreSignedUrlUpload(
     moduleName: string,
     name: string,
-    type: string,
+    // type: string,
     subPath?: string,
   ): Promise<AxiosResponse> {
     return APIService.post(`/${moduleName}/files/get-signed-url`, {
       filename: name,
-      filetype: type,
+      // filetype: type,
       subPath,
     });
   }
@@ -18,7 +18,7 @@ export default class UploadService {
   static putWithFormFileAsync = (url: string, file: any, type: string) => {
     return axios.put(url, file, {
       headers: {
-        'Content-Type': `${type}`,
+        'Content-Type': 'application/octet-stream',
       },
     });
   };

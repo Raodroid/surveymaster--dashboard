@@ -52,9 +52,16 @@ export const transformQuestionData = (
   ) {
     delete result?.options;
   } else {
-    result.options = result?.options?.map((opt, index) => ({
+    result.options = input?.options?.map((opt, index) => ({
       sort: index + 1,
       text: opt.text,
+    }));
+  }
+  if (result.type === QuestionType.PHOTO) {
+    result.options = input?.options?.map((opt, index) => ({
+      sort: index + 1,
+      text: opt.text,
+      imageUrl: (opt as any)?.imageUrl.response?.url || opt.imageUrl,
     }));
   }
 
@@ -63,11 +70,10 @@ export const transformQuestionData = (
     delete result?.numberMin;
     delete result?.numberStep;
   } else {
-    result.numberMax = stringToInt(result.numberMax);
-    result.numberMin = stringToInt(result.numberMin);
-    result.numberStep = stringToInt(result.numberStep);
+    result.numberMax = stringToInt(input.numberMax);
+    result.numberMin = stringToInt(input.numberMin);
+    result.numberStep = stringToInt(input.numberStep);
   }
-  debugger;
   if (result.type !== QuestionType.TIME_PICKER) {
     delete result.timeFormat;
   }
@@ -83,14 +89,6 @@ export const transformQuestionData = (
     if ((result.image as any)?.response?.url)
       result.image = (result.image as any)?.response?.url;
   }
-
-  if (result.type === QuestionType.PHOTO) {
-    result.options = result.options?.map(opt => ({
-      ...opt,
-      imageUrl: (opt as any)?.image?.response?.url,
-    }));
-  }
-
   return result;
 };
 
