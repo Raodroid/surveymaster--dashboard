@@ -47,6 +47,7 @@ export const transformQuestionData = (
       QuestionType.MULTIPLE_CHOICE,
       QuestionType.RADIO_BUTTONS,
       QuestionType.FORM_FIELD,
+      QuestionType.PHOTO,
     ].includes(result.type)
   ) {
     delete result?.options;
@@ -75,6 +76,19 @@ export const transformQuestionData = (
   }
   if (result.type !== QuestionType.DATA_MATRIX) {
     delete result.dataMatrix;
+  }
+  if (result.type !== QuestionType.TEXT_GRAPHIC) {
+    delete result.image;
+  } else {
+    if ((result.image as any)?.response?.url)
+      result.image = (result.image as any)?.response?.url;
+  }
+
+  if (result.type === QuestionType.PHOTO) {
+    result.options = result.options?.map(opt => ({
+      ...opt,
+      imageUrl: (opt as any)?.image?.response?.url,
+    }));
   }
 
   return result;

@@ -112,9 +112,13 @@ const EditQuestion = () => {
       numberStep: currentVersionQuestionData?.numberStep || 1,
       numberMax: currentVersionQuestionData?.numberMax || 10,
       numberMin: currentVersionQuestionData?.numberMin || 1,
-      dataMatrix: currentVersionQuestionData?.dataMatrix,
+      dataMatrix: currentVersionQuestionData?.dataMatrix || {
+        rows: [''],
+        columns: [''],
+      },
       timeFormat: currentVersionQuestionData?.timeFormat,
       dateFormat: currentVersionQuestionData?.dateFormat,
+      image: currentVersionQuestionData?.image || '',
     };
     if (
       currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED

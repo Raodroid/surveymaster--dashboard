@@ -105,7 +105,6 @@ const Photo = () => {
     <SimpleBar>
       <PhotoWrapper>
         <DragTable
-          className={'ABC'}
           columns={columnsFiltered}
           dataSource={dataSource}
           setDataTable={setDataTable}
@@ -186,7 +185,7 @@ const DisplayPhotoAnswer: FC<{
   };
 }> = props => {
   const { index, className, handleDeleteRow, record } = props;
-
+  console.log(record);
   return (
     <DisplayPhotoAnswerWrapper>
       <div className={'DisplayPhotoAnswerWrapper__image'}>
@@ -195,13 +194,14 @@ const DisplayPhotoAnswer: FC<{
           name={`options[${index}].imageUrl`}
           className={className}
           subPath={'question'}
+          // onChange={handleChange}
         />
       </div>
       <div className={'DisplayPhotoAnswerWrapper__info'}>
         <div className={'DisplayPhotoAnswerWrapper__info__top'}>
-          <span className={'img-name'}>{record?.imageURL?.name}</span>
+          <span className={'img-name'}>{(record?.imageUrl as any)?.name}</span>
           <span className={'img-size'}>
-            {formatBytes(record?.imageURL?.size)}
+            {formatBytes((record?.imageUrl as any)?.size || 0)}
           </span>
           <TrashOutlined
             className={'trash-icon'}

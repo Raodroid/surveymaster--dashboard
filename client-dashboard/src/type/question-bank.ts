@@ -50,6 +50,7 @@ export interface IQuestionVersion {
   dataMatrix?: IDataMatrixInfo;
   timeFormat?: TimeFormat;
   dateFormat?: DateFormat;
+  image?: string;
   numberValidationMax?: number;
   numberValidationMin?: number;
   textValidationMax?: number;
@@ -286,6 +287,7 @@ export interface BaseQuestionVersionDto {
   dateFormat?: DateFormat;
   timeFormat?: TimeFormat;
   dataMatrix?: IDataMatrixInfo;
+  image?: string;
 }
 
 export type QuestionParameter = BaseParameterDto & {

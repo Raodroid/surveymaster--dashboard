@@ -11,6 +11,7 @@ import { ROUTE_PATH } from '../../../../../../enums';
 import DateTimePicker from './RenderQuestionType/DateTimePicker';
 import Datamatrix from './RenderQuestionType/Datamatrix';
 import Photo from './RenderQuestionType/Photo';
+import TextGraphic from './RenderQuestionType/TextGraphic';
 
 const DisplayAnswerList = () => {
   const { values } = useFormikContext<BaseQuestionVersionDto>();
@@ -61,6 +62,8 @@ const DisplayAnswerList = () => {
       );
     case QuestionType.FORM_FIELD:
       return <MultipleChoice />;
+    case QuestionType.TEXT_GRAPHIC:
+      return <TextGraphic />;
     case QuestionType.DATA_MATRIX:
       return <Datamatrix />;
 

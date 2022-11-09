@@ -128,7 +128,6 @@ const MultipleChoice = () => {
     <SimpleBar>
       <AnswerListWrapper>
         <DragTable
-          className={'ABC'}
           columns={columnsFiltered}
           dataSource={dataSource}
           setDataTable={setDataTable}

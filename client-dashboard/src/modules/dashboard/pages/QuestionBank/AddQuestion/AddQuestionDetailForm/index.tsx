@@ -45,6 +45,11 @@ const AddQuestionDetailForm = () => {
         ]);
         break;
       }
+      case QuestionType.TEXT_GRAPHIC: {
+        setFieldValue('image', '');
+        break;
+      }
+
       case QuestionType.DATA_MATRIX: {
         setValues(s => ({
           ...s,
