@@ -21,18 +21,20 @@ function InviteMemberInputs(props: { edit: boolean }) {
 
   return (
     <>
-      <ControlledInput
-        inputType={INPUT_TYPES.INPUT}
-        type={'text'}
-        name="firstName"
-        label={t('common.firstName')}
-      />
-      <ControlledInput
-        inputType={INPUT_TYPES.INPUT}
-        type={'text'}
-        name="lastName"
-        label={t('common.lastName')}
-      />
+      <div className="flex-j-between name-wrapper">
+        <ControlledInput
+          inputType={INPUT_TYPES.INPUT}
+          type={'text'}
+          name="firstName"
+          label={t('common.firstName')}
+        />
+        <ControlledInput
+          inputType={INPUT_TYPES.INPUT}
+          type={'text'}
+          name="lastName"
+          label={t('common.lastName')}
+        />
+      </div>
       <ControlledInput
         inputType={INPUT_TYPES.INPUT}
         type={'text'}

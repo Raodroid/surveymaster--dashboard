@@ -257,3 +257,17 @@ export const PROJECT_FORM_SCHEMA = Yup.object().shape({
   personInCharge: Yup.string().required(INVALID_FIELDS.REQUIRED),
   type: Yup.string().required(INVALID_FIELDS.REQUIRED),
 });
+
+export const USER_FORM_SCHEMA = Yup.object().shape({
+  firstName: firstNameYup.required(INVALID_FIELDS.REQUIRED),
+  lastName: lastNameYup.required(INVALID_FIELDS.REQUIRED),
+  email: emailYup,
+});
+
+export const INVITE_MEMBER_SCHEMA = Yup.object({
+  firstName: firstNameYup.required(INVALID_FIELDS.REQUIRED).trim(),
+  lastName: lastNameYup.required(INVALID_FIELDS.REQUIRED).trim(),
+  email: emailYup,
+  departmentName: Yup.string().required(INVALID_FIELDS.REQUIRED).trim(),
+  roles: Yup.array().min(1, INVALID_FIELDS.REQUIRED),
+});

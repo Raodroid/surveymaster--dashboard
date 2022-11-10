@@ -8,7 +8,8 @@ import SimpleBar from 'simplebar-react';
 import { onError } from '../../../../../../utils/funcs';
 import InviteMemberInputs from '../../content/inputs/InviteMemberInputs';
 import { InviteMemberFormWrapper } from '../../styles';
-import { inviteMemberSchema, postPutInitialValues } from '../../utils';
+import { postPutInitialValues } from '../../utils';
+import { INVITE_MEMBER_SCHEMA } from '../../../../../common/validate/validate';
 
 function TeamForm() {
   const { t } = useTranslation();
@@ -44,7 +45,7 @@ function TeamForm() {
         onSubmit={handleFinish}
         enableReinitialize={true}
         initialValues={postPutInitialValues}
-        validationSchema={inviteMemberSchema}
+        validationSchema={INVITE_MEMBER_SCHEMA}
       >
         {({ handleSubmit: handleFinish }) => (
           <Form
