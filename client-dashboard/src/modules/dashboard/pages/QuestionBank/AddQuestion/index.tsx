@@ -19,6 +19,7 @@ import { ROUTE_PATH } from 'enums';
 import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
 import { generatePath } from 'react-router';
+import DisplayTitle from '../EditQuestion/DisplayTitle';
 
 export interface IAddQuestionFormValue extends BaseQuestionVersionDto {
   masterCategoryId: string;
@@ -42,15 +43,25 @@ export const transformQuestionData = (
 ): BaseQuestionVersionDto => {
   const result = { ...input };
   if (
-    ![QuestionType.MULTIPLE_CHOICE, QuestionType.RADIO_BUTTONS].includes(
-      result.type,
-    )
+    ![
+      QuestionType.MULTIPLE_CHOICE,
+      QuestionType.RADIO_BUTTONS,
+      QuestionType.FORM_FIELD,
+      QuestionType.PHOTO,
+    ].includes(result.type)
   ) {
     delete result?.options;
   } else {
-    result.options = result?.options?.map((opt, index) => ({
+    result.options = input?.options?.map((opt, index) => ({
       sort: index + 1,
       text: opt.text,
+    }));
+  }
+  if (result.type === QuestionType.PHOTO) {
+    result.options = input?.options?.map((opt, index) => ({
+      sort: index + 1,
+      text: opt.text,
+      imageUrl: (opt as any)?.imageUrl.response?.url || opt.imageUrl,
     }));
   }
 
@@ -59,9 +70,24 @@ export const transformQuestionData = (
     delete result?.numberMin;
     delete result?.numberStep;
   } else {
-    result.numberMax = stringToInt(result.numberMax);
-    result.numberMin = stringToInt(result.numberMin);
-    result.numberStep = stringToInt(result.numberStep);
+    result.numberMax = stringToInt(input.numberMax);
+    result.numberMin = stringToInt(input.numberMin);
+    result.numberStep = stringToInt(input.numberStep);
+  }
+  if (result.type !== QuestionType.TIME_PICKER) {
+    delete result.timeFormat;
+  }
+  if (result.type !== QuestionType.DATE_PICKER) {
+    delete result.dateFormat;
+  }
+  if (result.type !== QuestionType.DATA_MATRIX) {
+    delete result.dataMatrix;
+  }
+  if (result.type !== QuestionType.TEXT_GRAPHIC) {
+    delete result.image;
+  } else {
+    if ((result.image as any)?.response?.url)
+      result.image = (result.image as any)?.response?.url;
   }
   return result;
 };
@@ -159,7 +185,7 @@ const AddQuestion = () => {
                   <div className={'question-section__row'}>
                     <div className={'answer-list-wrapper'}>
                       <div className={'question-section__row__title'}>
-                        {t('common.answerList')}
+                        <DisplayTitle />
                       </div>
                       <div className={'question-section__row__content'}>
                         <DisplayAnswerList />

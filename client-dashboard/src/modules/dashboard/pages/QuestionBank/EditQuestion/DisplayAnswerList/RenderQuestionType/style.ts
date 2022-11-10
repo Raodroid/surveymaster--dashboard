@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Form } from 'antd';
-import templateVariable from '../../../../../../app/template-variables.module.scss';
+import templateVariable from '../../../../../../../app/template-variables.module.scss';
 
 export const DisplayAnswerListWrapper = styled(Form)``;
 

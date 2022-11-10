@@ -47,6 +47,10 @@ export interface IQuestionVersion {
   numberStep?: number;
   numberMin?: number;
   numberMax?: number;
+  dataMatrix?: IDataMatrixInfo;
+  timeFormat?: TimeFormat;
+  dateFormat?: DateFormat;
+  image?: string;
   numberValidationMax?: number;
   numberValidationMin?: number;
   textValidationMax?: number;
@@ -81,9 +85,20 @@ export enum QuestionType {
   SLIDER = 'SLIDER',
   TEXT_ENTRY = 'TEXT_ENTRY',
   SIGNATURE = 'SIGNATURE',
-  // TEXT_GRAPHIC = 'TEXT_GRAPHIC',
-  // DATA_MATRIX = 'DATA_MATRIX',
-  // FORM_FIELD = 'FORM_FIELD',
+  DATA_MATRIX = 'DATA_MATRIX',
+  FORM_FIELD = 'FORM_FIELD',
+  TEXT_GRAPHIC = 'TEXT_GRAPHIC',
+}
+
+export enum TimeFormat {
+  TWELVE_HOUR = 'TWELVE_HOUR',
+  TWENTY_FOUR_HOUR = 'TWENTY_FOUR_HOUR',
+}
+
+export enum DateFormat {
+  DD_MM_YYYY = 'DD_MM_YYYY',
+  MM_DD_YYYY = 'MM_DD_YYYY',
+  YYYY_MM_DD = 'YYYY_MM_DD',
 }
 
 export enum QuestionVersionStatus {
@@ -251,7 +266,10 @@ export interface IBaseQuestionOptionsVersionDto {
   text?: string;
   id?: number | string; //just useful in case for drag drop
 }
-
+export interface IDataMatrixInfo {
+  rows: string[];
+  columns: string[];
+}
 export interface BaseQuestionVersionDto {
   id?: string;
   type: QuestionType;
@@ -266,6 +284,10 @@ export interface BaseQuestionVersionDto {
   numberMin?: number;
   numberMax?: number;
   options?: IBaseQuestionOptionsVersionDto[];
+  dateFormat?: DateFormat;
+  timeFormat?: TimeFormat;
+  dataMatrix?: IDataMatrixInfo;
+  image?: string;
 }
 
 export type QuestionParameter = BaseParameterDto & {

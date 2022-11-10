@@ -1,20 +1,27 @@
 import React, { useCallback, useMemo } from 'react';
-import { DragTable } from '../../../../components/DragTable/DragTable';
+import { DragTable } from '../../../../../components/DragTable/DragTable';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
 import { SortableHandle } from 'react-sortable-hoc';
 import { DragIcon, TrashOutlined } from 'icons';
 import templateVariable from 'app/template-variables.module.scss';
 import { useFormikContext } from 'formik';
-import { BaseQuestionVersionDto, IQuestionVersionOption } from 'type';
+import {
+  BaseQuestionVersionDto,
+  IQuestionVersionOption,
+  QuestionType,
+} from 'type';
 import { Button } from 'antd';
-import { INPUT_TYPES } from '../../../../../common/input/type';
-import { ControlledInput } from '../../../../../common';
 import SimpleBar from 'simplebar-react';
 import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../enums';
-import { filterColumn, IRenderColumnCondition } from '../../../../../../utils';
+import { ROUTE_PATH } from '../../../../../../../enums';
+import {
+  filterColumn,
+  IRenderColumnCondition,
+} from '../../../../../../../utils';
 import { AnswerListWrapper } from './style';
+import { INPUT_TYPES } from '../../../../../../common/input/type';
+import { ControlledInput } from '../../../../../../common';
 
 const DragHandle = SortableHandle(() => (
   <DragIcon
@@ -22,7 +29,7 @@ const DragHandle = SortableHandle(() => (
   />
 ));
 
-const AnswerList = () => {
+const MultipleChoice = () => {
   const { t } = useTranslation();
   const { values, setValues } = useFormikContext<BaseQuestionVersionDto>();
 
@@ -60,7 +67,10 @@ const AnswerList = () => {
         },
       },
       {
-        title: t('common.question'),
+        title:
+          values.type === QuestionType.FORM_FIELD
+            ? t('common.field')
+            : t('common.question'),
         dataIndex: 'question',
         render: (value, record, index) => {
           return (
@@ -87,7 +97,7 @@ const AnswerList = () => {
         ),
       },
     ],
-    [handleDeleteRow, isViewMode, t],
+    [className, handleDeleteRow, isViewMode, t, values.type],
   );
 
   const renderColumnCondition: IRenderColumnCondition = [
@@ -118,7 +128,6 @@ const AnswerList = () => {
     <SimpleBar>
       <AnswerListWrapper>
         <DragTable
-          className={'ABC'}
           columns={columnsFiltered}
           dataSource={dataSource}
           setDataTable={setDataTable}
@@ -130,7 +139,7 @@ const AnswerList = () => {
   );
 };
 
-export default AnswerList;
+export default MultipleChoice;
 
 const initNewRowValue = {
   id: '',
@@ -138,7 +147,7 @@ const initNewRowValue = {
 };
 
 const GroupSurveyButton = () => {
-  const { setValues } = useFormikContext<BaseQuestionVersionDto>();
+  const { setValues, values } = useFormikContext<BaseQuestionVersionDto>();
   const { t } = useTranslation();
 
   const handleAddRow = useCallback(() => {
@@ -157,7 +166,9 @@ const GroupSurveyButton = () => {
 
   return (
     <Button type={'primary'} onClick={handleAddRow} style={{ width: `100%` }}>
-      {t('common.addOneMoreQuestion')}
+      {values.type === QuestionType.FORM_FIELD
+        ? t('common.addOneMoreField')
+        : t('common.addOneMoreQuestion')}
     </Button>
   );
 };

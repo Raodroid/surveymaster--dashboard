@@ -20,6 +20,13 @@
     "foods": "Foods"
   },
   "common": {
+    "field": "Field",
+    "fieldList": "Field List",
+    "optionList": "Option List",
+    "enterColumnName": "Enter column name",
+    "enterRowName": "Enter row name",
+    "addColumn": "Add Column",
+    "option": "Option",
     "confirmFile": "Confirm File",
     "selectAnotherFile": "Select Another File",
     "parameter": "Parameter",
@@ -47,6 +54,7 @@
     "questionCategory": "Question Category",
     "addAllQuestionsFromOneCategory": "Add All Questions from One Category",
     "addOneMoreQuestion": "Add One More Question",
+    "addOneMoreField": "Add One More Field",
     "surveyQuestionList": "Survey Question List",
     "surveyRemarks": "Survey Remarks",
     "surveyTitle": "Survey Title",
@@ -465,5 +473,12 @@
     "CHANGE_SURVEY_REMARK": "Changed Survey Remark from \"{{params.oldSurvey.remark}}\" to \"{{params.newSurvey.remark}}\"",
     "CHANGE_ORDER_QUESTION": "Changed Question Order",
     "noActionsYet": "No actions yet"
+  },
+  "timeFormat": {
+    "TWELVE_HOUR": "12h format",
+    "TWENTY_FOUR_HOUR": "24h format",
+    "DD_MM_YYYY": "dd/mm/yyyy",
+    "MM_DD_YYYY": "mm/dd/yyyy",
+    "YYYY_MM_DD": "yyyy/mm/dd"
   }
 }

@@ -17,14 +17,15 @@ const AddQuestionDetailForm = () => {
       case QuestionType.SLIDER: {
         setValues(oldValues => ({
           ...oldValues,
-          numberMax: '10',
-          numberMin: '1',
-          numberStep: '1',
+          numberMax: oldValues.numberMax || '10',
+          numberMin: oldValues.numberMin || '1',
+          numberStep: oldValues.numberStep || '1',
         }));
 
         break;
       }
       case QuestionType.MULTIPLE_CHOICE:
+      case QuestionType.FORM_FIELD:
       case QuestionType.RADIO_BUTTONS: {
         setFieldValue('options', [
           {
@@ -32,6 +33,31 @@ const AddQuestionDetailForm = () => {
             text: '',
           },
         ]);
+        break;
+      }
+      case QuestionType.PHOTO: {
+        setFieldValue('options', [
+          {
+            id: Math.random(),
+            text: '',
+            imageUrl: '',
+          },
+        ]);
+        break;
+      }
+      case QuestionType.TEXT_GRAPHIC: {
+        setFieldValue('image', '');
+        break;
+      }
+
+      case QuestionType.DATA_MATRIX: {
+        setValues(s => ({
+          ...s,
+          dataMatrix: {
+            rows: s?.dataMatrix?.rows || [''],
+            columns: s?.dataMatrix?.columns || [''],
+          },
+        }));
         break;
       }
     }

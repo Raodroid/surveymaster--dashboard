@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Upload } from 'antd';
 import notification from 'customize-components/CustomNotification';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/lib/upload';
@@ -22,28 +22,25 @@ function getBase64(img, callback) {
 
 const CustomImageUpload = (props: CustomUploadProps) => {
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>(props.value);
+  const [imageUrl, setImageUrl] = useState<string>('');
   const { t } = useTranslation();
 
   const customRequest = async options => {
     let type = options.file.type;
     let nameImage = options.file.name;
     const moduleName = props.moduleName || 'users';
-    const subPath = `${moduleName}/${props.subPath || 'default'}`;
+    const subPath = props.subPath || 'default';
     try {
       const res = await UploadService.getPreSignedUrlUpload(
         moduleName,
         nameImage,
-        type,
+        // type,
         subPath,
       );
       const { data } = res;
+
       if (data) {
-        await UploadService.putWithFormFileAsync(
-          data.urls[0],
-          options.file,
-          type,
-        );
+        await UploadService.putWithFormFileAsync(data.url, options.file, type);
         options.onSuccess({
           url: `${process.env.REACT_APP_S3_URL}/${data.filePath}`,
         });
@@ -110,6 +107,10 @@ const CustomImageUpload = (props: CustomUploadProps) => {
   const customProps: { onChange?: typeof handleChange } = {};
   if (props.onChange) customProps.onChange = handleChange;
 
+  useEffect(() => {
+    setImageUrl(props.value);
+  }, [props.value]);
+
   return (
     <>
       <Upload
@@ -122,11 +123,11 @@ const CustomImageUpload = (props: CustomUploadProps) => {
         showUploadList={false}
         beforeUpload={beforeUpload}
       >
-        {image ? (
+        {image && !isLoading ? (
           <img
             src={image}
             alt="avatar"
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
           uploadButton

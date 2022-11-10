@@ -1,10 +1,7 @@
 import * as Yup from 'yup';
 import moment from 'moment';
-import { ProjectTypes, QuestionType } from '../../../type';
-import {
-  questionValueType,
-  SurveyTemplateEnum,
-} from '../../dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
+import { QuestionType } from '../../../type';
+import { SurveyTemplateEnum } from '../../dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
 
 export const INVALID_FIELDS = {
   MIN_USERNAME: 'validation.messages.minUserName',
@@ -172,6 +169,39 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
 
+  dateFormat: Yup.string()
+    .nullable()
+    .when('type', {
+      is: QuestionType.DATE_PICKER,
+      then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+    }),
+  timeFormat: Yup.string()
+    .nullable()
+    .when('type', {
+      is: QuestionType.TIME_PICKER,
+      then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+    }),
+  dataMatrix: Yup.object()
+    .nullable()
+    .when('type', {
+      is: QuestionType.DATA_MATRIX,
+      then: Yup.object().shape({
+        rows: Yup.array()
+          .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+          .required(INVALID_FIELDS.REQUIRED)
+          .min(1),
+        columns: Yup.array()
+          .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+          .required(INVALID_FIELDS.REQUIRED)
+          .min(1),
+      }),
+    }),
+  image: Yup.object()
+    .nullable()
+    .when('type', {
+      is: QuestionType.TEXT_GRAPHIC,
+      then: Yup.object().required(INVALID_FIELDS.REQUIRED),
+    }),
   options: Yup.array()
     .when('type', {
       is: QuestionType.MULTIPLE_CHOICE,
@@ -189,6 +219,31 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
         .of(
           Yup.object().shape({
             text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          }),
+        )
+        .min(1),
+    })
+    .when('type', {
+      is: QuestionType.FORM_FIELD,
+      then: Yup.array()
+        .of(
+          Yup.object().shape({
+            text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          }),
+        )
+        .min(1),
+    })
+    .when('type', {
+      is: QuestionType.PHOTO,
+      then: Yup.array()
+        .of(
+          Yup.object().shape({
+            text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+            imageUrl: Yup.mixed()
+              .required(INVALID_FIELDS.REQUIRED)
+              .test('fileFormat', 'PDF only', value => {
+                return typeof value === 'string' || typeof value === 'object';
+              }),
           }),
         )
         .min(1),

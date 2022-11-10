@@ -39,7 +39,7 @@ function UserForm() {
   );
 
   const handleSubmit = (userFormValues: UserUpdatedDto) => {
-    mutationUpdateProfile.mutateAsync({ ...userFormValues });
+    mutationUpdateProfile.mutateAsync(userFormValues);
   };
 
   return (
