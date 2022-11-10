@@ -26,7 +26,6 @@ export const ProjectWrapper = styled(Content)`
     height: 48px;
   }
   .ant-table-cell {
-    font-weight: 600;
     &::before {
       display: none;
     }

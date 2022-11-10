@@ -11,7 +11,7 @@ export const QuestionBankSiderFooterWrapper = styled.div`
     background: var(--ant-primary-color-active-deprecated-d-02);
   }
   span {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     margin: 0;
   }
