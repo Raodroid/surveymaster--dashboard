@@ -47,7 +47,6 @@ export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
   }
 
   .ant-table {
-    padding: 20px 12px 0;
     .ant-table-cell {
       a,
       span,

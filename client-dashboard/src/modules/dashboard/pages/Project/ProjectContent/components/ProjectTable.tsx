@@ -189,7 +189,7 @@ function ProjectTable() {
   };
 
   return (
-    <ProjectTableWrapper ref={wrapperRef} className="scroll-table" centerLastChild>
+    <ProjectTableWrapper ref={wrapperRef} centerLastChild>
       <HannahCustomSpin
         parentRef={wrapperRef}
         spinning={

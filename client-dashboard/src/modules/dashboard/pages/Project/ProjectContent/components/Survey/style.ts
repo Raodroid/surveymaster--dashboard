@@ -41,7 +41,6 @@ export const TableWrapper = styled.div`
     }
   }
   .ant-table {
-    padding: 20px 12px 0;
     width: 100%;
     a,
     .ant-table-cell div,

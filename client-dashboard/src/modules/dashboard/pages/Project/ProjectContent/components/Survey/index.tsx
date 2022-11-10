@@ -1,4 +1,3 @@
-import { ExportOutlined } from '@ant-design/icons';
 import { notification, PaginationProps, Table } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
@@ -20,17 +19,16 @@ import {
   IGetParams,
   IPostSurveyBodyDto,
   ISurvey,
-  ProjectTypes
+  ProjectTypes,
 } from 'type';
 import { onError, saveBlob } from 'utils';
-import { useCheckScopeEntityDefault } from '../../../../../../common/hoc';
 import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
 import { MenuDropDownWrapper } from 'customize-components/styles';
 import { MOMENT_FORMAT, SCOPE_CONFIG } from 'enums';
-import { CopyOutlined, ExportOutlined } from '@ant-design/icons';
+import { ExportOutlined } from '@ant-design/icons';
 import { useCheckScopeEntityDefault } from '../../../../../../common/hoc';
 import HannahCustomSpin from '../../../../../components/HannahCustomSpin';
 
@@ -163,13 +161,10 @@ function Survey() {
   const wrapperRef = useRef<any>();
 
   return (
-    <SurveyWrapper className="flex-column scroll-table" centerLastChild>
+    <SurveyWrapper className="flex-column" centerLastChild>
       <ProjectHeader routes={routes} search />
 
-      <TableWrapper
-        className="flex-column project-table-max-height"
-        ref={wrapperRef}
-      >
+      <TableWrapper className="flex-column" ref={wrapperRef}>
         <HannahCustomSpin
           parentRef={wrapperRef}
           spinning={

@@ -69,17 +69,6 @@ export const SetUpPreferencesModalStyled = styled(ModalStyled)`
     font-weight: 600;
   }
 
-  .submit-btn {
-    // --ant-primary-color-hover: rgba(51, 85, 108, 0.8);
-    // --ant-primary-color-active: #096dd9;
-
-    background: #33556c;
-    span {
-      font-weight: bold;
-      font-size: 14px;
-    }
-  }
-
   .ant-checkbox-group {
     gap: 12px;
 
