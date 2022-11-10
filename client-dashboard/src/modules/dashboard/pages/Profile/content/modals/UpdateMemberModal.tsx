@@ -10,10 +10,11 @@ import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
 import SimpleBar from 'simplebar-react';
 import { ProfileModal } from '.';
-import { onError } from '../../../../../../utils/funcs';
-import { inviteMemberSchema, postPutInitialValues } from '../../utils';
+import { onError } from 'utils';
+import { postPutInitialValues } from '../../utils';
 import InviteMemberInputs from '../inputs/InviteMemberInputs';
 import { UpdateMemberModalStyled } from './styles';
+import { INVITE_MEMBER_SCHEMA } from '../../../../../common/validate/validate';
 
 interface UpdateModal extends Omit<ProfileModal, 'userId'> {
   userData?: UserPayload;
@@ -70,7 +71,7 @@ function UpdateMemberModal(props: UpdateModal) {
           enableReinitialize={true}
           initialValues={userInit}
           onSubmit={handleFinish}
-          validationSchema={inviteMemberSchema}
+          validationSchema={INVITE_MEMBER_SCHEMA}
         >
           {({ handleSubmit }) => (
             <Form layout="vertical" onFinish={handleSubmit}>

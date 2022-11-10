@@ -243,7 +243,6 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
               .required(INVALID_FIELDS.REQUIRED)
               .test('fileFormat', 'PDF only', value => {
                 return typeof value === 'string' || typeof value === 'object';
-                // return value && ['application/pdf'].includes(value.type);
               }),
           }),
         )
@@ -314,18 +313,16 @@ export const PROJECT_FORM_SCHEMA = Yup.object().shape({
   type: Yup.string().required(INVALID_FIELDS.REQUIRED),
 });
 
-//
-// import { mixed, InferType } from 'yup';
-//
-// let objectIdSchema = yup
-//   .mixed((input): input is ObjectId => input instanceof ObjectId)
-//   .transform((value: any, input, ctx) => {
-//     if (ctx.typeCheck(value)) return value;
-//     return new ObjectId(value);
-//   });
-//
-// await objectIdSchema.validate(ObjectId('507f1f77bcf86cd799439011')); // ObjectId("507f1f77bcf86cd799439011")
-//
-// await objectIdSchema.validate('507f1f77bcf86cd799439011'); // ObjectId("507f1f77bcf86cd799439011")
-//
-// InferType<typeof objectIdSchema>; // ObjectId
+export const USER_FORM_SCHEMA = Yup.object().shape({
+  firstName: firstNameYup.required(INVALID_FIELDS.REQUIRED),
+  lastName: lastNameYup.required(INVALID_FIELDS.REQUIRED),
+  email: emailYup,
+});
+
+export const INVITE_MEMBER_SCHEMA = Yup.object({
+  firstName: firstNameYup.required(INVALID_FIELDS.REQUIRED).trim(),
+  lastName: lastNameYup.required(INVALID_FIELDS.REQUIRED).trim(),
+  email: emailYup,
+  departmentName: Yup.string().required(INVALID_FIELDS.REQUIRED).trim(),
+  roles: Yup.array().min(1, INVALID_FIELDS.REQUIRED),
+});

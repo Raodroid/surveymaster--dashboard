@@ -37,6 +37,7 @@ const ProtectedRouteWrapper = styled(Layout)`
 export const BodyAppWrapper = styled(Content)`
   height: 100%;
   margin-bottom: 1.5rem;
+  max-height: 820px;
 
   display: flex;
   @media only screen and (max-width: 1440px) {

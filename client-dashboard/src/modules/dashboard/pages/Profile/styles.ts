@@ -260,9 +260,11 @@ export const UserContentStyled = styled(ContentStyled)`
     min-height: 36px;
     padding: 4px;
   }
+
   .wrapper {
     gap: 6px;
   }
+
   .notifications {
     --ant-primary-color: #1890ff;
     --ant-primary-1: #e6f7ff;
@@ -279,6 +281,7 @@ export const UserContentStyled = styled(ContentStyled)`
 
     .ant-switch-checked {
       background: #e0effc;
+
       .ant-switch-handle::before {
         background: #007ae7;
       }
@@ -291,25 +294,33 @@ export const UserContentStyled = styled(ContentStyled)`
     .ant-switch-handle {
       width: 32px;
       height: 32px;
+
       &::before {
         border-radius: 50%;
       }
     }
   }
+
   .preferences {
     color: #007ae7;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
+
     :hover {
       color: #015398;
     }
   }
+
   .switch-wrapper {
     span {
       margin-right: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(37, 33, 106, 0.4);
     }
   }
+
   .others {
     flex: 1;
   }

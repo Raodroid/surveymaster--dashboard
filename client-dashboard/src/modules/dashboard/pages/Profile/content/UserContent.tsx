@@ -1,10 +1,11 @@
 import { Button, Divider, Switch } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AuthAction } from 'redux/auth';
 import { UserContentStyled } from '../styles';
 import { ChangePasswordModal, SetUpPreferencesModal } from './modals';
+import { AuthSelectors } from '../../../../../redux/auth';
 
 function UserContent() {
   const dispatch = useDispatch();
@@ -12,8 +13,18 @@ function UserContent() {
   const [changePassword, setChangePassword] = useState(false);
   const [changePreferences, setChangePreferences] = useState(false);
 
+  const profile = useSelector(AuthSelectors.getProfile);
+
   return (
     <UserContentStyled className="flex">
+      <div className={'cell'}>
+        <div className="password padding-24 flex-j-between flex-a-center">
+          <span className="title">
+            {profile?.firstName + ' ' + profile?.lastName}
+          </span>
+        </div>
+      </div>
+
       <div className="cell setting">
         <div className="password padding-24 flex-j-between flex-a-center">
           <span className="title">{t('common.password')}</span>
