@@ -28,7 +28,19 @@ export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
   }
 
   flex: 1;
-  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: scroll;
+  .ProjectTableWrapper {
+    &__body {
+      padding: 1.5rem;
+      height: 100%;
+      overflow: scroll;
+    }
+  }
+
   .ant-table-cell {
     height: 48px;
     padding: 0 10px;

@@ -328,6 +328,7 @@ const FilterComponentWrapper = styled.div`
     margin: 0 6px;
   }
   .filter-main {
+    cursor: pointer;
     border-radius: 2px;
     background: white;
     color: ${templateVariable.text_primary_color};

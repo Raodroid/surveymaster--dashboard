@@ -33,16 +33,17 @@ function Inputs(props: {
               ? t('common.externalSurveyTitle')
               : t('common.surveyTitle')
           }
-          className="surveyTitle"
-          disabled={disabled}
+          className={`surveyTitle ${disabled ? 'view-mode' : ''}`}
+          // disabled={disabled}
           inputType={INPUT_TYPES.INPUT}
         />
         {!hideDate ? (
           <ControlledInput
             name="createdAt"
             label="Date Created"
-            disabled={disabled}
+            // disabled={disabled}
             inputType={INPUT_TYPES.INPUT}
+            className={disabled ? 'view-mode' : undefined}
           />
         ) : null}
       </div>
@@ -50,8 +51,8 @@ function Inputs(props: {
         <ControlledInput
           name="remark"
           label="Survey Remarks"
-          className="surveyRemarks"
-          disabled={disabled}
+          className={`surveyRemarks ${disabled ? 'view-mode' : ''}`}
+          // disabled={disabled}
           inputType={INPUT_TYPES.TEXTAREA}
         />
       ) : null}
@@ -66,8 +67,7 @@ function Inputs(props: {
         name="displayId"
         label="ID"
         type="text"
-        className="surveyId"
-        disabled
+        className="surveyId view-mode"
         inputType={INPUT_TYPES.INPUT}
       />
     </InputsWrapper>

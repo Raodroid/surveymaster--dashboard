@@ -10,6 +10,8 @@ import { projectRoutePath } from './util';
 import { useCheckScopeEntityDefault } from '../../../common/hoc';
 import { SCOPE_CONFIG } from 'enums';
 import AddSurvey from './ProjectContent/components/DetailSurvey/Add';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '../../../../redux/auth';
 
 const Project = () => {
   const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');
@@ -17,6 +19,9 @@ const Project = () => {
   const { canRead: canReadSurvey } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.SURVEYS,
   );
+
+  const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);
+  const canReadSurveyinal = isFetching ? true : canReadSurvey;
 
   return (
     <ProjectWrapper>
@@ -33,13 +38,13 @@ const Project = () => {
           }
         >
           <Route path="/" element={<ProjectContent />} />
-          {canReadSurvey && (
+          {canReadSurveyinal && (
             <Route
               path={subRoute(projectRoutePath.SURVEY)}
               element={<Survey />}
             />
           )}
-          {canReadSurvey && (
+          {canReadSurveyinal && (
             <Route
               path={subRoute(projectRoutePath.ADD_NEW_SURVEY)}
               element={<AddSurvey />}

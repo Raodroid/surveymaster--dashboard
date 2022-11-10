@@ -4,16 +4,14 @@ import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { PenFilled, TrashOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import _get from 'lodash/get';
-import { CustomSpinSuspense } from 'modules/common/styles';
 import moment from 'moment';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
-import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import { onError } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
@@ -21,6 +19,10 @@ import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper } from '../styles';
 import { QsParams } from './ProjectFilter';
+import SimpleBar from 'simplebar-react';
+import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
+import HannahCustomSpin from '../../../../components/HannahCustomSpin';
+
 const initParams: IGetParams = {
   q: '',
   page: 1,
@@ -69,7 +71,7 @@ function ProjectTable() {
       getProjects({
         ...params,
         ...formatQsParams,
-        isDeleted: formatQsParams.isDeleted === 'true' ? true : false,
+        isDeleted: formatQsParams.isDeleted === 'true',
       }),
     {
       onError,
@@ -99,7 +101,7 @@ function ProjectTable() {
         key: 'id',
       },
       {
-        title: 'Project Title',
+        title: t('common.projectTitle'),
         dataIndex: 'name',
         key: 'name',
       },
@@ -109,7 +111,7 @@ function ProjectTable() {
         key: 'numberOfSurveys',
       },
       {
-        title: 'Person In Charge',
+        title: t('common.personInCharge'),
         dataIndex: 'createdBy',
         key: 'createdBy',
         render: (_, record) => (
@@ -119,7 +121,7 @@ function ProjectTable() {
         ),
       },
       {
-        title: 'Date of Creation',
+        title: t('common.dateOfCreation'),
         dataIndex: 'createdAt',
         key: 'createdAt',
         render: (text: string) => {
@@ -128,10 +130,9 @@ function ProjectTable() {
         },
       },
       {
-        title: 'Actions',
+        title: t('common.actions'),
         dataIndex: 'actions',
         key: 'actions',
-        // width: 100,
         render: (_, record) => (
           <div
             className="flex-center actions"
@@ -188,35 +189,33 @@ function ProjectTable() {
   };
 
   return (
-    <ProjectTableWrapper
-      ref={wrapperRef}
-      className="scroll-table"
-      centerLastChild
-    >
-      <CustomSpinSuspense
+    <ProjectTableWrapper ref={wrapperRef} className="scroll-table" centerLastChild>
+      <HannahCustomSpin
+        parentRef={wrapperRef}
         spinning={
           getProjectListQuery.isLoading || getProjectListQuery.isFetching
         }
-      >
+      />
+      <SimpleBar className={'ProjectTableWrapper__body'}>
         <Table
           pagination={false}
           dataSource={projects}
           columns={columns}
           onRow={onRow}
           rowKey={record => record.id as string}
-          scroll={{ y: 100 }}
+          scroll={{ x: 800 }}
         />
-        <StyledPagination
-          onChange={page => {
-            setParams(s => ({ ...s, page }));
-          }}
-          showSizeChanger
-          pageSize={params.take}
-          onShowSizeChange={onShowSizeChange}
-          defaultCurrent={1}
-          total={total}
-        />
-      </CustomSpinSuspense>
+      </SimpleBar>
+      <StyledPagination
+        onChange={page => {
+          setParams(s => ({ ...s, page }));
+        }}
+        showSizeChanger
+        pageSize={params.take}
+        onShowSizeChange={onShowSizeChange}
+        defaultCurrent={1}
+        total={total}
+      />
       <DeleteProjectModal
         setShowModal={setShowDeleteProject}
         showModal={showDeleteProject}

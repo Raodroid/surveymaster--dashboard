@@ -29,7 +29,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { onError, useDebounce } from '../../../../../utils';
 import { QuestionBankService } from '../../../../../services';
 import _get from 'lodash/get';
-import { ROUTE_PATH } from '../../../../../enums';
+import { ROUTE_PATH, size } from '../../../../../enums';
 import { useNavigate } from 'react-router-dom';
 import StyledPagination from '../../../components/StyledPagination';
 import qs from 'qs';
@@ -41,6 +41,7 @@ import {
   useCheckScopeEntityDefault,
 } from '../../../../common/hoc';
 import { SCOPE_CONFIG } from '../../../../../enums/user';
+import SimpleBar from 'simplebar-react';
 
 const { Item } = Menu;
 
@@ -121,7 +122,7 @@ const CategoryDetail = () => {
       {
         title: t('common.question'),
         dataIndex: ['latestVersion'],
-        width: 300,
+        width: 250,
         render: value => value?.title || '--',
       },
       {
@@ -237,15 +238,16 @@ const CategoryDetail = () => {
           searchTxt={searchTxt}
           setSearchTxt={setSearchTxt}
         />
-        <div className={'CategoryDetail__body'}>
+        <SimpleBar className={'CategoryDetail__body'}>
           <Table
             rowKey={record => record?.id as string}
             dataSource={questionList}
             columns={columns}
             onRow={handleClickRow}
             pagination={false}
+            scroll={{ x: size.medium }}
           />
-        </div>
+        </SimpleBar>
         <StyledPagination
           onChange={page => {
             setParams(s => ({ ...s, page }));

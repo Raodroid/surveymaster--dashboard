@@ -35,7 +35,7 @@ const BreadcrumbWrapper = styled.div<{ isMobile?: boolean }>`
     }
     a {
       color: ${templateVariable.text_primary_color};
-      font-weight: bold;
+      font-weight: 600;
       :last-child {
         color: ${templateVariable.text_primary_color};
       }
@@ -46,7 +46,7 @@ const BreadcrumbWrapper = styled.div<{ isMobile?: boolean }>`
     span {
       color: ${templateVariable.primary_color};
       &:first-child {
-        font-weight: bold;
+        font-weight: 600;
         margin-right: 5px;
       }
     }

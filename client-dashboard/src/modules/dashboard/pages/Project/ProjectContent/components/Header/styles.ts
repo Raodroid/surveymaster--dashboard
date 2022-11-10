@@ -77,6 +77,8 @@ export const ProjectFilterBtn = styled(Button)`
     background: white;
     color: var(--text-color);
     gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
 
     svg {
       width: 9px;
