@@ -1,5 +1,7 @@
 import { Button } from 'antd';
+import { SCOPE_CONFIG } from 'enums';
 import { PlusIcon } from 'icons';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,32 +17,40 @@ const ProjectSider = () => {
 
   const { projects, isLoading } = useGetAllProjects();
 
+  const { canCreate, canRead } = useCheckScopeEntityDefault(
+    SCOPE_CONFIG.ENTITY.PROJECTS,
+  );
+
   return (
     <ProjectSiderWrapper ref={wrapperRef}>
-      <div className="list flex-column">
-        <CustomSpinSuspense spinning={isLoading}>
-          <SimpleBar style={{ height: '100%' }}>
-            {projects.map(e => (
-              <Title
-                key={e.id}
-                title={e.name}
-                routePath={generatePath(projectRoutePath.SURVEY, {
-                  projectId: e.id,
-                })}
-                id={e.id}
-              />
-            ))}
-          </SimpleBar>
-        </CustomSpinSuspense>
-      </div>
-      <div className="add-new-project-btn-wrapper">
-        <CustomNavLink to={projectRoutePath.PROJECT.ADD}>
-          <Button type="default" className="new-project-btn">
-            <PlusIcon />
-            {t('common.addNewProject')}
-          </Button>
-        </CustomNavLink>
-      </div>
+      {canRead ? (
+        <div className="list flex-column">
+          <CustomSpinSuspense spinning={isLoading}>
+            <SimpleBar style={{ height: '100%' }}>
+              {projects.map(e => (
+                <Title
+                  key={e.id}
+                  title={e.name}
+                  routePath={generatePath(projectRoutePath.SURVEY, {
+                    projectId: e.id,
+                  })}
+                  id={e.id}
+                />
+              ))}
+            </SimpleBar>
+          </CustomSpinSuspense>
+        </div>
+      ) : null}
+      {canCreate ? (
+        <div className="add-new-project-btn-wrapper">
+          <CustomNavLink to={projectRoutePath.PROJECT.ADD}>
+            <Button type="default" className="new-project-btn">
+              <PlusIcon />
+              {t('common.addNewProject')}
+            </Button>
+          </CustomNavLink>
+        </div>
+      ) : null}
     </ProjectSiderWrapper>
   );
 };

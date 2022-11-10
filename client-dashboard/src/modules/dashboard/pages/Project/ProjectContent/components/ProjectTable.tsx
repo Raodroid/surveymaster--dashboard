@@ -1,9 +1,11 @@
 import { Button, Menu, PaginationProps, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
+import { SCOPE_CONFIG } from 'enums';
 import { PenFilled, TrashOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import _get from 'lodash/get';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import moment from 'moment';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -12,6 +14,7 @@ import { useQuery } from 'react-query';
 import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
+import SimpleBar from 'simplebar-react';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
 import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
@@ -21,6 +24,7 @@ import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper } from '../styles';
 import { QsParams } from './ProjectFilter';
+
 const initParams: IGetParams = {
   q: '',
   page: 1,
@@ -51,6 +55,10 @@ function ProjectTable() {
   const [projectId, setProjectId] = useState('');
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [showRestoreProject, setShowRestoreProject] = useState(false);
+
+  const { canDelete, canRestore, canUpdate } = useCheckScopeEntityDefault(
+    SCOPE_CONFIG.ENTITY.PROJECTS,
+  );
 
   const formatQsParams = useMemo(() => {
     const formatQs: QsParams = {
@@ -140,7 +148,7 @@ function ProjectTable() {
               setProjectId(record.id);
             }}
           >
-            {qsParams?.isDeleted !== 'true' && (
+            {qsParams?.isDeleted !== 'true' && canUpdate ? (
               <Button
                 onClick={() =>
                   navigate(
@@ -152,20 +160,20 @@ function ProjectTable() {
               >
                 <PenFilled />
               </Button>
-            )}
+            ) : null}
             <ThreeDotsDropdown
               overlay={
                 <MenuDropDownWrapper>
-                  {qsParams?.isDeleted !== 'true' && (
+                  {qsParams?.isDeleted !== 'true' && canDelete ? (
                     <Menu.Item onClick={() => setShowDeleteProject(true)}>
                       <TrashOutlined /> {t('common.deleteProject')}
                     </Menu.Item>
-                  )}
-                  {qsParams?.isDeleted === 'true' && (
+                  ) : null}
+                  {qsParams?.isDeleted === 'true' && canRestore ? (
                     <Menu.Item onClick={() => setShowRestoreProject(true)}>
                       <Refresh /> {t('common.restoreProject')}
                     </Menu.Item>
-                  )}
+                  ) : null}
                 </MenuDropDownWrapper>
               }
               trigger={['click']}
@@ -174,7 +182,7 @@ function ProjectTable() {
         ),
       },
     ],
-    [navigate, qsParams, t],
+    [navigate, qsParams, t, canRestore, canDelete, canUpdate],
   );
 
   const onRow = (record: IProject) => {

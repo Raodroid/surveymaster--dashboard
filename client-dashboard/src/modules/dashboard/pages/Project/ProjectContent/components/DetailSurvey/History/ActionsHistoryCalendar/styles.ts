@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const ActionsHistoryCalendarContentWrapper = styled.div`
   gap: 24px;
   min-height: 478px;
-  max-height: min(1200px, calc(100vh - 432px));
+  max-height: min(1200px, calc(100vh - 440px));
 `;
 
 export const CalendarScrollbarWrapper = styled.div`

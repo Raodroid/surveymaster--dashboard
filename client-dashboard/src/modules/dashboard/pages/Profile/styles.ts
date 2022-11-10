@@ -343,7 +343,7 @@ export const TeamContentStyled = styled(ContentStyled)`
     .search-btn {
       box-shadow: none;
       position: relative;
-      z-index: 1;
+      z-index: 10;
       min-width: 32px;
       padding: 0;
       background: transparent;
@@ -440,10 +440,6 @@ export const TableWrapperStyled = styled.div`
   }
   .ant-dropdown-open {
     background: var(--ant-primary-2);
-  }
-  .pagination {
-    margin: 12px 16px 12px 12px;
-    padding: 0 12px;
   }
 `;
 

@@ -1,15 +1,15 @@
+import { SCOPE_CONFIG } from 'enums';
 import { Navigate, Outlet, Route, Routes } from 'react-router';
+import { useCheckScopeEntityDefault } from '../../../common/hoc';
 import ProjectContent from './ProjectContent';
 import DetailSurvey from './ProjectContent/components/DetailSurvey';
+import AddSurvey from './ProjectContent/components/DetailSurvey/Add';
 import { AddProject, EditProject } from './ProjectContent/components/Project';
 import Survey from './ProjectContent/components/Survey';
 import { ProjectContentWrapper } from './ProjectContent/styles';
 import ProjectSider from './ProjectSider';
 import { ProjectWrapper } from './styles';
 import { projectRoutePath } from './util';
-import { useCheckScopeEntityDefault } from '../../../common/hoc';
-import { SCOPE_CONFIG } from 'enums';
-import AddSurvey from './ProjectContent/components/DetailSurvey/Add';
 
 const Project = () => {
   const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');

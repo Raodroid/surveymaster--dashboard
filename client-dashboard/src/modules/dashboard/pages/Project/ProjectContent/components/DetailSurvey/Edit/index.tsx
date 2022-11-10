@@ -1,6 +1,10 @@
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
-import { projectRoutePath, useGetProjectByIdQuery } from 'modules/dashboard/pages/Project/util';
+import {
+  projectRoutePath,
+  useGetProjectByIdQuery,
+} from 'modules/dashboard/pages/Project/util';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
 import { projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
@@ -10,6 +14,7 @@ import { EditSurveyWrapper } from './style';
 
 function EditSurvey() {
   const params = useParams<projectSurveyParams>();
+  const { t } = useTranslation();
 
   const { project } = useGetProjectByIdQuery(params.projectId);
   const { surveyData: survey } = useGetSurveyById(params.surveyId);
@@ -30,11 +35,11 @@ function EditSurvey() {
         }),
       },
       {
-        name: 'Edit Survey',
+        name: t('common.editSurvey'),
         href: projectRoutePath.DETAIL_SURVEY.EDIT,
       },
     ],
-    [params, survey, project],
+    [params, survey, project, t],
   );
 
   return (
