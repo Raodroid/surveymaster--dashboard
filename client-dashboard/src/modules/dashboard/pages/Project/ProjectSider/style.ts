@@ -49,7 +49,7 @@ export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
     border-radius: 6px;
     transition: all 0.3s;
     span {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       margin: 0;
       color: ${templateVariable.text_primary_color};
@@ -89,7 +89,7 @@ export const TitleStyled = styled.div`
     }
     span {
       font-size: 14px;
-      font-weight: bold;
+      font-weight: 600;
     }
   }
   .active {

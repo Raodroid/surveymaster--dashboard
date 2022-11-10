@@ -250,7 +250,7 @@ export const ContentStyled = styled.div`
   }
   .title {
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 600;
   }
 `;
 
