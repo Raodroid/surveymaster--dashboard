@@ -14,7 +14,6 @@ import { useQuery } from 'react-query';
 import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
-import SimpleBar from 'simplebar-react';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
 import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';

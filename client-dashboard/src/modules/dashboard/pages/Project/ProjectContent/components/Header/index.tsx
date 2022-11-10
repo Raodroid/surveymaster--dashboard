@@ -3,7 +3,7 @@ import useParseQueryString from 'hooks/useParseQueryString';
 import { Chat, Clock, PenFilled } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import StyledBreadcrumb, {
-  IBreadcrumbItem,
+  IBreadcrumbItem
 } from 'modules/common/commonComponent/StyledBreadcrumb';
 import qs from 'qs';
 import { useCallback, useRef } from 'react';

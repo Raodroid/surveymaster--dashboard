@@ -34,8 +34,6 @@ import { useLocation, useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
-import { useDebounce } from 'utils';
-import SimpleBar from 'simplebar-react';
 import { GetListQuestionDto, IGetParams } from 'type';
 import { QsParams } from '../../Project/ProjectContent/components/ProjectFilter';
 import {
