@@ -12,11 +12,13 @@ const Home = () => {
   );
   const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);
 
-  const canReadQuestionFinal = isFetching ? true : canReadProject;
+  const canReadProjectFinal = isFetching ? true : canReadProject;
 
   useEffect(() => {
-    if (canReadQuestionFinal) navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
-  }, [canReadQuestionFinal, navigate]);
+    if (canReadProjectFinal) navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT, {
+      replace: true,
+    });
+  }, [canReadProjectFinal, navigate]);
 
   return <div>Home Page</div>;
 };
