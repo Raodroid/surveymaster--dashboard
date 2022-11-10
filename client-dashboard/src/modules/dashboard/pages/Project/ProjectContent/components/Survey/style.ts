@@ -12,6 +12,14 @@ export const TableWrapper = styled.div`
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  position: relative;
+  .TableWrapper {
+    &__body {
+      padding: 1.5rem 1.5rem 0 1.5rem;
+      height: 100%;
+      overflow: scroll;
+    }
+  }
 
   .ant-pagination {
     margin-top: 10px;
@@ -33,7 +41,6 @@ export const TableWrapper = styled.div`
     }
   }
   .ant-table {
-    padding: 20px 12px 0;
     width: 100%;
     a,
     .ant-table-cell div,

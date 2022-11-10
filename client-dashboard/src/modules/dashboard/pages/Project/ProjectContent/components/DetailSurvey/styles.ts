@@ -51,10 +51,4 @@ export const InputsWrapper = styled.div`
       border-radius: 4px;
     }
   }
-  .ant-input-affix-wrapper-disabled,
-  .ant-input-disabled {
-    border: none;
-    border-radius: 4px;
-    background: rgba(37, 33, 106, 0.04);
-  }
 `;

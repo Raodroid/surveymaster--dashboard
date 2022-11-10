@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { BaseSectionWrapper } from '../../../../common/styles';
 import { screenSize } from '../../../../../enums';
 import templateVariable from 'app/template-variables.module.scss';
-import { Button } from 'antd';
-
 export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
   width: 290px;
   display: flex;
@@ -43,6 +41,19 @@ export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
   }
   .new-project-btn {
     gap: 12px;
+
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    margin: 0.4rem;
+    border-radius: 6px;
+    transition: all 0.3s;
+    span {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      color: ${templateVariable.text_primary_color};
+    }
   }
 `;
 

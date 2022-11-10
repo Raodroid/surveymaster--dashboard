@@ -15,9 +15,10 @@ const Home = () => {
   const canReadProjectFinal = isFetching ? true : canReadProject;
 
   useEffect(() => {
-    if (canReadProjectFinal) navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT, {
-      replace: true,
-    });
+    if (canReadProjectFinal)
+      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT, {
+        replace: true,
+      });
   }, [canReadProjectFinal, navigate]);
 
   return <div>Home Page</div>;

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const HeaderStyled = styled.div`
   min-height: 76px;
   max-height: 76px;
-  padding: 0 32px;
+  padding: 0 22px;
   border-bottom: 1px solid #f3eef3;
   .breadcrumb {
     border-top: none;
@@ -77,6 +77,8 @@ export const ProjectFilterBtn = styled(Button)`
     background: white;
     color: var(--text-color);
     gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
 
     svg {
       width: 9px;

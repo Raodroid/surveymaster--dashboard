@@ -35,10 +35,10 @@ const ProjectSider = () => {
       </div>
       <div className="add-new-project-btn-wrapper">
         <CustomNavLink to={projectRoutePath.PROJECT.ADD}>
-          <Button type="default" className="new-project-btn">
+          <div className="new-project-btn">
             <PlusIcon />
-            {t('common.addNewProject')}
-          </Button>
+            <span>{t('common.addNewProject')}</span>
+          </div>
         </CustomNavLink>
       </div>
     </ProjectSiderWrapper>

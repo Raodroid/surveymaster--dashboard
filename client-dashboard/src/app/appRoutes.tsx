@@ -2,13 +2,12 @@ import React, { lazy, useEffect, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { ROUTE_PATH } from '../enums';
 import { useScrollbarContext } from '../scrollbarContext/useScrollBar';
 import { ProtectedRoutes } from './protected.route';
 import { NoAuthenticationRoutes } from './public.route';
 import { UnProtectedRoutes } from './unProtected.route';
 import { useCheckScopeEntityDefault } from '../modules/common/hoc';
-import { SCOPE_CONFIG } from '../enums/user';
+import { SCOPE_CONFIG, ROUTE_PATH } from '../enums';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
 
