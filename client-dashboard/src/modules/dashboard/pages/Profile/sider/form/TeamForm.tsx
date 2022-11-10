@@ -70,29 +70,17 @@ function TeamForm() {
                     {t('common.sendInvitation')}
                   </Button>
                 </div>
-                <div className="flex-center footer flex-column">
-                  <div className="flex">
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      className="submit-btn secondary-btn"
-                      loading={mutationInviteMember.isLoading}
-                    >
-                      {t('common.sendInvitation')}
-                    </Button>
-                  </div>
 
-                  <Divider />
+                <Divider />
 
-                  <div className="flex">
-                    <Button
-                      type="primary"
-                      className="invitation-link info-btn"
-                      // loading={mutationInviteMember.isLoading}
-                    >
-                      {t('common.copyInvitationLink')}
-                    </Button>
-                  </div>
+                <div className="flex">
+                  <Button
+                    type="primary"
+                    className="invitation-link info-btn"
+                    // loading={mutationInviteMember.isLoading}
+                  >
+                    {t('common.copyInvitationLink')}
+                  </Button>
                 </div>
               </div>
             </Form>

@@ -303,7 +303,7 @@ function TeamContent() {
     <TeamContentStyled className="flex">
       <div className="cell padding-24 name title flex-a-center">AMiLi</div>
 
-      <div className="cell flex-column table-wrapper">
+      <div className="cell flex-column table-wrapper scroll-table">
         {canRead ? (
           <>
             <div className="search padding-24 flex-center">
