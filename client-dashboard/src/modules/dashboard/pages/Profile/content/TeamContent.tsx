@@ -29,7 +29,6 @@ import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
-import SimpleBar from 'simplebar-react';
 import { useDebounce } from 'utils';
 import {
   CustomFallbackStyled,
@@ -43,7 +42,6 @@ import {
   ResetUserPasswordModal,
   UpdateMemberModal,
 } from './modals';
-
 interface TeamMember extends UserPayload {
   key: string;
   name: string;
@@ -270,7 +268,7 @@ function TeamContent() {
     <TeamContentStyled className="flex">
       <div className="cell padding-24 name title flex-a-center">AMiLi</div>
 
-      <div className="cell flex-column table-wrapper">
+      <div className="cell flex-column table-wrapper scroll-table">
         <div className="search padding-24 flex-center">
           <Button
             className="search-btn"
@@ -310,18 +308,16 @@ function TeamContent() {
         <TableWrapperStyled>
           <CustomSpinSuspense spinning={isLoading}>
             <div className="table-wrapper">
-              <SimpleBar style={{ maxHeight: '100%' }}>
-                <Table
-                  rowSelection={{
-                    type: 'checkbox',
-                    ...rowSelection,
-                  }}
-                  scroll={{ y: 'fit-content' }}
-                  columns={columns}
-                  dataSource={data}
-                  pagination={false}
-                />
-              </SimpleBar>
+              <Table
+                rowSelection={{
+                  type: 'checkbox',
+                  ...rowSelection,
+                }}
+                scroll={{ y: 100 }}
+                columns={columns}
+                dataSource={data}
+                pagination={false}
+              />
             </div>
             <Pagination
               className="flex-j-end pagination"

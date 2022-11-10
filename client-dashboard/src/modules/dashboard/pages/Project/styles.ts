@@ -31,9 +31,6 @@ export const ProjectWrapper = styled(Content)`
       display: none;
     }
   }
-  .ant-table-body {
-    overflow-y: auto !important;
-  }
   .ant-table-thead {
     .ant-table-cell {
       border: none;
@@ -45,16 +42,6 @@ export const ProjectWrapper = styled(Content)`
   }
   .overflow-hidden {
     overflow-y: hidden;
-  }
-  .project-table-max-height {
-    // .ant-table-thead .ant-table-cell:nth-last-child(2),
-    .ant-table-thead .ant-table-cell:nth-last-child(1) {
-      text-align: center;
-    }
-    .ant-table-body {
-      min-height: calc(100vh - 310px);
-      max-height: calc(100vh - 310px) !important;
-    }
   }
   .ant-spin-nested-loading,
   .ant-spin-container {

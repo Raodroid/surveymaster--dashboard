@@ -386,7 +386,6 @@ export const TeamContentStyled = styled(ContentStyled)`
 `;
 
 export const TableWrapperStyled = styled.div`
-  flex: 1;
   width: 100%;
   padding-top: 6px;
   overflow: hidden;

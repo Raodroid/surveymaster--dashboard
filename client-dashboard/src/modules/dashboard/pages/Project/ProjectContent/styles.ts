@@ -22,7 +22,11 @@ export const ProjectHomeWrapper = styled.div`
   height: 100%;
 `;
 
-export const ProjectTableWrapper = styled.div`
+export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
+  .ant-table-thead .ant-table-cell:nth-last-child(2) {
+    text-align: ${props => (props.centerLastChild ? 'center' : '')};
+  }
+
   flex: 1;
   overflow: hidden;
   .ant-table-cell {

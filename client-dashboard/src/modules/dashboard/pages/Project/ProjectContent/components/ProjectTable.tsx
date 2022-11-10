@@ -13,6 +13,7 @@ import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
+import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import { onError } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
@@ -20,9 +21,6 @@ import { projectRoutePath } from '../../util';
 import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper } from '../styles';
 import { QsParams } from './ProjectFilter';
-import SimpleBar from 'simplebar-react';
-import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
-
 const initParams: IGetParams = {
   q: '',
   page: 1,
@@ -133,6 +131,7 @@ function ProjectTable() {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',
+        // width: 100,
         render: (_, record) => (
           <div
             className="flex-center actions"
@@ -189,32 +188,34 @@ function ProjectTable() {
   };
 
   return (
-    <ProjectTableWrapper ref={wrapperRef} className="project-table-max-height">
+    <ProjectTableWrapper
+      ref={wrapperRef}
+      className="scroll-table"
+      centerLastChild
+    >
       <CustomSpinSuspense
         spinning={
           getProjectListQuery.isLoading || getProjectListQuery.isFetching
         }
       >
-        <SimpleBar style={{ height: '100%' }}>
-          <Table
-            pagination={false}
-            dataSource={projects}
-            columns={columns}
-            onRow={onRow}
-            rowKey={record => record.id as string}
-            // scroll={{ y: 100 }}
-          />
-          <StyledPagination
-            onChange={page => {
-              setParams(s => ({ ...s, page }));
-            }}
-            showSizeChanger
-            pageSize={params.take}
-            onShowSizeChange={onShowSizeChange}
-            defaultCurrent={1}
-            total={total}
-          />
-        </SimpleBar>
+        <Table
+          pagination={false}
+          dataSource={projects}
+          columns={columns}
+          onRow={onRow}
+          rowKey={record => record.id as string}
+          scroll={{ y: 100 }}
+        />
+        <StyledPagination
+          onChange={page => {
+            setParams(s => ({ ...s, page }));
+          }}
+          showSizeChanger
+          pageSize={params.take}
+          onShowSizeChange={onShowSizeChange}
+          defaultCurrent={1}
+          total={total}
+        />
       </CustomSpinSuspense>
       <DeleteProjectModal
         setShowModal={setShowDeleteProject}

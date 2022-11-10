@@ -1,9 +1,12 @@
+import { ExportOutlined } from '@ant-design/icons';
 import { notification, PaginationProps, Table } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
+import { MenuDropDownWrapper } from 'customize-components/styles';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
+import { MOMENT_FORMAT, SCOPE_CONFIG } from 'enums';
 import useParseQueryString from 'hooks/useParseQueryString';
-import { FileIconOutlined, PenFilled, TrashOutlined } from 'icons';
+import { FileIconOutlined, PenFilled } from 'icons';
 import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
@@ -13,24 +16,20 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import SimpleBar from 'simplebar-react';
 import { ProjectService, SurveyService } from 'services';
 import {
   GetListQuestionDto,
   IGetParams,
   IPostSurveyBodyDto,
   ISurvey,
-  ProjectTypes,
+  ProjectTypes
 } from 'type';
 import { onError, saveBlob } from 'utils';
+import { useCheckScopeEntityDefault } from '../../../../../../common/hoc';
 import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
-import { MenuDropDownWrapper } from 'customize-components/styles';
-import { MOMENT_FORMAT, SCOPE_CONFIG } from 'enums';
-import { CopyOutlined, ExportOutlined } from '@ant-design/icons';
-import { useCheckScopeEntityDefault } from '../../../../../../common/hoc';
 
 const initParams: IGetParams = {
   q: '',
@@ -133,7 +132,7 @@ function Survey() {
         title: t('common.actions'),
         dataIndex: 'actions',
         key: 'actions',
-        width: 100,
+        // width: 100,
         render: (_, record: ISurvey) => (
           <div
             className="flex-center actions"
@@ -160,7 +159,7 @@ function Survey() {
   };
 
   return (
-    <SurveyWrapper className="flex-column">
+    <SurveyWrapper className="flex-column scroll-table" centerLastChild>
       <ProjectHeader routes={routes} search />
 
       <TableWrapper className="flex-column project-table-max-height">
@@ -169,25 +168,24 @@ function Survey() {
             getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
           }
         >
-          <SimpleBar style={{ height: '100%' }}>
-            <Table
-              dataSource={surveys}
-              columns={columns}
-              onRow={onRow}
-              pagination={false}
-              rowKey={record => record.id as string}
-            />
-            <StyledPagination
-              onChange={page => {
-                setParamsQuery(s => ({ ...s, page }));
-              }}
-              showSizeChanger
-              pageSize={paramsQuery.take}
-              onShowSizeChange={onShowSizeChange}
-              defaultCurrent={1}
-              total={total}
-            />
-          </SimpleBar>
+          <Table
+            dataSource={surveys}
+            columns={columns}
+            onRow={onRow}
+            pagination={false}
+            rowKey={record => record.id as string}
+            scroll={{ y: 100 }}
+          />
+          <StyledPagination
+            onChange={page => {
+              setParamsQuery(s => ({ ...s, page }));
+            }}
+            showSizeChanger
+            pageSize={paramsQuery.take}
+            onShowSizeChange={onShowSizeChange}
+            defaultCurrent={1}
+            total={total}
+          />
         </CustomSpinSuspense>
       </TableWrapper>
     </SurveyWrapper>
