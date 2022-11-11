@@ -1,6 +1,5 @@
 import { NotificationType } from 'aws-sdk/clients/budgets';
 import { UserUpdatedDto } from 'interfaces';
-import { IGetParams } from 'type';
 import APIService from './base.service';
 
 export default class UserService {

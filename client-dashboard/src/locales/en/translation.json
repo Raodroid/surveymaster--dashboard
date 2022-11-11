@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "duplicateQuestion": "Duplicate Question",
     "field": "Field",
     "fieldList": "Field List",
     "optionList": "Option List",

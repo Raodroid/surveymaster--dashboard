@@ -18,10 +18,7 @@ export const CategoryDetailHeaderWrapper = styled.div`
     }
     .ant-input-prefix {
       color: ${templateVariable.primary_color};
-      svg {
-        width: 20px;
-        height: 20px;
-      }
+      margin-right: 1rem;
     }
   }
 `;

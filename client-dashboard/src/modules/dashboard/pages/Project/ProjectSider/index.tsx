@@ -22,6 +22,7 @@ const ProjectSider = () => {
           <SimpleBar style={{ height: '100%' }}>
             {projects.map(e => (
               <Title
+                project={e}
                 key={e.id}
                 title={e.name}
                 routePath={generatePath(projectRoutePath.SURVEY, {

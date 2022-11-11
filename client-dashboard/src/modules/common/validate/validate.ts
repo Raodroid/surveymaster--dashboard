@@ -291,19 +291,21 @@ export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
 export const SURVEY_EXTERNAL_FORM_SCHEMA = Yup.object().shape({
   ...SURVEY_FORM_SCHEMA,
   selectedRowKeys: Yup.array().of(Yup.string()).min(1),
-  questions: Yup.array().of(
-    Yup.object().test(
-      'questionNotValid',
-      'questions field is not valid',
-      function (value, context) {
-        const { selectedRowKeys } = context?.['from']?.[1]?.value;
-        if (selectedRowKeys?.some(key => key === value?.id)) {
-          return !!value.questionVersionId && !!value.parameter;
-        }
-        return true;
-      },
-    ),
-  ),
+  questions: Yup.array()
+    .of(
+      Yup.object().test(
+        'questionNotValid',
+        'questions field is not valid',
+        function (value, context) {
+          const { selectedRowKeys } = context?.['from']?.[1]?.value;
+          if (selectedRowKeys?.some(key => key === value?.id)) {
+            return !!value.questionVersionId && !!value.parameter;
+          }
+          return true;
+        },
+      ),
+    )
+    .min(1),
 });
 
 export const PROJECT_FORM_SCHEMA = Yup.object().shape({

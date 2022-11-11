@@ -1,10 +1,10 @@
-import React, { Dispatch, FC, useCallback, useEffect, useState } from 'react';
+import React, { Dispatch, FC, useCallback } from 'react';
 import { CategoryDetailHeaderWrapper } from './style';
 import { useTranslation } from 'react-i18next';
 import { Input } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
 
 import { FilterComponent } from './FilterComponent';
+import { SearchIcon } from '../../../../../../icons/SearchIcon';
 
 interface ICategoryDetailHeader {
   searchTxt: string;
@@ -26,7 +26,7 @@ const CategoryDetailHeader: FC<ICategoryDetailHeader> = props => {
     <CategoryDetailHeaderWrapper>
       <Input
         className={'search-input'}
-        prefix={<SearchOutlined />}
+        prefix={<SearchIcon />}
         allowClear
         placeholder={`${t('common.searchQuestion')} ...`}
         value={searchTxt}

@@ -11,7 +11,6 @@ const BreadcrumbWrapper = styled.div<{ isMobile?: boolean }>`
   padding: 1.5rem 0;
   border-top: 1px solid ${templateVariable.border_color};
   flex-direction: ${p => (p.isMobile ? 'column' : 'row')};
-
   ${p =>
     p.isMobile &&
     css`

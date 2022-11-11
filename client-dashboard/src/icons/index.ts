@@ -23,3 +23,6 @@ export * from './Clock';
 export * from './Refresh';
 export * from './SuffixIcon';
 export * from './FileIconOutlined';
+export * from './ExternalIcon';
+export * from './InternalIcon';
+export * from './ListIcon';

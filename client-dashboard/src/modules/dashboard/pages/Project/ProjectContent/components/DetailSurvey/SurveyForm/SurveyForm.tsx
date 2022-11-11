@@ -138,10 +138,6 @@ const SurveyForm: FC = () => {
     params?.projectId,
   );
 
-  useEffect(() => {
-    console.log(params?.surveyId);
-  }, [params?.surveyId]);
-
   const isLoading = isFetchingProject || isFetchingSurveyData;
 
   const initialValues = useMemo<IAddSurveyFormValues>(
