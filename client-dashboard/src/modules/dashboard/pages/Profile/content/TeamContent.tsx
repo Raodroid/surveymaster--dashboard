@@ -42,6 +42,7 @@ import {
   ResetUserPasswordModal,
   UpdateMemberModal,
 } from './modals';
+import StyledPagination from '../../../components/StyledPagination';
 interface TeamMember extends UserPayload {
   key: string;
   name: string;
@@ -99,6 +100,7 @@ function TeamContent() {
 
   const baseParams = useMemo(
     () => ({
+      isActivated: true,
       page: page,
       take: 10,
       roles: Object.values(allRoles).map(elm => elm.id),
@@ -313,18 +315,18 @@ function TeamContent() {
                   type: 'checkbox',
                   ...rowSelection,
                 }}
-                scroll={{ y: 100 }}
+                scroll={{ y: 100, x: 800 }}
                 columns={columns}
                 dataSource={data}
                 pagination={false}
               />
             </div>
-            <Pagination
+            <StyledPagination
               className="flex-j-end pagination"
               showSizeChanger={false}
-              defaultCurrent={page}
+              defaultCurrent={1}
               current={page}
-              total={teamMembers?.data?.pageCount * 10}
+              total={teamMembers?.data?.pageCount * 10 || 0}
               onChange={e => setPage(e)}
             />
           </CustomSpinSuspense>

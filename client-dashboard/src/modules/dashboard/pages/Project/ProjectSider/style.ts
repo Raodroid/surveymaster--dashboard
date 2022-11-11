@@ -19,7 +19,7 @@ export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
       flex: 1;
     }
     .simplebar-content {
-      padding: 0 1.5rem !important;
+      padding: 0 1rem !important;
     }
   }
   .add-new-project-btn-wrapper {
@@ -98,7 +98,6 @@ export const TitleStyled = styled.div`
   .wrapper {
     gap: 4px;
     flex-direction: column;
-    padding: 4px;
     margin-bottom: 4px;
     transition: all linear 0.1s;
     overflow: hidden;

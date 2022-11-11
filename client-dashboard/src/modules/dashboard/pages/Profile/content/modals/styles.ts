@@ -57,27 +57,9 @@ export const ChangePasswordModalStyled = styled(ModalStyled)`
 `;
 
 export const SetUpPreferencesModalStyled = styled(ModalStyled)`
-  // --ant-primary-color: #b78c69;
-
-  .ant-modal-title,
-  .ant-checkbox-wrapper span {
-    color: #292929;
-  }
-
   .ant-checkbox-wrapper span {
     font-size: 12px;
     font-weight: 600;
-  }
-
-  .ant-checkbox-group {
-    gap: 12px;
-
-    .ant-checkbox-inner {
-      border: 2px solid #292929;
-    }
-    .ant-checkbox-checked .ant-checkbox-inner {
-      border: 2px solid transparent;
-    }
   }
 
   .ant-modal-close-x path {

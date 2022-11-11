@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { Badge, Button, Menu, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -283,6 +283,7 @@ const initParams: GetListQuestionDto = {
   take: 10,
   page: 1,
   hasLatestCompletedVersion: true,
+  isDeleted: false,
 };
 
 interface IExpandableTable extends questionValueType {
@@ -334,7 +335,6 @@ const DisplayAnswer = props => {
       onError,
     },
   );
-
   const [questionOption, normalizeByQuestionId] = useMemo<
     [IOptionItem[], Record<string, IQuestion>]
   >(() => {
@@ -344,7 +344,7 @@ const DisplayAnswer = props => {
 
     return [
       questionListData.pages.reduce((current: IOptionItem[], page) => {
-        const nextPageData = page.data.data;
+        const nextPageData = page.data.data || [];
         nextPageData.forEach((q: IQuestion) => {
           const latestQuestionVersionId = q.latestCompletedVersion.id;
           const latestQuestionId = q.id;
@@ -492,7 +492,13 @@ const DisplayAnswer = props => {
       },
     ],
     [
-     
+      fetchNextPage,
+      hasNextPage,
+      isExternalProject,
+      isLoading,
+      normalizeByQuestionId,
+      questionOption,
+      t,
     ],
   );
 
@@ -698,8 +704,6 @@ export const DynamicSelect = props => {
     isLoading,
     index,
   } = props;
-  useEffect(() => {
-  }, [])
   const { t } = useTranslation();
   const { values, setValues, initialValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();
@@ -707,6 +711,7 @@ export const DynamicSelect = props => {
 
   const currQuestionVersionId = value.questionVersionId;
   const currQuestionVersionCreatedAt = value.createdAt;
+
   const options = useMemo<IOptionItem[]>(() => {
     const currQuestionVersionId = values.questions?.[index]?.questionVersionId;
     if (currQuestionVersionId) {
@@ -718,7 +723,7 @@ export const DynamicSelect = props => {
         },
       ];
     }
-    return [...questionOption];
+    return questionOption;
   }, [index, questionOption, values]);
 
   const fetch = useCallback(
@@ -844,10 +849,6 @@ const ActionDropDown: FC<{
   const { initialValues, setValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();
   const { value } = getFieldMeta<questionValueType>(`questions[${index}]`);
-
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
 
   const isDirty = useMemo(
     () =>

@@ -28,6 +28,7 @@ function Inputs() {
     () => ({
       roles: Object.values(allRoles).map(elm => elm.id),
       selectAll: true,
+      isDeleted: false,
     }),
     [allRoles],
   );

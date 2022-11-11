@@ -33,7 +33,11 @@ import { ROUTE_PATH, size } from '../../../../../enums';
 import { useNavigate } from 'react-router-dom';
 import StyledPagination from '../../../components/StyledPagination';
 import qs from 'qs';
-import { PenFilled, TrashOutlined } from '../../../../../icons';
+import {
+  FileIconOutlined,
+  PenFilled,
+  TrashOutlined,
+} from '../../../../../icons';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
 import { MenuDropDownWrapper } from '../../../../../customize-components/styles';
 import {
@@ -64,6 +68,7 @@ const initParams: GetListQuestionDto = {
   page: 1,
   createdFrom: '',
   createdTo: '',
+  isDeleted: false,
 };
 
 export const CategoryDetailContext =
@@ -365,8 +370,8 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
             okText="Yes"
             cancelText="No"
           >
-            <Item key={ACTION_ENUM.DUPLICATE} icon={<PenFilled />}>
-              {t('common.duplicate')}
+            <Item key={ACTION_ENUM.DUPLICATE} icon={<FileIconOutlined />}>
+              {t('common.duplicateQuestion')}
             </Item>
           </Popconfirm>,
         );

@@ -27,6 +27,7 @@ export const useGetAllCategories = () => {
     () =>
       QuestionBankService.getCategories({
         selectAll: true,
+        isDeleted: false,
       }),
     {
       onError,

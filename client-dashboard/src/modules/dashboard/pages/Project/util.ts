@@ -12,6 +12,7 @@ export const useGetAllProjects = () => {
     () =>
       ProjectService.getProjects({
         selectAll: true,
+        isDeleted: false,
       }),
     {
       onError,

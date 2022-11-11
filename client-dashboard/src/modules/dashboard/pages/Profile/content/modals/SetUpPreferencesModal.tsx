@@ -143,8 +143,9 @@ function SetUpPreferencesModal(props: SetUpPreferences) {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="submit-btn secondary-btn"
+                className="secondary-btn"
                 loading={mutationSetupEmailNoti.isLoading}
+                style={{ width: '100%' }}
               >
                 {t('common.saveChange')}
               </Button>
