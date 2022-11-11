@@ -22,6 +22,8 @@ import { QsParams } from './ProjectFilter';
 import SimpleBar from 'simplebar-react';
 import { MenuDropDownWrapper } from '../../../../../../customize-components/styles';
 import HannahCustomSpin from '../../../../components/HannahCustomSpin';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc';
+import { SCOPE_CONFIG } from 'enums';
 
 const initParams: IGetParams = {
   q: '',
@@ -54,6 +56,9 @@ function ProjectTable() {
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [showRestoreProject, setShowRestoreProject] = useState(false);
 
+  const { canRead, canRestore, canDelete, canUpdate } =
+    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECTS);
+
   const formatQsParams = useMemo(() => {
     const formatQs: QsParams = {
       ...qsParams,
@@ -67,12 +72,14 @@ function ProjectTable() {
 
   const getProjectListQuery = useQuery(
     ['getProjects', params, formatQsParams],
-    () =>
-      getProjects({
-        ...params,
-        ...formatQsParams,
-        isDeleted: formatQsParams.isDeleted === 'true',
-      }),
+    canRead
+      ? () =>
+          getProjects({
+            ...params,
+            ...formatQsParams,
+            isDeleted: formatQsParams.isDeleted === 'true',
+          })
+      : () => {},
     {
       onError,
       refetchOnWindowFocus: false,
@@ -141,7 +148,7 @@ function ProjectTable() {
               setProjectId(record.id);
             }}
           >
-            {qsParams?.isDeleted !== 'true' && (
+            {qsParams?.isDeleted !== 'true' && canUpdate && (
               <Button
                 onClick={() =>
                   navigate(
@@ -157,12 +164,12 @@ function ProjectTable() {
             <ThreeDotsDropdown
               overlay={
                 <MenuDropDownWrapper>
-                  {qsParams?.isDeleted !== 'true' && (
+                  {qsParams?.isDeleted !== 'true' && canDelete && (
                     <Menu.Item onClick={() => setShowDeleteProject(true)}>
                       <TrashOutlined /> {t('common.deleteProject')}
                     </Menu.Item>
                   )}
-                  {qsParams?.isDeleted === 'true' && (
+                  {qsParams?.isDeleted === 'true' && canRestore && (
                     <Menu.Item onClick={() => setShowRestoreProject(true)}>
                       <Refresh /> {t('common.restoreProject')}
                     </Menu.Item>
@@ -175,7 +182,7 @@ function ProjectTable() {
         ),
       },
     ],
-    [navigate, qsParams, t],
+    [navigate, qsParams, t, canDelete, canRestore, canUpdate],
   );
 
   const onRow = (record: IProject) => {
@@ -189,44 +196,48 @@ function ProjectTable() {
   };
 
   return (
-    <ProjectTableWrapper ref={wrapperRef} centerLastChild>
-      <HannahCustomSpin
-        parentRef={wrapperRef}
-        spinning={
-          getProjectListQuery.isLoading || getProjectListQuery.isFetching
-        }
-      />
-      <SimpleBar className={'ProjectTableWrapper__body'}>
-        <Table
-          pagination={false}
-          dataSource={projects}
-          columns={columns}
-          onRow={onRow}
-          rowKey={record => record.id as string}
-          scroll={{ x: 800 }}
-        />
-      </SimpleBar>
-      <StyledPagination
-        onChange={page => {
-          setParams(s => ({ ...s, page }));
-        }}
-        showSizeChanger
-        pageSize={params.take}
-        onShowSizeChange={onShowSizeChange}
-        defaultCurrent={1}
-        total={total}
-      />
-      <DeleteProjectModal
-        setShowModal={setShowDeleteProject}
-        showModal={showDeleteProject}
-        projectId={projectId}
-      />
-      <RestoreProjectModal
-        setShowModal={setShowRestoreProject}
-        showModal={showRestoreProject}
-        projectId={projectId}
-      />
-    </ProjectTableWrapper>
+    <>
+      {canRead ? (
+        <ProjectTableWrapper ref={wrapperRef} centerLastChild>
+          <HannahCustomSpin
+            parentRef={wrapperRef}
+            spinning={
+              getProjectListQuery.isLoading || getProjectListQuery.isFetching
+            }
+          />
+          <SimpleBar className={'ProjectTableWrapper__body'}>
+            <Table
+              pagination={false}
+              dataSource={projects}
+              columns={columns}
+              onRow={onRow}
+              rowKey={record => record.id as string}
+              scroll={{ x: 800 }}
+            />
+          </SimpleBar>
+          <StyledPagination
+            onChange={page => {
+              setParams(s => ({ ...s, page }));
+            }}
+            showSizeChanger
+            pageSize={params.take}
+            onShowSizeChange={onShowSizeChange}
+            defaultCurrent={1}
+            total={total}
+          />
+          <DeleteProjectModal
+            setShowModal={setShowDeleteProject}
+            showModal={showDeleteProject}
+            projectId={projectId}
+          />
+          <RestoreProjectModal
+            setShowModal={setShowRestoreProject}
+            showModal={showRestoreProject}
+            projectId={projectId}
+          />
+        </ProjectTableWrapper>
+      ) : null}
+    </>
   );
 }
 
