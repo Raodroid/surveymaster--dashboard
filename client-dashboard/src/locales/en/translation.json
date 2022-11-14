@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "descriptionResetPassWord": "Enter your email address associated with this account and we will send you a password reset link",
     "duplicateQuestion": "Duplicate Question",
     "field": "Field",
     "fieldList": "Field List",
@@ -257,6 +258,7 @@
     "confirmLogOut": "Do you really want to log out?",
     "confirmCancel": "Do you really want to cancel this?",
     "confirmDeleteAccount": "Are you sure to delete your account?",
+    "confirmDeactivateAccount": "Are you sure to deactivate this account?",
     "confirmChangeStatus": "Do you really want to change status?",
     "confirmRestoreSample": "Do you really want to restore this sample?",
     "confirmDeleteAllSample": "Do you really want to delete the whole samples?",

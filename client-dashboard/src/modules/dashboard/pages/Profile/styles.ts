@@ -255,6 +255,7 @@ export const ContentStyled = styled.div`
 `;
 
 export const UserContentStyled = styled(ContentStyled)`
+  position: relative;
   .btn {
     min-width: 180px;
     min-height: 36px;

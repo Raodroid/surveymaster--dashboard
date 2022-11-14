@@ -290,7 +290,7 @@ export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
 });
 export const SURVEY_EXTERNAL_FORM_SCHEMA = Yup.object().shape({
   ...SURVEY_FORM_SCHEMA,
-  selectedRowKeys: Yup.array().of(Yup.string()).min(1),
+  selectedRowKeys: Yup.array().of(Yup.string()).min(1).required(INVALID_FIELDS),
   questions: Yup.array()
     .of(
       Yup.object().test(
