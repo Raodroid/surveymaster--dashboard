@@ -341,4 +341,5 @@ export type GetListQuestionDto = IGetParams & {
   subCategoryIds?: string[];
   types?: QuestionType[];
   hasLatestCompletedVersion?: boolean;
+  masterVariableNames?: string[];
 };

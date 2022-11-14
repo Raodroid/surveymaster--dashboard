@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
-import { Badge, Button, Menu, Table, Upload } from 'antd';
+import { Badge, Button, Menu, Spin, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { GroupSurveyButtonWrapper, UploadExternalFileWrapper } from './style';
 import * as XLSX from 'xlsx';
@@ -151,28 +151,82 @@ const UploadExternalFile = () => {
     (file: File) => {
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);
-      let data;
       reader.onload = async e => {
         let fileData = reader.result;
 
         let wb = await XLSX.read(fileData, { type: 'file' });
-        let rowObj = XLSX.utils.sheet_to_txt(wb.Sheets[wb.SheetNames[0]]);
-        data = JSON.stringify(rowObj).replaceAll('"', '').split('\\t');
-        setFileColumnTitle(data);
+        let rowObj = wb.Sheets[wb.SheetNames[0]];
 
-        const uniqParameter = data.reduce((res: questionValueType[], x) => {
-          if (values.questions.some(q => q.parameter === x)) {
-            return res;
+        const columnHeaders: string[] = [];
+        for (let key in rowObj) {
+          if (key === 'A2') {
+            break;
           }
-          return [
-            ...res,
-            {
-              ...initNewRowValue,
-              id: x,
-              parameter: x,
-            },
-          ];
-        }, []);
+          columnHeaders.push(rowObj[key].v as never);
+        }
+
+        const valueQuestionMap = values.questions.reduce(
+          (res: Record<string, boolean>, q) => {
+            if (!q.parameter) return res;
+            res[q.parameter] = true;
+            return res;
+          },
+          {},
+        );
+
+        const getQuestionByParametersList =
+          await QuestionBankService.getQuestions({
+            selectAll: true,
+            hasLatestCompletedVersion: true,
+            isDeleted: false,
+            masterVariableNames: columnHeaders,
+          });
+
+        const questionList: IQuestion[] =
+          getQuestionByParametersList.data.data || [];
+
+        const uniqParameter = columnHeaders.reduce(
+          (res: questionValueType[], x) => {
+            if (valueQuestionMap[x]) {
+              return res;
+            }
+
+            const questionHasVariableNameSameParameter = questionList.find(
+              q => q.masterVariableName === x,
+            );
+            if (questionHasVariableNameSameParameter) {
+              return [
+                ...res,
+                {
+                  ...initNewRowValue,
+                  category: questionHasVariableNameSameParameter.masterCategory
+                    ?.id as string,
+                  type: questionHasVariableNameSameParameter
+                    .latestCompletedVersion.type,
+                  question:
+                    questionHasVariableNameSameParameter.latestCompletedVersion
+                      .question,
+                  questionVersionId: questionHasVariableNameSameParameter
+                    .latestCompletedVersion.latestVersionOfQuestionId as string,
+                  questionTitle:
+                    questionHasVariableNameSameParameter.latestCompletedVersion
+                      .title,
+                  id: x,
+                  parameter: x,
+                },
+              ];
+            }
+            return [
+              ...res,
+              {
+                ...initNewRowValue,
+                id: x,
+                parameter: x,
+              },
+            ];
+          },
+          [],
+        );
 
         setValues(s => ({
           ...s,
@@ -183,11 +237,19 @@ const UploadExternalFile = () => {
     [setValues, values.questions],
   );
 
+  const [isUploading, setUploading] = useState(false);
+
   const onChange = useCallback(
     info => {
       const { status } = info.file;
+      if (status === 'uploading') {
+        setUploading(true);
+      }
       if (status !== 'uploading') {
-        handleFiles(info.file.originFileObj);
+        setTimeout(() => {
+          handleFiles(info.file.originFileObj);
+          setUploading(false);
+        });
       }
     },
     [handleFiles],
@@ -209,7 +271,7 @@ const UploadExternalFile = () => {
               <>
                 <div className={'display-file-data'}>
                   <div className={'display-file-data__table'}>
-                    {fileColumnTitle.map(x => (
+                    {fileColumnTitle.slice(0, 6).map(x => (
                       <div
                         className={'display-file-data__table__column'}
                         key={x}
@@ -227,19 +289,21 @@ const UploadExternalFile = () => {
                 </div>
               </>
             ) : (
-              <Dragger
-                name={'file'}
-                onChange={onChange}
-                onDrop={onDrop}
-                multiple={false}
-                accept={'.csv'}
-              >
-                <p className="ant-upload-text">{t('common.dragYourCSV')}</p>
-                <p className="ant-upload-hint">OR</p>
-                <Button className={'info-btn'} type={'primary'}>
-                  {t('common.browseLocalFile')}
-                </Button>
-              </Dragger>
+              <Spin spinning={isUploading}>
+                <Dragger
+                  name={'file'}
+                  onChange={onChange}
+                  onDrop={onDrop}
+                  multiple={false}
+                  accept={'.csv,.xlsx'}
+                >
+                  <p className="ant-upload-text">{t('common.dragYourCSV')}</p>
+                  <p className="ant-upload-hint">OR</p>
+                  <Button className={'info-btn'} type={'primary'}>
+                    {t('common.browseLocalFile')}
+                  </Button>
+                </Dragger>
+              </Spin>
             )}
           </UploadExternalFileWrapper>
           {fileColumnTitle && (
@@ -680,7 +744,7 @@ const DisplayAnswer = props => {
         <div className={'DisplayAnswerWrapper__footer'}>
           <Upload
             onChange={onChangeUploadFile}
-            accept={'.csv'}
+            accept={'.csv,.xlsx'}
             multiple={false}
           >
             <Button type={'primary'}>{t('common.clickToUpload')}</Button>
