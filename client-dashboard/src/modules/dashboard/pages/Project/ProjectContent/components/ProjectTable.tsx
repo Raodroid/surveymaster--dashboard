@@ -24,6 +24,9 @@ import { MenuDropDownWrapper } from '../../../../../../customize-components/styl
 import HannahCustomSpin from '../../../../components/HannahCustomSpin';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { SCOPE_CONFIG } from 'enums';
+import { useLocation } from 'react-router';
+import qs from 'qs';
+import useHandleNavigate from 'hooks/useHandleNavigate';
 
 const initParams: IGetParams = {
   q: '',
@@ -50,8 +53,6 @@ function ProjectTable() {
   const { t } = useTranslation();
   const qsParams = useParseQueryString<QsParams>();
 
-  const [params, setParams] = useState<GetListQuestionDto>(initParams);
-
   const [projectId, setProjectId] = useState('');
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [showRestoreProject, setShowRestoreProject] = useState(false);
@@ -59,9 +60,14 @@ function ProjectTable() {
   const { canRead, canRestore, canDelete, canUpdate } =
     useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECTS);
 
+  const handleNavigate = useHandleNavigate(initParams);
+
   const formatQsParams = useMemo(() => {
-    const formatQs: QsParams = {
-      ...qsParams,
+    const formatQs: IGetParams = {
+      q: qsParams.q || initParams.q,
+      page: Number(qsParams.page) || initParams.page,
+      take: Number(qsParams.take) || initParams.take,
+      isDeleted: qsParams.isDeleted === 'true',
       createdFrom: moment(qsParams.createdFrom)?.startOf('day')?.format(),
       createdTo: moment(qsParams.createdTo)?.endOf('day')?.format(),
     };
@@ -71,15 +77,8 @@ function ProjectTable() {
   }, [qsParams]);
 
   const getProjectListQuery = useQuery(
-    ['getProjects', params, formatQsParams],
-    canRead
-      ? () =>
-          getProjects({
-            ...params,
-            ...formatQsParams,
-            isDeleted: formatQsParams.isDeleted === 'true',
-          })
-      : () => {},
+    ['getProjects', formatQsParams],
+    canRead ? () => getProjects(formatQsParams) : () => {},
     {
       onError,
       refetchOnWindowFocus: false,
@@ -91,13 +90,6 @@ function ProjectTable() {
   const projects = useMemo<IProject[]>(
     () => _get(getProjectListQuery.data, 'data.data'),
     [getProjectListQuery.data],
-  );
-
-  const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
-    (current, pageSize) => {
-      setParams(s => ({ ...s, take: pageSize }));
-    },
-    [],
   );
 
   const columns: ColumnsType<IProject> = useMemo(
@@ -216,14 +208,13 @@ function ProjectTable() {
             />
           </SimpleBar>
           <StyledPagination
-            onChange={page => {
-              setParams(s => ({ ...s, page }));
+            onChange={(page, pageSize) => {
+              handleNavigate({ page, take: pageSize });
             }}
             showSizeChanger
-            pageSize={params.take}
-            onShowSizeChange={onShowSizeChange}
-            defaultCurrent={1}
+            pageSize={formatQsParams.take}
             total={total}
+            current={formatQsParams.page}
           />
           <DeleteProjectModal
             setShowModal={setShowDeleteProject}

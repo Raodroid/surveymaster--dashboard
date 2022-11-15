@@ -115,6 +115,7 @@ function FilterOverlay(props: IFilter) {
     if (setCounter) setCounter(list.length);
 
     const payloadParams = {
+      ...qsParams,
       q: qsParams.q || '',
       isDeleted: payload.isDeleted,
       createdFrom:

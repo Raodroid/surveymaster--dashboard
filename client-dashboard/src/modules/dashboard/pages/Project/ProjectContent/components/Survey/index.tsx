@@ -1,36 +1,31 @@
-import { notification, PaginationProps, Table } from 'antd';
+import { ExportOutlined } from '@ant-design/icons';
+import { notification, Table } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
+import { MenuDropDownWrapper } from 'customize-components/styles';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
+import { MOMENT_FORMAT, SCOPE_CONFIG } from 'enums';
+import useHandleNavigate from 'hooks/useHandleNavigate';
 import useParseQueryString from 'hooks/useParseQueryString';
 import { FileIconOutlined, PenFilled } from 'icons';
 import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import StyledPagination from 'modules/dashboard/components/StyledPagination';
 import moment from 'moment';
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import SimpleBar from 'simplebar-react';
 import { ProjectService, SurveyService } from 'services';
-import {
-  GetListQuestionDto,
-  IGetParams,
-  IPostSurveyBodyDto,
-  ISurvey,
-  ProjectTypes,
-} from 'type';
+import SimpleBar from 'simplebar-react';
+import { IGetParams, IPostSurveyBodyDto, ISurvey, ProjectTypes } from 'type';
 import { onError, saveBlob } from 'utils';
+import { useCheckScopeEntityDefault } from '../../../../../../common/hoc';
+import HannahCustomSpin from '../../../../../components/HannahCustomSpin';
 import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
-import { MenuDropDownWrapper } from 'customize-components/styles';
-import { MOMENT_FORMAT, SCOPE_CONFIG } from 'enums';
-import { ExportOutlined } from '@ant-design/icons';
-import { useCheckScopeEntityDefault } from '../../../../../../common/hoc';
-import HannahCustomSpin from '../../../../../components/HannahCustomSpin';
 
 const initParams: IGetParams = {
   q: '',
@@ -45,12 +40,14 @@ function Survey() {
   const qsParams = useParseQueryString<QsParams>();
   const { t } = useTranslation();
 
-  const [paramsQuery, setParamsQuery] =
-    useState<GetListQuestionDto>(initParams);
+  const handleNavigate = useHandleNavigate(initParams);
 
   const formatQsParams = useMemo(() => {
-    const formatQs: QsParams = {
-      ...qsParams,
+    const formatQs: IGetParams = {
+      q: qsParams.q || initParams.q,
+      page: Number(qsParams.page) || initParams.page,
+      take: Number(qsParams.take) || initParams.take,
+      isDeleted: qsParams.isDeleted === 'true',
       createdFrom: moment(qsParams.createdFrom)?.startOf('day')?.format(),
       createdTo: moment(qsParams.createdTo)?.endOf('day')?.format(),
     };
@@ -64,10 +61,9 @@ function Survey() {
   );
 
   const getSurveyListQuery = useQuery(
-    ['getSurveys', formatQsParams, paramsQuery, params],
+    ['getSurveys', formatQsParams, params],
     () =>
       SurveyService.getSurveys({
-        ...paramsQuery,
         ...formatQsParams,
         projectId: params.projectId,
       }),
@@ -81,13 +77,6 @@ function Survey() {
   const surveys = useMemo<ISurvey[]>(
     () => _get(getSurveyListQuery.data, 'data.data'),
     [getSurveyListQuery.data],
-  );
-
-  const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
-    (current, pageSize) => {
-      setParamsQuery(s => ({ ...s, take: pageSize }));
-    },
-    [],
   );
 
   const routes: IBreadcrumbItem[] = useMemo(
@@ -182,14 +171,13 @@ function Survey() {
           />
         </SimpleBar>
         <StyledPagination
-          onChange={page => {
-            setParamsQuery(s => ({ ...s, page }));
+          onChange={(page, pageSize) => {
+            handleNavigate({ page, take: pageSize });
           }}
           showSizeChanger
-          pageSize={paramsQuery.take}
-          onShowSizeChange={onShowSizeChange}
-          defaultCurrent={1}
+          pageSize={formatQsParams.take}
           total={total}
+          current={formatQsParams.page}
         />
       </TableWrapper>
     </SurveyWrapper>

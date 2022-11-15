@@ -3,10 +3,10 @@ import useParseQueryString from 'hooks/useParseQueryString';
 import { Chat, Clock, PenFilled } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import StyledBreadcrumb, {
-  IBreadcrumbItem
+  IBreadcrumbItem,
 } from 'modules/common/commonComponent/StyledBreadcrumb';
 import qs from 'qs';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
 import { projectRoutePath } from '../../../util';
@@ -20,6 +20,7 @@ function ProjectHeader(props: {
 }) {
   const { routes, links, search } = props;
   const searchRef = useRef<InputRef>(null);
+  const [searchInput, setSearchInput] = useState('');
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -34,11 +35,20 @@ function ProjectHeader(props: {
 
   if (routes) base.push(...routes);
 
+  useEffect(() => {
+    if (qsParams.q) setSearchInput(qsParams.q);
+  }, [qsParams]);
+
   const handleSearch = useCallback(() => {
     navigate(
       pathname +
         '?' +
-        qs.stringify({ ...qsParams, q: searchRef.current?.input?.value }),
+        qs.stringify({
+          ...qsParams,
+          q: searchRef.current?.input?.value,
+          page: 1,
+        }),
+      { replace: true },
     );
   }, [navigate, pathname, qsParams]);
 
@@ -57,7 +67,13 @@ function ProjectHeader(props: {
       {search && (
         <>
           <Form className="flex search-form" onFinish={handleSearch}>
-            <Input placeholder={'Search...'} ref={searchRef} allowClear />
+            <Input
+              placeholder={'Search...'}
+              ref={searchRef}
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              allowClear
+            />
             <Button htmlType="submit" onClick={handleSubmitBtnClick}>
               <SearchIcon />
             </Button>

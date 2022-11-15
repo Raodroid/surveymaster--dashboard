@@ -125,8 +125,6 @@ function TeamContent() {
     },
   );
 
-  console.log(baseParams);
-
   const total: number = _get(teamMembers, 'data.itemCount', 0);
 
   const handleNavigate = useCallback(
