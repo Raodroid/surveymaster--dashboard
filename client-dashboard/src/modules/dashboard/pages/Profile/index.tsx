@@ -12,6 +12,7 @@ import { TeamContent, UserContent } from './content';
 import Sider from './sider';
 import { ProfileStyled } from './styles';
 import { AuthSelectors } from 'redux/auth';
+import { store } from 'store';
 
 const Profile = () => {
   const path = useLocation();
@@ -33,10 +34,15 @@ const Profile = () => {
   }, [path.pathname]);
 
   useEffect(() => {
+    if (
+      Object.keys(store.getState().user.users).length === 0 ||
+      Object.keys(store.getState().auth.allRoles).length === 0
+    )
+      return;
     if (isMatch && (!isAdminRole || !canRead)) {
       navigate(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.ROOT);
     }
-  }, [isMatch, navigate, canRead, isAdminRole]);
+  }, [isMatch, navigate, canRead, isAdminRole, store]);
 
   return (
     <ProfileStyled>

@@ -86,7 +86,6 @@ function TeamContent() {
 
   const [search, setSearch] = useState('');
   const searchRef = useRef<InputRef>(null);
-  const searchValueRef = useRef<string>();
   const qsParams = useParseQueryString<QsParams>();
 
   const [showConfirmDeactivateModal, setShowConfirmDeactivateModal] =
@@ -136,6 +135,7 @@ function TeamContent() {
         isDeleted = qsParams.isDeleted === 'true',
       } = props;
       const newParams = {
+        ...qsParams,
         q,
         page,
         take,
@@ -147,11 +147,8 @@ function TeamContent() {
   );
 
   const handleSearch = useCallback(() => {
-    if (search !== searchValueRef.current) {
-      searchValueRef.current = search;
-      handleNavigate({ q: search, page: 1 });
-    }
-  }, [handleNavigate, search]);
+    handleNavigate({ q: searchRef.current?.input?.value, page: 1 });
+  }, [handleNavigate, searchRef]);
 
   const handleSubmitBtn = useCallback(() => {
     if (!searchRef.current?.input?.value && !qsParams.q) {
