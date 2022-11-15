@@ -182,7 +182,7 @@ export const SiderWrapper = styled.div`
         padding: 0 24px;
       }
       & > .ant-btn {
-        margin: 0 24px 28px;
+        margin: 12px 24px 28px;
       }
     }
   }
@@ -218,6 +218,10 @@ export const SiderWrapper = styled.div`
 
 export const UserFormWrapper = styled.div`
   overflow: hidden;
+  .inputs-wrapper {
+    flex: 1;
+    overflow: hidden;
+  }
 `;
 
 export const ContentStyled = styled.div`
@@ -343,7 +347,7 @@ export const TeamContentStyled = styled(ContentStyled)`
     .search-btn {
       box-shadow: none;
       position: relative;
-      z-index: 1;
+      z-index: 10;
       min-width: 32px;
       padding: 0;
       background: transparent;
@@ -387,12 +391,17 @@ export const TeamContentStyled = styled(ContentStyled)`
 
 export const TableWrapperStyled = styled.div`
   width: 100%;
-  padding-top: 6px;
   overflow: hidden;
   .ant-spin-nested-loading,
   .ant-spin-container {
     height: 100%;
     overflow: hidden;
+  }
+  .ant-table-header table {
+    min-height: 62px;
+  }
+  .ant-table-wrapper {
+    height: 100%;
   }
   .ant-spin-container {
     display: flex;
@@ -402,11 +411,13 @@ export const TableWrapperStyled = styled.div`
     }
   }
   .ant-table {
-    padding: 12px 16px 0 12px;
+    padding: 0 4px 0 12px;
+    table {
+      border-spacing: 0;
+    }
   }
-  .ant-table-row,
-  .ant-table-thead {
-    height: 72px;
+  .ant-table-row {
+    min-height: 72px;
   }
   .avatar-cell {
     width: 50px;
@@ -419,6 +430,7 @@ export const TableWrapperStyled = styled.div`
   }
   .ant-table-body {
     overflow-y: auto !important;
+    padding-right: 4px;
   }
   .ant-table-thead {
     .ant-table-cell {
@@ -440,10 +452,6 @@ export const TableWrapperStyled = styled.div`
   }
   .ant-dropdown-open {
     background: var(--ant-primary-2);
-  }
-  .pagination {
-    margin: 12px 16px 12px 12px;
-    padding: 0 12px;
   }
 `;
 

@@ -5,6 +5,7 @@ import { CustomSpinSuspense } from 'modules/common/styles';
 import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
 import moment from 'moment';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
 import { projectSurveyParams } from '..';
@@ -17,6 +18,8 @@ import { ActionsHistoryContentWrapper, ActionsHistoryWrapper } from './styles';
 
 function ActionHistory() {
   const params = useParams<projectSurveyParams>();
+  const { t } = useTranslation();
+
   const { project, survey, isSurveyLoading } = useGetSurveyDetail();
 
   const routes: IBreadcrumbItem[] = useMemo(
@@ -35,11 +38,11 @@ function ActionHistory() {
         }),
       },
       {
-        name: 'Action History',
+        name: t('common.actionsHistory'),
         href: projectRoutePath.DETAIL_SURVEY.HISTORY,
       },
     ],
-    [params, survey, project],
+    [params, survey, project, t],
   );
 
   const initialValue = useMemo(() => {

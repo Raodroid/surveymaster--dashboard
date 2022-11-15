@@ -30,6 +30,8 @@ interface FilterParams {
 
 export interface QsParams {
   q?: string;
+  page?: number;
+  take?: number;
   isDeleted?: string;
   createdFrom?: string;
   createdTo?: string;
@@ -113,6 +115,7 @@ function FilterOverlay(props: IFilter) {
     if (setCounter) setCounter(list.length);
 
     const payloadParams = {
+      ...qsParams,
       q: qsParams.q || '',
       isDeleted: payload.isDeleted,
       createdFrom:

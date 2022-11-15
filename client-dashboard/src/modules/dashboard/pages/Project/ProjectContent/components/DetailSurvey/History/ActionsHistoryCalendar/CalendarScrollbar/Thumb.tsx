@@ -42,7 +42,7 @@ function Thumb() {
     return Math.max(
       MIN_MONTHS_HEIGHT,
       Math.min(
-        window.innerHeight - 488,
+        window.innerHeight - 496,
         MAX_ACTIONS_HISTORY_HEIGHT - INPUTS_HEIGHT,
       ),
     );
