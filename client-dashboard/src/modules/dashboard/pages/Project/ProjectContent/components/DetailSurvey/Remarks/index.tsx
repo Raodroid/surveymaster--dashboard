@@ -51,11 +51,11 @@ function Remarks() {
         }),
       },
       {
-        name: 'Remarks',
+        name: t('common.remarks'),
         href: projectRoutePath.DETAIL_SURVEY.REMARKS,
       },
     ],
-    [params, survey, project],
+    [params, survey, project, t],
   );
 
   const mutationUpdateRemarks = useMutation(

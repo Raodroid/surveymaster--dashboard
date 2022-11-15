@@ -53,12 +53,16 @@ function CalendarList() {
   }, [histories]);
 
   const actionsFiltered = useMemo<IAction[]>(() => {
-    const filter = histories?.data.data.filter(action =>
-      moment(action.createdAt).isBetween(
-        moment(qsParams.createdFrom),
-        moment(qsParams.createdTo),
-      ),
-    );
+    const filter = histories?.data.data
+      .filter((action: IAction) =>
+        moment(action.createdAt).isBetween(
+          moment(qsParams.createdFrom),
+          moment(qsParams.createdTo),
+        ),
+      )
+      .sort((a: IAction, b: IAction) =>
+        moment(a.createdAt).isBefore(moment(b.createdAt), 's') ? -1 : 1,
+      );
     return filter;
   }, [qsParams, histories]);
 
