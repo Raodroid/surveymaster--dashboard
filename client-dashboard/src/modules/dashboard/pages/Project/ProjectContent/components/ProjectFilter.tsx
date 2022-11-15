@@ -30,6 +30,8 @@ interface FilterParams {
 
 export interface QsParams {
   q?: string;
+  page?: number;
+  take?: number;
   isDeleted?: string;
   createdFrom?: string;
   createdTo?: string;

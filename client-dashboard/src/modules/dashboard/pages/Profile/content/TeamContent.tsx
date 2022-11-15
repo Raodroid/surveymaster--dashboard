@@ -12,7 +12,6 @@ import {
   Input,
   InputRef,
   Menu,
-  PaginationProps,
   Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -34,7 +33,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
-import { GetListQuestionDto, IGetParams } from 'type';
+import { IGetParams } from 'type';
 import { QsParams } from '../../Project/ProjectContent/components/ProjectFilter';
 import {
   CustomFallbackStyled,
@@ -85,10 +84,10 @@ function TeamContent() {
   const allRoles = useSelector(AuthSelectors.getAllRoles);
   const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
 
+  const [search, setSearch] = useState('');
   const searchRef = useRef<InputRef>(null);
+  const searchValueRef = useRef<string>();
   const qsParams = useParseQueryString<QsParams>();
-
-  const [params, setParams] = useState<GetListQuestionDto>(initParams);
 
   const [showConfirmDeactivateModal, setShowConfirmDeactivateModal] =
     useState<boolean>(false);
@@ -106,15 +105,17 @@ function TeamContent() {
   const { canUpdate, canDelete, canRestore, canRead } =
     useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
 
-  const baseParams = useMemo(
-    () => ({
-      ...params,
-      ...qsParams,
+  const baseParams = useMemo<IGetParams>(() => {
+    if (qsParams.q) setSearch(qsParams.q);
+
+    return {
+      q: qsParams.q || initParams.q,
+      page: Number(qsParams.page) || initParams.page,
+      take: Number(qsParams.take) || initParams.take,
+      isDeleted: qsParams.isDeleted === 'true',
       roles: Object.values(allRoles).map(elm => elm.id),
-      isDeleted: qsParams.isDeleted === 'true' ? true : false,
-    }),
-    [allRoles, params, qsParams],
-  );
+    };
+  }, [allRoles, qsParams]);
 
   const { data: teamMembers, isLoading } = useQuery(
     ['getTeamMembers', baseParams, canRead],
@@ -124,22 +125,35 @@ function TeamContent() {
     },
   );
 
+  console.log(baseParams);
+
   const total: number = _get(teamMembers, 'data.itemCount', 0);
 
-  const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
-    (current, pageSize) => {
-      setParams(s => ({ ...s, take: pageSize }));
+  const handleNavigate = useCallback(
+    (props: IGetParams) => {
+      const {
+        q = qsParams.q || initParams.q,
+        page = qsParams.page || initParams.page,
+        take = qsParams.take || initParams.take,
+        isDeleted = qsParams.isDeleted === 'true',
+      } = props;
+      const newParams = {
+        q,
+        page,
+        take,
+        isDeleted,
+      };
+      navigate(pathname + '?' + qs.stringify(newParams), { replace: true });
     },
-    [],
+    [navigate, pathname, qsParams],
   );
 
   const handleSearch = useCallback(() => {
-    navigate(
-      pathname +
-        '?' +
-        qs.stringify({ ...qsParams, q: searchRef.current?.input?.value }),
-    );
-  }, [navigate, pathname, qsParams]);
+    if (search !== searchValueRef.current) {
+      searchValueRef.current = search;
+      handleNavigate({ q: search, page: 1 });
+    }
+  }, [handleNavigate, search]);
 
   const handleSubmitBtn = useCallback(() => {
     if (!searchRef.current?.input?.value && !qsParams.q) {
@@ -311,23 +325,20 @@ function TeamContent() {
                 </Button>
                 <Input
                   ref={searchRef}
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
                   allowClear
                   placeholder="Search Team Member..."
                 />
               </Form>
               <Checkbox
                 className="show-inactivate-users-checkbox"
-                checked={qsParams.isDeleted === 'true' ? true : false}
-                onChange={() =>
-                  navigate(
-                    pathname +
-                      '?' +
-                      qs.stringify({
-                        ...qsParams,
-                        isDeleted: qsParams.isDeleted === 'true' ? false : true,
-                      }),
-                  )
-                }
+                checked={qsParams.isDeleted === 'true'}
+                onChange={() => {
+                  handleNavigate({
+                    isDeleted: qsParams.isDeleted === 'true' ? false : true,
+                  });
+                }}
               >
                 {t('common.showInactivateUsers')}
               </Checkbox>
@@ -350,14 +361,13 @@ function TeamContent() {
                   />
                 </div>
                 <StyledPagination
-                  onChange={page => {
-                    setParams(s => ({ ...s, page }));
-                  }}
+                  onChange={(page, pageSize) =>
+                    handleNavigate({ page: page, take: pageSize })
+                  }
                   showSizeChanger
-                  pageSize={params.take}
-                  onShowSizeChange={onShowSizeChange}
-                  defaultCurrent={1}
+                  pageSize={baseParams.take}
                   total={total}
+                  current={baseParams.page}
                 />
               </CustomSpinSuspense>
             </TableWrapperStyled>
