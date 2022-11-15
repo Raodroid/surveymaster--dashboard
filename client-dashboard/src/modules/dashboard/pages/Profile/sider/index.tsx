@@ -1,8 +1,11 @@
 import { Radio } from 'antd';
 import {
   PROFILE_TAB,
-  ROUTE_PATH, STAFF_ADMIN_DASHBOARD_ROLE_LIMIT
+  ROUTE_PATH,
+  SCOPE_CONFIG,
+  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
 } from 'enums';
+import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -25,10 +28,11 @@ function Sider(props: SiderProps) {
   const isAdminRole = useMemo(() => {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
+  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
 
   return (
     <SiderWrapper className="sider flex">
-      {isAdminRole ? (
+      {isAdminRole && canRead ? (
         <div className="tabs flex">
           <Radio.Group value={tab}>
             <Radio.Button

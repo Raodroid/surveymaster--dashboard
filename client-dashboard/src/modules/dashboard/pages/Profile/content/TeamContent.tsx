@@ -48,7 +48,6 @@ import {
   ResetUserPasswordModal,
   UpdateMemberModal,
 } from './modals';
-import StyledPagination from '../../../components/StyledPagination';
 interface TeamMember extends UserPayload {
   key: string;
   name: string;
