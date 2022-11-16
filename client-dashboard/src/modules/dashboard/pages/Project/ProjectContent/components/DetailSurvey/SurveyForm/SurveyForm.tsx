@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { Button, notification } from 'antd';
 import { ControlledInput } from '../../../../../../../common';
 import { INPUT_TYPES } from '../../../../../../../common/input/type';
@@ -174,10 +174,27 @@ const SurveyForm: FC = () => {
 
   const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
+  const [excelUploadFile, setExcelUploadFile] = useState<string | Blob>('');
+
+  const mutationUploadExcelFile = useMutation(
+    (id: string) =>
+      SurveyService.uploadExcelFile({
+        id,
+        file: excelUploadFile,
+      }),
+    {
+      onError,
+    },
+  );
+
   const onSuccess = useCallback(
     async res => {
       await queryClient.invalidateQueries('getProjects');
       await queryClient.invalidateQueries('getSurveyById');
+
+      if (excelUploadFile)
+        await mutationUploadExcelFile.mutateAsync(res.data.id);
+
       notification.success({
         message: t(`common.${isEditMode ? 'updateSuccess' : 'createSuccess'}`),
       });
@@ -188,7 +205,15 @@ const SurveyForm: FC = () => {
         }),
       );
     },
-    [isEditMode, navigate, params, queryClient, t],
+    [
+      excelUploadFile,
+      isEditMode,
+      mutationUploadExcelFile,
+      navigate,
+      params.projectId,
+      queryClient,
+      t,
+    ],
   );
 
   const addSurveyMutation = useMutation(
@@ -382,7 +407,10 @@ const SurveyForm: FC = () => {
               <div className={'SurveyFormWrapper__question'}>
                 {(isExternalProject ||
                   values?.template === SurveyTemplateEnum.NEW) && (
-                  <QuestionSurveyList isExternalProject={isExternalProject} />
+                  <QuestionSurveyList
+                    isExternalProject={isExternalProject}
+                    setExcelUploadFile={setExcelUploadFile}
+                  />
                 )}
               </div>
               <div className={'SurveyFormWrapper__submit_btn'}>
@@ -411,8 +439,11 @@ const SurveyForm: FC = () => {
 
 export default SurveyForm;
 
-const QuestionSurveyList: FC<{ isExternalProject: boolean }> = props => {
-  const { isExternalProject } = props;
+const QuestionSurveyList: FC<{
+  isExternalProject: boolean;
+  setExcelUploadFile: (value: string | Blob) => void;
+}> = props => {
+  const { isExternalProject, setExcelUploadFile } = props;
   const { t } = useTranslation();
   const params = useParams<{ surveyId?: string }>();
   const { surveyData } = useGetSurveyById(params?.surveyId);
@@ -443,7 +474,9 @@ const QuestionSurveyList: FC<{ isExternalProject: boolean }> = props => {
             : t('common.surveyQuestionList')}
         </div>
 
-        {!isViewMode && <UploadExternalFile />}
+        {!isViewMode && (
+          <UploadExternalFile setExcelUploadFile={setExcelUploadFile} />
+        )}
 
         {isViewMode && (
           <ViewSurveyQuestionList questions={surveyData.questions} />

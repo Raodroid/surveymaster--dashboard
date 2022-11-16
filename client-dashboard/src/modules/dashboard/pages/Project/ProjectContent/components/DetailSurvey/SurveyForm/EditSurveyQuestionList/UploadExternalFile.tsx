@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
-import { Badge, Button, Menu, Spin, Table, Upload } from 'antd';
+import { Badge, Button, Menu, notification, Spin, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { GroupSurveyButtonWrapper, UploadExternalFileWrapper } from './style';
 import * as XLSX from 'xlsx';
@@ -24,8 +24,8 @@ import {
   ProjectTypes,
   QuestionVersionStatus,
 } from 'type';
-import { useInfiniteQuery } from 'react-query';
-import { QuestionBankService } from 'services';
+import { useInfiniteQuery, useMutation } from 'react-query';
+import { AdminService, QuestionBankService, SurveyService } from 'services';
 import { ControlledInput } from '../../../../../../../../common';
 import { INPUT_TYPES } from '../../../../../../../../common/input/type';
 import styled from 'styled-components';
@@ -45,6 +45,7 @@ import templateVariable from '../../../../../../../../../app/template-variables.
 import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
 import { useGetProjectByIdQuery } from '../../../../../util';
 import { useParams } from 'react-router';
+import { PostPutMember } from '../../../../../../../../../interfaces';
 
 const initNewRowValue = {
   id: '',
@@ -133,7 +134,18 @@ const GroupSurveyButton = () => {
   );
 };
 
-const UploadExternalFile = () => {
+const createBinaryFile = (excelFile, callback) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    callback(excelFile);
+  };
+  reader.readAsBinaryString(excelFile);
+};
+
+const UploadExternalFile: FC<{
+  setExcelUploadFile: (value: string | Blob) => void;
+}> = props => {
+  const { setExcelUploadFile } = props;
   const params = useParams<{ projectId?: string; surveyId?: string }>();
   const { project } = useGetProjectByIdQuery(params.projectId);
   const isExternalProject = project.type === ProjectTypes.EXTERNAL;
@@ -151,7 +163,7 @@ const UploadExternalFile = () => {
     (file: File) => {
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);
-      reader.onload = async e => {
+      reader.onload = async () => {
         let fileData = reader.result;
 
         let wb = await XLSX.read(fileData, { type: 'file' });
@@ -159,10 +171,11 @@ const UploadExternalFile = () => {
 
         const columnHeaders: string[] = [];
         for (let key in rowObj) {
+          //condition to stop at second row which is not the column name title
           if (key === 'A2') {
             break;
           }
-          columnHeaders.push(rowObj[key].v as never);
+          if (rowObj[key].v) columnHeaders.push(rowObj[key].v as never);
         }
 
         const valueQuestionMap = values.questions.reduce(
@@ -179,7 +192,9 @@ const UploadExternalFile = () => {
             selectAll: true,
             hasLatestCompletedVersion: true,
             isDeleted: false,
-            masterVariableNames: columnHeaders,
+            body: {
+              masterVariableNames: columnHeaders,
+            },
           });
 
         const questionList: IQuestion[] =
@@ -247,12 +262,15 @@ const UploadExternalFile = () => {
       }
       if (status !== 'uploading') {
         setTimeout(() => {
+          createBinaryFile(info.file.originFileObj, res => {
+            setExcelUploadFile(res);
+          });
           handleFiles(info.file.originFileObj);
           setUploading(false);
         });
       }
     },
-    [handleFiles],
+    [handleFiles, setExcelUploadFile],
   );
 
   const onDrop = useCallback(
@@ -410,11 +428,11 @@ const DisplayAnswer = props => {
       questionListData.pages.reduce((current: IOptionItem[], page) => {
         const nextPageData = page.data.data || [];
         nextPageData.forEach((q: IQuestion) => {
-          const latestQuestionVersionId = q.latestCompletedVersion.id;
-          const latestQuestionId = q.id;
+          const latestQuestionVersionId = q.latestCompletedVersion?.id;
+          const latestQuestionId = q?.id;
           if (
             values.questions.some(
-              q => q.id === latestQuestionId, // check if chosen version is in the same question but different version
+              z => z.id === latestQuestionId, // check if chosen version is in the same question but different version
             )
           ) {
             return current;

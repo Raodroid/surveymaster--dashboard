@@ -3,7 +3,7 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import useParseQueryString from 'hooks/useParseQueryString';
-import { FileIconOutlined, PenFilled } from 'icons';
+import { FileIconOutlined, PenFilled, TrashOutlined } from 'icons';
 import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import StyledPagination from 'modules/dashboard/components/StyledPagination';
@@ -205,6 +205,7 @@ enum ACTION_ENUM {
   DUPLICATE_SURVEY = 'DUPLICATE_SURVEY',
   EDIT = 'EDIT',
   EXPORT = 'EXPORT',
+  DELETE_SURVEY_RESULTS = 'DELETE_SURVEY_RESULTS',
 }
 
 const DropDownMenu: FC<IDropDownMenu> = props => {
@@ -235,6 +236,19 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     },
   );
 
+  const deleteSurveyResultMutation = useMutation(
+    () => SurveyService.deleteSurveyResults({ id: record.id as string }),
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getSurveys');
+        notification.success({
+          message: t('common.deleteSurveyResultsSuccess'),
+        });
+      },
+      onError,
+    },
+  );
+
   const items = useMemo(() => {
     if (isFetchingProject) return [];
     const baseMenu: ItemType[] = [];
@@ -259,6 +273,14 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         key: ACTION_ENUM.EXPORT,
       });
     }
+    if (isExternalProject) {
+      baseMenu.push({
+        icon: <TrashOutlined />,
+        disabled: true,
+        label: t('common.deleteSurveyResults'),
+        key: ACTION_ENUM.DELETE_SURVEY_RESULTS,
+      });
+    }
 
     return baseMenu;
   }, [canRead, canUpdate, isExternalProject, isFetchingProject, t]);
@@ -281,6 +303,10 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       console.error(e);
     }
   }, [record.id]);
+
+  const handleDeleteSurveyResults = useCallback(() => {
+    deleteSurveyResultMutation.mutateAsync();
+  }, [deleteSurveyResultMutation]);
 
   const handleSelect = useCallback(
     async (props: {
@@ -311,10 +337,21 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         }
         case ACTION_ENUM.EXPORT: {
           await handleExport();
+          return;
+        }
+        case ACTION_ENUM.DELETE_SURVEY_RESULTS: {
+          await handleDeleteSurveyResults();
+          return;
         }
       }
     },
-    [duplicateMutation, handleExport, navigate, params.projectId],
+    [
+      duplicateMutation,
+      handleDeleteSurveyResults,
+      handleExport,
+      navigate,
+      params.projectId,
+    ],
   );
 
   const menu = (

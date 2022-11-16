@@ -45,4 +45,19 @@ export default class SurveyService {
     const { surveyId } = params;
     return APIService.get(`surveys/${surveyId}/histories`, { params });
   }
+  static deleteSurveyResults(payload: { id: string }): Promise<AxiosResponse> {
+    const { id } = payload;
+    return APIService.delete(`/surveys/${id}/survey-results`);
+  }
+  static uploadExcelFile(payload: {
+    id: string;
+    file: string | Blob;
+  }): Promise<AxiosResponse> {
+    const { id, file } = payload;
+    const formData = new FormData();
+    formData.append('file', file);
+    return APIService.post(`/surveys/${id}/survey-results/excel`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
 }

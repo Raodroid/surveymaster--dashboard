@@ -13,7 +13,8 @@ export default class QuestionBankService {
     return APIService.get('/categories', { params });
   }
   static getQuestions(params: GetListQuestionDto): Promise<AxiosResponse> {
-    return APIService.get(`/questions`, { params });
+    const { body, ...rest } = params;
+    return APIService.post(`/questions/query`, body, { params: rest });
   }
   static getQuestionById(props): Promise<AxiosResponse> {
     const { id } = props;

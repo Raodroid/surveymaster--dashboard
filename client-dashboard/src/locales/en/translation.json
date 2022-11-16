@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "deleteSurveyResults": "Delete Survey Results",
     "duplicateQuestion": "Duplicate Question",
     "field": "Field",
     "fieldList": "Field List",
@@ -127,6 +128,7 @@
     "welcomeHere": "Welcome to BIO & ME",
     "paymentSuccess": "Payment successfully",
     "duplicateSuccess": "Duplicate Successfully",
+    "deleteSurveyResultsSuccess": "Delete Survey Results Successfully",
     "paymentFailed": "Payment failed",
     "updateFailed": "Edit failed",
     "removeFailed": "Remove failed",
