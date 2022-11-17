@@ -6,7 +6,7 @@ import StyledBreadcrumb, {
   IBreadcrumbItem,
 } from 'modules/common/commonComponent/StyledBreadcrumb';
 import qs from 'qs';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
 import { projectRoutePath } from '../../../util';
@@ -20,8 +20,7 @@ function ProjectHeader(props: {
 }) {
   const { routes, links, search } = props;
   const searchRef = useRef<InputRef>(null);
-
-  const [inputSearch, setInputSearch] = useState<string>('');
+  const [searchInput, setSearchInput] = useState('');
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -36,17 +35,30 @@ function ProjectHeader(props: {
 
   if (routes) base.push(...routes);
 
+  useEffect(() => {
+    if (qsParams.q) setSearchInput(qsParams.q);
+  }, [qsParams]);
+
   const handleSearch = useCallback(() => {
-    navigate(pathname + '?' + qs.stringify({ ...qsParams, q: inputSearch }));
-  }, [navigate, pathname, qsParams, inputSearch]);
+    navigate(
+      pathname +
+        '?' +
+        qs.stringify({
+          ...qsParams,
+          q: searchRef.current?.input?.value,
+          page: 1,
+        }),
+      { replace: true },
+    );
+  }, [navigate, pathname, qsParams]);
 
   const handleSubmitBtnClick = useCallback(() => {
-    if (inputSearch.trim()) {
-      handleSearch();
-    } else {
+    if (!searchRef.current?.input?.value && !qsParams.q) {
       searchRef.current?.focus();
+      return;
     }
-  }, [inputSearch, searchRef, handleSearch]);
+    handleSearch();
+  }, [searchRef, handleSearch, qsParams]);
 
   return (
     <HeaderStyled className="flex-center-start">
@@ -58,11 +70,9 @@ function ProjectHeader(props: {
             <Input
               placeholder={'Search...'}
               ref={searchRef}
-              value={inputSearch}
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
               allowClear
-              onChange={e => {
-                setInputSearch(e.target.value);
-              }}
             />
             <Button htmlType="submit" onClick={handleSubmitBtnClick}>
               <SearchIcon />

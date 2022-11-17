@@ -5,9 +5,12 @@ import { AddSurveyWrapper } from './styles';
 import SurveyForm from '../SurveyForm/SurveyForm';
 import { projectRoutePath } from '../../../../util';
 import ProjectHeader from '../../Header';
+import { useTranslation } from 'react-i18next';
 
 function AddSurvey() {
   const params = useParams();
+  const { t } = useTranslation();
+
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
@@ -17,11 +20,11 @@ function AddSurvey() {
         }),
       },
       {
-        name: 'Add New Survey',
+        name: t('common.addNewSurvey'),
         href: projectRoutePath.ADD_NEW_SURVEY,
       },
     ],
-    [params],
+    [params, t],
   );
 
   return (

@@ -55,35 +55,35 @@ function UserForm() {
           {({ handleSubmit: handleFinish, setFieldValue, isValid, dirty }) => {
             return (
               <Form layout="vertical" onFinish={handleFinish}>
-                <SimpleBar style={{ maxHeight: '100%', flex: 1 }}>
-                  <div className="avatar">
-                    <ControlledInput
-                      moduleName="users"
-                      subPath="avatar"
-                      inputType={INPUT_TYPES.IMAGE_UPLOAD}
-                      name="avatar"
-                      label={t('common.photo')}
-                      className="custom-upload"
-                      id="custom-upload-avatar"
-                    />
-                  </div>
-                  <div className="buttons flex">
-                    <Button className="info-btn">
-                      <label
-                        htmlFor="custom-upload-avatar"
-                        className="flex-center"
-                      >
-                        {t('common.uploadNewPhoto')}
-                      </label>
-                    </Button>
-                    <Button
-                      className="info-btn"
-                      onClick={() => setFieldValue('avatar', null)}
+                <div className="avatar">
+                  <ControlledInput
+                    moduleName="users"
+                    subPath="avatar"
+                    inputType={INPUT_TYPES.IMAGE_UPLOAD}
+                    name="avatar"
+                    label={t('common.photo')}
+                    className="custom-upload"
+                    id="custom-upload-avatar"
+                  />
+                </div>
+                <div className="buttons flex">
+                  <Button className="info-btn">
+                    <label
+                      htmlFor="custom-upload-avatar"
+                      className="flex-center"
                     >
-                      {t('common.removePhoto')}
-                    </Button>
-                  </div>
-                  <div className="inputs-wrapper">
+                      {t('common.uploadNewPhoto')}
+                    </label>
+                  </Button>
+                  <Button
+                    className="info-btn"
+                    onClick={() => setFieldValue('avatar', null)}
+                  >
+                    {t('common.removePhoto')}
+                  </Button>
+                </div>
+                <div className="inputs-wrapper">
+                  <SimpleBar style={{ maxHeight: '100%' }}>
                     <div className="flex-j-between name-wrapper">
                       <ControlledInput
                         inputType={INPUT_TYPES.INPUT}
@@ -123,8 +123,8 @@ function UserForm() {
                     name="phone"
                     label={t('common.phoneNumber')}
                   /> */}
-                  </div>
-                </SimpleBar>
+                  </SimpleBar>
+                </div>
 
                 <Button
                   type="primary"

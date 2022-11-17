@@ -765,7 +765,9 @@ const DisplayAnswer = props => {
             accept={'.csv,.xlsx'}
             multiple={false}
           >
-            <Button type={'primary'}>{t('common.clickToUpload')}</Button>
+            <Button type={'primary'} disabled>
+              {t('common.clickToUpload')}
+            </Button>
           </Upload>
           <Button type={'primary'} onClick={handleAddRow}>
             {t('common.addRow')}

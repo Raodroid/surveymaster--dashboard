@@ -44,7 +44,7 @@ const ConfirmResetPasswordForm = () => {
   return (
     <ConfirmResetPasswordFormRoot>
       <p className="title">{t('common.resetPassword')}</p>
-      <p className="des">{t('common.desriptionResetPassWord')}</p>
+      <p className="des">{t('common.descriptionResetPassWord')}</p>
       <Formik
         onSubmit={onFinish}
         initialValues={initialValues}

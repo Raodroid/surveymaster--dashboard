@@ -105,6 +105,9 @@ export const UpdateMemberModalStyled = styled(ModalStyled)`
   .input-wrapper > div {
     padding: 40px 40px 0;
   }
+  .name-wrapper {
+    gap: 10px;
+  }
 `;
 
 export const ConfirmDeactivateModalStyled = styled(ModalStyled)``;

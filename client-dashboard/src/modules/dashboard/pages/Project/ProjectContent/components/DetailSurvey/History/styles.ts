@@ -59,7 +59,6 @@ export const QuestionListWrapper = styled.div`
     padding-right: 12px;
   }
   .ant-table-cell {
-    height: 48px;
     padding: 8px;
   }
 `;
