@@ -19,12 +19,10 @@ export const ProjectWrapper = styled(Content)`
   section:last-child {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    overflow: hidden;
   }
 
-  .ant-table-row,
-  .ant-table-thead {
-    height: 48px;
-  }
   .ant-table-cell {
     &::before {
       display: none;

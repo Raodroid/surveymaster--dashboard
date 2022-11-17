@@ -132,6 +132,7 @@ function ProjectTable() {
         title: t('common.actions'),
         dataIndex: 'actions',
         key: 'actions',
+        width: 100,
         render: (_, record) => (
           <div
             className="flex-center actions"
@@ -190,23 +191,28 @@ function ProjectTable() {
   return (
     <>
       {canRead ? (
-        <ProjectTableWrapper ref={wrapperRef} centerLastChild>
+        <ProjectTableWrapper
+          ref={wrapperRef}
+          centerLastChild
+          className="scroll-table"
+        >
           <HannahCustomSpin
             parentRef={wrapperRef}
             spinning={
               getProjectListQuery.isLoading || getProjectListQuery.isFetching
             }
           />
-          <SimpleBar className={'ProjectTableWrapper__body'}>
-            <Table
-              pagination={false}
-              dataSource={projects}
-              columns={columns}
-              onRow={onRow}
-              rowKey={record => record.id as string}
-              scroll={{ x: 800 }}
-            />
-          </SimpleBar>
+          {/* <SimpleBar className={'ProjectTableWrapper__body'}> */}
+          <Table
+            scroll={{ y: 100 }}
+            dataSource={projects}
+            columns={columns}
+            onRow={onRow}
+            pagination={false}
+            rowKey={record => record.id as string}
+            // scroll={{ x: 800 }}
+          />
+          {/* </SimpleBar> */}
           <StyledPagination
             onChange={(page, pageSize) => {
               handleNavigate({ page, take: pageSize });

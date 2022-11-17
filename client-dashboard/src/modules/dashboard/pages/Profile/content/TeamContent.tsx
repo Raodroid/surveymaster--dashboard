@@ -227,7 +227,7 @@ function TeamContent() {
           <ThreeDotsDropdown
             overlay={
               <DropDownMenuStyled>
-                {canUpdate && (
+                {!record.deletedAt && canUpdate ? (
                   <Menu.Item
                     key="editPreferences"
                     disabled={!isAdminRole}
@@ -238,8 +238,11 @@ function TeamContent() {
                     <SettingOutlined className="dropdown-icon" />{' '}
                     {t('common.editPreferences')}
                   </Menu.Item>
-                )}
-                {profile && record.key !== profile.id && canUpdate && (
+                ) : null}
+                {profile &&
+                canUpdate &&
+                !record.deletedAt &&
+                record.key !== profile.id ? (
                   <Menu.Item
                     key="resetUserPassword"
                     disabled={!isAdminRole}
@@ -250,21 +253,21 @@ function TeamContent() {
                     <EyeOutlined className="dropdown-icon" />{' '}
                     {t('common.resetPassword')}
                   </Menu.Item>
-                )}
-                {!record.deletedAt &&
-                  profile &&
-                  profile.id !== record.key &&
-                  canDelete && (
-                    <Menu.Item
-                      key="deactivateUser"
-                      disabled={!isAdminRole}
-                      onClick={() => setShowConfirmDeactivateModal(true)}
-                    >
-                      <UserDeleteOutlined className="dropdown-icon" />{' '}
-                      {t('common.removeFromTeam')}
-                    </Menu.Item>
-                  )}
-                {record.deletedAt && canRestore && (
+                ) : null}
+                {profile &&
+                canDelete &&
+                !record.deletedAt &&
+                profile.id !== record.key ? (
+                  <Menu.Item
+                    key="deactivateUser"
+                    disabled={!isAdminRole}
+                    onClick={() => setShowConfirmDeactivateModal(true)}
+                  >
+                    <UserDeleteOutlined className="dropdown-icon" />{' '}
+                    {t('common.removeFromTeam')}
+                  </Menu.Item>
+                ) : null}
+                {record.deletedAt && canRestore ? (
                   <Menu.Item
                     key="restore"
                     disabled={!isAdminRole}
@@ -273,7 +276,7 @@ function TeamContent() {
                     <DeleteOutlined className="dropdown-icon" />{' '}
                     {t('common.restore')}
                   </Menu.Item>
-                )}
+                ) : null}
               </DropDownMenuStyled>
             }
             trigger={['click']}

@@ -11,8 +11,9 @@ export const TableWrapper = styled.div`
   flex: 1;
   width: 100%;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
+  padding: 12px 5px 0 12px;
   .TableWrapper {
     &__body {
       padding: 1.5rem 1.5rem 0 1.5rem;
@@ -52,10 +53,20 @@ export const TableWrapper = styled.div`
     .ant-table-cell .dots-container {
       color: var(--ant-primary-color);
     }
-  }
 
+    table {
+      border-spacing: 0;
+    }
+  }
+  .ant-table-header {
+    overflow: unset !important;
+  }
+  .ant-table-body {
+    padding-right: 4px;
+  }
   .ant-table-cell {
-    padding: 0 10px;
+    height: 48px;
+    padding: 6px 10px;
   }
   .ant-table-row {
     cursor: pointer;

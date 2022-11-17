@@ -32,32 +32,43 @@ export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: scroll;
+  overflow: hidden;
+  padding: 12px 5px 0 12px;
   .ProjectTableWrapper {
     &__body {
       padding: 1.5rem;
       height: 100%;
-      overflow: scroll;
+      overflow: hidden;
     }
-  }
-
-  .ant-table-cell {
-    height: 48px;
-    padding: 0 10px;
   }
 
   .ant-table {
     .ant-table-cell {
+      padding: 6px 10px;
       a,
       span,
       div {
         font-size: 12px;
         color: var(--text-color);
       }
-
       .dots-container {
         color: var(--ant-primary-color);
       }
+    }
+    table {
+      border-spacing: 0;
+    }
+  }
+  .ant-table-header {
+    overflow: unset !important;
+  }
+  .ant-table-thead {
+    height: 48px;
+  }
+  .ant-table-body {
+    padding-right: 4px;
+    .ant-table-tbody {
+      border-spacing: 0;
     }
   }
   .actions {
@@ -83,5 +94,6 @@ export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
   }
   .ant-table-row {
     cursor: pointer;
+    height: 48px;
   }
 `;
