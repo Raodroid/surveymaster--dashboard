@@ -1,6 +1,7 @@
 import { NotificationType } from 'aws-sdk/clients/budgets';
 import { UserUpdatedDto } from 'interfaces';
 import APIService from './base.service';
+import { AxiosResponse } from 'axios';
 
 export default class UserService {
   static getProfile(): Promise<any> {
@@ -29,5 +30,9 @@ export default class UserService {
     roles: number[];
   }): Promise<any> {
     return APIService.get(`users/${params.userId}`, { params: params });
+  }
+
+  static deactivateProfile(): Promise<AxiosResponse> {
+    return APIService.delete('/auth/me/deactivate');
   }
 }

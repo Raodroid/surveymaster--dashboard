@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Button, Menu, Modal } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
-import { ROUTE_PATH } from 'enums';
 import { useTranslation } from 'react-i18next';
 import {
   MenuWrapper,

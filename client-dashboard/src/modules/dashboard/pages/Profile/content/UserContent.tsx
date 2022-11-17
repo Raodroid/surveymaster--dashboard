@@ -1,11 +1,17 @@
-import { Button, Divider, Switch } from 'antd';
-import { useState } from 'react';
+import { Button, Divider, Modal, Switch } from 'antd';
+import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthAction } from 'redux/auth';
 import { UserContentStyled } from '../styles';
 import { ChangePasswordModal, SetUpPreferencesModal } from './modals';
 import { AuthSelectors } from '../../../../../redux/auth';
+import { useMutation } from 'react-query';
+import { UserService } from '../../../../../services';
+import { onError } from '../../../../../utils';
+import HannahCustomSpin from '../../../components/HannahCustomSpin';
+
+const { confirm } = Modal;
 
 function UserContent() {
   const dispatch = useDispatch();
@@ -15,8 +21,31 @@ function UserContent() {
 
   const profile = useSelector(AuthSelectors.getProfile);
 
+  const deactivateMutation = useMutation(UserService.deactivateProfile, {
+    onSuccess: () => {
+      dispatch(AuthAction.userSignOut());
+    },
+    onError,
+  });
+
+  const showConfirm = useCallback(async () => {
+    confirm({
+      icon: null,
+      content: t('common.confirmDeactivateAccount'),
+      onOk() {
+        deactivateMutation.mutateAsync();
+      },
+    });
+  }, [deactivateMutation, t]);
+
+  const wrapperRef = useRef<any>();
+
   return (
-    <UserContentStyled className="flex">
+    <UserContentStyled className="flex" ref={wrapperRef}>
+      <HannahCustomSpin
+        parentRef={wrapperRef}
+        spinning={deactivateMutation.isLoading}
+      />
       <div className={'cell'}>
         <div className="password padding-24 flex-j-between flex-a-center">
           <span className="title">
@@ -80,7 +109,7 @@ function UserContent() {
 
         <div className="padding-24 flex-j-between flex-a-center">
           <div className="title">{t('common.deactivateAccount')}</div>
-          <Button type="primary" className="btn">
+          <Button type="primary" className="btn" onClick={showConfirm}>
             {t('common.deactivate')}
           </Button>
         </div>
