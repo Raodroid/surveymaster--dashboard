@@ -428,6 +428,9 @@ export const TableWrapperStyled = styled.div`
       display: none;
     }
   }
+  .ant-table-header {
+    overflow: unset !important;
+  }
   .ant-table-body {
     overflow-y: auto !important;
     padding-right: 4px;

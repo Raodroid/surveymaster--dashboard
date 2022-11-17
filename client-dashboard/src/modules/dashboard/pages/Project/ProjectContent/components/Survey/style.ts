@@ -13,7 +13,7 @@ export const TableWrapper = styled.div`
   height: 100%;
   overflow: hidden;
   position: relative;
-  padding: 0 5px 0 8px;
+  padding: 12px 5px 0 12px;
   .TableWrapper {
     &__body {
       padding: 1.5rem 1.5rem 0 1.5rem;

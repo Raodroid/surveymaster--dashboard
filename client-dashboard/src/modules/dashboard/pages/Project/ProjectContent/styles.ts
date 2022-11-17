@@ -33,7 +33,7 @@ export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  padding: 0 5px 0 8px;
+  padding: 12px 5px 0 12px;
   .ProjectTableWrapper {
     &__body {
       padding: 1.5rem;
@@ -55,7 +55,7 @@ export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
         color: var(--ant-primary-color);
       }
     }
-    .table {
+    table {
       border-spacing: 0;
     }
   }
