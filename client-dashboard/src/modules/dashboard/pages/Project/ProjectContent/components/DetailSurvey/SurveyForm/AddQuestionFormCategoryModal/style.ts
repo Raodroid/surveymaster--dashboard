@@ -11,7 +11,8 @@ export const AddQuestionFormCategoryModalWrapper = styled(Modal)`
   }
   .AddQuestionFormCategoryModal_body {
     display: flex;
-    gap: 2rem;
+    height: 100%;
+    overflow: hidden;
     > div {
       flex: 1;
     }
@@ -23,6 +24,7 @@ export const AddQuestionFormCategoryModalWrapper = styled(Modal)`
   .category-column {
     transition: width 0.3s ease-in;
     position: relative;
+    padding-right: 2rem;
   }
   .search-input {
     margin-bottom: 1rem;

@@ -207,8 +207,8 @@ const AddQuestionFormCategoryModal: FC<
       centered
       title={t('common.addAllQuestionsFromOneCategory')}
     >
-      <SimpleBar>
-        <div className={'AddQuestionFormCategoryModal_body'}>
+      <div className={'AddQuestionFormCategoryModal_body'}>
+        <SimpleBar>
           <div className={'category-column'} ref={wrapperRef}>
             <HannahCustomSpin
               parentRef={wrapperRef}
@@ -226,18 +226,23 @@ const AddQuestionFormCategoryModal: FC<
             />
             <CategoryMenuWrapper items={categoryData} onSelect={handleSelect} />
           </div>
-          {selectedCategoryId && (
-            <DisplayQuestionList
-              selectedCategoryId={selectedCategoryId}
-              selectedQuestionIdList={selectedQuestionIdList}
-              setSelectedQuestionIdList={setSelectedQuestionIdList}
-              questions={questions}
-              searchQuestionTxt={searchQuestionTxt}
-              setSearchQuestionTxt={setSearchQuestionTxt}
-            />
-          )}
-        </div>
-      </SimpleBar>
+        </SimpleBar>
+        {selectedCategoryId && (
+          <>
+            <span className={'border'} style={{ borderRight: 0 }} />
+            <SimpleBar>
+              <DisplayQuestionList
+                selectedCategoryId={selectedCategoryId}
+                selectedQuestionIdList={selectedQuestionIdList}
+                setSelectedQuestionIdList={setSelectedQuestionIdList}
+                questions={questions}
+                searchQuestionTxt={searchQuestionTxt}
+                setSearchQuestionTxt={setSearchQuestionTxt}
+              />{' '}
+            </SimpleBar>
+          </>
+        )}
+      </div>
     </AddQuestionFormCategoryModalWrapper>
   );
 };
