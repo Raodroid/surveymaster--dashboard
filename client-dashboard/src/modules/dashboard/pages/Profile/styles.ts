@@ -391,6 +391,7 @@ export const TeamContentStyled = styled(ContentStyled)`
   .table-wrapper {
     flex: 1;
     overflow: scroll;
+    position: relative;
   }
 `;
 
