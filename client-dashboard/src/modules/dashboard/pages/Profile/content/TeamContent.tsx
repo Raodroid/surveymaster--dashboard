@@ -22,10 +22,9 @@ import useParseQueryString from 'hooks/useParseQueryString';
 import { SearchIcon } from 'icons/SearchIcon';
 import _get from 'lodash/get';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc/useCheckScopeEntityDefault';
-import { CustomSpinSuspense } from 'modules/common/styles';
 import StyledPagination from 'modules/dashboard/components/StyledPagination';
 import qs from 'qs';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -38,7 +37,6 @@ import { QsParams } from '../../Project/ProjectContent/components/ProjectFilter'
 import {
   CustomFallbackStyled,
   DropDownMenuStyled,
-  TableWrapperStyled,
   TeamContentStyled,
 } from '../styles';
 import {
@@ -47,6 +45,8 @@ import {
   ResetUserPasswordModal,
   UpdateMemberModal,
 } from './modals';
+import SimpleBar from 'simplebar-react';
+import HannahCustomSpin from '../../../components/HannahCustomSpin';
 interface TeamMember extends UserPayload {
   key: string;
   name: string;
@@ -221,7 +221,7 @@ function TeamContent() {
       },
       {
         title: '',
-        width: 100,
+        width: 50,
         dataIndex: 'threeDots',
         render: (_, record: TeamMember) => (
           <ThreeDotsDropdown
@@ -308,13 +308,13 @@ function TeamContent() {
         : [],
     [teamMembers],
   );
-
+  const wrapperRef = useRef<any>(null);
   return (
-    <TeamContentStyled className="flex">
+    <TeamContentStyled>
       <div className="cell padding-24 name title flex-a-center">AMiLi</div>
 
-      <div className="cell flex-column table-wrapper scroll-table">
-        {canRead ? (
+      <div className="cell flex-column table-wrapper">
+        {canRead && (
           <>
             <div className="search padding-24 flex-center">
               <Form onFinish={handleSearch} className="search-form flex-center">
@@ -334,7 +334,7 @@ function TeamContent() {
                 checked={qsParams.isDeleted === 'true'}
                 onChange={() => {
                   handleNavigate({
-                    isDeleted: qsParams.isDeleted === 'true' ? false : true,
+                    isDeleted: qsParams.isDeleted !== 'true',
                   });
                 }}
               >
@@ -344,33 +344,33 @@ function TeamContent() {
 
             <Divider />
 
-            <TableWrapperStyled>
-              <CustomSpinSuspense spinning={isLoading}>
-                <div className="table-wrapper">
-                  <Table
-                    rowSelection={{
-                      type: 'checkbox',
-                      ...rowSelection,
-                    }}
-                    scroll={{ y: 100 }}
-                    columns={columns}
-                    dataSource={data}
-                    pagination={false}
-                  />
-                </div>
-                <StyledPagination
-                  onChange={(page, pageSize) =>
-                    handleNavigate({ page: page, take: pageSize })
-                  }
-                  showSizeChanger
-                  pageSize={baseParams.take}
-                  total={total}
-                  current={baseParams.page}
+            <div className="table-wrapper" ref={wrapperRef}>
+              <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
+              <SimpleBar>
+                <Table
+                  style={{ padding: '0 10px' }}
+                  rowSelection={{
+                    type: 'checkbox',
+                    ...rowSelection,
+                  }}
+                  columns={columns}
+                  dataSource={data}
+                  pagination={false}
+                  scroll={{ x: 800 }}
                 />
-              </CustomSpinSuspense>
-            </TableWrapperStyled>
+              </SimpleBar>
+            </div>
+            <StyledPagination
+              onChange={(page, pageSize) =>
+                handleNavigate({ page: page, take: pageSize })
+              }
+              showSizeChanger
+              pageSize={baseParams.take}
+              total={total}
+              current={baseParams.page}
+            />
           </>
-        ) : null}
+        )}
       </div>
 
       <UpdateMemberModal
