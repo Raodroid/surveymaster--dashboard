@@ -20,6 +20,9 @@ export const AddQuestionFormCategoryModalWrapper = styled(Modal)`
   .ant-modal-body {
     flex: 1;
     overflow: scroll;
+    ::-webkit-scrollbar {
+      display: none;
+    }
   }
   .category-column {
     transition: width 0.3s ease-in;
