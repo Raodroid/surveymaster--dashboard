@@ -8,5 +8,6 @@ export const DisplayQuestionListWrapper = styled.div`
   .ant-checkbox-group {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
   }
 `;

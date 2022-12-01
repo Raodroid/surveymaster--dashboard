@@ -1,48 +1,29 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
-import { QuestionBankService } from 'services';
-import { IOptionItem, IQuestion, ISurveyQuestionDto, QuestionType } from 'type';
-import _get from 'lodash/get';
-import { Button, Input, Spin } from 'antd';
+import React, { FC, useCallback, useMemo } from 'react';
+import { IOptionItem, IQuestion } from 'type';
+import { Input } from 'antd';
 import Checkbox from 'antd/es/checkbox';
-import { onError, useDebounce } from 'utils';
 import { DisplayQuestionListWrapper } from './style';
-import { useFormikContext } from 'formik';
-import { IAddSurveyFormValues } from '../../SurveyForm';
 import { useTranslation } from 'react-i18next';
+import SimpleBar from 'simplebar';
 
 interface IDisplayQuestionList {
   selectedCategoryId: string;
-  onClose?: (e?: any) => void;
+  selectedQuestionIdList: string[];
+  setSelectedQuestionIdList: (e?: any) => void;
+  questions: IQuestion[];
+  searchQuestionTxt: string;
+  setSearchQuestionTxt: (value: string) => void;
 }
 
 export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
-  const { selectedCategoryId, onClose } = props;
-  const [searchTxt, setSearchTxt] = useState<string>('');
-  const debounceSearchText = useDebounce(searchTxt);
+  const {
+    selectedQuestionIdList,
+    setSelectedQuestionIdList,
+    questions,
+    searchQuestionTxt,
+    setSearchQuestionTxt,
+  } = props;
   const { t } = useTranslation();
-  const [selectedQuestionIdList, setSelectedQuestionIdList] = useState<
-    string[]
-  >([]);
-
-  const { setFieldValue, values } = useFormikContext<IAddSurveyFormValues>();
-
-  const getQuestionByCategoryIdListQuery = useQuery(
-    ['getQuestionByCategoryIdList', selectedCategoryId, debounceSearchText],
-    () => {
-      return QuestionBankService.getQuestions({
-        categoryIds: [selectedCategoryId],
-        q: debounceSearchText,
-        hasLatestCompletedVersion: true,
-      });
-    },
-    { onError, enabled: !!selectedCategoryId, refetchOnWindowFocus: false },
-  );
-
-  const questions = useMemo<IQuestion[]>(
-    () => _get(getQuestionByCategoryIdListQuery.data, 'data.data', []),
-    [getQuestionByCategoryIdListQuery.data],
-  );
 
   const options = useMemo<IOptionItem[]>(() => {
     const result: IOptionItem[] = [];
@@ -56,94 +37,37 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
     });
     setSelectedQuestionIdList(questionIds);
     return result;
-  }, [questions]);
+  }, [questions, setSelectedQuestionIdList]);
 
-  const onChange = useCallback(values => {
-    setSelectedQuestionIdList(values);
-  }, []);
+  const onChange = useCallback(
+    values => {
+      setSelectedQuestionIdList(values);
+    },
+    [setSelectedQuestionIdList],
+  );
 
   const handleTyping = useCallback(
     e => {
-      setSearchTxt(e.target.value);
+      setSearchQuestionTxt(e.target.value);
     },
-    [setSearchTxt],
+    [setSearchQuestionTxt],
   );
 
-  const handleAddQuestions = useCallback(async () => {
-    let sort = values.questions.length + 1;
-    const newValues = selectedQuestionIdList.reduce(
-      (
-        result: Array<
-          ISurveyQuestionDto & {
-            type: QuestionType | string;
-            category: string;
-            id?: string;
-          }
-        >,
-        chosenQuestionVersionId,
-      ) => {
-        const question = questions.find(
-          (q: IQuestion) =>
-            q.latestCompletedVersion.id === chosenQuestionVersionId,
-        ) as IQuestion;
-
-        if (
-          values.questions.some(
-            q => q.id === question?.id, // check if chosen version is in the same question but different version
-          )
-        ) {
-          return result;
-        }
-
-        const transformData = {
-          type: question.latestCompletedVersion.type,
-          questionVersionId: chosenQuestionVersionId,
-          category: question.masterCategory?.name as string,
-          remark: '',
-          sort,
-          id: question.latestCompletedVersion.questionId,
-          questionTitle: question.latestCompletedVersion.title,
-        };
-        sort += 1;
-
-        return [...result, transformData];
-      },
-      [],
-    );
-    setFieldValue('questions', [...values.questions, ...newValues]);
-    if (onClose) {
-      onClose();
-    }
-  }, [onClose, questions, selectedQuestionIdList, setFieldValue, values]);
-
   return (
-    <Spin spinning={getQuestionByCategoryIdListQuery.isLoading}>
-      <DisplayQuestionListWrapper>
-        <Input
-          className={'search-input'}
-          allowClear
-          placeholder={`${t('common.searchQuestion')}...`}
-          value={searchTxt}
-          onChange={handleTyping}
-        />
-        <Checkbox.Group
-          value={selectedQuestionIdList}
-          options={options}
-          onChange={onChange}
-        />
-        <Button
-          type={'primary'}
-          disabled={!selectedQuestionIdList.length}
-          onClick={handleAddQuestions}
-        >
-          {t('common.add')} {selectedQuestionIdList.length}{' '}
-          {t(
-            `common.${
-              selectedQuestionIdList.length === 1 ? 'question' : 'questions'
-            }`,
-          )}
-        </Button>
-      </DisplayQuestionListWrapper>
-    </Spin>
+    <DisplayQuestionListWrapper>
+      <label className={'label-input'}>{t('common.selectCategory')}</label>
+      <Input
+        className={'search-input'}
+        allowClear
+        placeholder={`${t('common.searchQuestion')}...`}
+        value={searchQuestionTxt}
+        onChange={handleTyping}
+      />
+      <Checkbox.Group
+        value={selectedQuestionIdList}
+        options={options}
+        onChange={onChange}
+      />
+    </DisplayQuestionListWrapper>
   );
 };

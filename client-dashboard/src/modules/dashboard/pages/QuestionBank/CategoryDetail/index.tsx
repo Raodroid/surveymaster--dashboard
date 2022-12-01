@@ -250,7 +250,7 @@ const CategoryDetail = () => {
             columns={columns}
             onRow={handleClickRow}
             pagination={false}
-            scroll={{ x: size.medium }}
+            scroll={size.medium ? { x: size.medium } : undefined}
           />
         </SimpleBar>
         <StyledPagination
