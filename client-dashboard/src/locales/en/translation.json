@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "deleteSurveyResults": "Delete Survey Results",
     "selectCategory": "Select Category",
     "descriptionResetPassWord": "Enter your email address associated with this account and we will send you a password reset link",
     "duplicateQuestion": "Duplicate Question",
@@ -129,6 +130,7 @@
     "welcomeHere": "Welcome to BIO & ME",
     "paymentSuccess": "Payment successfully",
     "duplicateSuccess": "Duplicate Successfully",
+    "deleteSurveyResultsSuccess": "Delete Survey Results Successfully",
     "paymentFailed": "Payment failed",
     "updateFailed": "Edit failed",
     "removeFailed": "Remove failed",

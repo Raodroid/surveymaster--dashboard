@@ -95,7 +95,6 @@ const CustomImageUpload = (props: CustomUploadProps) => {
       getBase64(info.file.originFileObj, imgUrl => {
         setLoading(false);
         setImageUrl(imgUrl);
-        console.log(imgUrl);
       });
     }
 
