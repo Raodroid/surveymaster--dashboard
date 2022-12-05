@@ -153,24 +153,23 @@ function Survey() {
     <SurveyWrapper className="flex-column" centerLastChild>
       <ProjectHeader routes={routes} search />
 
-      <TableWrapper className="flex-column scroll-table" ref={wrapperRef}>
+      <TableWrapper className="flex-column" ref={wrapperRef}>
         <HannahCustomSpin
           parentRef={wrapperRef}
           spinning={
             getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
           }
         />
-        {/* <SimpleBar className={'TableWrapper__body'}> */}
-        <Table
-          dataSource={surveys}
-          columns={columns}
-          onRow={onRow}
-          pagination={false}
-          rowKey={record => record.id as string}
-          // scroll={{ x: 800 }}
-          scroll={{ y: 100 }}
-        />
-        {/* </SimpleBar> */}
+        <SimpleBar className={'TableWrapper__body'}>
+          <Table
+            dataSource={surveys}
+            columns={columns}
+            onRow={onRow}
+            pagination={false}
+            rowKey={record => record.id as string}
+            scroll={{ x: 800 }}
+          />
+        </SimpleBar>
         <StyledPagination
           onChange={(page, pageSize) => {
             handleNavigate({ page, take: pageSize });

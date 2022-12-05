@@ -126,10 +126,12 @@ const GroupSurveyButton = () => {
       <Button type={'primary'} onClick={handleAddRow}>
         {t('common.addRow')}
       </Button>
-      <AddQuestionFormCategoryModal
-        open={openLoadCategoryForm}
-        onCancel={toggleLoadCategoryForm}
-      />
+      {openLoadCategoryForm && (
+        <AddQuestionFormCategoryModal
+          open={openLoadCategoryForm}
+          onCancel={toggleLoadCategoryForm}
+        />
+      )}
     </GroupSurveyButtonWrapper>
   );
 };

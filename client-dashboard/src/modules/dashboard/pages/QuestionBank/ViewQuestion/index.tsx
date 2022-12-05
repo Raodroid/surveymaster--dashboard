@@ -97,6 +97,7 @@ const ViewQuestion = () => {
         await queryClient.invalidateQueries('getQuestionList');
         await queryClient.invalidateQueries('getQuestionQuery');
         notification.success({ message: t('common.updateSuccess') });
+        navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
       },
       onError,
     },
