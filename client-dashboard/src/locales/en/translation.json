@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "selectCategory": "Select Category",
     "descriptionResetPassWord": "Enter your email address associated with this account and we will send you a password reset link",
     "duplicateQuestion": "Duplicate Question",
     "field": "Field",

@@ -70,7 +70,7 @@ export const FilterComponent = () => {
   return (
     <FilterComponentWrapper>
       <FilterOutlined className={'filter-icon'} />
-      <span>{t('common.filter')}</span>
+      <span className={'title'}>{t('common.filters')}</span>
       <Dropdown
         trigger={['click']}
         placement="bottomRight"
@@ -326,6 +326,9 @@ const FilterComponentWrapper = styled.div`
   color: white;
   .filter-icon {
     margin: 0 6px;
+  }
+  .title {
+    font-size: 12px;
   }
   .filter-main {
     cursor: pointer;

@@ -332,6 +332,10 @@ export const UserContentStyled = styled(ContentStyled)`
 `;
 
 export const TeamContentStyled = styled(ContentStyled)`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: hidden;
   .search {
     width: 100%;
     .ant-input {
@@ -386,76 +390,8 @@ export const TeamContentStyled = styled(ContentStyled)`
   }
   .table-wrapper {
     flex: 1;
-    overflow: hidden;
-  }
-`;
-
-export const TableWrapperStyled = styled.div`
-  width: 100%;
-  overflow: hidden;
-  .ant-spin-nested-loading,
-  .ant-spin-container {
-    height: 100%;
-    overflow: hidden;
-  }
-  .ant-table-header table {
-    min-height: 62px;
-  }
-  .ant-table-wrapper {
-    height: 100%;
-  }
-  .ant-spin-container {
-    display: flex;
-    flex-direction: column;
-    .table-wrapper {
-      flex: 1;
-    }
-  }
-  .ant-table {
-    padding: 0 4px 0 12px;
-    table {
-      border-spacing: 0;
-    }
-  }
-  .ant-table-row {
-    min-height: 72px;
-  }
-  .avatar-cell {
-    width: 50px;
-  }
-  .ant-table-cell {
-    font-weight: 600;
-    &::before {
-      display: none;
-    }
-  }
-  .ant-table-header {
-    overflow: unset !important;
-  }
-  .ant-table-body {
-    overflow-y: auto !important;
-    padding-right: 4px;
-  }
-  .ant-table-thead {
-    .ant-table-cell {
-      border: none;
-    }
-  }
-  .three-dots {
-    width: 24px;
-    height: 24px;
-    background: transparent;
-    margin-left: auto;
-    border-radius: 4px;
-    color: var(--ant-primary-color);
-
-    &:hover {
-      color: var(--ant-primary-color);
-      background: var(--ant-primary-2);
-    }
-  }
-  .ant-dropdown-open {
-    background: var(--ant-primary-2);
+    overflow: scroll;
+    position: relative;
   }
 `;
 

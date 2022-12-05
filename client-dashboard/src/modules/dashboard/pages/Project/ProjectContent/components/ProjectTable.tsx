@@ -5,7 +5,7 @@ import { PenFilled, TrashOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import _get from 'lodash/get';
 import moment from 'moment';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { generatePath } from 'react-router';
@@ -191,28 +191,23 @@ function ProjectTable() {
   return (
     <>
       {canRead ? (
-        <ProjectTableWrapper
-          ref={wrapperRef}
-          centerLastChild
-          className="scroll-table"
-        >
+        <ProjectTableWrapper ref={wrapperRef} centerLastChild>
           <HannahCustomSpin
             parentRef={wrapperRef}
             spinning={
               getProjectListQuery.isLoading || getProjectListQuery.isFetching
             }
           />
-          {/* <SimpleBar className={'ProjectTableWrapper__body'}> */}
-          <Table
-            scroll={{ y: 100 }}
-            dataSource={projects}
-            columns={columns}
-            onRow={onRow}
-            pagination={false}
-            rowKey={record => record.id as string}
-            // scroll={{ x: 800 }}
-          />
-          {/* </SimpleBar> */}
+          <SimpleBar className={'ProjectTableWrapper__body'}>
+            <Table
+              dataSource={projects}
+              columns={columns}
+              onRow={onRow}
+              pagination={false}
+              rowKey={record => record.id as string}
+              scroll={{ x: 800 }}
+            />
+          </SimpleBar>
           <StyledPagination
             onChange={(page, pageSize) => {
               handleNavigate({ page, take: pageSize });
