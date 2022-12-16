@@ -307,7 +307,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       switch (key) {
         case ACTION_ENUM.DUPLICATE_SURVEY: {
           await duplicateMutation.mutateAsync({
-            name: `${record.name} (Copy)`,
+            name: `${record?.latestVersion?.name} (Copy)`,
             projectId: params.projectId as string,
             surveyId: record.id as string,
           });

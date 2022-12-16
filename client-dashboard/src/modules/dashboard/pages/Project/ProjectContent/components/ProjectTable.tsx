@@ -1,4 +1,4 @@
-import { Button, Menu, PaginationProps, Table } from 'antd';
+import { Button, Menu, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { PenFilled, TrashOutlined } from 'icons';
@@ -24,8 +24,6 @@ import { MenuDropDownWrapper } from '../../../../../../customize-components/styl
 import HannahCustomSpin from '../../../../components/HannahCustomSpin';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { SCOPE_CONFIG } from 'enums';
-import { useLocation } from 'react-router';
-import qs from 'qs';
 import useHandleNavigate from 'hooks/useHandleNavigate';
 
 const initParams: IGetParams = {

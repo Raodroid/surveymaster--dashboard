@@ -6,7 +6,6 @@ import {
   projectRoutePath,
   useGetProjectByIdQuery,
 } from 'modules/dashboard/pages/Project/util';
-import moment from 'moment';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
@@ -14,15 +13,20 @@ import { generatePath, useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
-import { IPostSurveyBodyDto, ISurvey } from 'type';
+import { IPostSurveyBodyDto, ISurveyVersion } from 'type';
 import { onError } from 'utils';
 import { projectSurveyParams } from '..';
-import { MOMENT_FORMAT } from '../../../../../../../../enums';
 import ProjectHeader from '../../Header';
 import { useGetSurveyById } from '../../Survey/util';
 import Inputs from '../Inputs';
 import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
+
+const initISurveyVersion: ISurveyVersion = {
+  displayId: '',
+  name: '',
+  numberOfQuestions: 0,
+};
 
 function Remarks() {
   const { t } = useTranslation();
@@ -30,9 +34,11 @@ function Remarks() {
   const navigate = useNavigate();
   const params = useParams<projectSurveyParams>();
 
-  const { surveyData: survey, isLoading: isSurveyLoading } = useGetSurveyById(
-    params.surveyId,
-  );
+  const {
+    surveyData: survey,
+    isLoading: isSurveyLoading,
+    currentSurveyVersion,
+  } = useGetSurveyById(params.surveyId);
   const { project } = useGetProjectByIdQuery(params.projectId);
 
   const routes: IBreadcrumbItem[] = useMemo(
@@ -44,7 +50,7 @@ function Remarks() {
         }),
       },
       {
-        name: survey?.name || '...',
+        name: currentSurveyVersion?.name || '...',
         href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
           projectId: params?.projectId,
           surveyId: params?.surveyId,
@@ -55,7 +61,7 @@ function Remarks() {
         href: projectRoutePath.DETAIL_SURVEY.REMARKS,
       },
     ],
-    [params, survey, project, t],
+    [params, currentSurveyVersion, project, t],
   );
 
   const mutationUpdateRemarks = useMutation(
@@ -76,10 +82,10 @@ function Remarks() {
   );
 
   const handleSubmit = useCallback(
-    (payload: ISurvey) => {
+    (payload: ISurveyVersion) => {
       const updateSurveyPayload = {
         surveyId: payload.id,
-        projectId: payload.projectId,
+        projectId: payload.survey?.projectId,
         questions: payload?.questions?.map(elm => {
           return {
             questionVersionId: elm.questionVersionId,
@@ -97,14 +103,14 @@ function Remarks() {
     [mutationUpdateRemarks, params.surveyId],
   );
 
-  const initialValue = useMemo<ISurvey>(() => {
-    return {
-      ...survey,
-      createdAt: moment(survey?.createdAt).format(
-        MOMENT_FORMAT.FULL_DATE_FORMAT,
-      ),
-    };
-  }, [survey]);
+  // const initialValue = useMemo<ISurvey>(() => {
+  //   return {
+  //     ...survey,
+  //     createdAt: moment(survey?.createdAt).format(
+  //       MOMENT_FORMAT.FULL_DATE_FORMAT,
+  //     ),
+  //   };
+  // }, [survey]);
 
   return (
     <>
@@ -114,7 +120,7 @@ function Remarks() {
         <CustomSpinSuspense spinning={isSurveyLoading}>
           <Formik
             enableReinitialize={true}
-            initialValues={initialValue}
+            initialValues={currentSurveyVersion || initISurveyVersion}
             onSubmit={handleSubmit}
           >
             {({ handleSubmit }) => (

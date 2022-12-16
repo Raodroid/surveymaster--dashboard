@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import {
   IPostSurveyBodyDto,
   IQuestionVersion,
-  ISurvey,
   ISurveyQuestionDto,
+  ISurveyVersion,
   ProjectTypes,
   QuestionType,
 } from 'type';
@@ -61,18 +61,10 @@ export interface IAddSurveyFormValues extends IPostSurveyBodyDto {
   selectedRowKeys?: string[];
 }
 
-export const initNewQuestionOnAddSurveyForm = {
-  questionVersionId: '',
-  remark: '',
-  type: '',
-  category: '',
-  questionTitle: '',
-};
-
 const transformQuestionData = (
-  input: ISurvey,
+  input?: ISurveyVersion,
 ): questionValueType[] | undefined => {
-  if (!input?.questions) return undefined;
+  if (!input || !input?.questions) return undefined;
 
   const { questions } = input;
 
@@ -93,7 +85,7 @@ const transformQuestionData = (
 };
 
 const createQuestionMap = (
-  input: ISurvey,
+  input?: ISurveyVersion,
 ):
   | Record<
       string,
@@ -104,7 +96,7 @@ const createQuestionMap = (
       } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
     >
   | undefined => {
-  if (!input?.questions) return undefined;
+  if (!input || !input?.questions) return undefined;
 
   const { questions } = input;
 
@@ -131,9 +123,8 @@ const SurveyForm: FC = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { surveyData, isLoading: isFetchingSurveyData } = useGetSurveyById(
-    params?.surveyId,
-  );
+  const { isLoading: isFetchingSurveyData, currentSurveyVersion } =
+    useGetSurveyById(params?.surveyId);
   const { project, isLoading: isFetchingProject } = useGetProjectByIdQuery(
     params?.projectId,
   );
@@ -142,19 +133,19 @@ const SurveyForm: FC = () => {
 
   const initialValues = useMemo<IAddSurveyFormValues>(
     () => ({
-      createdAt: surveyData.createdAt,
-      surveyId: surveyData?.id || '',
-      name: surveyData?.name || '',
+      createdAt: currentSurveyVersion?.survey?.createdAt,
+      surveyId: currentSurveyVersion?.survey?.id || '',
+      name: currentSurveyVersion?.name || '',
       template: SurveyTemplateEnum.NEW,
-      remark: surveyData?.remark || '',
-      questions: transformQuestionData(surveyData) || [],
-      questionIdMap: createQuestionMap(surveyData),
+      remark: currentSurveyVersion?.remark || '',
+      questions: transformQuestionData(currentSurveyVersion) || [],
+      questionIdMap: createQuestionMap(currentSurveyVersion),
       projectId,
-      selectedRowKeys: surveyData.questions?.map(
+      selectedRowKeys: currentSurveyVersion?.questions?.map(
         q => q.questionVersion?.questionId as string,
       ),
     }),
-    [projectId, surveyData],
+    [currentSurveyVersion, projectId],
   );
   const editSurveyRouteMath = useMatch({
     path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
@@ -325,7 +316,7 @@ const SurveyForm: FC = () => {
 
   const wrapperRef = useRef<any>();
 
-  const className = isViewMode ? 'view-mode' : undefined;
+  const className = isViewMode ? 'view-mode' : '';
 
   return (
     <>
@@ -357,7 +348,6 @@ const SurveyForm: FC = () => {
                     {isExternalProject && t('common.external')}{' '}
                     {t('common.mainInformation')}:
                   </div>
-
                   {!isExternalProject && !isEditMode && (
                     <ControlledInput
                       className={className}
@@ -446,7 +436,7 @@ const QuestionSurveyList: FC<{
   const { isExternalProject, setExcelUploadFile } = props;
   const { t } = useTranslation();
   const params = useParams<{ surveyId?: string }>();
-  const { surveyData } = useGetSurveyById(params?.surveyId);
+  const { currentSurveyVersion } = useGetSurveyById(params?.surveyId);
 
   const editSurveyRouteMath = useMatch({
     path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
@@ -469,7 +459,7 @@ const QuestionSurveyList: FC<{
     <SimpleBar style={{ height: '100%' }}>
       <QuestionListWrapper className={'QuestionListWrapper'}>
         <div className="QuestionListWrapper__header">
-          {isExternalProject && !surveyData.questions?.length
+          {isExternalProject && !currentSurveyVersion?.questions?.length
             ? t('common.uploadFile')
             : t('common.surveyQuestionList')}
         </div>
@@ -479,7 +469,7 @@ const QuestionSurveyList: FC<{
         )}
 
         {isViewMode && (
-          <ViewSurveyQuestionList questions={surveyData.questions} />
+          <ViewSurveyQuestionList questions={currentSurveyVersion?.questions} />
         )}
       </QuestionListWrapper>
     </SimpleBar>

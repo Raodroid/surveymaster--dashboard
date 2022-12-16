@@ -2,7 +2,7 @@ import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ISurvey, ISurveyQuestion } from 'type';
+import { ISurveyQuestion, ISurveyVersion } from 'type';
 import Remark from './Remark';
 import { QuestionRemarksWrapper } from './styles';
 
@@ -18,7 +18,7 @@ const columns: ColumnsType<ISurveyQuestion> = [
 ];
 
 function QuestionRemarks() {
-  const { values } = useFormikContext<ISurvey>();
+  const { values } = useFormikContext<ISurveyVersion>();
   const { t } = useTranslation();
   return (
     <QuestionRemarksWrapper>

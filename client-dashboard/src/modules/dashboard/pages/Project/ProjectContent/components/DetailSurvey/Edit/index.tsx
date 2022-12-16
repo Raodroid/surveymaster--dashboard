@@ -17,7 +17,7 @@ function EditSurvey() {
   const { t } = useTranslation();
 
   const { project } = useGetProjectByIdQuery(params.projectId);
-  const { surveyData: survey } = useGetSurveyById(params.surveyId);
+  const { currentSurveyVersion } = useGetSurveyById(params.surveyId);
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
@@ -28,7 +28,7 @@ function EditSurvey() {
         }),
       },
       {
-        name: survey.name || '...',
+        name: currentSurveyVersion?.name || '...',
         href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
           projectId: params?.projectId,
           surveyId: params?.surveyId,
@@ -39,7 +39,7 @@ function EditSurvey() {
         href: projectRoutePath.DETAIL_SURVEY.EDIT,
       },
     ],
-    [params, survey, project, t],
+    [params, currentSurveyVersion, project, t],
   );
 
   return (

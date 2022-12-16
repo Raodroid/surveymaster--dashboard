@@ -40,11 +40,8 @@ import {
 } from '../../../../../icons';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
 import { MenuDropDownWrapper } from '../../../../../customize-components/styles';
-import {
-  ScopeActionArray,
-  useCheckScopeEntityDefault,
-} from '../../../../common/hoc';
-import { SCOPE_CONFIG } from '../../../../../enums/user';
+import { useCheckScopeEntityDefault } from '../../../../common/hoc';
+import { SCOPE_CONFIG } from '../../../../../enums';
 import SimpleBar from 'simplebar-react';
 
 const { Item } = Menu;

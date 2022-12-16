@@ -34,15 +34,24 @@ export interface ISurveyQuestion {
   parameter?: string;
 }
 
+export interface ISurveyVersion {
+  id?: string;
+  displayId: string;
+  name: string;
+  remark?: string;
+  questions?: ISurveyQuestion[];
+  numberOfQuestions: number;
+  survey?: ISurvey;
+}
+
 export interface ISurvey {
   id?: string;
   displayId: string;
   projectId: string;
-  name: string;
-  remark?: string;
+  latestVersion?: ISurveyVersion;
+  latestCompletedVersion?: ISurveyVersion;
+  versions?: ISurveyVersion[];
   project?: IProject;
-  questions?: ISurveyQuestion[];
-  numberOfQuestions: number;
 
   createdBy: UserPayload;
   updatedBy?: UserPayload;
@@ -61,7 +70,7 @@ export interface ISurveyQuestionDto {
 
 export interface IPostSurveyBodyDto {
   name: string;
-  projectId: string;
+  projectId?: string;
   remark?: string;
   questions?: ISurveyQuestionDto[];
   surveyId?: string;
