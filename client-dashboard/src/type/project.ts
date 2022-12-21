@@ -61,6 +61,10 @@ export interface ISurvey {
   deletedAt?: Date | string | null;
 }
 
+export enum SurveyVersionStatus {
+  DRAFT = 'DRAFT',
+  COMPLETED = 'COMPLETED',
+}
 export interface ISurveyQuestionDto {
   questionVersionId: string;
   sort?: number;
@@ -68,13 +72,27 @@ export interface ISurveyQuestionDto {
   parameter?: string;
 }
 
-export interface IPostSurveyBodyDto {
-  name: string;
-  projectId?: string;
+export interface ISurveyVersionBaseDto {
+  name?: string;
   remark?: string;
+  status?: SurveyVersionStatus;
   questions?: ISurveyQuestionDto[];
-  surveyId?: string;
 }
+
+export interface IPostSurveyBodyDto {
+  projectId: string;
+  version?: ISurveyVersionBaseDto;
+}
+
+export interface IPostSurveyBodyDtoExtendId extends IPutSurveyBodyDto {
+  surveyVersionId?: string;
+}
+
+export interface IPostSurveyVersionBodyDto extends ISurveyVersionBaseDto {
+  surveyVersionId: string;
+}
+
+export interface IPutSurveyVersionBodyDto extends ISurveyVersionBaseDto {}
 
 export interface IPutSurveyBodyDto {
   name: string;

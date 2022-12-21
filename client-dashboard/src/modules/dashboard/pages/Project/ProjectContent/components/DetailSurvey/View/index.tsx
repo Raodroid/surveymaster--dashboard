@@ -7,10 +7,14 @@ import { projectRoutePath, useGetProjectByIdQuery } from '../../../../util';
 import ProjectHeader from '../../Header';
 import { projectSurveyParams } from '../index';
 import { useGetSurveyById } from '../../Survey/util';
-import { Dropdown } from 'antd';
+import { Dropdown, notification } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from 'react-query';
-import { ISurveyVersion } from '../../../../../../../../type';
+import { useMutation, useQueryClient } from 'react-query';
+import {
+  IPostSurveyVersionBodyDto,
+  ISurveyVersion,
+  SurveyVersionStatus,
+} from '../../../../../../../../type';
 import { useCheckScopeEntityDefault } from '../../../../../../../common/hoc';
 import { ROUTE_PATH, SCOPE_CONFIG } from '../../../../../../../../enums';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
@@ -21,6 +25,11 @@ import {
 } from '../../../../../../../../icons';
 import { ExportOutlined } from '@ant-design/icons';
 import { MenuDropDownWrapper } from '../../../../../../../../customize-components/styles';
+import {
+  QuestionBankService,
+  SurveyService,
+} from '../../../../../../../../services';
+import { onError } from '../../../../../../../../utils';
 
 function ViewSurvey() {
   const params = useParams<projectSurveyParams>();
@@ -87,7 +96,6 @@ interface IDropDownMenuButton {
 
 enum ACTION_ENUM {
   COMPLETE = 'COMPLETE',
-  DUPLICATE = 'DUPLICATE',
   EXPORT = 'EXPORT',
   DELETE = 'DELETE',
 }
@@ -112,11 +120,6 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
         label: t('common.edit'),
         key: ACTION_ENUM.COMPLETE,
       });
-      baseMenu.push({
-        icon: <FileIconOutlined />,
-        label: t('common.duplicateVersion'),
-        key: ACTION_ENUM.DUPLICATE,
-      });
     }
     if (canRead) {
       baseMenu.push({
@@ -133,6 +136,31 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
     return baseMenu;
   }, [canRead, canUpdate, t]);
 
+  const deleteMutation = useMutation(
+    (data: { id: string }) => {
+      return SurveyService.deleteSurveyVersion(data);
+    },
+    {
+      onSuccess: async () => {
+        // await queryClient.invalidateQueries('getQuestionList');
+        notification.success({ message: t('common.deleteSuccess') });
+      },
+      onError,
+    },
+  );
+  const completeMutation = useMutation(
+    (data: IPostSurveyVersionBodyDto) => {
+      return SurveyService.updateSurvey(data);
+    },
+    {
+      onSuccess: async () => {
+        // await queryClient.invalidateQueries('getQuestionList');
+        notification.success({ message: t('common.deleteSuccess') });
+      },
+      onError,
+    },
+  );
+
   const handleSelect = useCallback(
     async (props: {
       record: ISurveyVersion;
@@ -142,13 +170,25 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
     }) => {
       const { key, record } = props;
       switch (key) {
-        case ACTION_ENUM.DELETE:
-        case ACTION_ENUM.EXPORT:
-        case ACTION_ENUM.COMPLETE:
-        case ACTION_ENUM.DUPLICATE:
+        case ACTION_ENUM.DELETE: {
+          await deleteMutation.mutateAsync({ id: record.id as string });
+          break;
+        }
+        case ACTION_ENUM.EXPORT: {
+          break;
+        }
+        case ACTION_ENUM.COMPLETE: {
+          await completeMutation.mutateAsync({
+            surveyVersionId: record.id as string,
+            name: record.name,
+            questions: record.questions,
+            status: SurveyVersionStatus.COMPLETED,
+          });
+          break;
+        }
       }
     },
-    [],
+    [completeMutation, deleteMutation],
   );
 
   const menu = (

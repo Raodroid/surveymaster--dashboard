@@ -47,12 +47,12 @@ import { useGetProjectByIdQuery } from '../../../../../util';
 import { useParams } from 'react-router';
 import { PostPutMember } from '../../../../../../../../../interfaces';
 
-const initNewRowValue = {
+const initNewRowValue: questionValueType = {
   id: '',
   parameter: '',
   category: '',
   type: '',
-  question: '',
+  // question: '',
   remark: '',
   questionVersionId: '',
   questionTitle: '',
@@ -111,10 +111,13 @@ const GroupSurveyButton = () => {
   const handleAddRow = useCallback(() => {
     setValues(s => ({
       ...s,
-      questions: [
-        ...s.questions,
-        { ...initNewRowValue, id: Math.random().toString() },
-      ],
+      version: {
+        ...s.version,
+        questions: [
+          ...s?.version?.questions,
+          { ...initNewRowValue, id: Math.random().toString() },
+        ],
+      },
     }));
   }, [setValues]);
 
@@ -158,7 +161,7 @@ const UploadExternalFile: FC<{
   const { setValues, values } = useFormikContext<IAddSurveyFormValues>();
 
   const [displayParameterTable, toggleDisplayParameterTable] = useToggle(
-    values.questions.length !== 0,
+    values.version.questions.length !== 0,
   );
 
   const handleFiles = useCallback(
@@ -180,7 +183,7 @@ const UploadExternalFile: FC<{
           if (rowObj[key].v) columnHeaders.push(rowObj[key].v as never);
         }
 
-        const valueQuestionMap = values.questions.reduce(
+        const valueQuestionMap = values.version.questions.reduce(
           (res: Record<string, boolean>, q) => {
             if (!q.parameter) return res;
             res[q.parameter] = true;
@@ -247,11 +250,14 @@ const UploadExternalFile: FC<{
 
         setValues(s => ({
           ...s,
-          questions: [...s.questions, ...uniqParameter],
+          version: {
+            ...s.version,
+            questions: [...s.version.questions, ...uniqParameter],
+          },
         }));
       };
     },
-    [setValues, values.questions],
+    [setValues, values.version.questions],
   );
 
   const [isUploading, setUploading] = useState(false);
@@ -433,7 +439,7 @@ const DisplayAnswer = props => {
           const latestQuestionVersionId = q.latestCompletedVersion?.id;
           const latestQuestionId = q?.id;
           if (
-            values.questions.some(
+            values.version.questions.some(
               z => z.id === latestQuestionId, // check if chosen version is in the same question but different version
             )
           ) {
@@ -451,7 +457,7 @@ const DisplayAnswer = props => {
       }, []),
       normalizeByQuestionId,
     ];
-  }, [questionListData, values.questions]);
+  }, [questionListData, values.version.questions]);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setFieldValue('selectedRowKeys', [...newSelectedRowKeys]);
@@ -468,10 +474,13 @@ const DisplayAnswer = props => {
   const handleAddRow = useCallback(() => {
     setValues(s => ({
       ...s,
-      questions: [
-        ...s.questions,
-        { ...initNewRowValue, id: Math.random().toString() },
-      ],
+      version: {
+        ...s.version,
+        questions: [
+          ...s.version.questions,
+          { ...initNewRowValue, id: Math.random().toString() },
+        ],
+      },
     }));
   }, [setValues]);
 
@@ -688,8 +697,8 @@ const DisplayAnswer = props => {
   };
 
   const dataSource = useMemo(
-    () => values.questions.map((q, index) => ({ ...q, index })),
-    [values.questions],
+    () => values.version.questions.map((q, index) => ({ ...q, index })),
+    [values.version.questions],
   );
 
   const setDataTable = (questions: questionValueType[]) => {
@@ -749,7 +758,7 @@ const DisplayAnswer = props => {
           scroll={{ x: size.large }}
           rowSelection={rowSelection}
           columns={columnsFiltered}
-          dataSource={values.questions}
+          dataSource={values.version.questions}
           pagination={false}
           rowKey={record => record.id as string}
           expandable={{
@@ -799,12 +808,13 @@ export const DynamicSelect = props => {
   const currQuestionVersionCreatedAt = value.createdAt;
 
   const options = useMemo<IOptionItem[]>(() => {
-    const currQuestionVersionId = values.questions?.[index]?.questionVersionId;
+    const currQuestionVersionId =
+      values.version.questions?.[index]?.questionVersionId;
     if (currQuestionVersionId) {
       return [
         ...questionOption,
         {
-          label: values.questions[index].questionTitle,
+          label: values.version.questions[index].questionTitle,
           value: currQuestionVersionId,
         },
       ];
@@ -842,22 +852,25 @@ export const DynamicSelect = props => {
         setValues(s => {
           return {
             ...s,
-            questions: s.questions.map((q, idx) => {
-              if (idx === index) {
-                return {
-                  ...q,
-                  category: chooseQuestion.masterCategory?.name as string,
-                  type: chooseQuestion.latestCompletedVersion.type as string,
-                  questionTitle: chooseQuestion.latestCompletedVersion
-                    .title as string,
-                  id: chooseQuestion.latestCompletedVersion.questionId,
-                  questionVersionId: chooseQuestion.latestCompletedVersion.id,
-                  versions: chooseQuestion.versions,
-                  createdAt: chooseQuestion.createdAt,
-                };
-              }
-              return q;
-            }),
+            version: {
+              ...s.version,
+              questions: s.version.questions.map((q, idx) => {
+                if (idx === index) {
+                  return {
+                    ...q,
+                    category: chooseQuestion.masterCategory?.name as string,
+                    type: chooseQuestion.latestCompletedVersion.type as string,
+                    questionTitle: chooseQuestion.latestCompletedVersion
+                      .title as string,
+                    id: chooseQuestion.latestCompletedVersion.questionId,
+                    questionVersionId: chooseQuestion.latestCompletedVersion.id,
+                    versions: chooseQuestion.versions,
+                    createdAt: chooseQuestion.createdAt,
+                  };
+                }
+                return q;
+              }),
+            },
           };
         });
         setSearchTxt('');
@@ -954,34 +967,37 @@ const ActionDropDown: FC<{
 
     setValues(values => ({
       ...values,
-      questions: !questionIdMap
-        ? values.questions
-        : values.questions.map(q => {
-            if (
-              q.questionVersionId !== //only care about the current value
-              value.questionVersionId
-            )
+      version: {
+        ...values.version,
+        questions: !questionIdMap
+          ? values.version.questions
+          : values.version.questions.map(q => {
+              if (
+                q.questionVersionId !== //only care about the current value
+                value.questionVersionId
+              )
+                return q;
+
+              if (questionIdMap[q.questionVersionId])
+                //if true => nothing change here
+                return q;
+
+              const key = Object.keys(questionIdMap).find(questionVersionId => {
+                return questionIdMap[questionVersionId].versions.some(
+                  v => record.questionVersionId === v.id,
+                );
+              });
+
+              if (key) {
+                return {
+                  ...q,
+                  questionVersionId: key as string,
+                  questionTitle: questionIdMap[key].questionTitle,
+                };
+              }
               return q;
-
-            if (questionIdMap[q.questionVersionId])
-              //if true => nothing change here
-              return q;
-
-            const key = Object.keys(questionIdMap).find(questionVersionId => {
-              return questionIdMap[questionVersionId].versions.some(
-                v => record.questionVersionId === v.id,
-              );
-            });
-
-            if (key) {
-              return {
-                ...q,
-                questionVersionId: key as string,
-                questionTitle: questionIdMap[key].questionTitle,
-              };
-            }
-            return q;
-          }),
+            }),
+      },
     }));
   }, [
     initialValues.questionIdMap,
@@ -997,16 +1013,19 @@ const ActionDropDown: FC<{
 
       setValues(values => ({
         ...values,
-        questions: values.questions.map((q, idx) => {
-          if (idx === index) {
-            return {
-              ...q,
-              questionVersionId: newVersions[0].id as string,
-              questionTitle: newVersions[0].title as string,
-            };
-          }
-          return q;
-        }),
+        version: {
+          ...values.version,
+          questions: values.version.questions.map((q, idx) => {
+            if (idx === index) {
+              return {
+                ...q,
+                questionVersionId: newVersions[0].id as string,
+                questionTitle: newVersions[0].title as string,
+              };
+            }
+            return q;
+          }),
+        },
       }));
     },
     [setValues],
@@ -1016,15 +1035,18 @@ const ActionDropDown: FC<{
     index => {
       setValues(values => ({
         ...values,
-        questions: values.questions.reduce(
-          (res: questionValueType[], q, idx) => {
-            if (idx === index) {
-              return res;
-            }
-            return [...res, q];
-          },
-          [],
-        ),
+        version: {
+          ...values.version,
+          questions: values.version.questions.reduce(
+            (res: questionValueType[], q, idx) => {
+              if (idx === index) {
+                return res;
+              }
+              return [...res, q];
+            },
+            [],
+          ),
+        },
       }));
     },
     [setValues],

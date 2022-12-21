@@ -13,7 +13,11 @@ import { generatePath, useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
-import { IPostSurveyBodyDto, ISurveyVersion } from 'type';
+import {
+  IPostSurveyBodyDto,
+  IPostSurveyVersionBodyDto,
+  ISurveyVersion,
+} from 'type';
 import { onError } from 'utils';
 import { projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
@@ -65,7 +69,7 @@ function Remarks() {
   );
 
   const mutationUpdateRemarks = useMutation(
-    (payload: IPostSurveyBodyDto) => SurveyService.updateSurvey(payload),
+    (payload: IPostSurveyVersionBodyDto) => SurveyService.updateSurvey(payload),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('getSurveyById');
@@ -83,9 +87,8 @@ function Remarks() {
 
   const handleSubmit = useCallback(
     (payload: ISurveyVersion) => {
-      const updateSurveyPayload = {
-        surveyId: payload.id,
-        projectId: payload.survey?.projectId,
+      const updateSurveyPayload: IPostSurveyVersionBodyDto = {
+        surveyVersionId: payload.id as string,
         questions: payload?.questions?.map(elm => {
           return {
             questionVersionId: elm.questionVersionId,

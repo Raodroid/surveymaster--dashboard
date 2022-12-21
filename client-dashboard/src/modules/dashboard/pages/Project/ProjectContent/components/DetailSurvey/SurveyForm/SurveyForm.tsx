@@ -6,11 +6,14 @@ import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {
   IPostSurveyBodyDto,
+  IPostSurveyVersionBodyDto,
   IQuestionVersion,
   ISurveyQuestionDto,
   ISurveyVersion,
+  ISurveyVersionBaseDto,
   ProjectTypes,
   QuestionType,
+  SurveyVersionStatus,
 } from 'type';
 import { onError, transformEnumToOption } from 'utils';
 import { useMutation, useQueryClient } from 'react-query';
@@ -30,6 +33,7 @@ import {
 } from '../../../../../../../common/validate/validate';
 import ViewSurveyQuestionList from './ViewSurveyQuestionList';
 import SimpleBar from 'simplebar-react';
+import useParseQueryString from '../../../../../../../../hooks/useParseQueryString';
 
 export enum SurveyTemplateEnum {
   NEW = 'NEW',
@@ -49,7 +53,10 @@ export type questionValueType = ISurveyQuestionDto & {
 export interface IAddSurveyFormValues extends IPostSurveyBodyDto {
   createdAt?: string | Date | null;
   template: SurveyTemplateEnum | string;
-  questions: questionValueType[];
+  version: Omit<ISurveyVersionBaseDto, 'questions'> & {
+    questions: questionValueType[];
+  };
+  surveyId: string;
   questionIdMap?: Record<
     string,
     {
@@ -80,6 +87,7 @@ const transformQuestionData = (
         versions: q.questionVersion?.question?.versions,
         category: q.questionVersion?.question?.masterCategory?.name as string,
         parameter: q.parameter,
+        sort: q.sort,
       })) || []
   );
 };
@@ -117,6 +125,7 @@ const createQuestionMap = (
 };
 
 const SurveyForm: FC = () => {
+  const queryString = useParseQueryString<{ version?: string }>();
   const params = useParams<{ projectId?: string; surveyId?: string }>();
   const projectId = params.projectId || '';
   const { t } = useTranslation();
@@ -134,11 +143,13 @@ const SurveyForm: FC = () => {
   const initialValues = useMemo<IAddSurveyFormValues>(
     () => ({
       createdAt: currentSurveyVersion?.survey?.createdAt,
+      version: {
+        name: currentSurveyVersion?.name || '',
+        questions: transformQuestionData(currentSurveyVersion) || [],
+        remark: currentSurveyVersion?.remark || '',
+      },
       surveyId: currentSurveyVersion?.survey?.id || '',
-      name: currentSurveyVersion?.name || '',
       template: SurveyTemplateEnum.NEW,
-      remark: currentSurveyVersion?.remark || '',
-      questions: transformQuestionData(currentSurveyVersion) || [],
       questionIdMap: createQuestionMap(currentSurveyVersion),
       projectId,
       selectedRowKeys: currentSurveyVersion?.questions?.map(
@@ -147,6 +158,7 @@ const SurveyForm: FC = () => {
     }),
     [currentSurveyVersion, projectId],
   );
+
   const editSurveyRouteMath = useMatch({
     path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
     end: true,
@@ -218,7 +230,7 @@ const SurveyForm: FC = () => {
   );
 
   const updateSurveyMutation = useMutation(
-    (data: IPostSurveyBodyDto) => {
+    (data: IPostSurveyVersionBodyDto) => {
       return SurveyService.updateSurvey(data);
     },
     {
@@ -228,7 +240,7 @@ const SurveyForm: FC = () => {
   );
 
   const duplicateSurveyMutation = useMutation(
-    (data: IPostSurveyBodyDto) => {
+    (data: IPostSurveyBodyDto & { surveyId: string }) => {
       return SurveyService.duplicateSurvey(data);
     },
     {
@@ -239,8 +251,16 @@ const SurveyForm: FC = () => {
 
   const onSubmit = useCallback(
     async (values: IAddSurveyFormValues) => {
-      const { questions, selectedRowKeys, questionIdMap, template, ...rest } =
-        values;
+      const {
+        version,
+        selectedRowKeys,
+        questionIdMap,
+        template,
+        surveyId,
+        ...rest
+      } = values;
+
+      const { questions } = version;
 
       if (!values.projectId) {
         console.error('ProjectId is null');
@@ -251,55 +271,89 @@ const SurveyForm: FC = () => {
       if (isExternalProject) {
         const newValues = {
           ...rest,
-          questions: questions.reduce((res: ISurveyQuestionDto[], q) => {
-            if (selectedRowKeys && !selectedRowKeys.some(key => key === q.id)) {
-              return res;
-            }
-            return [
-              ...res,
-              {
-                sort: res.length + 1,
-                remark: q.remark,
-                questionVersionId: q.questionVersionId,
-                parameter: q.parameter,
+          status: SurveyVersionStatus.COMPLETED,
+          version: {
+            ...version,
+            questions: version.questions.reduce(
+              (res: ISurveyQuestionDto[], q) => {
+                if (
+                  selectedRowKeys &&
+                  !selectedRowKeys.some(key => key === q.id)
+                ) {
+                  return res;
+                }
+                return [
+                  ...res,
+                  {
+                    sort: res.length + 1,
+                    remark: q.remark,
+                    questionVersionId: q.questionVersionId,
+                    parameter: q.parameter,
+                  },
+                ];
               },
-            ];
-          }, []),
+              [],
+            ),
+          },
         };
 
         if (isEditMode) {
-          await updateSurveyMutation.mutateAsync(newValues);
+          await updateSurveyMutation.mutateAsync({
+            ...newValues,
+            surveyVersionId: queryString.version as string,
+          });
           return;
         }
         await addSurveyMutation.mutateAsync(newValues);
         return;
       }
 
-      const transformValue: IPostSurveyBodyDto = {
+      let transformValue: IPostSurveyBodyDto = {
         ...rest,
+        version,
       };
 
       if (isEditMode) {
-        transformValue.questions = questions.map((q, index) => ({
-          questionVersionId: q.questionVersionId,
-          sort: index + 1,
-          remark: q.remark,
-        }));
-        await updateSurveyMutation.mutateAsync(transformValue);
+        transformValue = {
+          ...transformValue,
+          version: {
+            ...transformValue.version,
+            questions: questions.map((q, index) => ({
+              questionVersionId: q.questionVersionId,
+              sort: index + 1,
+              remark: q.remark,
+            })),
+          },
+        };
+
+        await updateSurveyMutation.mutateAsync({
+          ...transformValue,
+          surveyVersionId: queryString.version as string,
+        });
         return;
       }
 
       if (values.template === SurveyTemplateEnum.DUPLICATE) {
-        await duplicateSurveyMutation.mutateAsync(transformValue);
+        await duplicateSurveyMutation.mutateAsync({
+          ...transformValue,
+          surveyId,
+        });
         return;
       }
 
       if (values.template === SurveyTemplateEnum.NEW) {
-        transformValue.questions = questions.map((q, index) => ({
-          questionVersionId: q.questionVersionId,
-          sort: index + 1,
-          remark: q.remark,
-        }));
+        transformValue = {
+          ...transformValue,
+          version: {
+            ...transformValue.version,
+            questions: questions.map((q, index) => ({
+              questionVersionId: q.questionVersionId,
+              sort: index + 1,
+              remark: q.remark,
+            })),
+          },
+        };
+
         await addSurveyMutation.mutateAsync(transformValue);
         return;
       }
@@ -310,6 +364,7 @@ const SurveyForm: FC = () => {
       isEditMode,
       isExternalProject,
       navigate,
+      queryString.version,
       updateSurveyMutation,
     ],
   );

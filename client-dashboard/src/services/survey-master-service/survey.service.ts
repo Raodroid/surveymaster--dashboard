@@ -1,5 +1,10 @@
 import { AxiosResponse } from 'axios';
-import { IGetParams, IPostSurveyBodyDto } from 'type';
+import {
+  IGetParams,
+  IPostSurveyBodyDto,
+  IPostSurveyBodyDtoExtendId,
+  IPostSurveyVersionBodyDto,
+} from 'type';
 import APIService from './base.service';
 
 interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
@@ -9,42 +14,64 @@ interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
 
 export default class SurveyService {
   static getSurveys(params: GetSurveyParams): Promise<AxiosResponse> {
-    return APIService.get('surveys', { params });
+    return APIService.get('/surveys', { params });
   }
   static getSurveyFile(surveyId: string): Promise<AxiosResponse> {
-    return APIService.get(`surveys/${surveyId}/file`);
+    return APIService.get(`/surveys/${surveyId}/file`);
   }
 
   static getSurveyById(id: string | undefined): Promise<AxiosResponse> {
-    return APIService.get(`surveys/${id}`);
-  }
-
-  static createSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
-    return APIService.post('surveys', props);
-  }
-  static duplicateSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
-    const { surveyId } = props;
-    return APIService.post(`/surveys/${surveyId}/duplicate  `, props);
-  }
-
-  static updateSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
-    const { surveyId } = props;
-    return APIService.put(`/surveys/${surveyId}  `, props);
+    return APIService.get(`/surveys/${id}`);
   }
 
   static getSurveyHistories(
     params: IGetParams & { surveyId?: string },
   ): Promise<AxiosResponse> {
     const { surveyId } = params;
-    return APIService.get(`surveys/${surveyId}/histories`, { params });
+    return APIService.get(`/surveys/${surveyId}/histories`, { params });
   }
 
   static getAllSurveyHistories(
     params: IGetParams & { surveyId?: string },
   ): Promise<AxiosResponse> {
     const { surveyId } = params;
-    return APIService.get(`surveys/${surveyId}/histories`, { params });
+    return APIService.get(`/surveys/${surveyId}/histories`, { params });
   }
+
+  static createSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
+    return APIService.post('/surveys', props);
+  }
+  static duplicateSurvey(
+    props: IPostSurveyBodyDto & { surveyId: string },
+  ): Promise<AxiosResponse> {
+    const { surveyId } = props;
+    return APIService.post(`/surveys/${surveyId}/duplicate`, props);
+  }
+
+  // static updateSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
+  //   const { surveyId } = props;
+  //   return APIService.put(`/surveys/${surveyId}  `, props);
+  // }
+
+  static updateSurvey(
+    props: IPostSurveyVersionBodyDto,
+  ): Promise<AxiosResponse> {
+    const { surveyVersionId, ...rest } = props;
+    return APIService.put(`/surveys/version/${surveyVersionId}`, rest);
+  }
+
+  static deleteSurveyVersion(payload: { id: string }): Promise<AxiosResponse> {
+    const { id } = payload;
+    return APIService.delete(`/surveys/version/${id}`);
+  }
+
+  static restoreSurveyVersion(payload: { id: string }): Promise<AxiosResponse> {
+    const { id } = payload;
+    return APIService.post(`/survey/version/${id}/restore`);
+  }
+
+  //-------------------------
+
   static deleteSurveyResults(payload: { id: string }): Promise<AxiosResponse> {
     const { id } = payload;
     return APIService.delete(`/surveys/${id}/survey-results`);
