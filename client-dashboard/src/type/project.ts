@@ -42,6 +42,7 @@ export interface ISurveyVersion {
   questions?: ISurveyQuestion[];
   numberOfQuestions: number;
   survey?: ISurvey;
+  status?: SurveyVersionStatus;
 }
 
 export interface ISurvey {

@@ -7,12 +7,13 @@ import { projectRoutePath, useGetProjectByIdQuery } from '../../../../util';
 import ProjectHeader from '../../Header';
 import { projectSurveyParams } from '../index';
 import { useGetSurveyById } from '../../Survey/util';
-import { Dropdown, notification } from 'antd';
+import { Button, Dropdown, notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import {
   IPostSurveyVersionBodyDto,
   ISurveyVersion,
+  QuestionVersionStatus,
   SurveyVersionStatus,
 } from '../../../../../../../../type';
 import { useCheckScopeEntityDefault } from '../../../../../../../common/hoc';
@@ -21,6 +22,7 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import {
   FileIconOutlined,
   PenFilled,
+  ThreeDotsIcon,
   TrashOutlined,
 } from '../../../../../../../../icons';
 import { ExportOutlined } from '@ant-design/icons';
@@ -30,8 +32,10 @@ import {
   SurveyService,
 } from '../../../../../../../../services';
 import { onError } from '../../../../../../../../utils';
+import useParseQueryString from '../../../../../../../../hooks/useParseQueryString';
 
 function ViewSurvey() {
+  const qsParams = useParseQueryString<{ version?: string }>();
   const params = useParams<projectSurveyParams>();
 
   const { project } = useGetProjectByIdQuery(params.projectId);
@@ -55,29 +59,32 @@ function ViewSurvey() {
     [params?.projectId, project.name, currentSurveyVersion?.name],
   );
 
-  const links: string[] = [
-    generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
-      projectId: params.projectId,
-      surveyId: params.surveyId,
-    }),
+  const links: string[] = useMemo(
+    () => [
+      generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
+        projectId: params.projectId,
+        surveyId: params.surveyId,
+      }) + `?version=${qsParams.version}`,
 
-    generatePath(projectRoutePath.DETAIL_SURVEY.HISTORY, {
-      projectId: params.projectId,
-      surveyId: params.surveyId,
-    }),
+      generatePath(projectRoutePath.DETAIL_SURVEY.HISTORY, {
+        projectId: params.projectId,
+        surveyId: params.surveyId,
+      }) + `?version=${qsParams.version}`,
 
-    generatePath(projectRoutePath.DETAIL_SURVEY.REMARKS, {
-      projectId: params.projectId,
-      surveyId: params.surveyId,
-    }),
-  ];
+      generatePath(projectRoutePath.DETAIL_SURVEY.REMARKS, {
+        projectId: params.projectId,
+        surveyId: params.surveyId,
+      }) + `?version=${qsParams.version}`,
+    ],
+    [params.projectId, params.surveyId, qsParams.version],
+  );
 
   return (
     <>
       <ProjectHeader routes={routes} links={links} />
 
       <ViewSurveyWrapper>
-        <div>
+        <div className={'version-section'}>
           {surveyData.versions?.map(ver => (
             <DropDownMenuButton surveyVersion={ver} />
           ))}
@@ -105,7 +112,12 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const params = useParams<{ surveyId?: string }>();
+  const params = useParams<{ surveyId?: string; projectId?: string }>();
+  const qsParams = useParseQueryString<{ version?: string }>();
+
+  const isSelected = qsParams.version === surveyVersion.displayId;
+
+  const isDraftVersion = surveyVersion?.status === SurveyVersionStatus.DRAFT;
 
   const { canUpdate, canRead } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.SURVEYS,
@@ -114,17 +126,17 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
   const items = useMemo(() => {
     const baseMenu: ItemType[] = [];
 
-    if (canUpdate) {
+    if (canUpdate && isDraftVersion) {
       baseMenu.push({
         icon: <PenFilled />,
-        label: t('common.edit'),
+        label: t('direction.maskAsCompleted'),
         key: ACTION_ENUM.COMPLETE,
       });
     }
     if (canRead) {
       baseMenu.push({
         icon: <ExportOutlined />,
-        label: t('common.export'),
+        label: t('common.exportQualtricsJSON'),
         key: ACTION_ENUM.EXPORT,
       });
       baseMenu.push({
@@ -134,7 +146,7 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
       });
     }
     return baseMenu;
-  }, [canRead, canUpdate, t]);
+  }, [canRead, canUpdate, isDraftVersion, t]);
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -154,8 +166,13 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
     },
     {
       onSuccess: async () => {
-        // await queryClient.invalidateQueries('getQuestionList');
-        notification.success({ message: t('common.deleteSuccess') });
+        await queryClient.invalidateQueries('getSurveys');
+        notification.success({ message: t('common.updateSuccess') });
+        navigate(
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
+            projectId: params.projectId,
+          }),
+        );
       },
       onError,
     },
@@ -204,17 +221,30 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
     navigate(
       generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
         surveyId: params.surveyId,
+        projectId: params.projectId,
       }) + `?version=${surveyVersion.displayId}`,
     );
-  }, [navigate, params.surveyId, surveyVersion.displayId]);
+  }, [navigate, params, surveyVersion]);
+
   return (
     <Dropdown.Button
       overlay={menu}
-      onClick={changeViewVersion}
       placement="bottomLeft"
       trigger={'click' as any}
-    >
-      {surveyVersion.displayId}
-    </Dropdown.Button>
+      className={'active'}
+      size={'small'}
+      buttonsRender={() => [
+        <Button
+          className={'info-btn'}
+          type={isSelected ? 'primary' : 'default'}
+          onClick={changeViewVersion}
+        >
+          {surveyVersion.displayId}
+        </Button>,
+        <Button className={'info-btn'}>
+          <ThreeDotsIcon style={{ width: 12, height: 12 }} />
+        </Button>,
+      ]}
+    />
   );
 };

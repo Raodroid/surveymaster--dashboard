@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
-import { Button, notification } from 'antd';
+import { Button, Modal, notification } from 'antd';
 import { ControlledInput } from '../../../../../../../common';
 import { INPUT_TYPES } from '../../../../../../../common/input/type';
 import { Formik } from 'formik';
@@ -34,12 +34,42 @@ import {
 import ViewSurveyQuestionList from './ViewSurveyQuestionList';
 import SimpleBar from 'simplebar-react';
 import useParseQueryString from '../../../../../../../../hooks/useParseQueryString';
+const { confirm } = Modal;
 
 export enum SurveyTemplateEnum {
   NEW = 'NEW',
   DUPLICATE = 'DUPLICATE',
   JSON = 'JSON',
 }
+
+const isChangeSurveyQuestionField = (
+  newQuestionValue: questionValueType[],
+  initQuestionValue: questionValueType[],
+): boolean => {
+  console.log(newQuestionValue, initQuestionValue);
+  if (newQuestionValue.length !== initQuestionValue.length) {
+    return true;
+  }
+
+  return newQuestionValue.some((q, index) => {
+    const {
+      questionVersionId: newQuestionVersionId,
+      questionTitle: newQuestionTitle,
+      remark: newRemark,
+    } = q;
+    const {
+      questionVersionId: oldQuestionVersionId,
+      questionTitle: oldQuestionTitle,
+      remark: oldRemark,
+    } = initQuestionValue[index];
+
+    return (
+      newQuestionVersionId !== oldQuestionVersionId ||
+      newRemark !== oldRemark ||
+      newQuestionTitle !== oldQuestionTitle
+    );
+  });
+};
 
 export type questionValueType = ISurveyQuestionDto & {
   type: QuestionType | string;
@@ -57,6 +87,7 @@ export interface IAddSurveyFormValues extends IPostSurveyBodyDto {
     questions: questionValueType[];
   };
   surveyId: string;
+  surveyVersionId?: string;
   questionIdMap?: Record<
     string,
     {
@@ -137,11 +168,11 @@ const SurveyForm: FC = () => {
   const { project, isLoading: isFetchingProject } = useGetProjectByIdQuery(
     params?.projectId,
   );
-
   const isLoading = isFetchingProject || isFetchingSurveyData;
 
   const initialValues = useMemo<IAddSurveyFormValues>(
     () => ({
+      surveyVersionId: currentSurveyVersion?.id,
       createdAt: currentSurveyVersion?.survey?.createdAt,
       version: {
         name: currentSurveyVersion?.name || '',
@@ -192,6 +223,7 @@ const SurveyForm: FC = () => {
 
   const onSuccess = useCallback(
     async res => {
+      console.log({ res });
       await queryClient.invalidateQueries('getProjects');
       await queryClient.invalidateQueries('getSurveyById');
 
@@ -204,8 +236,8 @@ const SurveyForm: FC = () => {
       navigate(
         generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
           projectId: params.projectId,
-          surveyId: res.data.id,
-        }),
+          surveyId: params.surveyId,
+        }) + `?version=${res.data.displayId}`,
       );
     },
     [
@@ -214,6 +246,7 @@ const SurveyForm: FC = () => {
       mutationUploadExcelFile,
       navigate,
       params.projectId,
+      params.surveyId,
       queryClient,
       t,
     ],
@@ -224,7 +257,23 @@ const SurveyForm: FC = () => {
       return SurveyService.createSurvey(data);
     },
     {
-      onSuccess,
+      onSuccess: async res => {
+        await queryClient.invalidateQueries('getProjects');
+        await queryClient.invalidateQueries('getSurveyById');
+
+        if (excelUploadFile)
+          await mutationUploadExcelFile.mutateAsync(res.data.id);
+
+        notification.success({
+          message: t('common.createSuccess'),
+        });
+        navigate(
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
+            projectId: params.projectId,
+            surveyId: res.data.id,
+          }) + `?version=${res.data.versions[0].displayId}`,
+        );
+      },
       onError,
     },
   );
@@ -250,7 +299,7 @@ const SurveyForm: FC = () => {
   );
 
   const onSubmit = useCallback(
-    async (values: IAddSurveyFormValues) => {
+    async (values: IAddSurveyFormValues, formikBag) => {
       const {
         version,
         selectedRowKeys,
@@ -300,7 +349,7 @@ const SurveyForm: FC = () => {
         if (isEditMode) {
           await updateSurveyMutation.mutateAsync({
             ...newValues,
-            surveyVersionId: queryString.version as string,
+            surveyVersionId: currentSurveyVersion?.id as string,
           });
           return;
         }
@@ -308,63 +357,70 @@ const SurveyForm: FC = () => {
         return;
       }
 
-      let transformValue: IPostSurveyBodyDto = {
+      const transformValue: IPostSurveyBodyDto = {
         ...rest,
-        version,
+        version: {
+          ...version,
+          questions: questions.map((q, index) => ({
+            questionVersionId: q.questionVersionId,
+            sort: index + 1,
+            remark: q.remark,
+          })),
+        },
       };
 
       if (isEditMode) {
-        transformValue = {
-          ...transformValue,
-          version: {
-            ...transformValue.version,
-            questions: questions.map((q, index) => ({
-              questionVersionId: q.questionVersionId,
-              sort: index + 1,
-              remark: q.remark,
-            })),
-          },
-        };
+        if (
+          isChangeSurveyQuestionField(
+            questions,
+            initialValues.version.questions,
+          )
+        ) {
+          confirm({
+            icon: null,
+            content: t('common.confirmLogOut'),
+            onOk() {
+              addSurveyMutation.mutateAsync(transformValue);
+            },
+            onCancel() {
+              return;
+            },
+          });
+        }
 
         await updateSurveyMutation.mutateAsync({
-          ...transformValue,
-          surveyVersionId: queryString.version as string,
+          ...transformValue.version,
+          surveyVersionId: currentSurveyVersion?.id as string,
         });
         return;
       }
 
       if (values.template === SurveyTemplateEnum.DUPLICATE) {
         await duplicateSurveyMutation.mutateAsync({
-          ...transformValue,
+          version: {
+            name: transformValue.version?.name,
+            remark: transformValue.version?.remark,
+          },
+          projectId: params.projectId as string,
           surveyId,
         });
         return;
       }
 
       if (values.template === SurveyTemplateEnum.NEW) {
-        transformValue = {
-          ...transformValue,
-          version: {
-            ...transformValue.version,
-            questions: questions.map((q, index) => ({
-              questionVersionId: q.questionVersionId,
-              sort: index + 1,
-              remark: q.remark,
-            })),
-          },
-        };
-
         await addSurveyMutation.mutateAsync(transformValue);
         return;
       }
     },
     [
+      initialValues,
       addSurveyMutation,
+      currentSurveyVersion?.id,
       duplicateSurveyMutation,
       isEditMode,
       isExternalProject,
       navigate,
-      queryString.version,
+      params.projectId,
       updateSurveyMutation,
     ],
   );
@@ -416,7 +472,7 @@ const SurveyForm: FC = () => {
                   )}
                   <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
-                    name="name"
+                    name="version.name"
                     className={className}
                     label={
                       isExternalProject
@@ -426,7 +482,7 @@ const SurveyForm: FC = () => {
                   />
                   <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
-                    name="remark"
+                    name="version.remark"
                     label={t('common.surveyRemarks')}
                     className={className}
                   />

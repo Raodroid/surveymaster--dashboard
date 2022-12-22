@@ -2,9 +2,9 @@ import styled from 'styled-components';
 
 export const SurveyWrapper = styled.div<{ centerLastChild: boolean }>`
   height: 100%;
-  .ant-table-thead .ant-table-cell:nth-last-child(2) {
-    text-align: ${props => (props.centerLastChild ? 'center' : '')};
-  }
+  // .ant-table-thead .ant-table-cell:nth-last-child(2) {
+  //   text-align: ${props => (props.centerLastChild ? 'center' : '')};
+  // }
 `;
 
 export const TableWrapper = styled.div`

@@ -20,11 +20,11 @@ const columns: ColumnsType<ISurvey> = [
   },
   {
     title: 'Title',
-    dataIndex: 'name',
+    dataIndex: ['latestVersion', 'name'],
   },
   {
     title: 'N of Q.',
-    dataIndex: 'numberOfQuestions',
+    dataIndex: ['latestVersion', 'numberOfQuestions'],
   },
 ];
 

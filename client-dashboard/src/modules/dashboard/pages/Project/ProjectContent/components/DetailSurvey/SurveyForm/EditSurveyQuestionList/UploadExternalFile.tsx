@@ -566,7 +566,7 @@ const DisplayAnswer = props => {
           <ControlledInput
             style={{ width: '100%' }}
             inputType={INPUT_TYPES.INPUT}
-            name={`questions[${index}].remark`}
+            name={`version.questions[${index}].remark`}
           />
         ),
       },
@@ -802,7 +802,9 @@ export const DynamicSelect = props => {
   const { t } = useTranslation();
   const { values, setValues, initialValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();
-  const { value } = getFieldMeta<questionValueType>(`questions[${index}]`);
+  const { value } = getFieldMeta<questionValueType>(
+    `version.questions[${index}]`,
+  );
 
   const currQuestionVersionId = value.questionVersionId;
   const currQuestionVersionCreatedAt = value.createdAt;
@@ -908,7 +910,7 @@ export const DynamicSelect = props => {
           style={{ width: '100%' }}
           placeholder={t('common.selectQuestion')}
           disabled
-          name={`questions[${index}].questionTitle`}
+          name={`version.questions[${index}].questionTitle`}
         />
       ) : (
         <ControlledInput
@@ -923,7 +925,7 @@ export const DynamicSelect = props => {
           options={options}
           placeholder={t('common.selectQuestion')}
           onChange={handleOnChange}
-          name={`questions[${index}].questionVersionId`}
+          name={`version.questions[${index}].questionVersionId`}
         />
       )}
     </div>
@@ -947,7 +949,9 @@ const ActionDropDown: FC<{
   const hasNewVersion = rowExpandable(record);
   const { initialValues, setValues, getFieldMeta } =
     useFormikContext<IAddSurveyFormValues>();
-  const { value } = getFieldMeta<questionValueType>(`questions[${index}]`);
+  const { value } = getFieldMeta<questionValueType>(
+    `version.questions[${index}]`,
+  );
 
   const isDirty = useMemo(
     () =>

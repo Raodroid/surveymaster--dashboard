@@ -95,34 +95,35 @@ function Survey() {
         title: 'ID',
         dataIndex: 'displayId',
         key: 'displayId',
+        width: 150,
       },
       {
         title: t('common.surveyTitle'),
-        dataIndex: 'name',
+        dataIndex: ['latestVersion', 'name'],
         key: 'name',
       },
       {
         title: 'N of Questions',
-        dataIndex: 'numberOfQuestions',
+        dataIndex: ['latestVersion', 'numberOfQuestions'],
         key: 'numberOfQuestions',
+        width: 200,
       },
       {
         title: t('common.dateOfCreation'),
         dataIndex: 'createdAt',
         key: 'createdAt',
+        width: 200,
         render: (text: Date) => {
-          return text ? (
-            <div>{moment(text).format(MOMENT_FORMAT.FULL_DATE_FORMAT)}</div>
-          ) : (
-            '--'
-          );
+          return text
+            ? moment(text).format(MOMENT_FORMAT.FULL_DATE_FORMAT)
+            : '--';
         },
       },
       {
         title: t('common.actions'),
         dataIndex: 'actions',
         key: 'actions',
-        // width: 100,
+        width: 100,
         render: (_, record: ISurvey) => (
           <div
             className="flex-center actions"
@@ -143,7 +144,7 @@ function Survey() {
           generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
             projectId: params?.projectId,
             surveyId: record.id,
-          }),
+          }) + `?version=${record.latestVersion.displayId}`,
         ),
     };
   };
@@ -321,7 +322,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
             generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
               projectId: params?.projectId,
               surveyId: record.id,
-            }),
+            }) + `?version=${record?.latestVersion?.displayId}`,
           );
           return;
         }

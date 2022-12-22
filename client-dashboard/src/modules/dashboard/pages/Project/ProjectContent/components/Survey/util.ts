@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import { SurveyService } from '../../../../../../../services';
 import { onError } from '../../../../../../../utils';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import _get from 'lodash/get';
 import { ISurvey, ISurveyVersion } from '../../../../../../../type';
 import useParseQueryString from '../../../../../../../hooks/useParseQueryString';
@@ -12,6 +12,7 @@ export const useGetSurveyById = (
   surveyData: ISurvey;
   isLoading: boolean;
   currentSurveyVersion?: ISurveyVersion;
+  latestVersion?: ISurveyVersion;
 } => {
   const qsParams = useParseQueryString<{ version?: string }>();
 
@@ -28,9 +29,14 @@ export const useGetSurveyById = (
   const surveyData = useMemo<ISurvey>(() => _get(data, 'data', {}), [data]);
 
   const currentSurveyVersion = useMemo<ISurveyVersion | undefined>(
-    () => surveyData.versions?.find(ver => ver.id === qsParams.version),
+    () => surveyData.versions?.find(ver => ver.displayId === qsParams.version),
     [qsParams.version, surveyData.versions],
   );
 
-  return { surveyData, isLoading, currentSurveyVersion };
+  const latestVersion = useMemo<ISurveyVersion | undefined>(
+    () => surveyData?.latestVersion,
+    [surveyData.latestVersion],
+  );
+
+  return { surveyData, isLoading, currentSurveyVersion, latestVersion };
 };
