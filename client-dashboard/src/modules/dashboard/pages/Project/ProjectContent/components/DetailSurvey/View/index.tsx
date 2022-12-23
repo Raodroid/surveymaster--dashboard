@@ -13,26 +13,27 @@ import { useMutation, useQueryClient } from 'react-query';
 import {
   IPostSurveyVersionBodyDto,
   ISurveyVersion,
-  QuestionVersionStatus,
   SurveyVersionStatus,
 } from '../../../../../../../../type';
 import { useCheckScopeEntityDefault } from '../../../../../../../common/hoc';
-import { ROUTE_PATH, SCOPE_CONFIG } from '../../../../../../../../enums';
+import {
+  MOMENT_FORMAT,
+  ROUTE_PATH,
+  SCOPE_CONFIG,
+} from '../../../../../../../../enums';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import {
-  FileIconOutlined,
   PenFilled,
   ThreeDotsIcon,
   TrashOutlined,
 } from '../../../../../../../../icons';
 import { ExportOutlined } from '@ant-design/icons';
 import { MenuDropDownWrapper } from '../../../../../../../../customize-components/styles';
-import {
-  QuestionBankService,
-  SurveyService,
-} from '../../../../../../../../services';
-import { onError } from '../../../../../../../../utils';
+import { SurveyService } from '../../../../../../../../services';
+import { onError, saveBlob } from '../../../../../../../../utils';
 import useParseQueryString from '../../../../../../../../hooks/useParseQueryString';
+import _get from 'lodash/get';
+import moment from 'moment';
 
 function ViewSurvey() {
   const qsParams = useParseQueryString<{ version?: string }>();
@@ -154,8 +155,13 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
     },
     {
       onSuccess: async () => {
-        // await queryClient.invalidateQueries('getQuestionList');
+        await queryClient.invalidateQueries('getSurveys');
         notification.success({ message: t('common.deleteSuccess') });
+        navigate(
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
+            projectId: params.projectId,
+          }),
+        );
       },
       onError,
     },
@@ -192,6 +198,26 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
           break;
         }
         case ACTION_ENUM.EXPORT: {
+          try {
+            const response = await SurveyService.getSurveyFile(
+              record.id as string,
+            );
+            const data: {
+              SurveyElements: any[];
+              SurveyEntry: { SurveyName: string };
+            } = _get(response, 'data', {});
+            const blob = new Blob([JSON.stringify(data, null, 2)], {
+              type: 'application/octet-stream',
+            });
+            saveBlob(
+              blob,
+              `${data.SurveyEntry.SurveyName}-${moment().format(
+                MOMENT_FORMAT.EXPORT,
+              )}.qsf`,
+            );
+          } catch (e) {
+            console.error(e);
+          }
           break;
         }
         case ACTION_ENUM.COMPLETE: {

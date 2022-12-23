@@ -167,6 +167,7 @@ export const useDebounce = (value: string, time: number = 500) => {
 };
 
 export const onError = (error: any) => {
+  console.error(error);
   notification.error({ message: error.response?.data?.message });
 };
 

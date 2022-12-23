@@ -2,7 +2,6 @@ import { AxiosResponse } from 'axios';
 import {
   IGetParams,
   IPostSurveyBodyDto,
-  IPostSurveyBodyDtoExtendId,
   IPostSurveyVersionBodyDto,
 } from 'type';
 import APIService from './base.service';
@@ -16,8 +15,8 @@ export default class SurveyService {
   static getSurveys(params: GetSurveyParams): Promise<AxiosResponse> {
     return APIService.get('/surveys', { params });
   }
-  static getSurveyFile(surveyId: string): Promise<AxiosResponse> {
-    return APIService.get(`/surveys/${surveyId}/file`);
+  static getSurveyFile(surveyVersionId: string): Promise<AxiosResponse> {
+    return APIService.get(`/surveys/version/${surveyVersionId}/file`);
   }
 
   static getSurveyById(id: string | undefined): Promise<AxiosResponse> {
@@ -41,18 +40,17 @@ export default class SurveyService {
   static createSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
     return APIService.post('/surveys', props);
   }
+  static createSurveyVersion(
+    props: IPostSurveyVersionBodyDto,
+  ): Promise<AxiosResponse> {
+    return APIService.post('/surveys/version', props);
+  }
   static duplicateSurvey(
     props: IPostSurveyBodyDto & { surveyId: string },
   ): Promise<AxiosResponse> {
     const { surveyId } = props;
     return APIService.post(`/surveys/${surveyId}/duplicate`, props);
   }
-
-  // static updateSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
-  //   const { surveyId } = props;
-  //   return APIService.put(`/surveys/${surveyId}  `, props);
-  // }
-
   static updateSurvey(
     props: IPostSurveyVersionBodyDto,
   ): Promise<AxiosResponse> {
@@ -83,8 +81,12 @@ export default class SurveyService {
     const { id, file } = payload;
     const formData = new FormData();
     formData.append('file', file);
-    return APIService.post(`/surveys/${id}/survey-results/excel`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return APIService.post(
+      `/surveys/version/${id}/survey-results/excel`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      },
+    );
   }
 }

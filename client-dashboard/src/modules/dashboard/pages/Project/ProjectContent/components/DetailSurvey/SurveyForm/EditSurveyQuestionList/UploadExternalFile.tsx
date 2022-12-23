@@ -502,7 +502,7 @@ const DisplayAnswer = props => {
               <ControlledInput
                 style={{ width: '100%' }}
                 inputType={INPUT_TYPES.INPUT}
-                name={`questions[${index}].parameter`}
+                name={`version.questions[${index}].parameter`}
               />
             </>
           );
@@ -758,7 +758,7 @@ const DisplayAnswer = props => {
           scroll={{ x: size.large }}
           rowSelection={rowSelection}
           columns={columnsFiltered}
-          dataSource={values.version.questions}
+          dataSource={values?.version?.questions}
           pagination={false}
           rowKey={record => record.id as string}
           expandable={{

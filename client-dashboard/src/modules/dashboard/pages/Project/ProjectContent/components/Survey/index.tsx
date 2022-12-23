@@ -39,7 +39,6 @@ function Survey() {
   const navigate = useNavigate();
   const qsParams = useParseQueryString<QsParams>();
   const { t } = useTranslation();
-
   const handleNavigate = useHandleNavigate(initParams);
 
   const formatQsParams = useMemo(() => {
@@ -276,7 +275,9 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
 
   const handleExport = useCallback(async () => {
     try {
-      const response = await SurveyService.getSurveyFile(record.id as string);
+      const response = await SurveyService.getSurveyFile(
+        record.latestVersion?.id as string,
+      );
       const data: {
         SurveyElements: any[];
         SurveyEntry: { SurveyName: string };
@@ -286,12 +287,14 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       });
       saveBlob(
         blob,
-        `${data.SurveyEntry.SurveyName}-${moment().format('DD/MM/YYYY')}.qsf`,
+        `${data.SurveyEntry.SurveyName}-${moment().format(
+          MOMENT_FORMAT.EXPORT,
+        )}.qsf`,
       );
     } catch (e) {
       console.error(e);
     }
-  }, [record.id]);
+  }, [record.latestVersion?.id]);
 
   const handleDeleteSurveyResults = useCallback(() => {
     deleteSurveyResultMutation.mutateAsync();

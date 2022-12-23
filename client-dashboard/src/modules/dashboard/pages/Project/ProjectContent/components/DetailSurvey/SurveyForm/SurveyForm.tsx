@@ -33,7 +33,6 @@ import {
 } from '../../../../../../../common/validate/validate';
 import ViewSurveyQuestionList from './ViewSurveyQuestionList';
 import SimpleBar from 'simplebar-react';
-import useParseQueryString from '../../../../../../../../hooks/useParseQueryString';
 const { confirm } = Modal;
 
 export enum SurveyTemplateEnum {
@@ -46,7 +45,6 @@ const isChangeSurveyQuestionField = (
   newQuestionValue: questionValueType[],
   initQuestionValue: questionValueType[],
 ): boolean => {
-  console.log(newQuestionValue, initQuestionValue);
   if (newQuestionValue.length !== initQuestionValue.length) {
     return true;
   }
@@ -156,7 +154,6 @@ const createQuestionMap = (
 };
 
 const SurveyForm: FC = () => {
-  const queryString = useParseQueryString<{ version?: string }>();
   const params = useParams<{ projectId?: string; surveyId?: string }>();
   const projectId = params.projectId || '';
   const { t } = useTranslation();
@@ -223,12 +220,8 @@ const SurveyForm: FC = () => {
 
   const onSuccess = useCallback(
     async res => {
-      console.log({ res });
       await queryClient.invalidateQueries('getProjects');
       await queryClient.invalidateQueries('getSurveyById');
-
-      if (excelUploadFile)
-        await mutationUploadExcelFile.mutateAsync(res.data.id);
 
       notification.success({
         message: t(`common.${isEditMode ? 'updateSuccess' : 'createSuccess'}`),
@@ -240,16 +233,7 @@ const SurveyForm: FC = () => {
         }) + `?version=${res.data.displayId}`,
       );
     },
-    [
-      excelUploadFile,
-      isEditMode,
-      mutationUploadExcelFile,
-      navigate,
-      params.projectId,
-      params.surveyId,
-      queryClient,
-      t,
-    ],
+    [isEditMode, navigate, params.projectId, params.surveyId, queryClient, t],
   );
 
   const addSurveyMutation = useMutation(
@@ -258,11 +242,37 @@ const SurveyForm: FC = () => {
     },
     {
       onSuccess: async res => {
+        const newVersion = res.data.versions[0];
+
+        if (excelUploadFile) {
+          await mutationUploadExcelFile.mutateAsync(newVersion.id);
+        }
         await queryClient.invalidateQueries('getProjects');
         await queryClient.invalidateQueries('getSurveyById');
 
-        if (excelUploadFile)
-          await mutationUploadExcelFile.mutateAsync(res.data.id);
+        notification.success({
+          message: t('common.createSuccess'),
+        });
+
+        navigate(
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
+            projectId: params.projectId,
+            surveyId: newVersion.surveyId,
+          }) + `?version=${newVersion.displayId}`,
+        );
+      },
+      onError,
+    },
+  );
+
+  const addSurveyVersionMutation = useMutation(
+    (data: IPostSurveyVersionBodyDto) => {
+      return SurveyService.createSurveyVersion(data);
+    },
+    {
+      onSuccess: async res => {
+        await queryClient.invalidateQueries('getProjects');
+        await queryClient.invalidateQueries('getSurveyById');
 
         notification.success({
           message: t('common.createSuccess'),
@@ -299,7 +309,7 @@ const SurveyForm: FC = () => {
   );
 
   const onSubmit = useCallback(
-    async (values: IAddSurveyFormValues, formikBag) => {
+    async (values: IAddSurveyFormValues) => {
       const {
         version,
         selectedRowKeys,
@@ -320,9 +330,9 @@ const SurveyForm: FC = () => {
       if (isExternalProject) {
         const newValues = {
           ...rest,
-          status: SurveyVersionStatus.COMPLETED,
           version: {
             ...version,
+            status: SurveyVersionStatus.COMPLETED,
             questions: version.questions.reduce(
               (res: ISurveyQuestionDto[], q) => {
                 if (
@@ -347,8 +357,30 @@ const SurveyForm: FC = () => {
         };
 
         if (isEditMode) {
+          if (
+            isChangeSurveyQuestionField(
+              questions,
+              initialValues.version.questions,
+            )
+          ) {
+            confirm({
+              icon: null,
+              content:
+                'You are changing questions of completed survey, if you press OK, this survey will be created as new external survey',
+              onOk() {
+                addSurveyMutation.mutateAsync(newValues);
+                return;
+              },
+              onCancel() {
+                return;
+              },
+            });
+
+            return;
+          }
+
           await updateSurveyMutation.mutateAsync({
-            ...newValues,
+            ...newValues.version,
             surveyVersionId: currentSurveyVersion?.id as string,
           });
           return;
@@ -371,6 +403,7 @@ const SurveyForm: FC = () => {
 
       if (isEditMode) {
         if (
+          currentSurveyVersion?.status === 'COMPLETED' &&
           isChangeSurveyQuestionField(
             questions,
             initialValues.version.questions,
@@ -378,14 +411,19 @@ const SurveyForm: FC = () => {
         ) {
           confirm({
             icon: null,
-            content: t('common.confirmLogOut'),
+            content:
+              'You are changing questions of completed survey, if you press OK, this survey will be created as new version',
             onOk() {
-              addSurveyMutation.mutateAsync(transformValue);
+              addSurveyVersionMutation.mutateAsync({
+                ...transformValue.version,
+                surveyVersionId: currentSurveyVersion.id as string,
+              });
             },
             onCancel() {
               return;
             },
           });
+          return;
         }
 
         await updateSurveyMutation.mutateAsync({
@@ -413,15 +451,17 @@ const SurveyForm: FC = () => {
       }
     },
     [
-      initialValues,
-      addSurveyMutation,
-      currentSurveyVersion?.id,
-      duplicateSurveyMutation,
-      isEditMode,
       isExternalProject,
+      isEditMode,
       navigate,
-      params.projectId,
+      addSurveyMutation,
       updateSurveyMutation,
+      currentSurveyVersion?.id,
+      currentSurveyVersion?.status,
+      initialValues.version.questions,
+      addSurveyVersionMutation,
+      duplicateSurveyMutation,
+      params.projectId,
     ],
   );
 
