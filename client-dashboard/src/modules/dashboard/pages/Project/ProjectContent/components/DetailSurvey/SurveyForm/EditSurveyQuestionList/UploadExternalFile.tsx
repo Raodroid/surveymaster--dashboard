@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
-import { Badge, Button, Menu, notification, Spin, Table, Upload } from 'antd';
+import { Badge, Button, Menu, Spin, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { GroupSurveyButtonWrapper, UploadExternalFileWrapper } from './style';
 import * as XLSX from 'xlsx';
@@ -24,8 +24,8 @@ import {
   ProjectTypes,
   QuestionVersionStatus,
 } from 'type';
-import { useInfiniteQuery, useMutation } from 'react-query';
-import { AdminService, QuestionBankService, SurveyService } from 'services';
+import { useInfiniteQuery } from 'react-query';
+import { QuestionBankService } from 'services';
 import { ControlledInput } from '../../../../../../../../common';
 import { INPUT_TYPES } from '../../../../../../../../common/input/type';
 import styled from 'styled-components';
@@ -45,7 +45,6 @@ import templateVariable from '../../../../../../../../../app/template-variables.
 import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
 import { useGetProjectByIdQuery } from '../../../../../util';
 import { useParams } from 'react-router';
-import { PostPutMember } from '../../../../../../../../../interfaces';
 
 const initNewRowValue: questionValueType = {
   id: '',
@@ -704,7 +703,10 @@ const DisplayAnswer = props => {
   const setDataTable = (questions: questionValueType[]) => {
     setValues(s => ({
       ...s,
-      questions,
+      version: {
+        ...s.version,
+        questions,
+      },
     }));
   };
 

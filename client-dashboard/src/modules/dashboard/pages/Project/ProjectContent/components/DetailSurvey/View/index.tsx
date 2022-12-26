@@ -1,5 +1,5 @@
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { ViewSurveyWrapper } from './styles';
 import SurveyForm from '../SurveyForm/SurveyForm';
@@ -7,12 +7,13 @@ import { projectRoutePath, useGetProjectByIdQuery } from '../../../../util';
 import ProjectHeader from '../../Header';
 import { projectSurveyParams } from '../index';
 import { useGetSurveyById } from '../../Survey/util';
-import { Button, Dropdown, notification } from 'antd';
+import { Button, Dropdown, Modal, notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import {
-  IPostSurveyVersionBodyDto,
+  IPutSurveyVersionBodyDtoExtendId,
   ISurveyVersion,
+  ProjectTypes,
   SurveyVersionStatus,
 } from '../../../../../../../../type';
 import { useCheckScopeEntityDefault } from '../../../../../../../common/hoc';
@@ -30,11 +31,12 @@ import {
 import { ExportOutlined } from '@ant-design/icons';
 import { MenuDropDownWrapper } from '../../../../../../../../customize-components/styles';
 import { SurveyService } from '../../../../../../../../services';
-import { onError, saveBlob } from '../../../../../../../../utils';
+import { onError, saveBlob, useToggle } from '../../../../../../../../utils';
 import useParseQueryString from '../../../../../../../../hooks/useParseQueryString';
 import _get from 'lodash/get';
 import moment from 'moment';
 
+const { confirm } = Modal;
 function ViewSurvey() {
   const qsParams = useParseQueryString<{ version?: string }>();
   const params = useParams<projectSurveyParams>();
@@ -79,6 +81,7 @@ function ViewSurvey() {
     ],
     [params.projectId, params.surveyId, qsParams.version],
   );
+  const [isCallingAPI, toggleIsCallingAPI] = useToggle();
 
   return (
     <>
@@ -87,10 +90,13 @@ function ViewSurvey() {
       <ViewSurveyWrapper>
         <div className={'version-section'}>
           {surveyData.versions?.map(ver => (
-            <DropDownMenuButton surveyVersion={ver} />
+            <DropDownMenuButton
+              surveyVersion={ver}
+              callbackLoading={toggleIsCallingAPI}
+            />
           ))}
         </div>
-        <SurveyForm />
+        <SurveyForm isLoading={isCallingAPI} />
       </ViewSurveyWrapper>
     </>
   );
@@ -100,6 +106,7 @@ export default ViewSurvey;
 
 interface IDropDownMenuButton {
   surveyVersion: ISurveyVersion;
+  callbackLoading: () => void;
 }
 
 enum ACTION_ENUM {
@@ -109,16 +116,20 @@ enum ACTION_ENUM {
 }
 
 const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
-  const { surveyVersion } = props;
+  const { surveyVersion, callbackLoading } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams<{ surveyId?: string; projectId?: string }>();
   const qsParams = useParseQueryString<{ version?: string }>();
 
+  const { project } = useGetProjectByIdQuery(params?.projectId);
+
   const isSelected = qsParams.version === surveyVersion.displayId;
 
   const isDraftVersion = surveyVersion?.status === SurveyVersionStatus.DRAFT;
+
+  const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
   const { canUpdate, canRead } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.SURVEYS,
@@ -135,11 +146,14 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
       });
     }
     if (canRead) {
-      baseMenu.push({
-        icon: <ExportOutlined />,
-        label: t('common.exportQualtricsJSON'),
-        key: ACTION_ENUM.EXPORT,
-      });
+      if (!isDraftVersion && !isExternalProject) {
+        baseMenu.push({
+          icon: <ExportOutlined />,
+          label: t('common.exportQualtricsJSON'),
+          key: ACTION_ENUM.EXPORT,
+        });
+      }
+
       baseMenu.push({
         icon: <TrashOutlined />,
         label: t('common.delete'),
@@ -147,15 +161,17 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
       });
     }
     return baseMenu;
-  }, [canRead, canUpdate, isDraftVersion, t]);
+  }, [canRead, canUpdate, isDraftVersion, isExternalProject, t]);
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
+      callbackLoading();
       return SurveyService.deleteSurveyVersion(data);
     },
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveys');
+        callbackLoading();
         notification.success({ message: t('common.deleteSuccess') });
         navigate(
           generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
@@ -163,16 +179,21 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
           }),
         );
       },
-      onError,
+      onError: e => {
+        callbackLoading();
+        onError(e);
+      },
     },
   );
   const completeMutation = useMutation(
-    (data: IPostSurveyVersionBodyDto) => {
+    (data: IPutSurveyVersionBodyDtoExtendId) => {
+      callbackLoading();
       return SurveyService.updateSurvey(data);
     },
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveys');
+        callbackLoading();
         notification.success({ message: t('common.updateSuccess') });
         navigate(
           generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
@@ -180,7 +201,10 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
           }),
         );
       },
-      onError,
+      onError: e => {
+        callbackLoading();
+        onError(e);
+      },
     },
   );
 
@@ -192,13 +216,22 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
       item: React.ReactInstance;
     }) => {
       const { key, record } = props;
+
       switch (key) {
         case ACTION_ENUM.DELETE: {
-          await deleteMutation.mutateAsync({ id: record.id as string });
+          confirm({
+            icon: null,
+            content: t('common.confirmDeleteSurveyVersion'),
+            onOk() {
+              deleteMutation.mutateAsync({ id: record.id as string });
+            },
+          });
+
           break;
         }
         case ACTION_ENUM.EXPORT: {
           try {
+            callbackLoading();
             const response = await SurveyService.getSurveyFile(
               record.id as string,
             );
@@ -215,23 +248,31 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
                 MOMENT_FORMAT.EXPORT,
               )}.qsf`,
             );
-          } catch (e) {
-            console.error(e);
+          } catch (error) {
+            console.error({ error });
+          } finally {
+            callbackLoading();
           }
           break;
         }
         case ACTION_ENUM.COMPLETE: {
-          await completeMutation.mutateAsync({
-            surveyVersionId: record.id as string,
-            name: record.name,
-            questions: record.questions,
-            status: SurveyVersionStatus.COMPLETED,
+          confirm({
+            icon: null,
+            content: t('common.confirmCompleteSurveyVersion'),
+            onOk() {
+              completeMutation.mutateAsync({
+                surveyVersionId: record.id as string,
+                name: record.name,
+                questions: record.questions,
+                status: SurveyVersionStatus.COMPLETED,
+              });
+            },
           });
           break;
         }
       }
     },
-    [completeMutation, deleteMutation],
+    [callbackLoading, completeMutation, deleteMutation, t],
   );
 
   const menu = (

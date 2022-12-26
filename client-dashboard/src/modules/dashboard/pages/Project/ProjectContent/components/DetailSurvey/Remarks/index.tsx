@@ -13,11 +13,7 @@ import { generatePath, useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
-import {
-  IPostSurveyBodyDto,
-  IPostSurveyVersionBodyDto,
-  ISurveyVersion,
-} from 'type';
+import { IPutSurveyVersionBodyDtoExtendId, ISurveyVersion } from 'type';
 import { onError } from 'utils';
 import { projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
@@ -38,11 +34,9 @@ function Remarks() {
   const navigate = useNavigate();
   const params = useParams<projectSurveyParams>();
 
-  const {
-    surveyData: survey,
-    isLoading: isSurveyLoading,
-    currentSurveyVersion,
-  } = useGetSurveyById(params.surveyId);
+  const { isLoading: isSurveyLoading, currentSurveyVersion } = useGetSurveyById(
+    params.surveyId,
+  );
   const { project } = useGetProjectByIdQuery(params.projectId);
 
   const routes: IBreadcrumbItem[] = useMemo(
@@ -69,7 +63,8 @@ function Remarks() {
   );
 
   const mutationUpdateRemarks = useMutation(
-    (payload: IPostSurveyVersionBodyDto) => SurveyService.updateSurvey(payload),
+    (payload: IPutSurveyVersionBodyDtoExtendId) =>
+      SurveyService.updateSurvey(payload),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('getSurveyById');
@@ -87,7 +82,7 @@ function Remarks() {
 
   const handleSubmit = useCallback(
     (payload: ISurveyVersion) => {
-      const updateSurveyPayload: IPostSurveyVersionBodyDto = {
+      const updateSurveyPayload: IPutSurveyVersionBodyDtoExtendId = {
         surveyVersionId: payload.id as string,
         questions: payload?.questions?.map(elm => {
           return {
@@ -105,15 +100,6 @@ function Remarks() {
     },
     [mutationUpdateRemarks, params.surveyId],
   );
-
-  // const initialValue = useMemo<ISurvey>(() => {
-  //   return {
-  //     ...survey,
-  //     createdAt: moment(survey?.createdAt).format(
-  //       MOMENT_FORMAT.FULL_DATE_FORMAT,
-  //     ),
-  //   };
-  // }, [survey]);
 
   return (
     <>

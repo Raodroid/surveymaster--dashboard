@@ -1,4 +1,4 @@
-import { IGetParams, IQuestionVersion } from 'type';
+import { IQuestionVersion } from 'type';
 import { UserPayload } from '../redux/user';
 
 export enum ProjectTypes {
@@ -85,23 +85,15 @@ export interface IPostSurveyBodyDto {
   version?: ISurveyVersionBaseDto;
 }
 
-export interface IPostSurveyBodyDtoExtendId extends IPutSurveyBodyDto {
-  surveyVersionId?: string;
-}
-
 export interface IPostSurveyVersionBodyDto extends ISurveyVersionBaseDto {
-  surveyVersionId: string;
+  surveyId: string;
 }
 
 export interface IPutSurveyVersionBodyDto extends ISurveyVersionBaseDto {}
 
-export interface IPutSurveyBodyDto {
-  name: string;
-  remark?: string;
-  questions: ISurveyQuestionDto[];
-}
-export interface IPutSurveyBodyDtoExtendId extends IPutSurveyBodyDto {
-  id?: string;
+export interface IPutSurveyVersionBodyDtoExtendId
+  extends IPutSurveyVersionBodyDto {
+  surveyVersionId?: string;
 }
 
 export enum surveyActionType {
@@ -117,9 +109,3 @@ export enum surveyActionType {
   CHANGE_SURVEY_REMARK = 'CHANGE_SURVEY_REMARK',
   CHANGE_ORDER_QUESTION = 'CHANGE_ORDER_QUESTION',
 }
-
-export type GetListSurveyDto = IGetParams & {
-  projectId: string;
-  minNumberOfQuestions?: number;
-  maxNumberOfQuestions?: number;
-};

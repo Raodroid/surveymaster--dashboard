@@ -3,6 +3,7 @@ import {
   IGetParams,
   IPostSurveyBodyDto,
   IPostSurveyVersionBodyDto,
+  IPutSurveyVersionBodyDtoExtendId,
 } from 'type';
 import APIService from './base.service';
 
@@ -52,7 +53,7 @@ export default class SurveyService {
     return APIService.post(`/surveys/${surveyId}/duplicate`, props);
   }
   static updateSurvey(
-    props: IPostSurveyVersionBodyDto,
+    props: IPutSurveyVersionBodyDtoExtendId,
   ): Promise<AxiosResponse> {
     const { surveyVersionId, ...rest } = props;
     return APIService.put(`/surveys/version/${surveyVersionId}`, rest);
@@ -70,9 +71,13 @@ export default class SurveyService {
 
   //-------------------------
 
-  static deleteSurveyResults(payload: { id: string }): Promise<AxiosResponse> {
+  static deleteSurveyById(payload: { id: string }): Promise<AxiosResponse> {
     const { id } = payload;
-    return APIService.delete(`/surveys/${id}/survey-results`);
+    return APIService.delete(`/surveys/${id}`);
+  }
+  static restoreSurveyById(payload: { id: string }): Promise<AxiosResponse> {
+    const { id } = payload;
+    return APIService.post(`/surveys/${id}/restore`);
   }
   static uploadExcelFile(payload: {
     id: string;
