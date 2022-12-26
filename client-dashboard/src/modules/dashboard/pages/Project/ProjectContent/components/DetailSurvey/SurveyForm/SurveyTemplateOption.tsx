@@ -82,7 +82,7 @@ export const TemplateOption = () => {
     () => ({
       selectedRowKeys: x,
       onChange: (selectedRowKeys: React.Key[], selectedRows: ISurvey[]) => {
-        setFieldValue('surveyId', selectedRows[0].id);
+        setFieldValue('duplicateSurveyId', selectedRows[0].id);
         setX([selectedRows[0].id as string]);
       },
     }),
@@ -93,7 +93,7 @@ export const TemplateOption = () => {
     e => {
       e.preventDefault();
       if (e.target.value) setFieldValue('template', e.target.value);
-      setFieldValue('surveyId', undefined);
+      setFieldValue('duplicateSurveyId', undefined);
     },
     [setFieldValue],
   );
@@ -108,10 +108,6 @@ export const TemplateOption = () => {
         <Space direction="vertical" style={{ width: '100%' }}>
           <Radio value={SurveyTemplateEnum.NEW} className={'full-width'}>
             {t(`surveyTemplateEnum.${SurveyTemplateEnum.NEW}`)}
-          </Radio>
-
-          <Radio value={SurveyTemplateEnum.JSON} className={'full-width'}>
-            {t(`surveyTemplateEnum.${SurveyTemplateEnum.JSON}`)}
           </Radio>
           <Radio
             value={SurveyTemplateEnum.DUPLICATE}

@@ -171,6 +171,7 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveys');
+        await queryClient.invalidateQueries('getSurveyById');
         callbackLoading();
         notification.success({ message: t('common.deleteSuccess') });
         navigate(
@@ -193,6 +194,7 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveys');
+        await queryClient.invalidateQueries('getSurveyById');
         callbackLoading();
         notification.success({ message: t('common.updateSuccess') });
         navigate(

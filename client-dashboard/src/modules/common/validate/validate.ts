@@ -256,7 +256,7 @@ const SURVEY_FORM_SCHEMA = {
 };
 
 export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
-  surveyId: Yup.string().when('template', {
+  duplicateSurveyId: Yup.string().when('template', {
     is: SurveyTemplateEnum.DUPLICATE,
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
@@ -264,30 +264,15 @@ export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
   version: Yup.object().shape({
     ...SURVEY_FORM_SCHEMA,
     questions: Yup.array()
-      .when('template', {
-        is: SurveyTemplateEnum.NEW,
-        then: Yup.array()
-          .of(
-            Yup.object().shape({
-              questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
-              remark: Yup.string(),
-              type: Yup.string().required(INVALID_FIELDS.REQUIRED),
-              category: Yup.string().required(INVALID_FIELDS.REQUIRED),
-            }),
-          )
-          .min(1),
-      })
-      .when('template', {
-        is: SurveyTemplateEnum.JSON,
-        then: Yup.array().of(
-          Yup.object().shape({
-            questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
-            remark: Yup.string(),
-            type: Yup.string().required(INVALID_FIELDS.REQUIRED),
-            category: Yup.string().required(INVALID_FIELDS.REQUIRED),
-          }),
-        ),
-      }),
+      .min(1)
+      .of(
+        Yup.object().shape({
+          questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          remark: Yup.string(),
+          type: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          category: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        }),
+      ),
   }),
 });
 export const SURVEY_EXTERNAL_FORM_SCHEMA = Yup.object().shape({

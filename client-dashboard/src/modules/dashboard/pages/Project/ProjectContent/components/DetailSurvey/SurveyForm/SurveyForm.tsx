@@ -40,7 +40,6 @@ const { confirm } = Modal;
 export enum SurveyTemplateEnum {
   NEW = 'NEW',
   DUPLICATE = 'DUPLICATE',
-  JSON = 'JSON',
 }
 
 const isChangeSurveyQuestionField = (
@@ -86,6 +85,7 @@ export interface IAddSurveyFormValues extends IPostSurveyBodyDto {
   version: Omit<ISurveyVersionBaseDto, 'questions'> & {
     questions: questionValueType[];
   };
+  duplicateSurveyId?: string;
   surveyId: string;
   surveyVersionId?: string;
   questionIdMap?: Record<
@@ -163,8 +163,11 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { isLoading: isFetchingSurveyData, currentSurveyVersion } =
-    useGetSurveyById(params?.surveyId);
+  const {
+    isLoading: isFetchingSurveyData,
+    currentSurveyVersion,
+    surveyData,
+  } = useGetSurveyById(params?.surveyId);
   const { project, isLoading: isFetchingProject } = useGetProjectByIdQuery(
     params?.projectId,
   );
@@ -178,7 +181,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
         questions: transformQuestionData(currentSurveyVersion) || [],
         remark: currentSurveyVersion?.remark || '',
       },
-      surveyId: currentSurveyVersion?.survey?.id || '',
+      surveyId: surveyData.displayId || '',
       template: SurveyTemplateEnum.NEW,
       questionIdMap: createQuestionMap(currentSurveyVersion),
       projectId,
@@ -319,6 +322,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
         questionIdMap,
         template,
         surveyId,
+        duplicateSurveyId,
         ...rest
       } = values;
 
@@ -451,7 +455,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
               remark: transformValue.version?.remark,
             },
             projectId: params.projectId as string,
-            surveyId,
+            surveyId: duplicateSurveyId as string,
           });
           return;
         }
