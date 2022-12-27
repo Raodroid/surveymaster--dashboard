@@ -4,7 +4,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 12
+      nodejs: 14
    
     commands:
         # install npm
@@ -36,7 +36,7 @@ phases:
   post_build:
     on-failure: ABORT
     commands:
-        - echo "Complete build, now deploy to s3 and create invalidation for cloudfront - yarn deploy:${STAGE} &&  yarn invalidate:${STAGE}"
+        - echo "Complete build, now deploy to s3 and create invalidation for cloudfront - by yarn deploy:${STAGE} &&  yarn invalidate:${STAGE}"
         - yarn "deploy:${STAGE}"
         - yarn "invalidate:${STAGE}"
 
