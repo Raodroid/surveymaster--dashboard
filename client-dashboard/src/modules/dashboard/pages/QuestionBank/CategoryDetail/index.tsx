@@ -40,12 +40,10 @@ import {
 } from '../../../../../icons';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
 import { MenuDropDownWrapper } from '../../../../../customize-components/styles';
-import {
-  ScopeActionArray,
-  useCheckScopeEntityDefault,
-} from '../../../../common/hoc';
-import { SCOPE_CONFIG } from '../../../../../enums/user';
+import { useCheckScopeEntityDefault } from '../../../../common/hoc';
+import { SCOPE_CONFIG } from '../../../../../enums';
 import SimpleBar from 'simplebar-react';
+import { generatePath } from 'react-router';
 
 const { Item } = Menu;
 
@@ -53,6 +51,7 @@ enum ACTION_ENUM {
   DELETE = 'DELETE',
   RESTORE = 'RESTORE',
   DUPLICATE = 'DUPLICATE',
+  EDIT = 'EDIT',
 }
 
 interface ICategoryDetailContext {
@@ -280,7 +279,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   const queryClient = useQueryClient();
   const context = useContext(CategoryDetailContext);
   const setLoading = context?.setLoading;
-
+  const navigate = useNavigate();
   const { canCreate, canDelete, canUpdate } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTIONS,
   );
@@ -340,9 +339,18 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           await restoreMutation.mutateAsync({ id: record.id as string });
           break;
         }
+        case ACTION_ENUM.EDIT: {
+          navigate(
+            generatePath(
+              ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.EDIT_QUESTION,
+              { questionId: record.id },
+            ) + `?version=${record.latestVersion.displayId}`,
+          );
+          break;
+        }
       }
     },
-    [deleteMutation, restoreMutation, duplicateMutation],
+    [deleteMutation, duplicateMutation, restoreMutation, navigate],
   );
 
   const items = useMemo(() => {
@@ -374,6 +382,13 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
               {t('common.duplicateQuestion')}
             </Item>
           </Popconfirm>,
+        );
+      }
+      if (canUpdate) {
+        baseMenu.push(
+          <Item key={ACTION_ENUM.EDIT} icon={<PenFilled />}>
+            {t('common.editQuestion')}
+          </Item>,
         );
       }
       if (canDelete) {
