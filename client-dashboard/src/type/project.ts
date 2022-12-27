@@ -1,4 +1,4 @@
-import { IGetParams, IQuestionVersion } from 'type';
+import { IQuestionVersion } from 'type';
 import { UserPayload } from '../redux/user';
 
 export enum ProjectTypes {
@@ -34,15 +34,25 @@ export interface ISurveyQuestion {
   parameter?: string;
 }
 
+export interface ISurveyVersion {
+  id?: string;
+  displayId: string;
+  name: string;
+  remark?: string;
+  questions?: ISurveyQuestion[];
+  numberOfQuestions: number;
+  survey?: ISurvey;
+  status?: SurveyVersionStatus;
+}
+
 export interface ISurvey {
   id?: string;
   displayId: string;
   projectId: string;
-  name: string;
-  remark?: string;
+  latestVersion?: ISurveyVersion;
+  latestCompletedVersion?: ISurveyVersion;
+  versions?: ISurveyVersion[];
   project?: IProject;
-  questions?: ISurveyQuestion[];
-  numberOfQuestions: number;
 
   createdBy: UserPayload;
   updatedBy?: UserPayload;
@@ -52,6 +62,10 @@ export interface ISurvey {
   deletedAt?: Date | string | null;
 }
 
+export enum SurveyVersionStatus {
+  DRAFT = 'DRAFT',
+  COMPLETED = 'COMPLETED',
+}
 export interface ISurveyQuestionDto {
   questionVersionId: string;
   sort?: number;
@@ -59,21 +73,27 @@ export interface ISurveyQuestionDto {
   parameter?: string;
 }
 
-export interface IPostSurveyBodyDto {
-  name: string;
-  projectId: string;
+export interface ISurveyVersionBaseDto {
+  name?: string;
   remark?: string;
+  status?: SurveyVersionStatus;
   questions?: ISurveyQuestionDto[];
-  surveyId?: string;
 }
 
-export interface IPutSurveyBodyDto {
-  name: string;
-  remark?: string;
-  questions: ISurveyQuestionDto[];
+export interface IPostSurveyBodyDto {
+  projectId: string;
+  version?: ISurveyVersionBaseDto;
 }
-export interface IPutSurveyBodyDtoExtendId extends IPutSurveyBodyDto {
-  id?: string;
+
+export interface IPostSurveyVersionBodyDto extends ISurveyVersionBaseDto {
+  surveyId: string;
+}
+
+export interface IPutSurveyVersionBodyDto extends ISurveyVersionBaseDto {}
+
+export interface IPutSurveyVersionBodyDtoExtendId
+  extends IPutSurveyVersionBodyDto {
+  surveyVersionId?: string;
 }
 
 export enum surveyActionType {
@@ -89,9 +109,3 @@ export enum surveyActionType {
   CHANGE_SURVEY_REMARK = 'CHANGE_SURVEY_REMARK',
   CHANGE_ORDER_QUESTION = 'CHANGE_ORDER_QUESTION',
 }
-
-export type GetListSurveyDto = IGetParams & {
-  projectId: string;
-  minNumberOfQuestions?: number;
-  maxNumberOfQuestions?: number;
-};

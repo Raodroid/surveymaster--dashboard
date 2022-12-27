@@ -5,6 +5,7 @@ export const MOMENT_FORMAT = {
   FULL_DATE_FORMAT_WITH_SLASH: 'MM/DD/YYYY',
   TIME_ONLY: 'HH:mm',
   DOB: 'DD/MM/YYYY',
+  EXPORT: 'YYYYMMDD_hhmmss',
 };
 export const SORT_TYPE = {
   DESC: 'DESC',

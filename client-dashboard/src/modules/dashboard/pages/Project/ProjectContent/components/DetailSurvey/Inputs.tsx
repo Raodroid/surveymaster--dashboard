@@ -34,20 +34,18 @@ function Inputs(props: {
               : t('common.surveyTitle')
           }
           className={`surveyTitle ${disabled ? 'view-mode' : ''}`}
-          // disabled={disabled}
           inputType={INPUT_TYPES.INPUT}
         />
-        {!hideDate ? (
+        {!hideDate && (
           <ControlledInput
             name="createdAt"
             label="Date Created"
-            // disabled={disabled}
             inputType={INPUT_TYPES.INPUT}
             className={disabled ? 'view-mode' : undefined}
           />
-        ) : null}
+        )}
       </div>
-      {!hideRemarks ? (
+      {!hideRemarks && (
         <ControlledInput
           name="remark"
           label="Survey Remarks"
@@ -55,7 +53,7 @@ function Inputs(props: {
           // disabled={disabled}
           inputType={INPUT_TYPES.TEXTAREA}
         />
-      ) : null}
+      )}
 
       <Divider type="vertical" className="divider" />
 

@@ -1,5 +1,5 @@
 import { ExportOutlined } from '@ant-design/icons';
-import { notification, Table } from 'antd';
+import { Modal, notification, Table } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
 import { MenuDropDownWrapper } from 'customize-components/styles';
@@ -7,7 +7,12 @@ import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { MOMENT_FORMAT, SCOPE_CONFIG } from 'enums';
 import useHandleNavigate from 'hooks/useHandleNavigate';
 import useParseQueryString from 'hooks/useParseQueryString';
-import { FileIconOutlined, PenFilled, TrashOutlined } from 'icons';
+import {
+  FileIconOutlined,
+  PenFilled,
+  RollbackOutlined,
+  TrashOutlined,
+} from 'icons';
 import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import StyledPagination from 'modules/dashboard/components/StyledPagination';
@@ -26,7 +31,7 @@ import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import ProjectHeader from '../Header';
 import { QsParams } from '../ProjectFilter';
 import { SurveyWrapper, TableWrapper } from './style';
-
+const { confirm } = Modal;
 const initParams: IGetParams = {
   q: '',
   page: 1,
@@ -39,7 +44,6 @@ function Survey() {
   const navigate = useNavigate();
   const qsParams = useParseQueryString<QsParams>();
   const { t } = useTranslation();
-
   const handleNavigate = useHandleNavigate(initParams);
 
   const formatQsParams = useMemo(() => {
@@ -95,34 +99,35 @@ function Survey() {
         title: 'ID',
         dataIndex: 'displayId',
         key: 'displayId',
+        width: 150,
       },
       {
         title: t('common.surveyTitle'),
-        dataIndex: 'name',
+        dataIndex: ['latestVersion', 'name'],
         key: 'name',
       },
       {
         title: 'N of Questions',
-        dataIndex: 'numberOfQuestions',
+        dataIndex: ['latestVersion', 'numberOfQuestions'],
         key: 'numberOfQuestions',
+        width: 200,
       },
       {
         title: t('common.dateOfCreation'),
         dataIndex: 'createdAt',
         key: 'createdAt',
+        width: 200,
         render: (text: Date) => {
-          return text ? (
-            <div>{moment(text).format(MOMENT_FORMAT.FULL_DATE_FORMAT)}</div>
-          ) : (
-            '--'
-          );
+          return text
+            ? moment(text).format(MOMENT_FORMAT.FULL_DATE_FORMAT)
+            : '--';
         },
       },
       {
         title: t('common.actions'),
         dataIndex: 'actions',
         key: 'actions',
-        // width: 100,
+        width: 100,
         render: (_, record: ISurvey) => (
           <div
             className="flex-center actions"
@@ -136,17 +141,24 @@ function Survey() {
     [t],
   );
 
-  const onRow = record => {
-    return {
-      onClick: () =>
-        navigate(
-          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
-            projectId: params?.projectId,
-            surveyId: record.id,
-          }),
-        ),
-    };
-  };
+  const onRow = useMemo(
+    () =>
+      qsParams.isDeleted === 'true'
+        ? undefined
+        : record => {
+            return {
+              onClick: () =>
+                navigate(
+                  generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+                    projectId: params?.projectId,
+                    surveyId: record.id,
+                  }) + `?version=${record.latestVersion.displayId}`,
+                ),
+            };
+          },
+    [navigate, params?.projectId, qsParams.isDeleted],
+  );
+
   const wrapperRef = useRef<any>();
 
   return (
@@ -191,9 +203,10 @@ interface IDropDownMenu {
 
 enum ACTION_ENUM {
   DUPLICATE_SURVEY = 'DUPLICATE_SURVEY',
+  RESTORE = 'RESTORE',
   EDIT = 'EDIT',
   EXPORT = 'EXPORT',
-  DELETE_SURVEY_RESULTS = 'DELETE_SURVEY_RESULTS',
+  DELETE = 'DELETE',
 }
 
 const DropDownMenu: FC<IDropDownMenu> = props => {
@@ -207,12 +220,12 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
   );
   const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
-  const { canUpdate, canRead } = useCheckScopeEntityDefault(
+  const { canUpdate, canRead, canDelete } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTIONS,
   );
 
   const duplicateMutation = useMutation(
-    (data: IPostSurveyBodyDto) => {
+    (data: IPostSurveyBodyDto & { surveyId: string }) => {
       return SurveyService.duplicateSurvey(data as any);
     },
     {
@@ -224,13 +237,25 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     },
   );
 
-  const deleteSurveyResultMutation = useMutation(
-    () => SurveyService.deleteSurveyResults({ id: record.id as string }),
+  const deleteSurvey = useMutation(
+    () => SurveyService.deleteSurveyById({ id: record.id as string }),
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveys');
         notification.success({
-          message: t('common.deleteSurveyResultsSuccess'),
+          message: t('common.deleteSuccess'),
+        });
+      },
+      onError,
+    },
+  );
+  const restoreSurvey = useMutation(
+    () => SurveyService.restoreSurveyById({ id: record.id as string }),
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getSurveys');
+        notification.success({
+          message: t('common.restoreSuccess'),
         });
       },
       onError,
@@ -252,6 +277,13 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         label: t('common.duplicateSurvey'),
         key: ACTION_ENUM.DUPLICATE_SURVEY,
       });
+      if (record.deletedAt) {
+        baseMenu.push({
+          icon: <RollbackOutlined />,
+          label: t('common.restoreSurvey'),
+          key: ACTION_ENUM.RESTORE,
+        });
+      }
     }
 
     if (!isExternalProject && canRead) {
@@ -261,21 +293,30 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         key: ACTION_ENUM.EXPORT,
       });
     }
-    if (isExternalProject) {
+    if (canDelete && !record.deletedAt) {
       baseMenu.push({
         icon: <TrashOutlined />,
-        disabled: true,
-        label: t('common.deleteSurveyResults'),
-        key: ACTION_ENUM.DELETE_SURVEY_RESULTS,
+        label: t('common.deleteSurvey'),
+        key: ACTION_ENUM.DELETE,
       });
     }
 
     return baseMenu;
-  }, [canRead, canUpdate, isExternalProject, isFetchingProject, t]);
+  }, [
+    canDelete,
+    canRead,
+    canUpdate,
+    isExternalProject,
+    isFetchingProject,
+    record.deletedAt,
+    t,
+  ]);
 
   const handleExport = useCallback(async () => {
     try {
-      const response = await SurveyService.getSurveyFile(record.id as string);
+      const response = await SurveyService.getSurveyFile(
+        record.latestVersion?.id as string,
+      );
       const data: {
         SurveyElements: any[];
         SurveyEntry: { SurveyName: string };
@@ -285,16 +326,14 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       });
       saveBlob(
         blob,
-        `${data.SurveyEntry.SurveyName}-${moment().format('DD/MM/YYYY')}.qsf`,
+        `${data.SurveyEntry.SurveyName}-${moment().format(
+          MOMENT_FORMAT.EXPORT,
+        )}.qsf`,
       );
     } catch (e) {
       console.error(e);
     }
-  }, [record.id]);
-
-  const handleDeleteSurveyResults = useCallback(() => {
-    deleteSurveyResultMutation.mutateAsync();
-  }, [deleteSurveyResultMutation]);
+  }, [record.latestVersion?.id]);
 
   const handleSelect = useCallback(
     async (props: {
@@ -307,7 +346,9 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       switch (key) {
         case ACTION_ENUM.DUPLICATE_SURVEY: {
           await duplicateMutation.mutateAsync({
-            name: `${record.name} (Copy)`,
+            version: {
+              name: `${record?.latestVersion?.name} (Copy)`,
+            },
             projectId: params.projectId as string,
             surveyId: record.id as string,
           });
@@ -319,7 +360,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
             generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
               projectId: params?.projectId,
               surveyId: record.id,
-            }),
+            }) + `?version=${record?.latestVersion?.displayId}`,
           );
           return;
         }
@@ -327,18 +368,37 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
           await handleExport();
           return;
         }
-        case ACTION_ENUM.DELETE_SURVEY_RESULTS: {
-          await handleDeleteSurveyResults();
+        case ACTION_ENUM.DELETE: {
+          confirm({
+            icon: null,
+            content: t('common.confirmDeleteSurvey'),
+            onOk() {
+              deleteSurvey.mutateAsync();
+            },
+          });
+          return;
+        }
+        case ACTION_ENUM.RESTORE: {
+          confirm({
+            icon: null,
+            content: t('common.confirmRestoreSurvey'),
+            onOk() {
+              restoreSurvey.mutateAsync();
+            },
+          });
+
           return;
         }
       }
     },
     [
+      deleteSurvey,
       duplicateMutation,
-      handleDeleteSurveyResults,
       handleExport,
       navigate,
       params.projectId,
+      restoreSurvey,
+      t,
     ],
   );
 

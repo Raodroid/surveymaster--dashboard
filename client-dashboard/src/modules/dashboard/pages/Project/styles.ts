@@ -12,10 +12,6 @@ export const ProjectWrapper = styled(Content)`
   height: 100%;
   width: 100%;
 
-  @media only screen and (${screenSize.medium}) {
-    flex-direction: column;
-  }
-
   section:last-child {
     display: flex;
     flex-direction: column;
@@ -47,5 +43,12 @@ export const ProjectWrapper = styled(Content)`
   .ant-input-disabled,
   .ant-input-affix-wrapper-disabled {
     cursor: default;
+  }
+
+  @media only screen and (${screenSize.medium}) {
+    flex-direction: column;
+    section:last-child {
+      overflow: unset;
+    }
   }
 `;

@@ -15,6 +15,8 @@ import {
   ProjectFilterWrapper,
 } from './Header/styles';
 import qs from 'qs';
+import { matchPath } from 'react-router-dom';
+import { ROUTE_PATH } from '../../../../../../enums';
 
 export interface IFilter {
   counter?: number;
@@ -80,7 +82,6 @@ const defaultInit = {
   createdFrom: '',
   createdTo: '',
 };
-
 function FilterOverlay(props: IFilter) {
   const { counter, setCounter } = props;
   const navigate = useNavigate();
@@ -88,6 +89,25 @@ function FilterOverlay(props: IFilter) {
   const { t } = useTranslation();
 
   const qsParams = useParseQueryString<QsParams>();
+  const location = useLocation();
+
+  const isShowProjectTable = matchPath(
+    {
+      path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT,
+      caseSensitive: true,
+      end: true,
+    },
+    location.pathname,
+  );
+
+  const isShowSurveyTable = matchPath(
+    {
+      path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY,
+      caseSensitive: true,
+      end: true,
+    },
+    location.pathname,
+  );
 
   const initialValues: FilterParams = useMemo(() => {
     return {
@@ -131,6 +151,16 @@ function FilterOverlay(props: IFilter) {
     navigate(pathname + '?' + qs.stringify(payloadParams));
   };
 
+  const optionName = useMemo<string>(() => {
+    if (isShowSurveyTable) {
+      return 'Show Deleted Surveys';
+    }
+    if (isShowProjectTable) {
+      return 'Show Deleted Projects';
+    }
+    return '';
+  }, [isShowProjectTable, isShowSurveyTable]);
+
   return (
     <ProjectFilterOverlayWrapper>
       <Formik
@@ -157,7 +187,7 @@ function FilterOverlay(props: IFilter) {
                 <ControlledInput
                   name="isDeleted"
                   inputType={INPUT_TYPES.CHECKBOX}
-                  children={'Show Deleted Projects'}
+                  children={optionName}
                 />
                 <div className="dates-filter">
                   <ControlledInput

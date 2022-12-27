@@ -134,7 +134,7 @@ const AddQuestionFormCategoryModal: FC<
   }, [onCancel]);
 
   const handleAddQuestions = useCallback(async () => {
-    let sort = values.questions.length + 1;
+    let sort = values.version.questions.length + 1;
     const newValues = selectedQuestionIdList.reduce(
       (
         result: Array<
@@ -152,7 +152,7 @@ const AddQuestionFormCategoryModal: FC<
         ) as IQuestion;
 
         if (
-          values.questions.some(
+          values.version.questions.some(
             q => q.id === question?.id, // check if chosen version is in the same question but different version
           )
         ) {
@@ -174,14 +174,17 @@ const AddQuestionFormCategoryModal: FC<
       },
       [],
     );
-    setFieldValue('questions', [...values.questions, ...newValues]);
+    setFieldValue('version.questions', [
+      ...values.version.questions,
+      ...newValues,
+    ]);
     onCancel();
   }, [
     onCancel,
     questions,
     selectedQuestionIdList,
     setFieldValue,
-    values.questions,
+    values.version.questions,
   ]);
 
   return (

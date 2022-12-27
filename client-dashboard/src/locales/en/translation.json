@@ -20,7 +20,9 @@
     "foods": "Foods"
   },
   "common": {
+    "restoreSurvey": "Restore Survey",
     "deleteSurveyResults": "Delete Survey Results",
+    "deleteSurvey": "Delete Survey",
     "selectCategory": "Select Category",
     "descriptionResetPassWord": "Enter your email address associated with this account and we will send you a password reset link",
     "duplicateQuestion": "Duplicate Question",
@@ -266,6 +268,11 @@
     "confirmRestoreSample": "Do you really want to restore this sample?",
     "confirmDeleteAllSample": "Do you really want to delete the whole samples?",
     "confirmDeleteSample": "Are you sure delete this samples?",
+    "confirmDeleteSurveyVersion": "Are you sure to delete the survey version?",
+    "confirmDeleteSurvey": "Are you sure to delete the survey?",
+    "confirmRestoreSurvey": "Are you sure to restore the survey?",
+    "confirmCompleteSurveyVersion": "Are you sure to complete the survey version?",
+    "confirmCompleteSurvey": "Are you sure to complete the survey?",
     "createNew": "Create New",
     "manageAddress": "Manage Address",
     "changePasswordDefault": "Change password default",

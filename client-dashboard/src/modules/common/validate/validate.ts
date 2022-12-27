@@ -256,29 +256,16 @@ const SURVEY_FORM_SCHEMA = {
 };
 
 export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
-  ...SURVEY_FORM_SCHEMA,
-  surveyId: Yup.string().when('template', {
+  duplicateSurveyId: Yup.string().when('template', {
     is: SurveyTemplateEnum.DUPLICATE,
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
   template: Yup.string().required(INVALID_FIELDS.REQUIRED),
-  questions: Yup.array()
-    .when('template', {
-      is: SurveyTemplateEnum.NEW,
-      then: Yup.array()
-        .of(
-          Yup.object().shape({
-            questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
-            remark: Yup.string(),
-            type: Yup.string().required(INVALID_FIELDS.REQUIRED),
-            category: Yup.string().required(INVALID_FIELDS.REQUIRED),
-          }),
-        )
-        .min(1),
-    })
-    .when('template', {
-      is: SurveyTemplateEnum.JSON,
-      then: Yup.array().of(
+  version: Yup.object().shape({
+    ...SURVEY_FORM_SCHEMA,
+    questions: Yup.array()
+      .min(1)
+      .of(
         Yup.object().shape({
           questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
           remark: Yup.string(),
@@ -286,26 +273,28 @@ export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
           category: Yup.string().required(INVALID_FIELDS.REQUIRED),
         }),
       ),
-    }),
+  }),
 });
 export const SURVEY_EXTERNAL_FORM_SCHEMA = Yup.object().shape({
-  ...SURVEY_FORM_SCHEMA,
   selectedRowKeys: Yup.array().of(Yup.string()).min(1).required(INVALID_FIELDS),
-  questions: Yup.array()
-    .of(
-      Yup.object().test(
-        'questionNotValid',
-        'questions field is not valid',
-        function (value, context) {
-          const { selectedRowKeys } = context?.['from']?.[1]?.value;
-          if (selectedRowKeys?.some(key => key === value?.id)) {
-            return !!value.questionVersionId && !!value.parameter;
-          }
-          return true;
-        },
-      ),
-    )
-    .min(1),
+  version: Yup.object().shape({
+    ...SURVEY_FORM_SCHEMA,
+    questions: Yup.array()
+      .of(
+        Yup.object().test(
+          'questionNotValid',
+          'questions field is not valid',
+          function (value, context) {
+            const { selectedRowKeys } = context?.['from']?.[1]?.value;
+            if (selectedRowKeys?.some(key => key === value?.id)) {
+              return !!value.questionVersionId && !!value.parameter;
+            }
+            return true;
+          },
+        ),
+      )
+      .min(1),
+  }),
 });
 
 export const PROJECT_FORM_SCHEMA = Yup.object().shape({

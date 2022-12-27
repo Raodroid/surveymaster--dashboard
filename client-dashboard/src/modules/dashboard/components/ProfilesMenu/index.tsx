@@ -34,6 +34,7 @@ const ProfilesMenu = () => {
       },
     });
   }, [dispatch, t]);
+
   const handleChangeEmail = useCallback(() => {
     setIsShowModal(true);
   }, []);
