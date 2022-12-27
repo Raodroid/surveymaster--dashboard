@@ -1,0 +1,47 @@
+version: 0.2
+
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+   
+    commands:
+        # install npm
+      - cd ${REPO_PATH}
+      - yarn config set cache-folder /root/.yarn-cache
+      - yarn install
+  pre_build:
+    on-failure: ABORT
+    commands:
+      - export ENV_FILE=".env.${STAGE}"
+      - echo "Starting checking type by typescript" 
+      - yarn checkTs
+      - echo "Starting check linting by eslint"
+      - yarn lint
+      - echo "Starting run unit test"
+      - yarn test:cover
+      - echo "Create env file for build script"
+      - aws secretsmanager get-secret-value --secret-id $ENV_BUILD --region $SECRET_REGION --output text > .temp.env
+      - sed '1d' .temp.env > .temp1.env
+      - head -n -2 .temp1.env > $ENV_FILE && rm -rf .temp.env && rm -rf .temp1.env
+      - echo "Build env file completed"
+      - cat $ENV_FILE
+  build:
+    on-failure: ABORT
+    commands:
+        # run build script
+        - yarn "build:${STAGE}"
+
+  post_build:
+    on-failure: ABORT
+    commands:
+        - echo "Complete build, now deploy to s3 and create invalidation for cloudfront - yarn deploy:${STAGE} &&  yarn invalidate:${STAGE}"
+        - yarn "deploy:${STAGE}"
+        - yarn "invalidate:${STAGE}"
+
+cache:
+  paths:
+   - 'client-dashboard/node_module/**/*'
+   - /root/.cache/yarn/**/*
+   - /root/.yarn-cache/**/*
