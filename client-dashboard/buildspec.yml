@@ -19,8 +19,6 @@ phases:
       - yarn checkTs
       - echo "Starting check linting by eslint"
       - yarn lint
-      - echo "Starting run unit test"
-      - yarn test:cover
       - echo "Create env file for build script"
       - aws secretsmanager get-secret-value --secret-id $ENV_BUILD --region $SECRET_REGION --output text > .temp.env
       - sed '1d' .temp.env > .temp1.env
