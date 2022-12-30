@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ISurveyQuestion, ISurveyVersion } from 'type';
 import Remark from './Remark';
 import { QuestionRemarksWrapper } from './styles';
+import { useMemo } from 'react';
 
 const columns: ColumnsType<ISurveyQuestion> = [
   {
@@ -20,11 +21,19 @@ const columns: ColumnsType<ISurveyQuestion> = [
 function QuestionRemarks() {
   const { values } = useFormikContext<ISurveyVersion>();
   const { t } = useTranslation();
+
+  const dataSource = useMemo(
+    () =>
+      (values?.questions || [])?.sort(
+        (a, b) => Number(a.sort) - Number(b.sort),
+      ),
+    [values?.questions],
+  );
   return (
     <QuestionRemarksWrapper>
       <div className="title">{t('common.questionRemarks')}:</div>
       <Table
-        dataSource={values?.questions}
+        dataSource={dataSource}
         columns={columns}
         pagination={false}
         showHeader={false}

@@ -62,7 +62,7 @@ function Inputs(props: {
         {t('common.surveyParameters')}:
       </div>
       <ControlledInput
-        name="displayId"
+        name="displaySurveyId"
         label="ID"
         type="text"
         className="surveyId view-mode"

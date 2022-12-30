@@ -2,36 +2,46 @@ import { Divider, Form } from 'antd';
 import { Formik } from 'formik';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { projectRoutePath } from 'modules/dashboard/pages/Project/util';
+import {
+  projectRoutePath,
+  useGetProjectByIdQuery,
+} from 'modules/dashboard/pages/Project/util';
 import moment from 'moment';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
 import { projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
-import Inputs from '../Inputs';
-import { useGetSurveyDetail } from '../utils';
 import ActionsHistory from './ActionsHistory';
-import QuestionList from './QuestionList';
 import { ActionsHistoryContentWrapper, ActionsHistoryWrapper } from './styles';
+import { useGetSurveyById } from '../../Survey/util';
+import { ISurvey, ProjectTypes } from '../../../../../../../../type';
+import { ControlledInput } from '../../../../../../../common';
+import { INPUT_TYPES } from '../../../../../../../common/input/type';
+
+interface IActionHistory extends ISurvey {
+  displaySurveyId: string; // init value for Inputs component
+}
 
 function ActionHistory() {
   const params = useParams<projectSurveyParams>();
   const { t } = useTranslation();
-
-  const { project, survey, isSurveyLoading } = useGetSurveyDetail();
+  const { surveyData, isLoading, currentSurveyVersion } = useGetSurveyById(
+    params.surveyId,
+  );
+  const { project } = useGetProjectByIdQuery();
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
       {
-        name: project?.data?.name || '...',
+        name: project?.name || '...',
         href: generatePath(projectRoutePath.SURVEY, {
           projectId: params.projectId,
         }),
       },
       {
-        name: survey?.data.name || '...',
+        name: currentSurveyVersion?.name || '...',
         href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
           projectId: params.projectId,
           surveyId: params.surveyId,
@@ -42,15 +52,22 @@ function ActionHistory() {
         href: projectRoutePath.DETAIL_SURVEY.HISTORY,
       },
     ],
-    [params, survey, project, t],
+    [
+      project?.name,
+      params.projectId,
+      params.surveyId,
+      currentSurveyVersion?.name,
+      t,
+    ],
   );
 
-  const initialValue = useMemo(() => {
+  const initialValue = useMemo<IActionHistory>(() => {
     return {
-      ...survey?.data,
-      createdAt: moment(survey?.data?.createdAt).format('DD.MM'),
+      ...surveyData,
+      displaySurveyId: surveyData.displayId,
+      createdAt: moment(surveyData?.createdAt).format('DD.MM'),
     };
-  }, [survey]);
+  }, [surveyData]);
 
   const handleSubmit = () => {};
 
@@ -58,7 +75,7 @@ function ActionHistory() {
     <>
       <ProjectHeader routes={routes} />
       <ActionsHistoryWrapper>
-        <CustomSpinSuspense spinning={isSurveyLoading}>
+        <CustomSpinSuspense spinning={isLoading}>
           <Formik
             initialValues={initialValue}
             onSubmit={handleSubmit}
@@ -71,11 +88,24 @@ function ActionHistory() {
                 onFinish={handleFinish}
               >
                 <SimpleBar style={{ height: '100%' }}>
-                  <Inputs disabled hideRemarks />
                   <ActionsHistoryContentWrapper>
                     <ActionsHistory />
                     <Divider type="vertical" className="divider" />
-                    <QuestionList questions={survey?.data.questions} />
+                    <div className={'survey-info'}>
+                      <div className="title">
+                        {project.type === ProjectTypes.EXTERNAL
+                          ? t('common.external')
+                          : null}{' '}
+                        {t('common.surveyParameters')}:
+                      </div>
+                      <ControlledInput
+                        name="displaySurveyId"
+                        label="ID"
+                        type="text"
+                        className="surveyId view-mode"
+                        inputType={INPUT_TYPES.INPUT}
+                      />
+                    </div>
                   </ActionsHistoryContentWrapper>
                 </SimpleBar>
               </Form>

@@ -1,5 +1,5 @@
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { ViewSurveyWrapper } from './styles';
 import SurveyForm from '../SurveyForm/SurveyForm';
@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import {
   IPutSurveyVersionBodyDtoExtendId,
+  ISurveyQuestion,
   ISurveyVersion,
   ProjectTypes,
   SurveyVersionStatus,
@@ -35,10 +36,10 @@ import { onError, saveBlob, useToggle } from '../../../../../../../../utils';
 import useParseQueryString from '../../../../../../../../hooks/useParseQueryString';
 import _get from 'lodash/get';
 import moment from 'moment';
+import { useLocation } from 'react-router-dom';
 
 const { confirm } = Modal;
 function ViewSurvey() {
-  const qsParams = useParseQueryString<{ version?: string }>();
   const params = useParams<projectSurveyParams>();
 
   const { project } = useGetProjectByIdQuery(params.projectId);
@@ -62,24 +63,29 @@ function ViewSurvey() {
     [params?.projectId, project.name, currentSurveyVersion?.name],
   );
 
+  const paramMeter = useMemo(
+    () => ({
+      projectId: params.projectId,
+      surveyId: params.surveyId,
+    }),
+    [params.projectId, params.surveyId],
+  );
+
+  const location = useLocation();
+  const queryString = location.search;
+
   const links: string[] = useMemo(
     () => [
-      generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
-        projectId: params.projectId,
-        surveyId: params.surveyId,
-      }) + `?version=${qsParams.version}`,
+      generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, paramMeter) +
+        queryString,
 
-      generatePath(projectRoutePath.DETAIL_SURVEY.HISTORY, {
-        projectId: params.projectId,
-        surveyId: params.surveyId,
-      }) + `?version=${qsParams.version}`,
+      generatePath(projectRoutePath.DETAIL_SURVEY.HISTORY, paramMeter) +
+        queryString,
 
-      generatePath(projectRoutePath.DETAIL_SURVEY.REMARKS, {
-        projectId: params.projectId,
-        surveyId: params.surveyId,
-      }) + `?version=${qsParams.version}`,
+      generatePath(projectRoutePath.DETAIL_SURVEY.REMARKS, paramMeter) +
+        queryString,
     ],
-    [params.projectId, params.surveyId, qsParams.version],
+    [paramMeter, queryString],
   );
   const [isCallingAPI, toggleIsCallingAPI] = useToggle();
 
@@ -115,7 +121,7 @@ enum ACTION_ENUM {
   DELETE = 'DELETE',
 }
 
-const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
+export const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
   const { surveyVersion, callbackLoading } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -162,6 +168,8 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
     }
     return baseMenu;
   }, [canRead, canUpdate, isDraftVersion, isExternalProject, t]);
+
+  const location = useLocation();
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -265,8 +273,9 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
               completeMutation.mutateAsync({
                 surveyVersionId: record.id as string,
                 name: record.name,
-                questions: record.questions,
+                questions: record.questions as ISurveyQuestion[],
                 status: SurveyVersionStatus.COMPLETED,
+                remark: record.remark || '',
               });
             },
           });
@@ -285,15 +294,20 @@ const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
       items={items}
     />
   );
-
   const changeViewVersion = useCallback(() => {
     navigate(
-      generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
+      generatePath(location.pathname, {
         surveyId: params.surveyId,
         projectId: params.projectId,
       }) + `?version=${surveyVersion.displayId}`,
     );
-  }, [navigate, params, surveyVersion]);
+  }, [
+    location.pathname,
+    navigate,
+    params.projectId,
+    params.surveyId,
+    surveyVersion.displayId,
+  ]);
 
   return (
     <Dropdown.Button

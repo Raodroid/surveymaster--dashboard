@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { screenSize } from '../../../../../../../../enums';
 
 export const ViewSurveyWrapper = styled.div`
   flex: 1;

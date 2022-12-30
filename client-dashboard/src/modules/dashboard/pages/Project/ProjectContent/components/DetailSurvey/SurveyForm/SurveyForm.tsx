@@ -35,6 +35,7 @@ import {
 import ViewSurveyQuestionList from './ViewSurveyQuestionList';
 import SimpleBar from 'simplebar-react';
 import { useToggle } from '../../../../../../../../utils';
+
 const { confirm } = Modal;
 
 export enum SurveyTemplateEnum {
@@ -180,6 +181,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
         name: currentSurveyVersion?.name || '',
         questions: transformQuestionData(currentSurveyVersion) || [],
         remark: currentSurveyVersion?.remark || '',
+        status: currentSurveyVersion?.status,
       },
       surveyId: surveyData.displayId || '',
       template: SurveyTemplateEnum.NEW,
@@ -189,7 +191,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
         q => q.questionVersion?.questionId as string,
       ),
     }),
-    [currentSurveyVersion, projectId],
+    [currentSurveyVersion, projectId, surveyData.displayId],
   );
 
   const editSurveyRouteMath = useMatch({
@@ -365,7 +367,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
 
           if (isEditMode) {
             if (
-              currentSurveyVersion?.status === 'COMPLETED' &&
+              currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
               isChangeSurveyQuestionField(
                 questions,
                 initialValues.version.questions,
@@ -373,8 +375,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
             ) {
               confirm({
                 icon: null,
-                content:
-                  'You are changing questions of completed survey, if you press OK, this survey will be created as a new external version',
+                content: t('common.confirmCreateNewExternalSurveyVersion'),
                 onOk() {
                   addSurveyVersionMutation.mutateAsync({
                     surveyId: params.surveyId as string,
@@ -394,6 +395,10 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
             await updateSurveyMutation.mutateAsync({
               ...newValues.version,
               surveyVersionId: currentSurveyVersion?.id as string,
+              name: newValues.version?.name || '',
+              questions: newValues.version?.questions || [],
+              status: newValues.version?.status || SurveyVersionStatus.DRAFT,
+              remark: newValues.version.remark || null,
             });
             return;
           }
@@ -421,7 +426,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
 
         if (isEditMode) {
           if (
-            currentSurveyVersion?.status === 'COMPLETED' &&
+            currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
             isChangeSurveyQuestionField(
               questions,
               initialValues.version.questions,
@@ -429,8 +434,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
           ) {
             confirm({
               icon: null,
-              content:
-                'You are changing questions of completed survey, if you press OK, this survey will be created as a new version',
+              content: t('common.confirmCreateNewSurveyVersion'),
               onOk() {
                 addSurveyVersionMutation.mutateAsync({
                   surveyId: params.surveyId as string,
@@ -444,6 +448,10 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
           await updateSurveyMutation.mutateAsync({
             ...transformValue.version,
             surveyVersionId: currentSurveyVersion?.id as string,
+            name: transformValue.version?.name || '',
+            questions: transformValue.version?.questions || [],
+            status: transformValue.version?.status || SurveyVersionStatus.DRAFT,
+            remark: transformValue.version?.remark || null,
           });
           return;
         }
@@ -474,10 +482,11 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
       isExternalProject,
       isEditMode,
       addSurveyMutation,
+      currentSurveyVersion?.status,
+      currentSurveyVersion?.id,
       initialValues.version.questions,
       updateSurveyMutation,
-      currentSurveyVersion?.id,
-      currentSurveyVersion?.status,
+      t,
       addSurveyVersionMutation,
       params.surveyId,
       params.projectId,
@@ -551,7 +560,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                     }
                   />
                   <ControlledInput
-                    inputType={INPUT_TYPES.INPUT}
+                    inputType={INPUT_TYPES.TEXTAREA}
                     name="version.remark"
                     label={t('common.surveyRemarks')}
                     className={className}
