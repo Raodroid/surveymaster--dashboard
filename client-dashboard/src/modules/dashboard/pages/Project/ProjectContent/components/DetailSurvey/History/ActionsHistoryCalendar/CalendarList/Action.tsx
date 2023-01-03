@@ -7,6 +7,7 @@ import { ActionWrapper } from './styles';
 function Action(props: { action: IAction; today?: boolean }) {
   const { action, today = false } = props;
   const { t } = useTranslation();
+
   const actionText = useHandleActionType(action);
 
   if (!action) return <></>;

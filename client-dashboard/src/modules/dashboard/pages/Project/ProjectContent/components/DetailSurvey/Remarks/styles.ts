@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 
 export const RemarksWrapper = styled.div`
+  .version-section {
+    padding: 40px 40px 0 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
   .footer {
     height: 76px;
     background: white;

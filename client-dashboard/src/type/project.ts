@@ -43,6 +43,9 @@ export interface ISurveyVersion {
   numberOfQuestions: number;
   survey?: ISurvey;
   status?: SurveyVersionStatus;
+  createdAt?: Date | string;
+  updatedAt?: Date | string | null;
+  deletedAt?: Date | string | null;
 }
 
 export interface ISurvey {
@@ -75,7 +78,7 @@ export interface ISurveyQuestionDto {
 
 export interface ISurveyVersionBaseDto {
   name?: string;
-  remark?: string;
+  remark?: string | null;
   status?: SurveyVersionStatus;
   questions?: ISurveyQuestionDto[];
 }
@@ -89,7 +92,12 @@ export interface IPostSurveyVersionBodyDto extends ISurveyVersionBaseDto {
   surveyId: string;
 }
 
-export interface IPutSurveyVersionBodyDto extends ISurveyVersionBaseDto {}
+export interface IPutSurveyVersionBodyDto extends ISurveyVersionBaseDto {
+  name: string;
+  remark: string | null;
+  status: SurveyVersionStatus;
+  questions: ISurveyQuestionDto[];
+}
 
 export interface IPutSurveyVersionBodyDtoExtendId
   extends IPutSurveyVersionBodyDto {
@@ -98,14 +106,17 @@ export interface IPutSurveyVersionBodyDtoExtendId
 
 export enum surveyActionType {
   SURVEY_CLOSE = 'SURVEY_CLOSE',
-  SURVEY_CREATED = 'SURVEY_CREATED',
   SURVEY_ACTIVATE = 'SURVEY_ACTIVATE',
-
+  SURVEY_VERSION_CREATED = 'SURVEY_VERSION_CREATED',
+  SURVEY_VERSION_CLOSE = 'SURVEY_VERSION_CLOSE',
+  SURVEY_VERSION_ACTIVATE = 'SURVEY_VERSION_ACTIVATE',
+  CHANGE_SURVEY_VERSION_NAME = 'CHANGE_SURVEY_VERSION_NAME',
+  CHANGE_SURVEY_VERSION_REMARK = 'CHANGE_SURVEY_VERSION_REMARK',
+  CHANGE_SURVEY_VERSION_STATUS = 'CHANGE_SURVEY_VERSION_STATUS',
   ADD_QUESTION = 'ADD_QUESTION',
-  UPDATE_QUESTION = 'UPDATE_QUESTION',
   REMOVE_QUESTION = 'REMOVE_QUESTION',
-
-  CHANGE_SURVEY_NAME = 'CHANGE_SURVEY_NAME',
-  CHANGE_SURVEY_REMARK = 'CHANGE_SURVEY_REMARK',
   CHANGE_ORDER_QUESTION = 'CHANGE_ORDER_QUESTION',
+  UPDATE_VERSION_QUESTION = 'UPDATE_VERSION_QUESTION',
+  // CHANGE_PERSON_IN_CHARGE = 'CHANGE_PERSON_IN_CHARGE',
+  // ADD_QUESTION_BY_ADD_CATEGORY = 'ADD_QUESTION_BY_ADD_CATEGORY',
 }

@@ -3,10 +3,13 @@ import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import moment from 'moment';
 import { memo, useMemo } from 'react';
-import { useGetAllActionsHistory, useGetSurveyDetail } from '../../../utils';
+import { useGetAllActionsHistory } from '../../../utils';
 import { CalendarScrollbarWrapper, MonthsWrapper } from '../styles';
 import Month from './Month';
 import Thumb from './Thumb';
+import { useGetSurveyById } from '../../../../Survey/util';
+import { useParams } from 'react-router';
+import { projectSurveyParams } from '../../../index';
 
 export enum ACTIONS_HISTORY_ID {
   MONTHS = 'actions-history-months',
@@ -15,12 +18,13 @@ export enum ACTIONS_HISTORY_ID {
 
 function CalendarScrollbar() {
   const { histories } = useGetAllActionsHistory();
-  const { survey } = useGetSurveyDetail();
+  const params = useParams<projectSurveyParams>();
+  const { surveyData } = useGetSurveyById(params.surveyId);
 
   const months = useMemo(() => {
-    if (!survey) return [];
+    if (!surveyData) return [];
 
-    const dateStart = moment(survey?.data.createdAt)
+    const dateStart = moment(surveyData?.createdAt)
       .startOf('month')
       .startOf('day');
     const dateEnd = moment();
@@ -30,10 +34,10 @@ function CalendarScrollbar() {
       dateStart.add(1, 'month');
     }
     return months.reverse();
-  }, [survey]);
+  }, [surveyData]);
 
   const monthsHaveData = useMemo(() => {
-    const months = histories?.data.data.map(action =>
+    const months = histories?.map(action =>
       moment(action.createdAt).format('MMM.YYYY'),
     );
     return [...new Set(months)];
@@ -46,7 +50,7 @@ function CalendarScrollbar() {
           <Input disabled name="today" value="Today" />
         </div>
         <MonthsWrapper id={ACTIONS_HISTORY_ID.MONTHS_WRAPPER}>
-          {survey ? <Thumb /> : null}
+          {surveyData ? <Thumb /> : null}
 
           <div className="months" id={ACTIONS_HISTORY_ID.MONTHS}>
             {months.map((month: string, index: number) => {

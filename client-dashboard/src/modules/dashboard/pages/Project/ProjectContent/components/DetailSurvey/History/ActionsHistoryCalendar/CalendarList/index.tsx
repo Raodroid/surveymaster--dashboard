@@ -7,9 +7,12 @@ import { useMemo } from 'react';
 import SimpleBar from 'simplebar-react';
 import { surveyActionType } from 'type';
 import { QsParams } from '../../../../ProjectFilter';
-import { useGetAllActionsHistory, useGetSurveyDetail } from '../../../utils';
+import { useGetAllActionsHistory } from '../../../utils';
 import Action from './Action';
 import { CalendarListWrapper } from './styles';
+import { useGetSurveyById } from '../../../../Survey/util';
+import { useParams } from 'react-router';
+import { projectSurveyParams } from '../../../index';
 
 const initialAction: IAction = {
   actionType: '',
@@ -28,23 +31,23 @@ const initialAction: IAction = {
 
 function CalendarList() {
   const qsParams = useParseQueryString<QsParams>();
-
-  const { survey } = useGetSurveyDetail();
+  const params = useParams<projectSurveyParams>();
+  const { surveyData } = useGetSurveyById(params.surveyId);
   const { histories, isGetHistoryLoading } = useGetAllActionsHistory();
 
   const createAction = useMemo<IAction>(() => {
-    if (!histories || !survey) return initialAction;
-    const actions = histories?.data.data.filter(
-      action => action.createdAt === survey.data.createdAt,
+    if (!histories || !surveyData) return initialAction;
+    const actions = histories?.filter(action =>
+      moment(action.createdAt).isSame(surveyData?.createdAt),
     );
     return actions.find(
-      action => action.actionType === surveyActionType.SURVEY_CREATED,
-    );
-  }, [histories, survey]);
+      action => action.actionType === surveyActionType.SURVEY_VERSION_CREATED,
+    ) as IAction;
+  }, [histories, surveyData]);
 
   const todayAction = useMemo<IAction>(() => {
     return (
-      histories?.data.data.find(action => {
+      histories?.find(action => {
         return moment()
           .startOf('day')
           .isSame(moment(action.createdAt).startOf('day'));
@@ -53,8 +56,8 @@ function CalendarList() {
   }, [histories]);
 
   const actionsFiltered = useMemo<IAction[]>(() => {
-    const filter = histories?.data.data
-      .filter((action: IAction) =>
+    return histories
+      ?.filter((action: IAction) =>
         moment(action.createdAt).isBetween(
           moment(qsParams.createdFrom),
           moment(qsParams.createdTo),
@@ -63,7 +66,6 @@ function CalendarList() {
       .sort((a: IAction, b: IAction) =>
         moment(a.createdAt).isBefore(moment(b.createdAt), 's') ? -1 : 1,
       );
-    return filter;
   }, [qsParams, histories]);
 
   return (

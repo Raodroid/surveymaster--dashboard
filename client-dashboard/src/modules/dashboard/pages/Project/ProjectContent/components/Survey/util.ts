@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import { SurveyService } from '../../../../../../../services';
 import { onError } from '../../../../../../../utils';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import _get from 'lodash/get';
 import { ISurvey, ISurveyVersion } from '../../../../../../../type';
 import useParseQueryString from '../../../../../../../hooks/useParseQueryString';

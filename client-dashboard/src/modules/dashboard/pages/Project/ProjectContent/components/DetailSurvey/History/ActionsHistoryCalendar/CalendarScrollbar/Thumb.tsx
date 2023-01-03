@@ -2,12 +2,14 @@ import useParseQueryString from 'hooks/useParseQueryString';
 import moment from 'moment';
 import qs from 'qs';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { useDebounce } from 'utils';
 import { ACTIONS_HISTORY_ID } from '.';
 import { QsParams } from '../../../../ProjectFilter';
-import { MONTH_HEIGHT, useGetSurveyDetail } from '../../../utils';
+import { MONTH_HEIGHT } from '../../../utils';
 import { ThumbWrapper } from '../styles';
+import { useGetSurveyById } from '../../../../Survey/util';
+import { projectSurveyParams } from '../../../index';
 
 const thumbId = 'actions-history-thumb';
 
@@ -27,7 +29,8 @@ function Thumb() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const qsParams = useParseQueryString<QsParams>();
-  const { survey } = useGetSurveyDetail();
+  const params = useParams<projectSurveyParams>();
+  const { surveyData } = useGetSurveyById(params.surveyId);
 
   const [isMounted, setIsMounted] = useState(false);
 
@@ -55,15 +58,15 @@ function Thumb() {
   }, [months, monthsHeight]);
 
   const numberOfDaysFromStartOfYear = useMemo(() => {
-    if (!survey) return 0;
-    return moment(survey?.data.createdAt).startOf('month').dayOfYear();
-  }, [survey]);
+    if (!surveyData) return 0;
+    return moment(surveyData.createdAt).startOf('month').dayOfYear();
+  }, [surveyData]);
 
   const numberOfDaysBetweenCreationDateToToday = useMemo(() => {
-    if (!survey) return 0;
-    const startDay = moment(survey?.data.createdAt).startOf('month');
+    if (!surveyData) return 0;
+    const startDay = moment(surveyData.createdAt).startOf('month');
     return moment().startOf('month').diff(startDay, 'days');
-  }, [survey]);
+  }, [surveyData]);
 
   const [day, setDay] = useState<number>(
     numberOfDaysBetweenCreationDateToToday,
@@ -275,11 +278,11 @@ function Thumb() {
     if (!isMounted) return;
     const params: QsParams = {
       ...qsParams,
-      createdFrom: moment(survey?.data.createdAt)
+      createdFrom: moment(surveyData.createdAt)
         .dayOfYear(parseInt(debounce) + numberOfDaysFromStartOfYear)
         .startOf('day')
         .format(),
-      createdTo: moment(survey?.data.createdAt)
+      createdTo: moment(surveyData.createdAt)
         .dayOfYear(parseInt(debounce) + numberOfDaysFromStartOfYear + 30)
         .endOf('day')
         .format(),

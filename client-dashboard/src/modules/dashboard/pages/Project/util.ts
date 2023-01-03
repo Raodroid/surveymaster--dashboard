@@ -1,4 +1,4 @@
-import { useCheckScopeEntityDefault } from './../../../common/hoc/useCheckScopeEntityDefault';
+import { useCheckScopeEntityDefault } from '../../../common/hoc';
 import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import _get from 'lodash/get';
 import { useMemo } from 'react';
@@ -32,7 +32,9 @@ export const useGetAllProjects = () => {
   return { projects, isLoading: getAllProjectQuery.isLoading };
 };
 
-export const useGetProjectByIdQuery = (projectId?: string) => {
+export const useGetProjectByIdQuery = (
+  projectId?: string,
+): { project: IProject; isLoading: boolean } => {
   const getProjectByIdQuery = useQuery(
     ['getProjectById', projectId],
     () => ProjectService.getProjectById(projectId),

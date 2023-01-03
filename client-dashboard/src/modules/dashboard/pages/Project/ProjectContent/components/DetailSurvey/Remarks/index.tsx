@@ -1,4 +1,4 @@
-import { Button, Form, notification } from 'antd';
+import { Button, Form, Modal, notification } from 'antd';
 import { Formik } from 'formik';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { CustomSpinSuspense } from 'modules/common/styles';
@@ -6,14 +6,20 @@ import {
   projectRoutePath,
   useGetProjectByIdQuery,
 } from 'modules/dashboard/pages/Project/util';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useParams } from 'react-router';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
-import { IPutSurveyVersionBodyDtoExtendId, ISurveyVersion } from 'type';
+import {
+  IPostSurveyVersionBodyDto,
+  IPutSurveyVersionBodyDtoExtendId,
+  ISurveyQuestion,
+  ISurveyVersion,
+  SurveyVersionStatus,
+} from 'type';
 import { onError } from 'utils';
 import { projectSurveyParams } from '..';
 import ProjectHeader from '../../Header';
@@ -21,9 +27,34 @@ import { useGetSurveyById } from '../../Survey/util';
 import Inputs from '../Inputs';
 import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
+import { DropDownMenuButton } from '../View';
+import { useToggle } from '../../../../../../../../utils';
 
-const initISurveyVersion: ISurveyVersion = {
+const { confirm } = Modal;
+
+const isChangeSurveyQuestionField = (
+  newQuestionValue?: ISurveyQuestion[],
+  initQuestionValue?: ISurveyQuestion[],
+): boolean => {
+  if (!newQuestionValue || !initQuestionValue) return false;
+  if (newQuestionValue.length !== initQuestionValue.length) {
+    return true;
+  }
+
+  return newQuestionValue.some((q, index) => {
+    const { remark: newRemark } = q;
+    const { remark: oldRemark } = initQuestionValue[index];
+
+    return newRemark !== oldRemark;
+  });
+};
+
+interface IRemarkForm extends ISurveyVersion {
+  displaySurveyId: string; // init value for Inputs component
+}
+const initISurveyVersion: IRemarkForm = {
   displayId: '',
+  displaySurveyId: '',
   name: '',
   numberOfQuestions: 0,
 };
@@ -33,11 +64,17 @@ function Remarks() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams<projectSurveyParams>();
+  const [isCallingAPI, toggleIsCallingAPI] = useToggle();
 
-  const { isLoading: isSurveyLoading, currentSurveyVersion } = useGetSurveyById(
-    params.surveyId,
-  );
+  const {
+    isLoading: isSurveyLoading,
+    currentSurveyVersion,
+    surveyData,
+  } = useGetSurveyById(params.surveyId);
   const { project } = useGetProjectByIdQuery(params.projectId);
+
+  const location = useLocation();
+  const queryString = location.search;
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [
@@ -49,31 +86,74 @@ function Remarks() {
       },
       {
         name: currentSurveyVersion?.name || '...',
-        href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
-          projectId: params?.projectId,
-          surveyId: params?.surveyId,
-        }),
+        href:
+          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+            projectId: params?.projectId,
+            surveyId: params?.surveyId,
+          }) + queryString,
       },
       {
         name: t('common.remarks'),
         href: projectRoutePath.DETAIL_SURVEY.REMARKS,
       },
     ],
-    [params, currentSurveyVersion, project, t],
+    [
+      project?.name,
+      params?.projectId,
+      params?.surveyId,
+      currentSurveyVersion?.name,
+      queryString,
+      t,
+    ],
   );
 
   const mutationUpdateRemarks = useMutation(
     (payload: IPutSurveyVersionBodyDtoExtendId) =>
       SurveyService.updateSurvey(payload),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries('getSurveyById');
+      onSuccess: async res => {
+        await queryClient.invalidateQueries('getProjects');
+        await queryClient.invalidateQueries('getSurveyById');
         notification.success({ message: t('common.updateSuccess') });
         navigate(
           generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
             projectId: params?.projectId,
             surveyId: params?.surveyId,
-          }),
+          }) + `?version=${res.data.displayId}`,
+        );
+      },
+      onError,
+    },
+  );
+
+  const initialValues = useMemo<IRemarkForm>(
+    () =>
+      currentSurveyVersion
+        ? {
+            ...currentSurveyVersion,
+            displaySurveyId: surveyData.displayId as string,
+          }
+        : initISurveyVersion,
+    [currentSurveyVersion, surveyData.displayId],
+  );
+
+  const addSurveyVersionMutation = useMutation(
+    (data: IPostSurveyVersionBodyDto) => {
+      return SurveyService.createSurveyVersion(data);
+    },
+    {
+      onSuccess: async res => {
+        await queryClient.invalidateQueries('getProjects');
+        await queryClient.invalidateQueries('getSurveyById');
+
+        notification.success({
+          message: t('common.createSuccess'),
+        });
+        navigate(
+          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+            projectId: params.projectId,
+            surveyId: res.data.surveyId,
+          }) + `?version=${res.data.displayId}`,
         );
       },
       onError,
@@ -81,10 +161,12 @@ function Remarks() {
   );
 
   const handleSubmit = useCallback(
-    (payload: ISurveyVersion) => {
+    (payload: IRemarkForm) => {
+      const { questions, id, name, remark, displaySurveyId, status, ...rest } =
+        payload;
       const updateSurveyPayload: IPutSurveyVersionBodyDtoExtendId = {
-        surveyVersionId: payload.id as string,
-        questions: payload?.questions?.map(elm => {
+        surveyVersionId: id as string,
+        questions: (questions || [])?.map(elm => {
           return {
             questionVersionId: elm.questionVersionId,
             remark: elm.remark,
@@ -93,23 +175,50 @@ function Remarks() {
             parameter: elm.parameter,
           };
         }),
-        name: payload.name,
-        remark: payload.remark,
+        name,
+        remark: remark || null,
+        status: status as SurveyVersionStatus,
       };
+
+      if (
+        currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
+        isChangeSurveyQuestionField(questions, initialValues.questions)
+      ) {
+        confirm({
+          icon: null,
+          content: t('common.confirmCreateNewSurveyVersion'),
+          onOk() {
+            addSurveyVersionMutation.mutateAsync({
+              surveyId: params.surveyId as string,
+              ...updateSurveyPayload,
+            });
+          },
+        });
+        return;
+      }
+
       mutationUpdateRemarks.mutateAsync(updateSurveyPayload);
     },
-    [mutationUpdateRemarks, params.surveyId],
+    [
+      addSurveyVersionMutation,
+      currentSurveyVersion?.status,
+      initialValues.questions,
+      mutationUpdateRemarks,
+      params.surveyId,
+    ],
   );
+
+  const isLoading =
+    isSurveyLoading || mutationUpdateRemarks.isLoading || isCallingAPI;
 
   return (
     <>
       <ProjectHeader routes={routes} />
-
       <RemarksWrapper className="height-100 overflow-hidden">
-        <CustomSpinSuspense spinning={isSurveyLoading}>
+        <CustomSpinSuspense spinning={isLoading}>
           <Formik
             enableReinitialize={true}
-            initialValues={currentSurveyVersion || initISurveyVersion}
+            initialValues={initialValues}
             onSubmit={handleSubmit}
           >
             {({ handleSubmit }) => (
@@ -119,16 +228,19 @@ function Remarks() {
                 className="height-100"
               >
                 <SimpleBar style={{ height: 'calc(100% - 76px)' }}>
+                  <div className={'version-section'}>
+                    {surveyData.versions?.map(ver => (
+                      <DropDownMenuButton
+                        surveyVersion={ver}
+                        callbackLoading={toggleIsCallingAPI}
+                      />
+                    ))}
+                  </div>
                   <Inputs hideDate />
                   <QuestionRemarks />
                 </SimpleBar>
                 <div className="footer flex-center">
-                  <Button
-                    type="primary"
-                    className="info-btn"
-                    htmlType="submit"
-                    loading={mutationUpdateRemarks.isLoading}
-                  >
+                  <Button type="primary" className="info-btn" htmlType="submit">
                     {t('common.saveRemarks')}
                   </Button>
                 </div>

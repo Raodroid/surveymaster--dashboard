@@ -3,6 +3,12 @@ import styled from 'styled-components';
 export const ActionsHistoryWrapper = styled.div`
   height: 100%;
   overflow: hidden;
+  .version-section {
+    padding: 40px 40px 0 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
   .detail-survey-inputs-wrapper {
     border: none;
     grid-template-areas:
@@ -38,8 +44,8 @@ export const ActionsHistoryContentWrapper = styled.div`
     margin-top: 0;
   }
 
-  .surveyQuestionList {
-    grid-area: surveyQuestionList;
+  .survey-info {
+    padding-top: 28px;
   }
 `;
 
