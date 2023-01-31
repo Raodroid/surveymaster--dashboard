@@ -219,14 +219,14 @@ const UploadExternalFile: FC<{
                 {
                   ...initNewRowValue,
                   category: questionHasVariableNameSameParameter.masterCategory
-                    ?.id as string,
+                    ?.name as string,
                   type: questionHasVariableNameSameParameter
                     .latestCompletedVersion.type,
                   question:
                     questionHasVariableNameSameParameter.latestCompletedVersion
                       .question,
                   questionVersionId: questionHasVariableNameSameParameter
-                    .latestCompletedVersion.latestVersionOfQuestionId as string,
+                    .latestCompletedVersion.id as string,
                   questionTitle:
                     questionHasVariableNameSameParameter.latestCompletedVersion
                       .title,
