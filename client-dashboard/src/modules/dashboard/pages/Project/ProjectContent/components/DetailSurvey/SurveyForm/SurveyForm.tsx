@@ -241,16 +241,17 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
     {
       onSuccess: async res => {
         const newVersion = res.data.versions[0];
+        const fileType = 'application/octet-stream';
 
         if (excelUploadFile) {
           const file = excelUploadFile as Blob;
           const res = await SurveyService.getSignedUrl({
             filename: file['name'] as string,
             surveyVersionId: newVersion.id,
-            fileType: file.type,
+            fileType: fileType,
           });
           const { data } = res;
-          await UploadService.putWithFormFileAsync(data.url, file, file.type);
+          await UploadService.putWithFormFileAsync(data.url, file, fileType);
           // await mutationUploadExcelFile.mutateAsync(newVersion.id);
         }
         await onSuccess();

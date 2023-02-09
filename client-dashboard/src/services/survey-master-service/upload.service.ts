@@ -18,7 +18,7 @@ export default class UploadService {
   static putWithFormFileAsync = (url: string, file: any, type: string) => {
     return axios.put(url, file, {
       headers: {
-        'Content-Type': 'application/octet-stream',
+        'Content-Type': type,
       },
     });
   };
