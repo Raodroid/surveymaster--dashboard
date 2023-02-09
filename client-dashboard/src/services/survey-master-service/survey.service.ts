@@ -79,6 +79,14 @@ export default class SurveyService {
     const { id } = payload;
     return APIService.post(`/surveys/${id}/restore`);
   }
+
+  static getSignedUrl(params: {
+    filename: string;
+    surveyVersionId: string;
+    fileType: string;
+  }) {
+    return APIService.post(`/surveys/files/get-signed-url`, params);
+  }
   static uploadExcelFile(payload: {
     id: string;
     file: string | Blob;

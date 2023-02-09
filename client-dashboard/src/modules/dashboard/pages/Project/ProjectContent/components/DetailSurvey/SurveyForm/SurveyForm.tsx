@@ -18,7 +18,7 @@ import {
 } from 'type';
 import { onError, transformEnumToOption } from 'utils';
 import { useMutation, useQueryClient } from 'react-query';
-import { SurveyService } from 'services';
+import { SurveyService, UploadService } from 'services';
 import { ROUTE_PATH } from 'enums';
 import { useMatch, useNavigate } from 'react-router-dom';
 import { QuestionListWrapper, SurveyFormWrapper } from './style';
@@ -243,7 +243,15 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
         const newVersion = res.data.versions[0];
 
         if (excelUploadFile) {
-          await mutationUploadExcelFile.mutateAsync(newVersion.id);
+          const file = excelUploadFile as Blob;
+          const res = await SurveyService.getSignedUrl({
+            filename: file['name'] as string,
+            surveyVersionId: newVersion.id,
+            fileType: file.type,
+          });
+          const { data } = res;
+          await UploadService.putWithFormFileAsync(data.url, file, file.type);
+          // await mutationUploadExcelFile.mutateAsync(newVersion.id);
         }
         await onSuccess();
 
