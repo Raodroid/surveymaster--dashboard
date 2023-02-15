@@ -77,18 +77,19 @@ function Inputs() {
       <Divider type="vertical" className="divider" />
 
       <div className="title projParams">{t('common.projectParameters')}:</div>
-      <ControlledInput
-        inputType={INPUT_TYPES.INPUT}
-        name="displayId"
-        label="ID"
-        className="projId"
-        disabled
-      />
+      {isEditMode && (
+        <ControlledInput
+          inputType={INPUT_TYPES.INPUT}
+          name="displayId"
+          label="ID"
+          className="projId"
+          disabled
+        />
+      )}
       <ControlledInput
         inputType={INPUT_TYPES.SELECT}
         name="personInCharge"
         label={t('common.personInCharge')}
-        className="personInCharge"
         options={optionsList}
         loading={!optionsList}
       />

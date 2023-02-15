@@ -19,6 +19,7 @@ import {
   Popover,
   Table,
   Popconfirm,
+  Modal,
 } from 'antd';
 import { GetListQuestionDto, IQuestion } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
@@ -46,6 +47,7 @@ import SimpleBar from 'simplebar-react';
 import { generatePath } from 'react-router';
 
 const { Item } = Menu;
+const { confirm } = Modal;
 
 enum ACTION_ENUM {
   DELETE = 'DELETE',
@@ -328,15 +330,33 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       const { key, record } = props;
       switch (key) {
         case ACTION_ENUM.DELETE: {
-          await deleteMutation.mutateAsync({ id: record.id as string });
+          confirm({
+            icon: null,
+            content: t('common.confirmDeleteQuestion'),
+            onOk() {
+              deleteMutation.mutateAsync({ id: record.id as string });
+            },
+          });
           break;
         }
         case ACTION_ENUM.DUPLICATE: {
-          await duplicateMutation.mutateAsync({ id: record.id as string });
+          confirm({
+            icon: null,
+            content: t('common.confirmDuplicateQuestion'),
+            onOk() {
+              duplicateMutation.mutateAsync({ id: record.id as string });
+            },
+          });
           break;
         }
         case ACTION_ENUM.RESTORE: {
-          await restoreMutation.mutateAsync({ id: record.id as string });
+          confirm({
+            icon: null,
+            content: t('common.confirmRestoreQuestion'),
+            onOk() {
+              restoreMutation.mutateAsync({ id: record.id as string });
+            },
+          });
           break;
         }
         case ACTION_ENUM.EDIT: {
@@ -350,7 +370,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
         }
       }
     },
-    [deleteMutation, duplicateMutation, restoreMutation, navigate],
+    [t, deleteMutation, duplicateMutation, restoreMutation, navigate],
   );
 
   const items = useMemo(() => {
@@ -360,29 +380,34 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       if (canUpdate) {
         baseMenu.push(
           <Item key={ACTION_ENUM.RESTORE} icon={<PenFilled />}>
-            {t('common.restore')}
+            {t('common.duplicateQuestion')}
           </Item>,
         );
       }
     } else {
       if (canCreate) {
         baseMenu.push(
-          <Popconfirm
-            placement="right"
-            title={`${t('common.duplicate')} question [${
-              record?.latestVersion?.title
-            }]`}
-            onConfirm={() =>
-              handleSelect({ record, key: ACTION_ENUM.DUPLICATE })
-            }
-            okText="Yes"
-            cancelText="No"
-          >
-            <Item key={ACTION_ENUM.DUPLICATE} icon={<FileIconOutlined />}>
-              {t('common.duplicateQuestion')}
-            </Item>
-          </Popconfirm>,
+          <Item key={ACTION_ENUM.DUPLICATE} icon={<FileIconOutlined />}>
+            {t('common.duplicateQuestion')}
+          </Item>,
         );
+        // baseMenu.push(
+        //   <Popconfirm
+        //     placement="rightTop"
+        //     title={`${t('common.duplicate')} question [${
+        //       record?.latestVersion?.title
+        //     }]`}
+        //     onConfirm={() =>
+        //       handleSelect({ record, key: ACTION_ENUM.DUPLICATE })
+        //     }
+        //     okText="Yes"
+        //     cancelText="No"
+        //   >
+        //     <Item key={ACTION_ENUM.DUPLICATE} icon={<FileIconOutlined />}>
+        //       {t('common.duplicateQuestion')}
+        //     </Item>
+        //   </Popconfirm>,
+        // );
       }
       if (canUpdate) {
         baseMenu.push(
@@ -394,7 +419,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
       if (canDelete) {
         baseMenu.push(
           <Item key={ACTION_ENUM.DELETE} icon={<TrashOutlined />}>
-            {t('common.delete')}
+            {t('common.deleteQuestion')}
           </Item>,
         );
       }

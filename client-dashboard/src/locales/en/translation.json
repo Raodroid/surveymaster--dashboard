@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "surveyType": "Survey Type",
     "restoreSurvey": "Restore Survey",
     "deleteSurveyResults": "Delete Survey Results",
     "deleteSurvey": "Delete Survey",
@@ -47,6 +48,8 @@
     "addNewExternalSurvey": "Add New External Survey",
     "projectDescription": "Project Description",
     "personInCharge": "Person In Charge",
+    "numberOfSurveys": "Number of Surveys",
+    "numberOfQuestions": "Number of Questions",
     "projectTitle": "Project Title",
     "exportQualtricsJSON": "Export Qualtrics JSON",
     "dateOfCreation": "Date of Creation",
@@ -78,6 +81,7 @@
     "saveNewQuestionVersion": "Save New Question Version",
     "addNewQuestion": "Add New Question",
     "editQuestion": "Edit Question",
+    "deleteQuestion": "Delete Question",
     "editSurvey": "Edit Survey",
     "surveyQuestionsList": "Survey Questions List",
     "questionFieldType": "Question Field Type",
@@ -268,6 +272,11 @@
     "confirmRestoreSample": "Do you really want to restore this sample?",
     "confirmDeleteAllSample": "Do you really want to delete the whole samples?",
     "confirmDeleteSample": "Are you sure delete this samples?",
+    "confirmDeleteProject": "Are you sure to delete the project?",
+    "confirmRestoreProject": "Are you sure to restore the project?",
+    "confirmDeleteQuestion": "Are you sure to delete the question?",
+    "confirmDuplicateQuestion": "Are you sure to duplicate the question?",
+    "confirmRestoreQuestion": "Are you sure to restore the question?",
     "confirmDeleteSurveyVersion": "Are you sure to delete the survey version?",
     "confirmDeleteSurvey": "Are you sure to delete the survey?",
     "confirmRestoreSurvey": "Are you sure to restore the survey?",
@@ -315,6 +324,7 @@
     "updateSuccess": "Update successfully",
     "createSuccess": "Create successfully",
     "deleteProject": "Delete Project",
+    "editProject": "Edit Project",
     "total": "Total",
     "cancel": "Cancel",
     "importCSV": "Import CSV",
@@ -452,7 +462,7 @@
   },
   "direction": {
     "continueWithGoogle": "Continue with Google",
-    "maskAsCompleted": "Mask as Completed"
+    "markAsCompleted": "Mark as Completed"
   },
   "questionType": {
     "MULTIPLE_CHOICE": "Multiple Choice",

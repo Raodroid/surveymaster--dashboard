@@ -147,7 +147,7 @@ export const DropDownMenuButton: FC<IDropDownMenuButton> = props => {
     if (canUpdate && isDraftVersion) {
       baseMenu.push({
         icon: <PenFilled />,
-        label: t('direction.maskAsCompleted'),
+        label: t('direction.markAsCompleted'),
         key: ACTION_ENUM.COMPLETE,
       });
     }

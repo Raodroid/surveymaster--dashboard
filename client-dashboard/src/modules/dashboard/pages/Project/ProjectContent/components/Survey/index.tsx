@@ -107,7 +107,7 @@ function Survey() {
         key: 'name',
       },
       {
-        title: 'N of Questions',
+        title: t('common.numberOfQuestions'),
         dataIndex: ['latestVersion', 'numberOfQuestions'],
         key: 'numberOfQuestions',
         width: 200,
@@ -269,7 +269,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     if (canUpdate) {
       baseMenu.push({
         icon: <PenFilled />,
-        label: t('common.edit'),
+        label: t('common.editSurvey'),
         key: ACTION_ENUM.EDIT,
       });
       baseMenu.push({

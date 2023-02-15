@@ -556,6 +556,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                         t(`surveyTemplateEnum.${type}`),
                       )}
                       dropdownRender={TemplateOption}
+                      label={t('common.surveyType')}
                     />
                   )}
                   <ControlledInput

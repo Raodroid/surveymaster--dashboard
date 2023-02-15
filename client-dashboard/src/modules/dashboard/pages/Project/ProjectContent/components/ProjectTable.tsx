@@ -1,4 +1,4 @@
-import { Button, Menu, Table } from 'antd';
+import { Button, Menu, Modal, notification, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { PenFilled, TrashOutlined } from 'icons';
@@ -7,7 +7,7 @@ import _get from 'lodash/get';
 import moment from 'moment';
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
@@ -16,7 +16,6 @@ import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import { onError } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
 import { projectRoutePath } from '../../util';
-import { DeleteProjectModal, RestoreProjectModal } from '../modals';
 import { ProjectTableWrapper } from '../styles';
 import { QsParams } from './ProjectFilter';
 import SimpleBar from 'simplebar-react';
@@ -25,6 +24,8 @@ import HannahCustomSpin from '../../../../components/HannahCustomSpin';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { SCOPE_CONFIG } from 'enums';
 import useHandleNavigate from 'hooks/useHandleNavigate';
+
+const { confirm } = Modal;
 
 const initParams: IGetParams = {
   q: '',
@@ -50,10 +51,9 @@ function ProjectTable() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const qsParams = useParseQueryString<QsParams>();
+  const queryClient = useQueryClient();
 
   const [projectId, setProjectId] = useState('');
-  const [showDeleteProject, setShowDeleteProject] = useState(false);
-  const [showRestoreProject, setShowRestoreProject] = useState(false);
 
   const { canRead, canRestore, canDelete, canUpdate } =
     useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECTS);
@@ -90,6 +90,35 @@ function ProjectTable() {
     [getProjectListQuery.data],
   );
 
+  const mutationDeleteProject = useMutation(
+    () =>
+      ProjectService.deleteProject({
+        projectId,
+      }),
+    {
+      onSuccess: () => {
+        notification.success({ message: t('common.deleteSuccess') });
+        queryClient.invalidateQueries('getProjects');
+        queryClient.invalidateQueries('getAllProjects');
+      },
+      onError,
+    },
+  );
+  const mutationRestoreProject = useMutation(
+    () =>
+      ProjectService.restoreProject({
+        projectId,
+      }),
+    {
+      onSuccess: () => {
+        notification.success({ message: t('common.restoreSuccess') });
+        queryClient.invalidateQueries('getProjects');
+        queryClient.invalidateQueries('getAllProjects');
+      },
+      onError,
+    },
+  );
+
   const columns: ColumnsType<IProject> = useMemo(
     () => [
       {
@@ -101,9 +130,18 @@ function ProjectTable() {
         title: t('common.projectTitle'),
         dataIndex: 'name',
         key: 'name',
+        render: (_, record) => (
+          <Tooltip
+            title={record.description}
+            placement={'right'}
+            color={'pink'}
+          >
+            {_}
+          </Tooltip>
+        ),
       },
       {
-        title: 'N of Surveys',
+        title: t('common.numberOfSurveys'),
         dataIndex: 'numberOfSurveys',
         key: 'numberOfSurveys',
       },
@@ -139,29 +177,50 @@ function ProjectTable() {
               setProjectId(record.id);
             }}
           >
-            {qsParams?.isDeleted !== 'true' && canUpdate && (
-              <Button
-                onClick={() =>
-                  navigate(
-                    generatePath(projectRoutePath.PROJECT.EDIT, {
-                      projectId: record?.id,
-                    }),
-                  )
-                }
-              >
-                <PenFilled />
-              </Button>
-            )}
             <ThreeDotsDropdown
               overlay={
                 <MenuDropDownWrapper>
+                  {qsParams?.isDeleted !== 'true' && canUpdate && (
+                    <Menu.Item
+                      onClick={() =>
+                        navigate(
+                          generatePath(projectRoutePath.PROJECT.EDIT, {
+                            projectId: record?.id,
+                          }),
+                        )
+                      }
+                    >
+                      <PenFilled /> {t('common.editProject')}
+                    </Menu.Item>
+                  )}
+
                   {qsParams?.isDeleted !== 'true' && canDelete && (
-                    <Menu.Item onClick={() => setShowDeleteProject(true)}>
+                    <Menu.Item
+                      onClick={() => {
+                        confirm({
+                          icon: null,
+                          content: t('common.confirmDeleteProject'),
+                          onOk() {
+                            mutationDeleteProject.mutateAsync();
+                          },
+                        });
+                      }}
+                    >
                       <TrashOutlined /> {t('common.deleteProject')}
                     </Menu.Item>
                   )}
                   {qsParams?.isDeleted === 'true' && canRestore && (
-                    <Menu.Item onClick={() => setShowRestoreProject(true)}>
+                    <Menu.Item
+                      onClick={() => {
+                        confirm({
+                          icon: null,
+                          content: t('common.confirmRestoreProject'),
+                          onOk() {
+                            mutationRestoreProject.mutateAsync();
+                          },
+                        });
+                      }}
+                    >
                       <Refresh /> {t('common.restoreProject')}
                     </Menu.Item>
                   )}
@@ -188,45 +247,33 @@ function ProjectTable() {
 
   return (
     <>
-      {canRead ? (
-        <ProjectTableWrapper ref={wrapperRef} centerLastChild>
-          <HannahCustomSpin
-            parentRef={wrapperRef}
-            spinning={
-              getProjectListQuery.isLoading || getProjectListQuery.isFetching
-            }
+      <ProjectTableWrapper ref={wrapperRef} centerLastChild>
+        <HannahCustomSpin
+          parentRef={wrapperRef}
+          spinning={
+            getProjectListQuery.isLoading || getProjectListQuery.isFetching
+          }
+        />
+        <SimpleBar className={'ProjectTableWrapper__body'}>
+          <Table
+            dataSource={projects}
+            columns={columns}
+            onRow={onRow}
+            pagination={false}
+            rowKey={record => record.id as string}
+            scroll={{ x: 800 }}
           />
-          <SimpleBar className={'ProjectTableWrapper__body'}>
-            <Table
-              dataSource={projects}
-              columns={columns}
-              onRow={onRow}
-              pagination={false}
-              rowKey={record => record.id as string}
-              scroll={{ x: 800 }}
-            />
-          </SimpleBar>
-          <StyledPagination
-            onChange={(page, pageSize) => {
-              handleNavigate({ page, take: pageSize });
-            }}
-            showSizeChanger
-            pageSize={formatQsParams.take}
-            total={total}
-            current={formatQsParams.page}
-          />
-          <DeleteProjectModal
-            setShowModal={setShowDeleteProject}
-            showModal={showDeleteProject}
-            projectId={projectId}
-          />
-          <RestoreProjectModal
-            setShowModal={setShowRestoreProject}
-            showModal={showRestoreProject}
-            projectId={projectId}
-          />
-        </ProjectTableWrapper>
-      ) : null}
+        </SimpleBar>
+        <StyledPagination
+          onChange={(page, pageSize) => {
+            handleNavigate({ page, take: pageSize });
+          }}
+          showSizeChanger
+          pageSize={formatQsParams.take}
+          total={total}
+          current={formatQsParams.page}
+        />
+      </ProjectTableWrapper>
     </>
   );
 }
