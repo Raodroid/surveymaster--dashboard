@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Badge, Button, Menu, Spin, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +40,7 @@ import { DragTable } from '../../../../../../../components/DragTable/DragTable';
 import {
   filterColumn,
   IRenderColumnCondition,
+  usePrevious,
 } from '../../../../../../../../../utils';
 import templateVariable from '../../../../../../../../../app/template-variables.module.scss';
 import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
@@ -458,18 +459,6 @@ const DisplayAnswer = props => {
     ];
   }, [questionListData, values.version.questions]);
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setFieldValue('selectedRowKeys', [...newSelectedRowKeys]);
-  };
-
-  const rowSelection = {
-    selectedRowKeys: values.selectedRowKeys,
-    onChange: onSelectChange,
-    getCheckboxProps: (record: questionValueType) => ({
-      disabled: !record.questionVersionId, // Column configuration not to be checked
-    }),
-  };
-
   const handleAddRow = useCallback(() => {
     setValues(s => ({
       ...s,
@@ -492,22 +481,6 @@ const DisplayAnswer = props => {
   const columns: ColumnsType<questionValueType> = useMemo(
     () => [
       {
-        title: t('common.parameter'),
-        dataIndex: 'parameter',
-        width: 200,
-        render: (value, record, index) => {
-          return (
-            <>
-              <ControlledInput
-                style={{ width: '100%' }}
-                inputType={INPUT_TYPES.INPUT}
-                name={`version.questions[${index}].parameter`}
-              />
-            </>
-          );
-        },
-      },
-      {
         title: t('common.order'),
         dataIndex: 'order',
         width: 100,
@@ -526,7 +499,22 @@ const DisplayAnswer = props => {
           );
         },
       },
-
+      {
+        title: t('common.parameter'),
+        dataIndex: 'parameter',
+        width: 200,
+        render: (value, record, index) => {
+          return (
+            <>
+              <ControlledInput
+                style={{ width: '100%' }}
+                inputType={INPUT_TYPES.INPUT}
+                name={`version.questions[${index}].parameter`}
+              />
+            </>
+          );
+        },
+      },
       {
         title: t('common.category'),
         dataIndex: 'category',
@@ -599,10 +587,6 @@ const DisplayAnswer = props => {
       {
         condition: !isExternalProject,
         indexArray: ['parameter'],
-      },
-      {
-        condition: isExternalProject,
-        indexArray: ['order'],
       },
     ],
     [isExternalProject],
@@ -700,6 +684,33 @@ const DisplayAnswer = props => {
     [values.version.questions],
   );
 
+  const [checked, setChecked] = useState<React.Key[]>([]);
+
+  const preVersionQuestion = usePrevious(values.version.questions);
+
+  useEffect(() => {
+    if (!preVersionQuestion) {
+      setChecked(values.version.questions.map(i => i.questionVersionId));
+    }
+  }, [preVersionQuestion, values.version.questions]);
+
+  const onSelectChange = (
+    newSelectedRowKeys: React.Key[],
+    selectedRows: questionValueType[],
+  ) => {
+    setChecked(selectedRows.map(x => x.questionVersionId));
+  };
+
+  const rowSelection = {
+    selectedRowKeys: checked.map(questionVersionId =>
+      dataSource.findIndex(i => i.questionVersionId === questionVersionId),
+    ),
+    onChange: onSelectChange,
+    getCheckboxProps: (record: questionValueType) => ({
+      disabled: !record.questionVersionId, // Column configuration not to be checked
+    }),
+  };
+
   const setDataTable = (questions: questionValueType[]) => {
     setValues(s => ({
       ...s,
@@ -754,40 +765,38 @@ const DisplayAnswer = props => {
   }
 
   return (
-    <SimpleBar style={{ height: '100%', width: '100%' }}>
-      <DisplayAnswerWrapper>
-        <Table
-          scroll={{ x: size.large }}
-          rowSelection={rowSelection}
-          columns={columnsFiltered}
-          dataSource={values?.version?.questions}
-          pagination={false}
-          rowKey={record => record.id as string}
-          expandable={{
-            expandedRowRender,
-            rowExpandable,
-            expandRowByClick: false,
-            expandIconColumnIndex: -1,
-            defaultExpandAllRows: true,
-          }}
-          rowClassName={renderRowClassName}
-        />
-        <div className={'DisplayAnswerWrapper__footer'}>
-          <Upload
-            onChange={onChangeUploadFile}
-            accept={'.csv,.xlsx'}
-            multiple={false}
-          >
-            <Button type={'primary'} disabled>
-              {t('common.clickToUpload')}
-            </Button>
-          </Upload>
-          <Button type={'primary'} onClick={handleAddRow}>
-            {t('common.addRow')}
+    <DisplayAnswerWrapper>
+      <DragTable
+        scroll={{ x: size.large }}
+        rowSelection={rowSelection}
+        columns={columnsFiltered}
+        dataSource={dataSource}
+        pagination={false}
+        renderRowClassName={renderRowClassName}
+        expandable={{
+          expandedRowRender,
+          rowExpandable,
+          expandRowByClick: false,
+          expandIconColumnIndex: -1,
+          defaultExpandAllRows: true,
+        }}
+        setDataTable={setDataTable}
+      />
+      <div className={'DisplayAnswerWrapper__footer'}>
+        <Upload
+          onChange={onChangeUploadFile}
+          accept={'.csv,.xlsx'}
+          multiple={false}
+        >
+          <Button type={'primary'} disabled>
+            {t('common.clickToUpload')}
           </Button>
-        </div>
-      </DisplayAnswerWrapper>
-    </SimpleBar>
+        </Upload>
+        <Button type={'primary'} onClick={handleAddRow}>
+          {t('common.addRow')}
+        </Button>
+      </div>
+    </DisplayAnswerWrapper>
   );
 };
 

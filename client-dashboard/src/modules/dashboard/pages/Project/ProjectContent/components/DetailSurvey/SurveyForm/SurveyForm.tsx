@@ -448,6 +448,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                 addSurveyVersionMutation.mutateAsync({
                   surveyId: params.surveyId as string,
                   ...transformValue.version,
+                  // questions: transformValue.version?.questions,
                 });
               },
             });
