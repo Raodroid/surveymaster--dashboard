@@ -146,7 +146,7 @@ const ViewQuestion = () => {
     [navigate, params?.questionId, queryString],
   );
 
-  const handleMaskAsCompleted = useCallback(async () => {
+  const handleMarkAsCompleted = useCallback(async () => {
     if (!selectedVerQuestionData?.id) return;
 
     await markAsCompleteQuestionMutation.mutateAsync({
@@ -193,10 +193,10 @@ const ViewQuestion = () => {
               <Button
                 type={'primary'}
                 className={'info-btn'}
-                onClick={handleMaskAsCompleted}
+                onClick={handleMarkAsCompleted}
                 loading={markAsCompleteQuestionMutation.isLoading}
               >
-                {t('direction.maskAsCompleted')}
+                {t('direction.markAsCompleted')}
               </Button>
             )}
             {canUpdate && (

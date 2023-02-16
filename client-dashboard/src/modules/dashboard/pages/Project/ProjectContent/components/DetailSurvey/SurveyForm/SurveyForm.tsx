@@ -448,6 +448,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                 addSurveyVersionMutation.mutateAsync({
                   surveyId: params.surveyId as string,
                   ...transformValue.version,
+                  // questions: transformValue.version?.questions,
                 });
               },
             });
@@ -556,6 +557,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                         t(`surveyTemplateEnum.${type}`),
                       )}
                       dropdownRender={TemplateOption}
+                      label={t('common.surveyType')}
                     />
                   )}
                   <ControlledInput
@@ -575,22 +577,28 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                     className={className}
                   />
                 </div>
-                <div className="divider" />
-                <div
-                  className={'SurveyFormWrapper__survey-info__params-section'}
-                >
-                  <div className="title params">
-                    {isExternalProject && t('common.external')}{' '}
-                    {t('common.surveyParameters')}:
-                  </div>
+                {isEditMode && (
+                  <>
+                    <div className="divider" />
+                    <div
+                      className={
+                        'SurveyFormWrapper__survey-info__params-section'
+                      }
+                    >
+                      <div className="title params">
+                        {isExternalProject && t('common.external')}{' '}
+                        {t('common.surveyParameters')}:
+                      </div>
 
-                  <ControlledInput
-                    inputType={INPUT_TYPES.INPUT}
-                    name="surveyId"
-                    label="ID"
-                    className={'view-mode'}
-                  />
-                </div>
+                      <ControlledInput
+                        inputType={INPUT_TYPES.INPUT}
+                        name="surveyId"
+                        label="ID"
+                        className={'view-mode'}
+                      />
+                    </div>
+                  </>
+                )}{' '}
               </div>
 
               <div className={'SurveyFormWrapper__question'}>

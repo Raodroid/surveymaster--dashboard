@@ -261,19 +261,27 @@ export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
   template: Yup.string().required(INVALID_FIELDS.REQUIRED),
-  version: Yup.object().shape({
-    ...SURVEY_FORM_SCHEMA,
-    questions: Yup.array()
-      .min(1)
-      .of(
-        Yup.object().shape({
-          questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
-          remark: Yup.string(),
-          type: Yup.string().required(INVALID_FIELDS.REQUIRED),
-          category: Yup.string().required(INVALID_FIELDS.REQUIRED),
-        }),
-      ),
-  }),
+  version: Yup.object()
+    .when('template', {
+      is: SurveyTemplateEnum.NEW,
+      then: Yup.object().shape({
+        ...SURVEY_FORM_SCHEMA,
+        questions: Yup.array()
+          .min(1)
+          .of(
+            Yup.object().shape({
+              questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
+              remark: Yup.string(),
+              type: Yup.string().required(INVALID_FIELDS.REQUIRED),
+              category: Yup.string().required(INVALID_FIELDS.REQUIRED),
+            }),
+          ),
+      }),
+    })
+    .when('template', {
+      is: SurveyTemplateEnum.DUPLICATE,
+      then: Yup.object().shape(SURVEY_FORM_SCHEMA),
+    }),
 });
 export const SURVEY_EXTERNAL_FORM_SCHEMA = Yup.object().shape({
   selectedRowKeys: Yup.array().of(Yup.string()).min(1).required(INVALID_FIELDS),
