@@ -63,7 +63,7 @@ export const minsToHours = (mins: number) => {
 };
 
 export const generateRandom = () => {
-  const crypto = window.crypto;
+  const crypto = window.crypto || (window as any).msCrypto;
   var array = new Uint32Array(1);
   crypto.getRandomValues(array);
   const string = '0.' + array[0].toString().slice(1);
