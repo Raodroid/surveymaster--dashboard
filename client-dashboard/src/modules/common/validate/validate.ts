@@ -293,8 +293,10 @@ export const SURVEY_EXTERNAL_FORM_SCHEMA = Yup.object().shape({
           'questionNotValid',
           'questions field is not valid',
           function (value, context) {
-            const { selectedRowKeys } = context?.['from']?.[1]?.value;
-            if (selectedRowKeys?.some(key => key === value?.id)) {
+            const { selectedRowKeys } = context?.['from']?.[2]?.value;
+            if (
+              selectedRowKeys?.some(key => key === value?.questionVersionId)
+            ) {
               return !!value.questionVersionId && !!value.parameter;
             }
             return true;

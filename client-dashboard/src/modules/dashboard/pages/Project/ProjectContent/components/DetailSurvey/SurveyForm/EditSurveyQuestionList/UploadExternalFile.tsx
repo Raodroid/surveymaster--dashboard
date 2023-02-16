@@ -392,7 +392,7 @@ const DisplayAnswer = props => {
   const { t } = useTranslation();
 
   const [searchTxt, setSearchTxt] = useState<string>('');
-  const { values, setValues, initialValues } =
+  const { values, setValues, setFieldValue, initialValues } =
     useFormikContext<IAddSurveyFormValues>();
 
   const createSurveyRouteMath = useMatch({
@@ -709,7 +709,10 @@ const DisplayAnswer = props => {
     newSelectedRowKeys: React.Key[],
     selectedRows: questionValueType[],
   ) => {
-    setChecked(selectedRows.map(x => x.questionVersionId));
+    const nextValue = selectedRows.map(x => x.questionVersionId);
+    setChecked(nextValue);
+
+    setFieldValue('selectedRowKeys', nextValue);
   };
 
   const rowSelection = {
