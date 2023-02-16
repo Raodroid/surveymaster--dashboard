@@ -31,10 +31,9 @@ import { INPUT_TYPES } from '../../../../../../../../common/input/type';
 import styled from 'styled-components';
 import { MenuDropDownWrapper } from 'customize-components/styles';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
-import SimpleBar from 'simplebar-react';
 import UncontrollInput from '../../../../../../../../common/input/uncontrolled-input/UncontrollInput';
 import moment from 'moment';
-import { MOMENT_FORMAT, size } from 'enums';
+import { MOMENT_FORMAT, ROUTE_PATH, size } from 'enums';
 import { SortableHandle } from 'react-sortable-hoc';
 import { DragTable } from '../../../../../../../components/DragTable/DragTable';
 import {
@@ -46,6 +45,7 @@ import templateVariable from '../../../../../../../../../app/template-variables.
 import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
 import { useGetProjectByIdQuery } from '../../../../../util';
 import { useParams } from 'react-router';
+import { useMatch } from 'react-router-dom';
 
 const initNewRowValue: questionValueType = {
   id: '',
@@ -214,6 +214,7 @@ const UploadExternalFile: FC<{
             const questionHasVariableNameSameParameter = questionList.find(
               q => q.masterVariableName === x,
             );
+            //hannah
             if (questionHasVariableNameSameParameter) {
               return [
                 ...res,
@@ -391,8 +392,16 @@ const DisplayAnswer = props => {
   const { t } = useTranslation();
 
   const [searchTxt, setSearchTxt] = useState<string>('');
-  const { values, setValues, setFieldValue, initialValues } =
+  const { values, setValues, initialValues } =
     useFormikContext<IAddSurveyFormValues>();
+
+  const createSurveyRouteMath = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY,
+    end: true,
+    caseSensitive: true,
+  });
+
+  const isCreateMode = !!createSurveyRouteMath;
 
   const debounceSearchText = useDebounce(searchTxt);
 
@@ -431,7 +440,6 @@ const DisplayAnswer = props => {
     if (!questionListData) return [[], {}];
 
     const normalizeByQuestionId: Record<string, IQuestion> = {};
-
     return [
       questionListData.pages.reduce((current: IOptionItem[], page) => {
         const nextPageData = page.data.data || [];
@@ -440,7 +448,9 @@ const DisplayAnswer = props => {
           const latestQuestionId = q?.id;
           if (
             values.version.questions.some(
-              z => z.id === latestQuestionId, // check if chosen version is in the same question but different version
+              z =>
+                z.id === latestQuestionId || // check if chosen version is in the same question but different version
+                z.questionVersionId === latestQuestionVersionId, //check and filter out questions were automatically filled after uploading file
             )
           ) {
             return current;
@@ -689,10 +699,11 @@ const DisplayAnswer = props => {
   const preVersionQuestion = usePrevious(values.version.questions);
 
   useEffect(() => {
+    if (isCreateMode) return;
     if (!preVersionQuestion) {
       setChecked(values.version.questions.map(i => i.questionVersionId));
     }
-  }, [preVersionQuestion, values.version.questions]);
+  }, [isCreateMode, preVersionQuestion, values.version.questions]);
 
   const onSelectChange = (
     newSelectedRowKeys: React.Key[],
