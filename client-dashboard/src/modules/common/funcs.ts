@@ -61,3 +61,12 @@ export const minsToHours = (mins: number) => {
   const hours = (mins - minLeft) / 60;
   return minLeft === 0 ? `${hours} hours` : `${hours} hours ${minLeft} minutes`;
 };
+
+export const generateRandom = () => {
+  const crypto = window.crypto;
+  var array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  const string = '0.' + array[0].toString().slice(1);
+  const random = Number(string);
+  return random;
+};

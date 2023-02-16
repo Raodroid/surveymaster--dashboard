@@ -1,3 +1,4 @@
+import { generateRandom } from 'modules/common/funcs';
 import { memo, useCallback } from 'react';
 import { MONTH_HEIGHT } from '../../../utils';
 import { MonthWrapper } from '../styles';
@@ -14,7 +15,7 @@ function Month(props: { month: string; renderLines?: boolean }) {
 
   const getRandomInRange = (min: number, max: number) => {
     const difference = max - min;
-    let rand = Math.random();
+    let rand = generateRandom();
     rand = Math.floor(rand * difference);
     return rand + min;
   };

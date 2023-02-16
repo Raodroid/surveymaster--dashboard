@@ -15,6 +15,7 @@ import { Button } from 'antd';
 import { filterColumn, formatBytes, IRenderColumnCondition } from 'utils';
 import { SortableHandle } from 'react-sortable-hoc';
 import templateVariable from 'app/template-variables.module.scss';
+import { generateRandom } from 'modules/common/funcs';
 
 const DragHandle = SortableHandle(() => (
   <DragIcon
@@ -165,8 +166,8 @@ const GroupSurveyButton = () => {
         ...(s.options || []),
         {
           ...initNewRowValue,
-          id: Math.random().toString(),
-          sort: Math.random(),
+          id: generateRandom().toString(),
+          sort: generateRandom(),
         },
       ],
     }));
