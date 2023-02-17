@@ -94,7 +94,7 @@ export const ThumbWrapper = styled.div`
     content: '';
     width: 100%;
     background: rgba(255, 255, 255, 0.8);
-    height: 90vh;
+    height: max(90vh, 500px);
     position: absolute;
   }
 
