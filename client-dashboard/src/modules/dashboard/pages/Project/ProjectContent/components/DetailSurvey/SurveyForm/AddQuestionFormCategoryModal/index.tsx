@@ -25,6 +25,7 @@ import SimpleBar from 'simplebar-react';
 const initParams = {
   take: 10,
   page: 1,
+  isDeleted: false,
 };
 
 type MenuItem = Required<MenuProps>['items'][number];

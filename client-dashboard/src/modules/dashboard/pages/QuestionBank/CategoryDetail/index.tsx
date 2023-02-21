@@ -18,7 +18,6 @@ import {
   PaginationProps,
   Popover,
   Table,
-  Popconfirm,
   Modal,
 } from 'antd';
 import { GetListQuestionDto, IQuestion } from 'type';
@@ -255,6 +254,7 @@ const CategoryDetail = () => {
           />
         </SimpleBar>
         <StyledPagination
+          current={params.page}
           onChange={page => {
             setParams(s => ({ ...s, page }));
           }}
@@ -426,7 +426,7 @@ const DropDownMenu: FC<IDropDownMenu> = props => {
     }
 
     return baseMenu;
-  }, [isDeleted, canUpdate, t, canCreate, canDelete, record, handleSelect]);
+  }, [isDeleted, canUpdate, t, canCreate, canDelete]);
 
   const menu = (
     <MenuDropDownWrapper onClick={({ key }) => handleSelect({ key, record })}>
