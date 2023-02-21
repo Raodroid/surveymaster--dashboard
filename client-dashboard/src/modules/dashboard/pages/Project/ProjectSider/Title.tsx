@@ -68,7 +68,7 @@ function Title(props: TitleProps) {
           >
             <PlusIcon className="plus-icon" />{' '}
             {project.type === ProjectTypes.INTERNAL
-              ? t('common.addNewSurvey')
+              ? t('common.addNewInternalSurvey')
               : t('common.addNewExternalSurvey')}
           </Button>
         )}
