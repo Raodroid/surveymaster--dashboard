@@ -39,6 +39,7 @@
     "parameter": "Parameter",
     "selectQuestion": "Select Question",
     "addNewSurvey": "Add New Survey",
+    "addNewInternalSurvey": "Add New Internal Survey",
     "browseLocalFile": "Browse Local File",
     "dragYourCSV": "Drag your CSV file here to start uploading.",
     "deleteThisVersion": "Delete this version",

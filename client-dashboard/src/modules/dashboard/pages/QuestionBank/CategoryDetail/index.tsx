@@ -256,6 +256,7 @@ const CategoryDetail = () => {
         <StyledPagination
           current={params.page}
           onChange={page => {
+            console.log(page);
             setParams(s => ({ ...s, page }));
           }}
           showSizeChanger
