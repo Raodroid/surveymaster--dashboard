@@ -84,7 +84,7 @@ export const ThumbWrapper = styled.div`
   position: absolute;
   width: 60px;
   height: 124px;
-  cursor: all-scroll;
+  cursor: pointer;
   z-index: 10;
   background-color: rgb(0, 122, 231, 0.08);
   border-radius: 4px;
@@ -94,7 +94,7 @@ export const ThumbWrapper = styled.div`
     content: '';
     width: 100%;
     background: rgba(255, 255, 255, 0.8);
-    height: 90vh;
+    height: max(90vh, 500px);
     position: absolute;
   }
 

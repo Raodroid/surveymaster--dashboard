@@ -28,6 +28,7 @@ import useParseQueryString from '../../../../../hooks/useParseQueryString';
 import DisplayAnswerList from './DisplayAnswerList';
 import { transformQuestionData } from '../AddQuestion';
 import DisplayTitle from './DisplayTitle';
+import { generateRandom } from 'modules/common/funcs';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;
@@ -105,7 +106,7 @@ const EditQuestion = () => {
         imageUrl: opt.imageUrl,
       })) || [
         {
-          id: Math.random(),
+          id: generateRandom(),
           text: '',
           sort: 1,
         },

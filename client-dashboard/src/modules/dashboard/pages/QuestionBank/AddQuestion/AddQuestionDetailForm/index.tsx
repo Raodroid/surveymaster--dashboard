@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { AddQuestionDetailFormWrapper } from './style';
 import { transformEnumToOption } from '../../../../../../utils';
 import { useFormikContext } from 'formik';
+import { generateRandom } from '../../../../../common/funcs';
 
 const AddQuestionDetailForm = () => {
   const { t } = useTranslation();
@@ -29,7 +30,7 @@ const AddQuestionDetailForm = () => {
       case QuestionType.RADIO_BUTTONS: {
         setFieldValue('options', [
           {
-            id: Math.random(),
+            id: generateRandom(),
             text: '',
           },
         ]);
@@ -38,7 +39,7 @@ const AddQuestionDetailForm = () => {
       case QuestionType.PHOTO: {
         setFieldValue('options', [
           {
-            id: Math.random(),
+            id: generateRandom(),
             text: '',
             imageUrl: '',
           },

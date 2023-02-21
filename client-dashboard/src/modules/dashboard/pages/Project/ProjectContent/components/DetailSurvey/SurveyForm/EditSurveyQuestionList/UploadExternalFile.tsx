@@ -46,6 +46,7 @@ import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
 import { useGetProjectByIdQuery } from '../../../../../util';
 import { useParams } from 'react-router';
 import { useMatch } from 'react-router-dom';
+import { generateRandom } from 'modules/common/funcs';
 
 const initNewRowValue: questionValueType = {
   id: '',
@@ -115,7 +116,7 @@ const GroupSurveyButton = () => {
         ...s.version,
         questions: [
           ...s?.version?.questions,
-          { ...initNewRowValue, id: Math.random().toString() },
+          { ...initNewRowValue, id: generateRandom().toString() },
         ],
       },
     }));
@@ -476,7 +477,7 @@ const DisplayAnswer = props => {
         ...s.version,
         questions: [
           ...s.version.questions,
-          { ...initNewRowValue, id: Math.random().toString() },
+          { ...initNewRowValue, id: generateRandom().toString() },
         ],
       },
     }));

@@ -22,6 +22,7 @@ import {
 import { AnswerListWrapper } from './style';
 import { INPUT_TYPES } from '../../../../../../common/input/type';
 import { ControlledInput } from '../../../../../../common';
+import { generateRandom } from 'modules/common/funcs';
 
 const DragHandle = SortableHandle(() => (
   <DragIcon
@@ -157,8 +158,8 @@ const GroupSurveyButton = () => {
         ...(s.options || []),
         {
           ...initNewRowValue,
-          id: Math.random().toString(),
-          sort: Math.random(),
+          id: generateRandom().toString(),
+          sort: generateRandom(),
         },
       ],
     }));
