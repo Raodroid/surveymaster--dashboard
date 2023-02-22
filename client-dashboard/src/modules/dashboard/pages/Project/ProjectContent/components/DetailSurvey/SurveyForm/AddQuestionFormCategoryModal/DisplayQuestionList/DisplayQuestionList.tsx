@@ -55,7 +55,7 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
 
   return (
     <DisplayQuestionListWrapper>
-      <label className={'label-input'}>{t('common.selectCategory')}</label>
+      <label className={'label-input'}>{t('common.selectQuestion')}</label>
       <Input
         className={'search-input'}
         allowClear

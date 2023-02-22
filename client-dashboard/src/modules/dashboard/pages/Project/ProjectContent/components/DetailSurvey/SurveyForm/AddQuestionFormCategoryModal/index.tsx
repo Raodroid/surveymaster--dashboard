@@ -108,6 +108,7 @@ const AddQuestionFormCategoryModal: FC<
         categoryIds: [selectedCategoryId],
         q: debounceSearchTextQuestion,
         hasLatestCompletedVersion: true,
+        isDeleted: false,
       });
     },
     { onError, enabled: !!selectedCategoryId, refetchOnWindowFocus: false },
