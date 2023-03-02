@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useMatch, useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../enums';
 import { Menu, MenuProps, Spin } from 'antd';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import useParseQueryString from '../../../../../../hooks/useParseQueryString';
 import { ArrowDown } from '../../../../../../icons';
 import templateVariable from '../../../../../../app/template-variables.module.scss';

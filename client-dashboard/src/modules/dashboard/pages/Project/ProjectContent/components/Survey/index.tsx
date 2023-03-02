@@ -1,6 +1,6 @@
 import { ExportOutlined } from '@ant-design/icons';
 import { Modal, notification, Table } from 'antd';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { ColumnsType } from 'antd/lib/table';
 import { MenuDropDownWrapper } from 'customize-components/styles';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';

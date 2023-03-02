@@ -23,7 +23,7 @@ import {
   ROUTE_PATH,
   SCOPE_CONFIG,
 } from '../../../../../../../../enums';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import {
   PenFilled,
   ThreeDotsIcon,
