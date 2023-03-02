@@ -26,9 +26,9 @@ import { generatePath, useParams } from 'react-router';
 import { useGetQuestionByQuestionId } from '../util';
 import useParseQueryString from '../../../../../hooks/useParseQueryString';
 import DisplayAnswerList from './DisplayAnswerList';
-import { transformQuestionData } from '../AddQuestion';
 import DisplayTitle from './DisplayTitle';
 import { generateRandom } from 'modules/common/funcs';
+import { transformQuestionData } from '../AddQuestion/util';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;

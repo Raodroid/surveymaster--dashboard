@@ -4,7 +4,7 @@ import { INPUT_TYPES } from '../../../../../common/input/type';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext } from 'formik';
 import { useGetAllCategories } from '../../util';
-import { IAddQuestionFormValue } from '../../AddQuestion';
+import { IAddQuestionFormValue } from '../../AddQuestion/util';
 
 const QuestionCategoryForm = props => {
   const { disabled } = props;
