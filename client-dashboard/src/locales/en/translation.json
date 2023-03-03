@@ -478,6 +478,10 @@
     "DATA_MATRIX": "Data Matrix",
     "FORM_FIELD": "Form Field"
   },
+  "matrixType": {
+    "RADIO_BUTTON": "Radio Button",
+    "TEXT_INPUT": "Text Input"
+  },
   "sign": "Lost your phone? Left yourself logged in on a public computer? Need a way to sign out everywhere except your current browser? This is for you.",
   "surveyTemplateEnum": {
     "NEW": "New Survey",

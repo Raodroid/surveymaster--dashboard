@@ -47,6 +47,7 @@ export interface IQuestionVersion {
   numberStep?: number;
   numberMin?: number;
   numberMax?: number;
+  matrixType?: MatrixType;
   dataMatrix?: IDataMatrixInfo;
   timeFormat?: TimeFormat;
   dateFormat?: DateFormat;
@@ -270,6 +271,10 @@ export interface IDataMatrixInfo {
   rows: string[];
   columns: string[];
 }
+export enum MatrixType {
+  RADIO_BUTTON = 'RADIO_BUTTON',
+  TEXT_INPUT = 'TEXT_INPUT',
+}
 export interface BaseQuestionVersionDto {
   id?: string;
   type: QuestionType;
@@ -288,6 +293,7 @@ export interface BaseQuestionVersionDto {
   timeFormat?: TimeFormat;
   dataMatrix?: IDataMatrixInfo;
   image?: string;
+  matrixType?: MatrixType;
 }
 
 export type QuestionParameter = BaseParameterDto & {

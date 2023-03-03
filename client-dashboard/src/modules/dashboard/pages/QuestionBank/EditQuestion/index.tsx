@@ -118,6 +118,7 @@ const EditQuestion = () => {
         rows: [''],
         columns: [''],
       },
+      matrixType: currentVersionQuestionData?.matrixType,
       timeFormat: currentVersionQuestionData?.timeFormat,
       dateFormat: currentVersionQuestionData?.dateFormat,
       image: currentVersionQuestionData?.image || '',
