@@ -71,6 +71,7 @@ const Datamatrix = () => {
           )}
           name="matrixType"
           label={t('common.matrixType')}
+          className={className}
         />
       </div>
       <DatamatrixWrapper>
