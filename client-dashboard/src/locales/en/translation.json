@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "matrixType": "Matrix Type",
     "surveyType": "Survey Type",
     "restoreSurvey": "Restore Survey",
     "deleteSurveyResults": "Delete Survey Results",
