@@ -13,6 +13,7 @@ import { onError } from 'utils';
 import {
   BaseQuestionVersionDto,
   IQuestionCreatePostDto,
+  MatrixType,
   QuestionType,
 } from 'type';
 import { ROUTE_PATH } from 'enums';
@@ -36,6 +37,7 @@ const initValue: IAddQuestionFormValue = {
   numberMin: undefined,
   numberMax: undefined,
   options: undefined,
+  matrixType: MatrixType.RADIO_BUTTON,
 };
 
 export const transformQuestionData = (
@@ -82,6 +84,7 @@ export const transformQuestionData = (
   }
   if (result.type !== QuestionType.DATA_MATRIX) {
     delete result.dataMatrix;
+    delete result.matrixType;
   }
   if (result.type !== QuestionType.TEXT_GRAPHIC) {
     delete result.image;

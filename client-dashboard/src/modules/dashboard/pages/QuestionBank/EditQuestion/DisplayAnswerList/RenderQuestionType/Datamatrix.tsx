@@ -10,6 +10,8 @@ import templateVariable from '../../../../../../../app/template-variables.module
 import { IAddQuestionFormValue } from '../../../AddQuestion';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../../enums';
+import { MatrixType } from '../../../../../../../type';
+import { transformEnumToOption } from '../../../../../../../utils';
 
 const Datamatrix = () => {
   const { t } = useTranslation();
@@ -60,58 +62,77 @@ const Datamatrix = () => {
   );
 
   return (
-    <DatamatrixWrapper>
-      <div className={'DatamatrixWrapper__section rows'}>
-        {values.dataMatrix?.rows?.map((row, index) => (
-          <div className={'input-wrapper'} key={index}>
-            <ControlledInput
-              inputType={INPUT_TYPES.INPUT}
-              name={`dataMatrix.rows[${index}]`}
-              placeholder={t('common.enterRowName')}
-              className={className}
-            />
-            {!isViewMode && (
-              <TrashOutlined
-                className={'trash-icon'}
-                onClick={() => {
-                  handleRemove('rows', index);
-                }}
-              />
-            )}
-          </div>
-        ))}
-        {!isViewMode && (
-          <Button type={'primary'} onClick={() => handleAdd('rows')}>
-            {t('common.addRow')}
-          </Button>
-        )}
+    <>
+      <div className={''}>
+        <ControlledInput
+          inputType={INPUT_TYPES.SELECT}
+          options={transformEnumToOption(MatrixType, questionType =>
+            t(`matrixType.${questionType}`),
+          )}
+          name="matrixType"
+          label={t('common.matrixType')}
+          className={className}
+        />
       </div>
-      <div className={'DatamatrixWrapper__section columns'}>
-        {values.dataMatrix?.columns?.map((col, index) => (
-          <div key={index} className={'input-wrapper'}>
-            <ControlledInput
-              inputType={INPUT_TYPES.INPUT}
-              name={`dataMatrix.columns[${index}]`}
-              placeholder={t('common.enterColumnName')}
-              className={className}
-            />
-            {!isViewMode && (
-              <TrashOutlined
-                className={'trash-icon'}
-                onClick={() => {
-                  handleRemove('columns', index);
-                }}
-              />
-            )}
+      <DatamatrixWrapper>
+        <div className={'DatamatrixWrapper__section rows'}>
+          <div className={'ant-col ant-form-item-label'}>
+            <label>Rows</label>
           </div>
-        ))}
-        {!isViewMode && (
-          <Button type={'primary'} onClick={() => handleAdd('columns')}>
-            {t('common.addColumn')}
-          </Button>
-        )}
-      </div>
-    </DatamatrixWrapper>
+          {values.dataMatrix?.rows?.map((row, index) => (
+            <div className={'input-wrapper'} key={index}>
+              <ControlledInput
+                inputType={INPUT_TYPES.INPUT}
+                name={`dataMatrix.rows[${index}]`}
+                placeholder={t('common.enterRowName')}
+                className={className}
+              />
+              {!isViewMode && (
+                <TrashOutlined
+                  className={'trash-icon'}
+                  onClick={() => {
+                    handleRemove('rows', index);
+                  }}
+                />
+              )}
+            </div>
+          ))}
+          {!isViewMode && (
+            <Button type={'primary'} onClick={() => handleAdd('rows')}>
+              {t('common.addRow')}
+            </Button>
+          )}
+        </div>
+        <div className={'DatamatrixWrapper__section columns'}>
+          <div className={'ant-col ant-form-item-label'}>
+            <label>Columns</label>
+          </div>
+          {values.dataMatrix?.columns?.map((col, index) => (
+            <div key={index} className={'input-wrapper'}>
+              <ControlledInput
+                inputType={INPUT_TYPES.INPUT}
+                name={`dataMatrix.columns[${index}]`}
+                placeholder={t('common.enterColumnName')}
+                className={className}
+              />
+              {!isViewMode && (
+                <TrashOutlined
+                  className={'trash-icon'}
+                  onClick={() => {
+                    handleRemove('columns', index);
+                  }}
+                />
+              )}
+            </div>
+          ))}
+          {!isViewMode && (
+            <Button type={'primary'} onClick={() => handleAdd('columns')}>
+              {t('common.addColumn')}
+            </Button>
+          )}
+        </div>
+      </DatamatrixWrapper>
+    </>
   );
 };
 
