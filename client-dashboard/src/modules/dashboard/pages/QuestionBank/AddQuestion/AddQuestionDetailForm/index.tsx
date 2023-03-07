@@ -71,12 +71,14 @@ const AddQuestionDetailForm = () => {
           t(`questionType.${questionType}`),
         )}
         name="type"
+        aria-label={'type'}
         label={t('common.questionFieldType')}
         onChange={handleTextFieldChange}
       />
       <ControlledInput
         inputType={INPUT_TYPES.INPUT}
         name="title"
+        aria-label={'title'}
         label={t('common.question')}
       />
     </AddQuestionDetailFormWrapper>

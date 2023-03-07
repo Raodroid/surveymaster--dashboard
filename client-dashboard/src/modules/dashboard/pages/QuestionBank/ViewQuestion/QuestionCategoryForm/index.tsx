@@ -30,6 +30,7 @@ const QuestionCategoryForm = props => {
         inputType={INPUT_TYPES.SELECT}
         options={categoryOptions}
         name="masterCategoryId"
+        aria-label="masterCategoryId"
         label={t('common.masterQuestionCategory')}
         onChange={() => {
           if (disabled) return;
@@ -45,6 +46,7 @@ const QuestionCategoryForm = props => {
         label={t('common.masterQuestionSubCategory')}
         inputType={INPUT_TYPES.SELECT}
         name="masterSubCategoryId"
+        aria-label="masterSubCategoryId"
         maxTagCount="responsive"
         options={(() => {
           const x = categories?.find(i => i.id === values.masterCategoryId);
@@ -61,6 +63,7 @@ const QuestionCategoryForm = props => {
         label={t('common.masterVariableName')}
         inputType={INPUT_TYPES.INPUT}
         name="masterVariableName"
+        aria-label="masterVariableName"
       />
       {disabled && (
         <ControlledInput
