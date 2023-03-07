@@ -49,6 +49,7 @@ const QuestionCategoryForm = props => {
         aria-label="masterSubCategoryId"
         maxTagCount="responsive"
         options={(() => {
+          console.log('hanh', values);
           const x = categories?.find(i => i.id === values.masterCategoryId);
           if (!x?.children) return [];
           return x.children?.map(child => ({

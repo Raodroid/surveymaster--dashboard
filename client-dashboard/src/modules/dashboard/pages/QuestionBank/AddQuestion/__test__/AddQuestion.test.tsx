@@ -4,8 +4,18 @@ import { JestGeneralProviderHoc } from '../../../../../../get-mock-data-jest-tes
 import AddQuestion from '../index';
 import clearAllMocks = jest.clearAllMocks;
 import { QuestionBankService } from '../../../../../../services';
+import { ROUTE_PATH } from '../../../../../../enums';
+import { generatePath } from 'react-router';
+import { notification } from 'antd';
 
-afterAll(() => {
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as any),
+  useNavigate: () => mockedUsedNavigate,
+}));
+
+beforeEach(() => {
   clearAllMocks();
 });
 
@@ -27,9 +37,8 @@ const createMock = () => {
   Object.defineProperty(window, 'crypto', {});
 };
 
-test('AddQuestionDetailForm: base content', async () => {
+test('AddQuestionDetailForm: render base content', async () => {
   createMock();
-
   render(
     <JestGeneralProviderHoc>
       <AddQuestion />
@@ -45,47 +54,34 @@ test('AddQuestionDetailForm: base content', async () => {
   screen.getByText(/master variable name/i);
   screen.getByRole('button', { name: /save question/i });
 
-  await waitFor(() => {
-    screen.getByRole('combobox', {
-      name: 'masterCategoryId',
-    });
-    screen.getByRole('combobox', {
-      name: 'masterSubCategoryId',
-    });
-    screen.getByRole('textbox', {
-      name: 'masterVariableName',
-    });
-    screen.getByRole('textbox', {
-      name: 'title',
-    });
+  const questionFieldTypeSelector = screen.getByRole('combobox', {
+    name: 'type',
   });
+  await userEvent.click(questionFieldTypeSelector);
 
   await waitFor(() => {
-    const questionFieldTypeSelector = screen.getByRole('combobox', {
-      name: 'type',
-    });
-    userEvent.click(questionFieldTypeSelector);
     screen.getByRole('option', { name: 'Text Entry' });
     screen.getByText('Text Graphic');
+  });
 
-    const multiChoiceOpt = screen.getByText('Multiple Choice');
-    fireEvent.click(multiChoiceOpt);
-    screen.getByRole('button', { name: /add one more question/i });
-    screen.getByText(/answer list/i);
-
-    userEvent.click(questionFieldTypeSelector);
+  await userEvent.click(questionFieldTypeSelector);
+  await waitFor(() => {
     const radioButtonOpt = screen.getByText('Radio Button');
     fireEvent.click(radioButtonOpt);
     screen.getByRole('button', { name: /add one more question/i });
     screen.getByText(/answer list/i);
+  });
 
-    userEvent.click(questionFieldTypeSelector);
+  await userEvent.click(questionFieldTypeSelector);
+  await waitFor(() => {
     const photoOpt = screen.getByText('Photo');
     fireEvent.click(photoOpt);
     screen.getByRole('button', { name: /add one more question/i });
     screen.getByText(/upload/i);
+  });
 
-    userEvent.click(questionFieldTypeSelector);
+  await userEvent.click(questionFieldTypeSelector);
+  await waitFor(() => {
     const datePickerOpt = screen.getByText('Date Picker');
     fireEvent.click(datePickerOpt);
     // screen.getByRole('button', { name: /add one more question/i });
@@ -94,45 +90,55 @@ test('AddQuestionDetailForm: base content', async () => {
     screen.getByRole('cell', { name: /dd\/mm\/yyyy/i });
     screen.getByRole('cell', { name: /mm\/dd\/yyyy/i });
     screen.getByRole('cell', { name: /yyy\/mm\/dd/i });
+  });
 
-    userEvent.click(questionFieldTypeSelector);
+  await userEvent.click(questionFieldTypeSelector);
+  await waitFor(() => {
     const timePickerOpt = screen.getByText('Time Picker');
     fireEvent.click(timePickerOpt);
     screen.getByText(/option list/i);
     screen.getByRole('columnheader', { name: /option/i });
     screen.getByRole('cell', { name: /12h format/i });
     screen.getByRole('cell', { name: /24h format/i });
+  });
 
-    userEvent.click(questionFieldTypeSelector);
+  await userEvent.click(questionFieldTypeSelector);
+  await waitFor(() => {
     const sliderOpt = screen.getByText('Slider');
     fireEvent.click(sliderOpt);
     screen.getByText(/answer list/i);
     screen.getByText(/grid line/i);
     screen.getByText(/max value/i);
     screen.getByText(/min value/i);
+  });
 
-    userEvent.click(questionFieldTypeSelector);
+  await userEvent.click(questionFieldTypeSelector);
+  await waitFor(() => {
     const formFieldOpt = screen.getByText('Form Field');
     fireEvent.click(formFieldOpt);
-
     screen.getByText('Field List');
     screen.getByRole('columnheader', { name: /order/i });
     screen.getByRole('columnheader', { name: /field/i });
     screen.getByRole('button', { name: /add one more field/i });
+  });
 
-    userEvent.click(questionFieldTypeSelector);
+  await userEvent.click(questionFieldTypeSelector);
+  await waitFor(() => {
     const textGraphicOpt = screen.getByText('Text Graphic');
     fireEvent.click(textGraphicOpt);
-
     screen.getByText('Answer List');
+  });
 
-    userEvent.click(questionFieldTypeSelector);
-    const dataMatrixOpt = screen.getByText('Data Matrix');
-    fireEvent.click(dataMatrixOpt);
+  await userEvent.click(questionFieldTypeSelector);
+  await waitFor(() => {
+    const multiChoiceOpt = screen.getByText('Multiple Choice');
+    fireEvent.click(multiChoiceOpt);
+    screen.getByRole('button', { name: /add one more question/i });
+    screen.getByText(/answer list/i);
   });
 });
 
-test('AddQuestionDetailForm: base content', async () => {
+test('AddQuestionDetailForm: submit form success', async () => {
   createMock();
   jest.spyOn(QuestionBankService, 'getCategories').mockReturnValueOnce(
     Promise.resolve({
@@ -171,32 +177,161 @@ test('AddQuestionDetailForm: base content', async () => {
     }),
   );
 
+  const addQuestionAPI = jest
+    .spyOn(QuestionBankService, 'addQuestion')
+    .mockResolvedValue({
+      data: { versions: [{ displayId: 1 }], id: 'abc' },
+      status: 200,
+      statusText: '',
+      headers: {},
+      config: {},
+    });
+
   render(
     <JestGeneralProviderHoc>
       <AddQuestion />
     </JestGeneralProviderHoc>,
   );
 
+  await userEvent.type(
+    screen.getByRole('textbox', {
+      name: 'title',
+    }),
+    'what is 1+1?',
+  );
+  await userEvent.type(
+    screen.getByRole('textbox', {
+      name: 'masterVariableName',
+    }),
+    'simpleMath',
+  );
+
+  const masterQuestionSelect = screen.getByRole('combobox', {
+    name: 'masterCategoryId',
+  });
+  await userEvent.click(masterQuestionSelect);
+
   await waitFor(() => {
-    const masterQuestionSelect = screen.getByRole('combobox', {
-      name: 'masterCategoryId',
-    });
-    const masterSubQuestionSelect = screen.getByRole('combobox', {
-      name: 'masterSubCategoryId',
-    });
-
-    userEvent.click(masterQuestionSelect);
-
-    const questionMasterQuestionOption = screen.getByRole('option', {
-      name: 'Survey Information',
-    });
     screen.getByRole('option', { name: 'GPAQ' });
+  });
+  fireEvent.click(screen.getByText('Survey Information'));
 
-    fireEvent.click(questionMasterQuestionOption);
+  await userEvent.click(
+    screen.getByRole('combobox', {
+      name: 'masterSubCategoryId',
+    }),
+  );
 
-    userEvent.click(masterSubQuestionSelect);
-
-    screen.getByRole('option', { name: 'Qualtrics' });
+  await waitFor(() => {
     screen.getByRole('option', { name: 'Generals' });
+  });
+
+  fireEvent.click(screen.getByText('Qualtrics'));
+
+  await userEvent.click(screen.getByRole('button', { name: /save question/i }));
+
+  expect(addQuestionAPI).toHaveBeenCalled();
+  await waitFor(() => {
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(
+      generatePath(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION, {
+        questionId: 'abc',
+      }) + `?version=${1}`,
+    );
+  });
+});
+
+test('AddQuestionDetailForm: submit form fail', async () => {
+  createMock();
+
+  jest.spyOn(QuestionBankService, 'getCategories').mockReturnValueOnce(
+    Promise.resolve({
+      status: 200,
+      statusText: 'success',
+      headers: {},
+      config: {},
+      data: {
+        data: [
+          {
+            id: '1',
+            name: 'Survey Information',
+            children: [
+              {
+                name: 'Qualtrics',
+                id: '1.1',
+              },
+              {
+                name: 'Generals',
+                id: '1.2',
+              },
+            ],
+          },
+          {
+            id: '2',
+            name: 'GPAQ',
+            children: [
+              {
+                name: 'Hannah',
+                id: '2.1',
+              },
+            ],
+          },
+        ],
+      },
+    }),
+  );
+
+  const notiErrorMock = jest.spyOn(notification, 'error');
+
+  const addQuestionAPI = jest
+    .spyOn(QuestionBankService, 'addQuestion')
+    .mockRejectedValue('');
+
+  render(
+    <JestGeneralProviderHoc>
+      <AddQuestion />
+    </JestGeneralProviderHoc>,
+  );
+
+  await userEvent.type(
+    screen.getByRole('textbox', {
+      name: 'title',
+    }),
+    'what is 1+1?',
+  );
+  await userEvent.type(
+    screen.getByRole('textbox', {
+      name: 'masterVariableName',
+    }),
+    'simpleMath',
+  );
+
+  const masterQuestionSelect = screen.getByRole('combobox', {
+    name: 'masterCategoryId',
+  });
+  await userEvent.click(masterQuestionSelect);
+
+  await waitFor(() => {
+    screen.getByRole('option', { name: 'GPAQ' });
+  });
+  fireEvent.click(screen.getByText('Survey Information'));
+
+  await userEvent.click(
+    screen.getByRole('combobox', {
+      name: 'masterSubCategoryId',
+    }),
+  );
+
+  await waitFor(() => {
+    screen.getByRole('option', { name: 'Generals' });
+  });
+
+  fireEvent.click(screen.getByText('Qualtrics'));
+
+  await userEvent.click(screen.getByRole('button', { name: /save question/i }));
+
+  expect(addQuestionAPI).toHaveBeenCalled();
+
+  await waitFor(() => {
+    expect(notiErrorMock).toHaveBeenCalledTimes(1);
   });
 });
