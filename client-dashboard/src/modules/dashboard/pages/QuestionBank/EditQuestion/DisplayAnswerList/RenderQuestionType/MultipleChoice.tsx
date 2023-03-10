@@ -79,6 +79,7 @@ const MultipleChoice = () => {
               inputType={INPUT_TYPES.INPUT}
               name={`options[${index}].text`}
               className={className}
+              aria-label={`options[${index}].text`}
             />
           );
         },
@@ -89,12 +90,16 @@ const MultipleChoice = () => {
         dataIndex: 'action',
         width: 60,
         render: (value, record, index) => (
-          <TrashOutlined
-            className={'trash-icon'}
+          <Button
+            ghost
+            type={'text'}
+            aria-label={'trash-icon'}
             onClick={() => {
               handleDeleteRow(record);
             }}
-          />
+          >
+            <TrashOutlined className={'trash-icon'} />
+          </Button>
         ),
       },
     ],

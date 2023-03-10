@@ -21,7 +21,6 @@ import {
 } from 'type';
 import { ROUTE_PATH } from '../../../../../enums';
 import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
-import EditQuestionDetailForm from './EditQuestionDetailForm';
 import { generatePath, useParams } from 'react-router';
 import { useGetQuestionByQuestionId } from '../util';
 import useParseQueryString from '../../../../../hooks/useParseQueryString';
@@ -29,6 +28,7 @@ import DisplayAnswerList from './DisplayAnswerList';
 import DisplayTitle from './DisplayTitle';
 import { generateRandom } from 'modules/common/funcs';
 import { transformQuestionData } from '../AddQuestion/util';
+import AddQuestionDetailForm from '../AddQuestion/AddQuestionDetailForm';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;
@@ -216,7 +216,7 @@ const EditQuestion = () => {
                         {t('common.questionDetails')}
                       </div>
                       <div className={'question-section__row__content'}>
-                        <EditQuestionDetailForm />
+                        <AddQuestionDetailForm />
                       </div>
                     </div>
                   </div>

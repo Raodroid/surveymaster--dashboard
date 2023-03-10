@@ -217,10 +217,14 @@ const DisplayPhotoAnswer: FC<{
             <span className={'img-size'}>{formatBytes(imageSize)}</span>
           )}
           {!isViewMode && (
-            <TrashOutlined
-              className={'trash-icon'}
+            <Button
               onClick={() => handleDeleteRow(record)}
-            />
+              aria-label={'trash-icon'}
+              type={'text'}
+              ghost
+            >
+              <TrashOutlined className={'trash-icon'} />
+            </Button>
           )}
         </div>
         <div className={'DisplayPhotoAnswerWrapper__info__bottom'}>

@@ -35,6 +35,11 @@ const createMock = () => {
   });
 
   Object.defineProperty(window, 'crypto', {});
+  Object.defineProperty(window, 'location', {
+    value: {
+      href: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ADD_QUESTION,
+    },
+  });
 };
 
 test('AddQuestionDetailForm: render base content', async () => {
@@ -68,6 +73,8 @@ test('AddQuestionDetailForm: render base content', async () => {
   await waitFor(() => {
     const radioButtonOpt = screen.getByText('Radio Button');
     fireEvent.click(radioButtonOpt);
+  });
+  await waitFor(() => {
     screen.getByRole('button', { name: /add one more question/i });
     screen.getByText(/answer list/i);
   });
@@ -76,15 +83,37 @@ test('AddQuestionDetailForm: render base content', async () => {
   await waitFor(() => {
     const photoOpt = screen.getByText('Photo');
     fireEvent.click(photoOpt);
+  });
+
+  await waitFor(() => {
     screen.getByRole('button', { name: /add one more question/i });
+    screen.getByRole('columnheader', { name: /order/i });
+    screen.getByRole('columnheader', { name: /answer/i });
     screen.getByText(/upload/i);
+    expect(screen.getAllByRole('row').length).toBe(2);
+  });
+  await userEvent.click(
+    screen.getAllByRole('button', { name: /trash\-icon/i })[0],
+  );
+
+  await waitFor(() => {
+    screen.getByText(/no data/i);
+  });
+  await userEvent.click(
+    screen.getByRole('button', { name: /add one more question/i }),
+  );
+
+  await waitFor(() => {
+    expect(screen.getAllByRole('row').length).toBe(2);
   });
 
   await userEvent.click(questionFieldTypeSelector);
   await waitFor(() => {
     const datePickerOpt = screen.getByText('Date Picker');
     fireEvent.click(datePickerOpt);
-    // screen.getByRole('button', { name: /add one more question/i });
+  });
+
+  await waitFor(() => {
     screen.getByText(/option list/i);
     screen.getByRole('columnheader', { name: /option/i });
     screen.getByRole('cell', { name: /dd\/mm\/yyyy/i });
@@ -96,6 +125,9 @@ test('AddQuestionDetailForm: render base content', async () => {
   await waitFor(() => {
     const timePickerOpt = screen.getByText('Time Picker');
     fireEvent.click(timePickerOpt);
+  });
+
+  await waitFor(() => {
     screen.getByText(/option list/i);
     screen.getByRole('columnheader', { name: /option/i });
     screen.getByRole('cell', { name: /12h format/i });
@@ -106,6 +138,9 @@ test('AddQuestionDetailForm: render base content', async () => {
   await waitFor(() => {
     const sliderOpt = screen.getByText('Slider');
     fireEvent.click(sliderOpt);
+  });
+
+  await waitFor(() => {
     screen.getByText(/answer list/i);
     screen.getByText(/grid line/i);
     screen.getByText(/max value/i);
@@ -116,6 +151,8 @@ test('AddQuestionDetailForm: render base content', async () => {
   await waitFor(() => {
     const formFieldOpt = screen.getByText('Form Field');
     fireEvent.click(formFieldOpt);
+  });
+  await waitFor(() => {
     screen.getByText('Field List');
     screen.getByRole('columnheader', { name: /order/i });
     screen.getByRole('columnheader', { name: /field/i });
@@ -126,6 +163,9 @@ test('AddQuestionDetailForm: render base content', async () => {
   await waitFor(() => {
     const textGraphicOpt = screen.getByText('Text Graphic');
     fireEvent.click(textGraphicOpt);
+  });
+
+  await waitFor(() => {
     screen.getByText('Answer List');
   });
 
@@ -133,10 +173,77 @@ test('AddQuestionDetailForm: render base content', async () => {
   await waitFor(() => {
     const multiChoiceOpt = screen.getByText('Multiple Choice');
     fireEvent.click(multiChoiceOpt);
+  });
+
+  await waitFor(() => {
     screen.getByRole('button', { name: /add one more question/i });
     screen.getByText(/answer list/i);
+    expect(screen.getAllByRole('row').length).toBe(2);
   });
-});
+
+  await userEvent.click(
+    screen.getByRole('button', { name: /add one more question/i }),
+  );
+  await waitFor(() => {
+    expect(screen.getAllByRole('row').length).toBe(3);
+  });
+
+  await userEvent.click(
+    screen.getAllByRole('button', { name: /trash\-icon/i })[0],
+  );
+
+  await waitFor(() => {
+    expect(screen.getAllByRole('row').length).toBe(2);
+  });
+
+  await userEvent.click(
+    screen.getAllByRole('button', { name: /trash\-icon/i })[0],
+  );
+
+  await waitFor(() => {
+    screen.getByText(/no data/i);
+  });
+
+  await userEvent.click(questionFieldTypeSelector);
+
+  await waitFor(() => {
+    const radioButtonOpt = screen.getByText(/data matrix/i);
+    fireEvent.click(radioButtonOpt);
+  });
+
+  await waitFor(() => {
+    screen.getByRole('button', { name: /add column/i });
+    screen.getByText(/answer list/i);
+    screen.getByPlaceholderText(/enter row name/i);
+    screen.getByPlaceholderText(/enter column name/i);
+  });
+
+  await userEvent.click(screen.getByRole('button', { name: /add row/i }));
+
+  await waitFor(() => {
+    expect(screen.getAllByPlaceholderText(/enter row name/i).length).toBe(2);
+  });
+  await userEvent.click(screen.getByRole('button', { name: /add column/i }));
+
+  await waitFor(() => {
+    expect(screen.getAllByPlaceholderText(/enter column name/i).length).toBe(2);
+  });
+
+  await userEvent.click(
+    screen.getAllByRole('button', { name: 'trash-icon-row' })[0],
+  );
+
+  await waitFor(() => {
+    expect(screen.getAllByPlaceholderText(/enter row name/i).length).toBe(1);
+  });
+  await userEvent.click(
+    screen.getAllByRole('button', { name: 'trash-icon-column' })[0],
+  );
+
+  await waitFor(() => {
+    expect(screen.getAllByPlaceholderText(/enter column name/i).length).toBe(1);
+  });
+}, 10000);
 
 test('AddQuestionDetailForm: submit form success', async () => {
   createMock();

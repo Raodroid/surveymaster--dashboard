@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "env-cmd -f .env.development craco start",
+    "start": "env-cmd -f .env.dev-server craco start",
     "build:development": "env-cmd -f .env.development craco build",
     "build:dev-server": "env-cmd -f .env.dev-server craco build",
     "deploy:dev-server": "aws s3 sync build/ s3://eg-dev-server-survey-master-admin-origin --cache-control no-cache",

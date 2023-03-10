@@ -17,6 +17,7 @@ const EditQuestionDetailForm = () => {
           t(`questionType.${questionType}`),
         )}
         name="type"
+        aria-label={'type'}
         label={t('common.questionFieldType')}
       />
       <ControlledInput

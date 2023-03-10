@@ -88,12 +88,17 @@ const Datamatrix = () => {
                 className={className}
               />
               {!isViewMode && (
-                <TrashOutlined
-                  className={'trash-icon'}
+                <Button
+                  aria-label={'trash-icon-row'}
                   onClick={() => {
                     handleRemove('rows', index);
                   }}
-                />
+                  ghost
+                  type={'text'}
+                  style={{ width: 'fit-content', marginTop: 0 }}
+                >
+                  <TrashOutlined className={'trash-icon'} />
+                </Button>
               )}
             </div>
           ))}
@@ -116,12 +121,17 @@ const Datamatrix = () => {
                 className={className}
               />
               {!isViewMode && (
-                <TrashOutlined
-                  className={'trash-icon'}
+                <Button
+                  aria-label={'trash-icon-column'}
                   onClick={() => {
                     handleRemove('columns', index);
                   }}
-                />
+                  ghost
+                  type={'text'}
+                  style={{ width: 'fit-content', marginTop: 0 }}
+                >
+                  <TrashOutlined className={'trash-icon'} />
+                </Button>
               )}
             </div>
           ))}
