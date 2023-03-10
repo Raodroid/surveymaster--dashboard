@@ -105,7 +105,7 @@ test('EditQuestionDetailForm: submit form success', async () => {
   screen.getByText(/question details/i);
 
   await waitFor(() => {
-    screen.getByText('yourName');
+    screen.getByDisplayValue('yourName');
   });
 
   screen.logTestingPlaygroundURL();
