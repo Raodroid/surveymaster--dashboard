@@ -70,6 +70,7 @@ const Datamatrix = () => {
             t(`matrixType.${questionType}`),
           )}
           name="matrixType"
+          aria-label={'matrixType'}
           label={t('common.matrixType')}
           className={className}
         />

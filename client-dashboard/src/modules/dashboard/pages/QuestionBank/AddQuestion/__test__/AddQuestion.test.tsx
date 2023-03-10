@@ -49,7 +49,6 @@ test('AddQuestionDetailForm: render base content', async () => {
       <AddQuestion />
     </JestGeneralProviderHoc>,
   );
-
   screen.getByText(/add new question/i);
   screen.getByText(/question details/i);
   screen.getByText(/text entry/i);
@@ -212,6 +211,7 @@ test('AddQuestionDetailForm: render base content', async () => {
   });
 
   await waitFor(() => {
+    screen.getByRole('combobox', { name: 'matrixType' });
     screen.getByRole('button', { name: /add column/i });
     screen.getByText(/answer list/i);
     screen.getByPlaceholderText(/enter row name/i);

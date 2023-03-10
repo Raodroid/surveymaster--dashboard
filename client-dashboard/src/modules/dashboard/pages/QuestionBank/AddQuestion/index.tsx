@@ -10,7 +10,7 @@ import { Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from 'services';
 import { onError } from 'utils';
-import { IQuestionCreatePostDto, QuestionType } from 'type';
+import { IQuestionCreatePostDto, MatrixType, QuestionType } from 'type';
 import { ROUTE_PATH } from 'enums';
 import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
