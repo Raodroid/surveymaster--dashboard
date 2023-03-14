@@ -4,7 +4,7 @@ import { INPUT_TYPES } from '../../../../../common/input/type';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext } from 'formik';
 import { useGetAllCategories } from '../../util';
-import { IAddQuestionFormValue } from '../../AddQuestion/util';
+import { IAddQuestionFormValue } from '../util';
 
 const QuestionCategoryForm = props => {
   const { disabled } = props;
@@ -71,6 +71,7 @@ const QuestionCategoryForm = props => {
           label={t('common.masterCombineToken')}
           inputType={INPUT_TYPES.INPUT}
           name="masterCombineToken"
+          aria-label={'masterCombineToken'}
         />
       )}
       {disabled && (
@@ -78,7 +79,8 @@ const QuestionCategoryForm = props => {
           className={className}
           label={t('common.version') + ' ID'}
           inputType={INPUT_TYPES.INPUT}
-          name="masterCombineToken"
+          name="displayId"
+          aria-label={'displayId'}
         />
       )}
     </>

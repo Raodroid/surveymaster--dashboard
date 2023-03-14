@@ -3,7 +3,7 @@ import { EditQuestionWrapper } from './style';
 import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
 import { useTranslation } from 'react-i18next';
 import { Button, Form, notification } from 'antd';
-import QuestionCategoryForm from '../ViewQuestion/QuestionCategoryForm';
+import QuestionCategoryForm from '../AddQuestion/QuestionCategoryForm';
 import { useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 import qs from 'qs';
@@ -24,11 +24,11 @@ import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import { generatePath, useParams } from 'react-router';
 import { useGetQuestionByQuestionId } from '../util';
 import useParseQueryString from '../../../../../hooks/useParseQueryString';
-import DisplayAnswerList from './DisplayAnswerList';
-import DisplayTitle from './DisplayTitle';
+import DisplayAnswerList from '../AddQuestion/DisplayAnswerList';
+import DisplayTitle from '../AddQuestion/DisplayTitle';
 import { generateRandom } from 'modules/common/funcs';
 import { transformQuestionData } from '../AddQuestion/util';
-import AddQuestionDetailForm from '../AddQuestion/AddQuestionDetailForm';
+import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;
@@ -53,10 +53,9 @@ function transformData(
     masterCategoryId,
     ...rest
   } = input;
+  if (!id) return undefined;
 
   const newValue = transformQuestionData(rest);
-
-  if (!id) return undefined;
 
   if (questionData.status === QuestionVersionStatus.COMPLETED) {
     return {

@@ -6,17 +6,16 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { useGetQuestionByQuestionId } from '../util';
 import { Button, Form, notification } from 'antd';
-import QuestionCategoryForm from './QuestionCategoryForm';
+import QuestionCategoryForm from '../AddQuestion/QuestionCategoryForm';
 import { useTranslation } from 'react-i18next';
-import QuestionDetailForm from './QuestionDetailForm';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import useParseQueryString from 'hooks/useParseQueryString';
 import { PenFilled } from 'icons';
 import templateVariable from 'app/template-variables.module.scss';
 import qs from 'qs';
-import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
-import DisplayTitle from '../EditQuestion/DisplayTitle';
+import DisplayAnswerList from '../AddQuestion/DisplayAnswerList';
+import DisplayTitle from '../AddQuestion/DisplayTitle';
 import {
   BaseQuestionVersionDto,
   IBaseQuestionOptionsVersionDto,
@@ -31,6 +30,7 @@ import moment, { Moment } from 'moment';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
 import { SCOPE_CONFIG } from 'enums';
 import { useCheckScopeEntityDefault } from '../../../../common/hoc';
+import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
 
 const formSchema = Yup.object();
 
@@ -200,13 +200,19 @@ const ViewQuestion = () => {
               </Button>
             )}
             {canUpdate && (
-              <PenFilled
+              <Button
                 onClick={handleEdit}
-                style={{
-                  color: templateVariable.primary_color,
-                  cursor: 'pointer',
-                }}
-              />
+                type={'text'}
+                aria-label={'direct-edit-page'}
+                ghost
+              >
+                <PenFilled
+                  style={{
+                    color: templateVariable.primary_color,
+                    cursor: 'pointer',
+                  }}
+                />
+              </Button>
             )}
           </div>
         }
@@ -268,7 +274,7 @@ const ViewQuestion = () => {
                         {t('common.questionDetails')}
                       </div>
                       <div className={'question-section__row__content'}>
-                        <QuestionDetailForm />
+                        <AddQuestionDetailForm />
                       </div>
                     </div>
                   </div>

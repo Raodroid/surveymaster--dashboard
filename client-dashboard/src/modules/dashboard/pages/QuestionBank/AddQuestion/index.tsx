@@ -3,9 +3,9 @@ import { AddQuestionWrapper } from './style';
 import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
 import { useTranslation } from 'react-i18next';
 import { Button, Form, notification } from 'antd';
-import QuestionCategoryForm from '../ViewQuestion/QuestionCategoryForm';
+import QuestionCategoryForm from './QuestionCategoryForm';
 import { useNavigate } from 'react-router-dom';
-import AddQuestionDetailForm from './AddQuestionDetailForm';
+import AddQuestionDetailForm from './QuestionDetailForm';
 import { Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from 'services';
@@ -13,9 +13,9 @@ import { onError } from 'utils';
 import { IQuestionCreatePostDto, MatrixType, QuestionType } from 'type';
 import { ROUTE_PATH } from 'enums';
 import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
-import DisplayAnswerList from '../EditQuestion/DisplayAnswerList';
+import DisplayAnswerList from './DisplayAnswerList';
 import { generatePath } from 'react-router';
-import DisplayTitle from '../EditQuestion/DisplayTitle';
+import DisplayTitle from './DisplayTitle';
 import { IAddQuestionFormValue, transformQuestionData } from './util';
 
 const initValue: IAddQuestionFormValue = {

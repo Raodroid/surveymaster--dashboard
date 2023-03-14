@@ -7,7 +7,7 @@ import { ControlledInput } from '../../../../../../common';
 import { INPUT_TYPES } from '../../../../../../common/input/type';
 import { TrashOutlined } from '../../../../../../../icons';
 import templateVariable from '../../../../../../../app/template-variables.module.scss';
-import { IAddQuestionFormValue } from '../../../AddQuestion/util';
+import { IAddQuestionFormValue } from '../../util';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../../enums';
 import { MatrixType } from '../../../../../../../type';

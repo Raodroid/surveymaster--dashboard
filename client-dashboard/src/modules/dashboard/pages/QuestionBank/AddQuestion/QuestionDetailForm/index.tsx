@@ -3,12 +3,21 @@ import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '../../../../../common/input/type';
 import { QuestionType } from '../../../../../../type';
 import { useTranslation } from 'react-i18next';
-import { AddQuestionDetailFormWrapper } from './style';
+import { QuestionDetailFormWrapper } from './style';
 import { transformEnumToOption } from '../../../../../../utils';
 import { useFormikContext } from 'formik';
 import { generateRandom } from '../../../../../common/funcs';
+import { useMatch } from 'react-router-dom';
+import { ROUTE_PATH } from '../../../../../../enums';
 
 const AddQuestionDetailForm = () => {
+  const isViewMode = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION,
+    end: true,
+    caseSensitive: true,
+  });
+  const className = !!isViewMode ? 'view-mode' : undefined;
+
   const { t } = useTranslation();
 
   const { setFieldValue, setValues } = useFormikContext();
@@ -63,25 +72,39 @@ const AddQuestionDetailForm = () => {
       }
     }
   };
+
   return (
-    <AddQuestionDetailFormWrapper className={'AddQuestionDetailForm'}>
-      <ControlledInput
-        inputType={INPUT_TYPES.SELECT}
-        options={transformEnumToOption(QuestionType, questionType =>
-          t(`questionType.${questionType}`),
+    <QuestionDetailFormWrapper className={'QuestionDetailForm'}>
+      <div className={'QuestionDetailForm__row'}>
+        <ControlledInput
+          className={className}
+          inputType={INPUT_TYPES.SELECT}
+          name="type"
+          options={transformEnumToOption(QuestionType, questionType =>
+            t(`questionType.${questionType}`),
+          )}
+          aria-label={'type'}
+          label={t('common.questionFieldType')}
+          onChange={handleTextFieldChange}
+        />
+        {isViewMode && (
+          <ControlledInput
+            className={className}
+            inputType={INPUT_TYPES.DAY_PICKER}
+            name="createdAt"
+            aria-label={'createdAt'}
+            label={t('common.dateCreated')}
+          />
         )}
-        name="type"
-        aria-label={'type'}
-        label={t('common.questionFieldType')}
-        onChange={handleTextFieldChange}
-      />
+      </div>
       <ControlledInput
+        className={className}
         inputType={INPUT_TYPES.INPUT}
         name="title"
         aria-label={'title'}
         label={t('common.question')}
       />
-    </AddQuestionDetailFormWrapper>
+    </QuestionDetailFormWrapper>
   );
 };
 
