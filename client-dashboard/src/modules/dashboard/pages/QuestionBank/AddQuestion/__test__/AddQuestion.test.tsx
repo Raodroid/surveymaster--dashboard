@@ -1,6 +1,9 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { JestGeneralProviderHoc } from '../../../../../../get-mock-data-jest-test';
+import {
+  baseAxiosResponse,
+  JestGeneralProviderHoc,
+} from '../../../../../../get-mock-data-jest-test';
 import AddQuestion from '../index';
 import clearAllMocks = jest.clearAllMocks;
 import { QuestionBankService } from '../../../../../../services';
@@ -16,10 +19,6 @@ jest.mock('react-router-dom', () => ({
 }));
 
 beforeEach(() => {
-  clearAllMocks();
-});
-
-const createMock = () => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: jest.fn().mockImplementation(query => ({
@@ -40,10 +39,14 @@ const createMock = () => {
       href: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ADD_QUESTION,
     },
   });
-};
+});
+
+afterEach(() => {
+  clearAllMocks();
+});
 
 test('AddQuestionDetailForm: render base content', async () => {
-  createMock();
+  // createMock();
   render(
     <JestGeneralProviderHoc>
       <AddQuestion />
@@ -246,13 +249,10 @@ test('AddQuestionDetailForm: render base content', async () => {
 }, 10000);
 
 test('AddQuestionDetailForm: submit form success', async () => {
-  createMock();
+  // createMock();
   jest.spyOn(QuestionBankService, 'getCategories').mockReturnValueOnce(
     Promise.resolve({
-      status: 200,
-      statusText: 'success',
-      headers: {},
-      config: {},
+      ...baseAxiosResponse,
       data: {
         data: [
           {
@@ -287,11 +287,8 @@ test('AddQuestionDetailForm: submit form success', async () => {
   const addQuestionAPI = jest
     .spyOn(QuestionBankService, 'addQuestion')
     .mockResolvedValue({
+      ...baseAxiosResponse,
       data: { versions: [{ displayId: 1 }], id: 'abc' },
-      status: 200,
-      statusText: '',
-      headers: {},
-      config: {},
     });
 
   render(
@@ -348,14 +345,9 @@ test('AddQuestionDetailForm: submit form success', async () => {
 });
 
 test('AddQuestionDetailForm: submit form fail', async () => {
-  createMock();
-
   jest.spyOn(QuestionBankService, 'getCategories').mockReturnValueOnce(
     Promise.resolve({
-      status: 200,
-      statusText: 'success',
-      headers: {},
-      config: {},
+      ...baseAxiosResponse,
       data: {
         data: [
           {

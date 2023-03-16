@@ -1,5 +1,8 @@
 import QuestionBankSiderMainContent from '../../main-content';
-import { JestGeneralProviderHoc } from '../../../../../../../get-mock-data-jest-test';
+import {
+  baseAxiosResponse,
+  JestGeneralProviderHoc,
+} from '../../../../../../../get-mock-data-jest-test';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QuestionBankService } from 'services';
@@ -15,10 +18,7 @@ jest.mock('react-router-dom', () => ({
 test('QuestionSiderMainContent', async () => {
   jest.spyOn(QuestionBankService, 'getCategories').mockReturnValueOnce(
     Promise.resolve({
-      status: 200,
-      statusText: 'success',
-      headers: {},
-      config: {},
+      ...baseAxiosResponse,
       data: {
         data: [
           {

@@ -1,5 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { JestGeneralProviderHoc } from '../../../../../../get-mock-data-jest-test';
+import {
+  baseAxiosResponse,
+  JestGeneralProviderHoc,
+} from '../../../../../../get-mock-data-jest-test';
 import EditQuestion from '../index';
 import { QuestionBankService } from '../../../../../../services';
 import {
@@ -15,6 +18,7 @@ import { ROUTE_PATH } from '../../../../../../enums';
 import { notification } from 'antd';
 
 const mockedUsedNavigate = jest.fn();
+
 const mockLocation = {
   pathname: '/app/question-bank/51/edit',
   search: '?version=24ZU-HURK-PHZD',
@@ -30,10 +34,6 @@ jest.mock('react-router', () => ({
   ...(jest.requireActual('react-router') as any),
   useParams: () => ({ questionId: '51' }),
 }));
-
-beforeEach(() => {
-  clearAllMocks();
-});
 
 const questionVersionVersion: IQuestionVersion = {
   createdAt: '2023-02-28T03:01:16.042Z',
@@ -70,6 +70,23 @@ const questionMock: IQuestion = {
 };
 
 const createMock = (status = QuestionVersionStatus.COMPLETED) => {
+  jest.spyOn(QuestionBankService, 'getQuestionById').mockReturnValueOnce(
+    Promise.resolve({
+      ...baseAxiosResponse,
+      data: {
+        ...questionMock,
+        latestCompletedVersion: {
+          ...questionMock.latestCompletedVersion,
+          status,
+        },
+        latestVersion: { ...questionMock.latestVersion, status },
+        versions: [{ ...questionMock.versions[0], status }],
+      },
+    }),
+  );
+};
+
+beforeEach(() => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: jest.fn().mockImplementation(query => ({
@@ -86,29 +103,9 @@ const createMock = (status = QuestionVersionStatus.COMPLETED) => {
 
   Object.defineProperty(window, 'crypto', {});
 
-  jest.spyOn(QuestionBankService, 'getQuestionById').mockReturnValueOnce(
-    Promise.resolve({
-      status: 200,
-      statusText: 'success',
-      headers: {},
-      config: {},
-      data: {
-        ...questionMock,
-        latestCompletedVersion: {
-          ...questionMock.latestCompletedVersion,
-          status,
-        },
-        latestVersion: { ...questionMock.latestVersion, status },
-        versions: [{ ...questionMock.versions[0], status }],
-      },
-    }),
-  );
   jest.spyOn(QuestionBankService, 'getCategories').mockReturnValueOnce(
     Promise.resolve({
-      status: 200,
-      statusText: 'success',
-      headers: {},
-      config: {},
+      ...baseAxiosResponse,
       data: {
         data: [
           {
@@ -139,8 +136,11 @@ const createMock = (status = QuestionVersionStatus.COMPLETED) => {
       },
     }),
   );
-};
+});
 
+afterEach(() => {
+  clearAllMocks();
+});
 test('EditQuestionDetailForm: init fetched value', async () => {
   createMock();
 
@@ -171,11 +171,8 @@ test('EditQuestionDetailForm: status = COMPLETED success', async () => {
   const createVersionQuestionAPI = jest
     .spyOn(QuestionBankService, 'createQuestionVersion')
     .mockResolvedValue({
+      ...baseAxiosResponse,
       data: { displayId: '1', id: 'abc' },
-      status: 200,
-      statusText: '',
-      headers: {},
-      config: {},
     });
 
   render(

@@ -1,5 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { JestGeneralProviderHoc } from '../../../../../../get-mock-data-jest-test';
+import {
+  baseAxiosResponse,
+  JestGeneralProviderHoc,
+} from '../../../../../../get-mock-data-jest-test';
 import ViewQuestion from '../index';
 import { QuestionBankService } from '../../../../../../services';
 import {
@@ -30,7 +33,9 @@ jest.mock('react-router', () => ({
   useParams: () => ({ questionId: '51' }),
 }));
 
-beforeEach(() => {
+beforeEach(() => {});
+
+afterEach(() => {
   clearAllMocks();
 });
 
@@ -95,10 +100,7 @@ const createMock = (status = QuestionVersionStatus.COMPLETED) => {
 
   jest.spyOn(QuestionBankService, 'getQuestionById').mockReturnValueOnce(
     Promise.resolve({
-      status: 200,
-      statusText: 'success',
-      headers: {},
-      config: {},
+      ...baseAxiosResponse,
       data: {
         ...questionMock,
         latestCompletedVersion: {
@@ -112,10 +114,7 @@ const createMock = (status = QuestionVersionStatus.COMPLETED) => {
   );
   jest.spyOn(QuestionBankService, 'getCategories').mockReturnValueOnce(
     Promise.resolve({
-      status: 200,
-      statusText: 'success',
-      headers: {},
-      config: {},
+      ...baseAxiosResponse,
       data: {
         data: [
           {
@@ -204,11 +203,7 @@ test('ViewQuestionDetailForm: status = DRAFT mark as complete', async () => {
   const markAsCompleteQuestionAPI = jest
     .spyOn(QuestionBankService, 'changeStatusQuestion')
     .mockResolvedValue({
-      data: {},
-      status: 200,
-      statusText: '',
-      headers: {},
-      config: {},
+      ...baseAxiosResponse,
     });
 
   render(
@@ -237,11 +232,7 @@ test('ViewQuestionDetailForm: delete version', async () => {
   const deleteVersionQuestionAPI = jest
     .spyOn(QuestionBankService, 'deleteQuestionVersion')
     .mockResolvedValue({
-      data: {},
-      status: 200,
-      statusText: '',
-      headers: {},
-      config: {},
+      ...baseAxiosResponse,
     });
 
   render(

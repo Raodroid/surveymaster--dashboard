@@ -1,31 +1,25 @@
-import styled from 'styled-components';
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useState,
-} from 'react';
-
-import { useTranslation } from 'react-i18next';
-import { Button, Dropdown, Form } from 'antd';
-import templateVariable from 'app/template-variables.module.scss';
-import { ControlledInput } from '../../../../../common';
-import { INPUT_TYPES } from '../../../../../common/input/type';
-import { Formik } from 'formik';
+import React, { Dispatch, FC, SetStateAction, useCallback } from 'react';
 import * as Yup from 'yup';
 import {
   GetListQuestionDto,
   IOptionItem,
   QuestionType,
-} from '../../../../../../type';
-import { ArrowDown, FilterOutlined, RollbackOutlined } from 'icons';
-import { transformEnumToOption } from '../../../../../../utils';
+} from '../../../../../../../type';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import qs from 'qs';
-import { MOMENT_FORMAT, ROUTE_PATH } from '../../../../../../enums';
+import { useGetAllCategories } from '../../../util';
 import moment from 'moment';
-import { useGetAllCategories } from '../../util';
+import qs from 'qs';
+import { MOMENT_FORMAT, ROUTE_PATH } from '../../../../../../../enums';
+import { Formik } from 'formik';
+import { RollbackOutlined } from '../../../../../../../icons';
+import { Button, Form } from 'antd';
+import { ControlledInput } from '../../../../../../common';
+import { INPUT_TYPES } from '../../../../../../common/input/type';
+import styled from 'styled-components';
+import templateVariable from '../../../../../../../app/template-variables.module.scss';
+import { transformEnumToOption } from '../../../../../../../utils';
+import { values } from 'lodash';
 
 const CHECKBOX_KEY = {
   filterByCategory: 'filterByCategory',
@@ -64,40 +58,6 @@ const filterKeyPairArr: {
   },
 ];
 
-export const FilterComponent = () => {
-  const [numOfFilter, setNumOfFilter] = useState(0);
-  const { t } = useTranslation();
-  return (
-    <FilterComponentWrapper>
-      <FilterOutlined className={'filter-icon'} />
-      <span className={'title'}>{t('common.filters')}</span>
-      <Dropdown
-        trigger={['click']}
-        placement="bottomRight"
-        overlay={
-          <FilerDropdown
-            numOfFilter={numOfFilter}
-            setNumOfFilter={setNumOfFilter}
-          />
-        }
-      >
-        <div className={'filter-main'}>
-          <span onClick={e => e.preventDefault()}>
-            {numOfFilter}
-            <ArrowDown
-              style={{
-                color: templateVariable.primary_color,
-                height: 5,
-                marginLeft: 6,
-              }}
-            />
-          </span>
-        </div>
-      </Dropdown>
-    </FilterComponentWrapper>
-  );
-};
-
 const initialFilterFormValues: IFormValue = {
   filterByAnswerType: false,
   filterByCreatedDate: false,
@@ -121,7 +81,7 @@ interface IFormValue extends GetListQuestionDto {
   filterBySubCategory: boolean;
 }
 
-const FilerDropdown: FC<IFilerDropdown> = props => {
+export const FilerDropdown: FC<IFilerDropdown> = props => {
   const { numOfFilter, setNumOfFilter } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -180,12 +140,17 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
               <span className={'filter-tag'}>{numOfFilter}</span>
             </div>
             <div className={'FilerDropdown__header__left-side'}>
-              <RollbackOutlined
-                className={'rollback-icon'}
+              <Button
                 onClick={() => {
                   handleRollback(resetForm);
                 }}
-              />
+                type={'text'}
+                ghost
+                style={{ width: 'fit-content' }}
+                aria-label={'clear filter'}
+              >
+                <RollbackOutlined className={'rollback-icon'} />
+              </Button>
             </div>
           </div>
           <div className={'FilerDropdown__body'}>
@@ -201,6 +166,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                     inputType={INPUT_TYPES.CHECKBOX}
                     name="isDeleted"
                     children={'Show Deleted Question'}
+                    aria-label={'isDeleted'}
                   />
                 </div>
               </div>
@@ -209,6 +175,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                   <ControlledInput
                     inputType={INPUT_TYPES.CHECKBOX}
                     name="filterByCreatedDate"
+                    aria-label={'filterByCreatedDate'}
                     children={'Data Creation Date'}
                   />
                 </div>
@@ -216,11 +183,13 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                   <ControlledInput
                     inputType={INPUT_TYPES.DAY_PICKER}
                     name="createdFrom"
+                    aria-label="createdFrom"
                     suffixIcon={false}
                   />
                   <ControlledInput
                     inputType={INPUT_TYPES.DAY_PICKER}
                     name="createdTo"
+                    aria-label="createdTo"
                     suffixIcon={false}
                   />
                 </div>
@@ -230,6 +199,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                   <ControlledInput
                     inputType={INPUT_TYPES.CHECKBOX}
                     name="filterByCategory"
+                    aria-label="filterByCategory"
                     children={t('common.category')}
                   />
                 </div>
@@ -238,6 +208,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                     loading={isLoading}
                     inputType={INPUT_TYPES.SELECT}
                     name="categoryIds"
+                    aria-label="categoryIds"
                     options={categoryOptions}
                     mode={'multiple'}
                     maxTagCount="responsive"
@@ -252,6 +223,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                   <ControlledInput
                     inputType={INPUT_TYPES.CHECKBOX}
                     name="filterBySubCategory"
+                    aria-label="filterBySubCategory"
                     children={t('common.subCategory')}
                   />
                 </div>
@@ -260,6 +232,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                     loading={isLoading}
                     inputType={INPUT_TYPES.SELECT}
                     name="subCategoryIds"
+                    aria-label="subCategoryIds"
                     mode={'multiple'}
                     maxTagCount="responsive"
                     options={(values?.categoryIds || []).reduce(
@@ -284,6 +257,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                   <ControlledInput
                     inputType={INPUT_TYPES.CHECKBOX}
                     name="filterByAnswerType"
+                    aria-label="filterByAnswerType"
                     children={t('common.answerType')}
                   />
                 </div>
@@ -291,6 +265,7 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
                   <ControlledInput
                     inputType={INPUT_TYPES.SELECT}
                     name="types"
+                    aria-label="types"
                     mode={'multiple'}
                     maxTagCount="responsive"
                     options={transformEnumToOption(QuestionType, questionType =>
@@ -316,34 +291,6 @@ const FilerDropdown: FC<IFilerDropdown> = props => {
     />
   );
 };
-
-const FilterComponentWrapper = styled.div`
-  display: flex;
-  padding: 0 10px;
-  align-items: center;
-  border-radius: 4px;
-  background: ${templateVariable.primary_color};
-  color: white;
-  .filter-icon {
-    margin: 0 6px;
-  }
-  .title {
-    font-size: 12px;
-  }
-  .filter-main {
-    cursor: pointer;
-    border-radius: 2px;
-    background: white;
-    color: ${templateVariable.text_primary_color};
-    padding: 3px 10px;
-    margin: 2px;
-    transform: translateX(10px);
-    span {
-      font-size: 12px;
-      font-weight: 600;
-    }
-  }
-`;
 
 const FilerDropdownWrapper = styled.div`
   width: 316px;

@@ -3,7 +3,7 @@ import { CategoryDetailHeaderWrapper } from './style';
 import { useTranslation } from 'react-i18next';
 import { Input } from 'antd';
 
-import { FilterComponent } from './FilterComponent';
+import { FilterComponent } from './FilterComponent/FilterComponent';
 import { SearchIcon } from '../../../../../../icons/SearchIcon';
 
 interface ICategoryDetailHeader {
@@ -31,6 +31,7 @@ const CategoryDetailHeader: FC<ICategoryDetailHeader> = props => {
         placeholder={`${t('common.searchQuestion')} ...`}
         value={searchTxt}
         onChange={handleTyping}
+        aria-label={'search-input'}
       />
 
       <FilterComponent />
