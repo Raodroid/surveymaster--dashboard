@@ -5,6 +5,7 @@ import { IProject, ProjectTypes } from '../../../../../../type';
 import Title from '../Title';
 import * as hoc from '../../../../../common/hoc/useCheckScopeEntityDefault';
 import restoreAllMocks = jest.restoreAllMocks;
+import * as router from 'react-router';
 
 const project: IProject = {
   personResponsible: undefined,
@@ -18,8 +19,11 @@ const project: IProject = {
   type: ProjectTypes.INTERNAL,
   personInCharge: '63113393-c401-4c23-8c7d-2a7f5cbb1a80',
 };
+const mockedUseNavigate = jest.fn();
 
 beforeEach(() => {
+  jest.spyOn(router, 'useNavigate').mockImplementation(() => mockedUseNavigate);
+
   jest.spyOn(hoc, 'useCheckScopeEntityDefault').mockReturnValue({
     canRead: true,
     canCreate: true,
@@ -33,36 +37,17 @@ afterEach(() => {
   restoreAllMocks();
 });
 
-test('TitleProjectSider: base render', async () => {
-  const mockedUsedNavigate = jest.fn();
-
-  jest.mock('react-router', () => ({
-    ...(jest.requireActual('react-router') as any),
-    useParams: () => ({ questionId: '31' }),
-    useNavigate: () => mockedUsedNavigate,
-  }));
+test('TitleProjectSider: open toggle project detail', async () => {
   render(
     <JestGeneralProviderHoc>
       <Title
         title={'Project 1'}
         routePath={`/app/project/${project.id}`}
         project={project}
+        id={project.id}
       />
     </JestGeneralProviderHoc>,
   );
-  screen.getByRole('button', {
-    name: /toggle project detail/i,
-  });
-
-  screen.getByRole('button', {
-    name: /view survey list/i,
-    hidden: true,
-  });
-  screen.getByRole('button', {
-    name: /create new survey/i,
-    hidden: true,
-  });
-
   await act(async () => {
     await userEvent.click(
       screen.getByRole('button', {
@@ -72,6 +57,92 @@ test('TitleProjectSider: base render', async () => {
   });
 
   await waitFor(() => {
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/app/project/31');
+    expect(mockedUseNavigate).toHaveBeenCalledWith('/app/project/31');
+  });
+});
+
+test('TitleProjectSider: close toggle project detail', async () => {
+  jest
+    .spyOn(router, 'useParams')
+    .mockImplementation(() => ({ projectId: '31' }));
+
+  render(
+    <JestGeneralProviderHoc>
+      <Title
+        title={'Project 1'}
+        routePath={`/app/project/${project.id}`}
+        project={project}
+        id={project.id}
+      />
+    </JestGeneralProviderHoc>,
+  );
+  await act(async () => {
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: /toggle project detail/i,
+      }),
+    );
+  });
+
+  await waitFor(() => {
+    expect(mockedUseNavigate).toHaveBeenCalledWith('/app/project');
+  });
+});
+
+test('TitleProjectSider: click create new survey', async () => {
+  jest
+    .spyOn(router, 'useParams')
+    .mockImplementation(() => ({ projectId: '31' }));
+
+  render(
+    <JestGeneralProviderHoc>
+      <Title
+        title={'Project 1'}
+        routePath={`/app/project/${project.id}`}
+        project={project}
+        id={project.id}
+      />
+    </JestGeneralProviderHoc>,
+  );
+  await act(async () => {
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: /create new survey/i,
+      }),
+    );
+  });
+
+  await waitFor(() => {
+    expect(mockedUseNavigate).toHaveBeenCalledWith(
+      '/app/project/31/add-survey',
+    );
+  });
+});
+
+test('TitleProjectSider: click view survey list', async () => {
+  jest
+    .spyOn(router, 'useParams')
+    .mockImplementation(() => ({ projectId: '31' }));
+
+  render(
+    <JestGeneralProviderHoc>
+      <Title
+        title={'Project 1'}
+        routePath={`/app/project/${project.id}`}
+        project={project}
+        id={project.id}
+      />
+    </JestGeneralProviderHoc>,
+  );
+  await act(async () => {
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: /view survey list/i,
+      }),
+    );
+  });
+
+  await waitFor(() => {
+    expect(mockedUseNavigate).toHaveBeenCalledWith('/app/project/31');
   });
 });

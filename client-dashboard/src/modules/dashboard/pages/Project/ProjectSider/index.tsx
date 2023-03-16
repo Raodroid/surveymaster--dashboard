@@ -1,4 +1,3 @@
-import { Button } from 'antd';
 import { SCOPE_CONFIG } from 'enums';
 import { PlusIcon } from 'icons';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
@@ -23,7 +22,7 @@ const ProjectSider = () => {
 
   return (
     <ProjectSiderWrapper ref={wrapperRef}>
-      {canRead ? (
+      {canRead && (
         <div className="list flex-column">
           <CustomSpinSuspense spinning={isLoading}>
             <SimpleBar style={{ height: '100%' }}>
@@ -41,17 +40,21 @@ const ProjectSider = () => {
             </SimpleBar>
           </CustomSpinSuspense>
         </div>
-      ) : null}
-      {canCreate ? (
+      )}
+      {canCreate && (
         <div className="add-new-project-btn-wrapper">
           <CustomNavLink to={projectRoutePath.PROJECT.ADD}>
-            <div className="new-project-btn">
+            <div
+              className="new-project-btn"
+              role={'link'}
+              aria-label={'add new project'}
+            >
               <PlusIcon />
               <span>{t('common.addNewProject')}</span>
             </div>
           </CustomNavLink>
         </div>
-      ) : null}
+      )}
     </ProjectSiderWrapper>
   );
 };

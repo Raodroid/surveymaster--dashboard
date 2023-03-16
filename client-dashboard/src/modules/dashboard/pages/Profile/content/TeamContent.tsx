@@ -33,7 +33,7 @@ import { AuthSelectors } from 'redux/auth';
 import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
 import { IGetParams } from 'type';
-import { QsParams } from '../../Project/ProjectContent/components/ProjectFilter';
+import { QsParams } from '../../Project/ProjectContent/components/project-filter/ProjectFilter';
 import {
   CustomFallbackStyled,
   DropDownMenuStyled,

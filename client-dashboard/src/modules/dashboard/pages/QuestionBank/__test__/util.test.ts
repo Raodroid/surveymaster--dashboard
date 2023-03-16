@@ -1,7 +1,10 @@
 import { useGetAllCategories, useGetQuestionByQuestionId } from '../util';
 import { QuestionBankService } from '../../../../../services';
 import { renderHook, waitFor } from '@testing-library/react';
-import { wrapperQuery } from '../../../../../get-mock-data-jest-test';
+import {
+  baseAxiosResponse,
+  wrapperQuery,
+} from '../../../../../get-mock-data-jest-test';
 import {
   IQuestion,
   IQuestionVersion,
@@ -38,10 +41,7 @@ afterEach(() => {
 });
 test('useGetAllCategories', async () => {
   await jest.spyOn(QuestionBankService, 'getCategories').mockResolvedValue({
-    status: 200,
-    statusText: 'success',
-    headers: {},
-    config: {},
+    ...baseAxiosResponse,
     data: categories,
   });
   const { result } = renderHook(() => useGetAllCategories(), {
@@ -93,10 +93,7 @@ const questionMock: IQuestion = {
 //enable off
 test('useGetQuestionByQuestionId', async () => {
   await jest.spyOn(QuestionBankService, 'getQuestionById').mockResolvedValue({
-    status: 200,
-    statusText: 'success',
-    headers: {},
-    config: {},
+    ...baseAxiosResponse,
     data: questionMock,
   });
   const { result } = renderHook(() => useGetQuestionByQuestionId('51'), {
@@ -110,10 +107,7 @@ test('useGetQuestionByQuestionId', async () => {
 // enable on
 test('useGetQuestionByQuestionId', async () => {
   await jest.spyOn(QuestionBankService, 'getQuestionById').mockResolvedValue({
-    status: 200,
-    statusText: 'success',
-    headers: {},
-    config: {},
+    ...baseAxiosResponse,
     data: questionMock,
   });
   const { result } = renderHook(() => useGetQuestionByQuestionId(), {

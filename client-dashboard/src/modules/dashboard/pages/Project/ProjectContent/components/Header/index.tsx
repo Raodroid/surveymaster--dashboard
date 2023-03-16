@@ -10,7 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
 import { projectRoutePath } from '../../../util';
-import ProjectFilter from '../ProjectFilter';
+import ProjectFilter from '../project-filter/ProjectFilter';
 import { HeaderStyled } from './styles';
 
 function ProjectHeader(props: {

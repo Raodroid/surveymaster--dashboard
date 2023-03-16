@@ -1,27 +1,18 @@
-import { Button, Divider, Dropdown, Form } from 'antd';
-import { Formik } from 'formik';
-import useParseQueryString from 'hooks/useParseQueryString';
-import { ArrowDown, FilterOutlined } from 'icons';
-import { Refresh } from 'icons/Refresh';
-import { ControlledInput } from 'modules/common';
-import { INPUT_TYPES } from 'modules/common/input/type';
-import moment, { Moment } from 'moment';
-import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import {
-  ProjectFilterBtn,
-  ProjectFilterOverlayWrapper,
-  ProjectFilterWrapper,
-} from './Header/styles';
-import qs from 'qs';
+import { useTranslation } from 'react-i18next';
+import useParseQueryString from '../../../../../../../hooks/useParseQueryString';
 import { matchPath } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../enums';
-
-export interface IFilter {
-  counter?: number;
-  setCounter?: (payload: number) => void;
-}
+import { ROUTE_PATH } from '../../../../../../../enums';
+import { useMemo } from 'react';
+import moment, { Moment } from 'moment';
+import qs from 'qs';
+import { ProjectFilterOverlayWrapper } from '../Header/styles';
+import { Formik } from 'formik';
+import { Button, Divider, Form } from 'antd';
+import { ArrowDown, Refresh } from '../../../../../../../icons';
+import { ControlledInput } from '../../../../../../common';
+import { INPUT_TYPES } from '../../../../../../common/input/type';
+import { IFilter, QsParams } from './ProjectFilter';
 
 interface FilterParams {
   isDeleted?: boolean;
@@ -30,59 +21,14 @@ interface FilterParams {
   createdTo?: Moment | string;
 }
 
-export interface QsParams {
-  q?: string;
-  page?: number;
-  take?: number;
-  isDeleted?: string;
-  createdFrom?: string;
-  createdTo?: string;
-}
-
-function ProjectFilter() {
-  const [counter, setCounter] = useState(0);
-  const { t } = useTranslation();
-  const qsParams = useParseQueryString<QsParams>();
-
-  useEffect(() => {
-    const list = Object.values({
-      ...qsParams,
-      dateCreation:
-        qsParams.createdFrom || qsParams.createdTo ? 'true' : 'false',
-    }).filter(elm => elm === 'true');
-
-    if (setCounter) setCounter(list.length);
-  }, [qsParams]);
-
-  return (
-    <ProjectFilterWrapper>
-      <Dropdown
-        overlay={<FilterOverlay counter={counter} setCounter={setCounter} />}
-        trigger={['click']}
-        placement="bottomRight"
-      >
-        <ProjectFilterBtn type="primary" className="flex-j-end">
-          <FilterOutlined />
-          {t('common.filters')}
-          <div className="counter flex-center">
-            {counter}
-            <ArrowDown />
-          </div>
-        </ProjectFilterBtn>
-      </Dropdown>
-    </ProjectFilterWrapper>
-  );
-}
-
-export default ProjectFilter;
-
 const defaultInit = {
   dateCreation: false,
   isDeleted: false,
   createdFrom: '',
   createdTo: '',
 };
-function FilterOverlay(props: IFilter) {
+
+export function FilterOverlay(props: IFilter) {
   const { counter, setCounter } = props;
   const navigate = useNavigate();
   const { pathname } = useLocation();

@@ -6,7 +6,7 @@ import moment from 'moment';
 import { useMemo } from 'react';
 import SimpleBar from 'simplebar-react';
 import { surveyActionType } from 'type';
-import { QsParams } from '../../../../ProjectFilter';
+import { QsParams } from '../../../../project-filter/ProjectFilter';
 import { useGetAllActionsHistory } from '../../../utils';
 import Action from './Action';
 import { CalendarListWrapper } from './styles';
