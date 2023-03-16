@@ -13,8 +13,8 @@ export interface IProject {
   type: ProjectTypes;
   description: string;
   personInCharge: string;
-  personResponsible: UserPayload;
-  createdBy: UserPayload;
+  personResponsible?: UserPayload;
+  createdBy?: UserPayload;
 
   updatedBy?: UserPayload;
   deletedBy?: UserPayload;
