@@ -4,7 +4,7 @@ import { Badge, Button, Menu, Spin, Table, Upload } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { GroupSurveyButtonWrapper, UploadExternalFileWrapper } from './style';
 import * as XLSX from 'xlsx';
-import Dragger from 'antd/es/upload/Dragger';
+import Dragger from 'antd/lib/upload/Dragger';
 import {
   DragIcon,
   Refresh,

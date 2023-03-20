@@ -11,16 +11,15 @@ export const useGetAllProjects = () => {
   const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECTS);
   const getAllProjectQuery = useQuery(
     ['getAllProjects', canRead],
-    canRead
-      ? () =>
-          ProjectService.getProjects({
-            selectAll: true,
-            isDeleted: false,
-          })
-      : () => {},
+    () =>
+      ProjectService.getProjects({
+        selectAll: true,
+        isDeleted: false,
+      }),
     {
       onError,
       refetchOnWindowFocus: false,
+      enabled: canRead,
     },
   );
 

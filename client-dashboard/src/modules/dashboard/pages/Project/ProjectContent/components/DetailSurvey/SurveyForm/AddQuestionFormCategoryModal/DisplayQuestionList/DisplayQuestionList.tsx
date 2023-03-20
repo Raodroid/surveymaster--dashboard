@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useMemo } from 'react';
 import { IOptionItem, IQuestion } from 'type';
 import { Input } from 'antd';
-import Checkbox from 'antd/es/checkbox';
+import Checkbox from 'antd/lib/checkbox';
 import { DisplayQuestionListWrapper } from './style';
 import { useTranslation } from 'react-i18next';
 import SimpleBar from 'simplebar';

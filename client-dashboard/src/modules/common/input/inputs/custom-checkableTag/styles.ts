@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import CheckableTag from 'antd/es/tag/CheckableTag';
+import CheckableTag from 'antd/lib/tag/CheckableTag';
 
 export const CheckableTagCustomized = styled(CheckableTag)`
   &:hover {

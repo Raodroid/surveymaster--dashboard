@@ -14,10 +14,10 @@ const CustomInput = (props: CustomInputProps) => {
 
   return (
     <Input
+      aria-label={'Custom Input'}
       {...props}
       {...customProps}
       autoComplete="chrome-off"
-      aria-label="Custom Input"
     />
   );
 };

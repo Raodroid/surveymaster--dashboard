@@ -4,7 +4,7 @@ import { CustomTextAreaProps } from './inputs/custom-textarea/CustomTextArea';
 import { CustomPasswordProps } from './inputs/custom-password/CustomPassword';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { FetchParamsSelect } from 'type';
-import { SliderBaseProps } from 'antd/es/slider';
+import { SliderBaseProps } from 'antd/lib/slider';
 import { DATE_PICKER_TYPES } from 'enums';
 import { CustomRadioButtonGroupProps } from './inputs/custom-group-radio-button/CustomGroupRadioButton';
 import { CustomInputMaskProps } from './input-mask/BaseInputMask';

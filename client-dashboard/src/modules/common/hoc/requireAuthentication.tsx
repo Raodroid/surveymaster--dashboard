@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { AuthSelectors } from 'redux/auth/index';
 import { Component, HigherOrderComType } from '../../../type';
-import useParseQueryString from '../../../hooks/useParseQueryString';
+import { useParseQueryString } from '../../../hooks';
 
 const requireAuthentication: HigherOrderComType = (Com: Component) => {
   return props => {

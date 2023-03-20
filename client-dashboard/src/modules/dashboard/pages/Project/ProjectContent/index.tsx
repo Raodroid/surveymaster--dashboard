@@ -8,12 +8,12 @@ const ProjectContent = () => {
   const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECTS);
   return (
     <ProjectHomeWrapper className="flex-column">
-      {canRead ? (
+      {canRead && (
         <>
           <ProjectHeader search />
           <ProjectTable />
         </>
-      ) : null}
+      )}
     </ProjectHomeWrapper>
   );
 };

@@ -40,7 +40,7 @@ class CustomNotification {
   }
 
   error(args: ArgsProps) {
-    return notification.success({
+    return notification.error({
       ...this.defaultAttribute(args),
       icon: (
         <Icons>
@@ -51,7 +51,7 @@ class CustomNotification {
   }
 
   warning(args: ArgsProps) {
-    return notification.success({
+    return notification.warning({
       ...this.defaultAttribute(args),
       icon: (
         <Icons className="bg-orange-warning">
@@ -62,7 +62,7 @@ class CustomNotification {
   }
 
   info(args: ArgsProps) {
-    return notification.success({
+    return notification.info({
       ...this.defaultAttribute(args),
       icon: (
         <Icons>

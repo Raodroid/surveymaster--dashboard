@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckboxProps } from 'antd/es/checkbox';
+import { CheckboxProps } from 'antd/lib/checkbox';
 import templateVariable from 'app/template-variables.module.scss';
 
 const HeartOutlined = (props: { onClick?; text?: string }) => {

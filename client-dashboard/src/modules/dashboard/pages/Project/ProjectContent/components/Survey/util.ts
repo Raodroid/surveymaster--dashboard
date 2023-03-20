@@ -4,7 +4,7 @@ import { onError } from '../../../../../../../utils';
 import { useMemo } from 'react';
 import _get from 'lodash/get';
 import { ISurvey, ISurveyVersion } from '../../../../../../../type';
-import useParseQueryString from '../../../../../../../hooks/useParseQueryString';
+import { useParseQueryString } from '../../../../../../../hooks';
 
 export const useGetSurveyById = (
   id?: string,

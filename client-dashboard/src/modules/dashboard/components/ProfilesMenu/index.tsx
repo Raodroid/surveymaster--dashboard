@@ -8,7 +8,7 @@ import {
   ProfileCard,
   ProfilesMenuWrapper,
 } from './styles';
-import SubMenu from 'antd/es/menu/SubMenu';
+import SubMenu from 'antd/lib/menu/SubMenu';
 import { useDispatch } from 'react-redux';
 import { AuthAction } from 'redux/auth';
 import ChangeEmailForm from 'modules/auth/change-email/change-email-form/ChangeEmailForm';

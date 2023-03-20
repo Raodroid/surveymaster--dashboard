@@ -43,6 +43,7 @@ function Title(props: TitleProps) {
       <Button
         className={`${isActive && 'active'} title-btn flex`}
         onClick={handleTitleClick}
+        aria-label={'toggle project detail'}
       >
         <div>
           {project.type === ProjectTypes.INTERNAL ? (
@@ -58,6 +59,7 @@ function Title(props: TitleProps) {
           <Button
             className="flex-center primary"
             type="primary"
+            aria-label={'create new survey'}
             onClick={() => {
               navigate(
                 generatePath(projectRoutePath.ADD_NEW_SURVEY, {
@@ -73,7 +75,11 @@ function Title(props: TitleProps) {
           </Button>
         )}
         {canRead && (
-          <Button className="flex-center" onClick={() => navigate(route_path)}>
+          <Button
+            className="flex-center"
+            onClick={() => navigate(route_path)}
+            aria-label={'view survey list'}
+          >
             <ListIcon /> {t('common.surveyList')}
           </Button>
         )}

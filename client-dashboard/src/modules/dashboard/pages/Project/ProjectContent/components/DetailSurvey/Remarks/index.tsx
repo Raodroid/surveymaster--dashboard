@@ -27,8 +27,8 @@ import { useGetSurveyById } from '../../Survey/util';
 import Inputs from '../Inputs';
 import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
-import { DropDownMenuButton } from '../View';
 import { useToggle } from '../../../../../../../../utils';
+import { ViewDetailSurveyDropDownMenuButton } from '../View/ViewDetailSurveyDropDownBtn';
 
 const { confirm } = Modal;
 
@@ -230,7 +230,7 @@ function Remarks() {
                 <SimpleBar style={{ height: 'calc(100% - 76px)' }}>
                   <div className={'version-section'}>
                     {surveyData.versions?.map(ver => (
-                      <DropDownMenuButton
+                      <ViewDetailSurveyDropDownMenuButton
                         surveyVersion={ver}
                         callbackLoading={toggleIsCallingAPI}
                       />

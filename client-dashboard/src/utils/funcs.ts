@@ -13,7 +13,6 @@ import {
 import useWindowSize from 'modules/common/hoc/useWindowSize';
 import { mobileSize } from '../enums';
 import { ColumnsType } from 'antd/lib/table/interface';
-import moment from 'moment';
 
 declare global {
   interface Navigator {

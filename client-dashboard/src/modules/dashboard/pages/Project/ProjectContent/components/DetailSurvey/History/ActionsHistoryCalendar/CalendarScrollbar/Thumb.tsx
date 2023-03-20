@@ -1,11 +1,11 @@
-import useParseQueryString from 'hooks/useParseQueryString';
+import { useParseQueryString } from 'hooks/useParseQueryString';
 import moment from 'moment';
 import qs from 'qs';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useDebounce } from 'utils';
 import { ACTIONS_HISTORY_ID } from '.';
-import { QsParams } from '../../../../ProjectFilter';
+import { QsParams } from '../../../../project-filter/ProjectFilter';
 import { MONTH_HEIGHT } from '../../../utils';
 import { ThumbWrapper } from '../styles';
 import { useGetSurveyById } from '../../../../Survey/util';

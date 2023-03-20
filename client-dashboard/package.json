@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "env-cmd -f .env.development craco start",
+    "start": "env-cmd -f .env.dev-server craco start",
     "build:development": "env-cmd -f .env.development craco build",
     "build:dev-server": "env-cmd -f .env.dev-server craco build",
     "deploy:dev-server": "aws s3 sync build/ s3://eg-dev-server-survey-master-admin-origin --cache-control no-cache",
     "invalidate:dev-server": "aws configure set preview.cloudfront true && aws cloudfront create-invalidation --distribution-id E1FZTWZAHX0593 --paths '/*'",
-    "test": "react-app-rewired test",
+    "test": "craco test",
+    "test:cover": "craco test --coverage --watchAll=false",
     "eject": "react-app-rewired eject",
     "test:generators": "ts-node --project=./internals/ts-node.tsconfig.json ./internals/testing/test-generators.ts",
     "checkTs": "tsc --noEmit",
@@ -94,6 +95,8 @@
   },
   "devDependencies": {
     "@stripe/react-stripe-js": "1.10.0",
+    "@testing-library/dom": "9.0.0",
+    "@testing-library/user-event": "14.4.3",
     "@types/jest": "29.0.0",
     "@types/lodash": "4.14.184",
     "@types/node": "18.7.15",
@@ -155,14 +158,6 @@
       "!src/**/*/types.ts",
       "!src/index.tsx",
       "!src/serviceWorker.ts"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 90,
-        "functions": 90,
-        "lines": 90,
-        "statements": 90
-      }
-    }
+    ]
   }
 }

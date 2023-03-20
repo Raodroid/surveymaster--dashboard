@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dropdown } from 'antd';
+import { Button, Dropdown } from 'antd';
 import { DropDownProps } from 'antd/lib/dropdown';
 import { ThreeDotsDropdownWrapper } from './styles';
 import { ThreeDotsIcon } from '../icons';
@@ -8,16 +8,9 @@ const ThreeDotsDropdown: React.FC<DropDownProps> = props => {
   return (
     <ThreeDotsDropdownWrapper>
       <Dropdown placement="bottomRight" {...props}>
-        <div
-          className="three-dots"
-          onClick={e => {
-            e.preventDefault();
-          }}
-        >
-          <div className="dots-container">
-            <ThreeDotsIcon />
-          </div>
-        </div>
+        <Button type={'text'} ghost aria-label={'three drop down'}>
+          <ThreeDotsIcon />
+        </Button>
       </Dropdown>
     </ThreeDotsDropdownWrapper>
   );

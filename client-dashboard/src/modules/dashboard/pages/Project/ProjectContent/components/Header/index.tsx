@@ -1,5 +1,5 @@
 import { Button, Divider, Form, Input, InputRef } from 'antd';
-import useParseQueryString from 'hooks/useParseQueryString';
+import { useParseQueryString } from 'hooks/useParseQueryString';
 import { Chat, Clock, PenFilled } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import StyledBreadcrumb, {
@@ -10,7 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
 import { projectRoutePath } from '../../../util';
-import ProjectFilter from '../ProjectFilter';
+import ProjectFilter from '../project-filter/ProjectFilter';
 import { HeaderStyled } from './styles';
 
 function ProjectHeader(props: {
@@ -73,8 +73,13 @@ function ProjectHeader(props: {
               value={searchInput}
               onChange={e => setSearchInput(e.target.value)}
               allowClear
+              aria-label={'search survey'}
             />
-            <Button htmlType="submit" onClick={handleSubmitBtnClick}>
+            <Button
+              htmlType="submit"
+              onClick={handleSubmitBtnClick}
+              aria-label={'submit search survey button'}
+            >
               <SearchIcon />
             </Button>
           </Form>
@@ -87,19 +92,19 @@ function ProjectHeader(props: {
 
       {links && (
         <div className="wrapper flex-center">
-          <Link to={links[0]}>
+          <Link to={links[0]} aria-label={'edit survey link'}>
             <PenFilled />
           </Link>
 
           <Divider type="vertical" style={{ height: 8, width: 1 }} />
 
-          <Link to={links[1]}>
+          <Link to={links[1]} aria-label={'go to history survey link'}>
             <Clock />
           </Link>
 
           <Divider type="vertical" style={{ height: 8, width: 1 }} />
 
-          <Link to={links[2]}>
+          <Link to={links[2]} aria-label={'edit remark survey link'}>
             <Chat />
           </Link>
         </div>

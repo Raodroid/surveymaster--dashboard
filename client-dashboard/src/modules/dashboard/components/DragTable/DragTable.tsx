@@ -2,11 +2,35 @@ import React from 'react';
 
 import { Table } from 'antd';
 
-import { arrayMoveImmutable } from 'array-move';
 
 import type { SortableContainerProps, SortEnd } from 'react-sortable-hoc';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { TableProps } from 'antd/lib/table';
+
+export function arrayMoveMutable<Type>(
+  array: Type[],
+  fromIndex: number,
+  toIndex: number,
+) {
+  const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex;
+
+  if (startIndex >= 0 && startIndex < array.length) {
+    const endIndex = toIndex < 0 ? array.length + toIndex : toIndex;
+
+    const [item] = array.splice(fromIndex, 1);
+    array.splice(endIndex, 0, item);
+  }
+}
+
+export function arrayMoveImmutable<Type>(
+  array: Type[],
+  fromIndex: number,
+  toIndex: number,
+) {
+  const newArray = [...array];
+  arrayMoveMutable(newArray, fromIndex, toIndex);
+  return newArray;
+}
 
 const ThemeContext = React.createContext<{
   onSortEnd: ({ oldIndex, newIndex }: SortEnd) => void;
@@ -66,11 +90,10 @@ const SortableBody = SortableContainer(
   ),
 );
 
-interface HanhTableProps<RecordType> extends TableProps<RecordType>  {
+interface HanhTableProps<RecordType> extends TableProps<RecordType> {
   setDataTable: (value) => void;
   renderRowClassName?: (value) => string;
-};
-
+}
 
 export const DragTable: React.FC<HanhTableProps<any>> = props => {
   const {
