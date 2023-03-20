@@ -13,7 +13,7 @@ import { onError } from 'utils/funcs';
 import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
 import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
-import Inputs from './ProjectInputs';
+import ProjectInputs from './ProjectInputs';
 import { AddProjectWrapper } from './styles';
 
 const initialValues: ProjectPayload = {
@@ -70,7 +70,7 @@ function AddProject() {
             >
               {({ handleSubmit: handleFinish }) => (
                 <Form layout="vertical" onFinish={handleFinish}>
-                  <Inputs />
+                  <ProjectInputs />
                   <div className="footer">
                     <Button
                       type="primary"

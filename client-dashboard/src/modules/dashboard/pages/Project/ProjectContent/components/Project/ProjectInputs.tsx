@@ -12,6 +12,7 @@ import { transformEnumToOption } from '../../../../../../../utils';
 import { ProjectTypes } from '../../../../../../../type';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../../enums';
+import _get from 'lodash/get';
 
 function ProjectInputs() {
   const { t } = useTranslation();
@@ -38,15 +39,17 @@ function ProjectInputs() {
     () => AdminService.getTeamMembers(baseParams),
     {
       refetchOnWindowFocus: false,
+      refetchOnMount: false,
     },
   );
 
-  const optionsList = useMemo(() => {
-    if (teamMembers?.data?.data)
-      return teamMembers.data.data.map(elm => {
+  const optionsList = useMemo(
+    () =>
+      _get(teamMembers, 'data.data', []).map(elm => {
         return { label: elm.firstName + ' ' + elm.lastName, value: elm.id };
-      });
-  }, [teamMembers]);
+      }),
+    [teamMembers],
+  );
 
   return (
     <InputsWrapper>
@@ -56,10 +59,12 @@ function ProjectInputs() {
         name="name"
         label={t('common.projectTitle')}
         className="projTitle"
+        aria-label={'name'}
       />
       <ControlledInput
         inputType={INPUT_TYPES.SELECT}
         name="type"
+        aria-label={'type'}
         label={t('common.projectType')}
         className="projType"
         disabled={isEditMode}
@@ -70,6 +75,7 @@ function ProjectInputs() {
       <ControlledInput
         inputType={INPUT_TYPES.TEXTAREA}
         name="description"
+        aria-label={'description'}
         label={t('common.projectDescription')}
         className="projDesc"
       />
@@ -81,6 +87,7 @@ function ProjectInputs() {
         <ControlledInput
           inputType={INPUT_TYPES.INPUT}
           name="displayId"
+          aria-label="displayId"
           label="ID"
           className="projId"
           disabled
@@ -89,6 +96,7 @@ function ProjectInputs() {
       <ControlledInput
         inputType={INPUT_TYPES.SELECT}
         name="personInCharge"
+        aria-label={'personInCharge'}
         label={t('common.personInCharge')}
         options={optionsList}
         loading={!optionsList}

@@ -66,7 +66,7 @@ function EditProject() {
 
   return (
     <EditProjectWrapper className="flex-column">
-      {canUpdate ? (
+      {canUpdate && (
         <>
           <ProjectHeader routes={routes} />
           <CustomSpinSuspense spinning={isLoading}>
@@ -100,7 +100,7 @@ function EditProject() {
             </AddProjectWrapper>
           </CustomSpinSuspense>
         </>
-      ) : null}
+      )}
     </EditProjectWrapper>
   );
 }
