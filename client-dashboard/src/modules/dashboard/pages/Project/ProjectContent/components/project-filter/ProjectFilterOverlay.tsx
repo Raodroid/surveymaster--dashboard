@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import useParseQueryString from '../../../../../../../hooks/useParseQueryString';
+import { useParseQueryString } from '../../../../../../../hooks';
 import { matchPath } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../../enums';
 import { useMemo } from 'react';
@@ -28,7 +28,7 @@ const defaultInit = {
   createdTo: '',
 };
 
-export function FilterOverlay(props: IFilter) {
+export function ProjectFilterOverlay(props: IFilter) {
   const { counter, setCounter } = props;
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -57,7 +57,7 @@ export function FilterOverlay(props: IFilter) {
 
   const initialValues: FilterParams = useMemo(() => {
     return {
-      dateCreation: qsParams.createdFrom || qsParams.createdTo ? true : false,
+      dateCreation: !!(qsParams.createdFrom || qsParams.createdTo),
       isDeleted: qsParams.isDeleted === 'true',
       createdFrom: qsParams.createdFrom && moment(qsParams.createdFrom),
       createdTo: qsParams.createdTo && moment(qsParams.createdTo),
@@ -123,7 +123,10 @@ export function FilterOverlay(props: IFilter) {
                   <div className="counter flex-center">{counter}</div>
                 </div>
                 <div className="right">
-                  <Button onClick={() => handleReset(values, setFieldValue)}>
+                  <Button
+                    onClick={() => handleReset(values, setFieldValue)}
+                    aria-label={'clear filter'}
+                  >
                     <Refresh />
                   </Button>
                 </div>
@@ -134,6 +137,7 @@ export function FilterOverlay(props: IFilter) {
                   name="isDeleted"
                   inputType={INPUT_TYPES.CHECKBOX}
                   children={optionName}
+                  aria-label={'isDeleted'}
                 />
                 <div className="dates-filter">
                   <ControlledInput
@@ -141,18 +145,21 @@ export function FilterOverlay(props: IFilter) {
                     inputType={INPUT_TYPES.CHECKBOX}
                     children={'Data Creation Range'}
                     onChange={e => setFieldValue('dateCreation', e)}
+                    aria-label={'dateCreation'}
                   />
                   <div className="flex-center dates">
                     <ControlledInput
                       name="createdFrom"
                       inputType={INPUT_TYPES.DAY_PICKER}
                       suffixIcon={<ArrowDown />}
+                      aria-label={'createdFrom'}
                     />
                     -
                     <ControlledInput
                       name="createdTo"
                       inputType={INPUT_TYPES.DAY_PICKER}
                       suffixIcon={<ArrowDown />}
+                      aria-label={'createdTo'}
                     />
                   </div>
                 </div>

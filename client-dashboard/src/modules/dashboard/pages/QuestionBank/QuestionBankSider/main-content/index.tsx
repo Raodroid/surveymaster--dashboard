@@ -5,7 +5,7 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../enums';
 import { Menu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import useParseQueryString from '../../../../../../hooks/useParseQueryString';
+import { useParseQueryString } from '../../../../../../hooks';
 import { ArrowDown } from '../../../../../../icons';
 import templateVariable from '../../../../../../app/template-variables.module.scss';
 import qs from 'qs';

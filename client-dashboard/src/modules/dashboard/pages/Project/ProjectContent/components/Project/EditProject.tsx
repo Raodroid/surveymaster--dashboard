@@ -14,7 +14,7 @@ import { onError } from 'utils/funcs';
 import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
 import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import ProjectHeader from '../Header';
-import Inputs from './Inputs';
+import Inputs from './ProjectInputs';
 import { AddProjectWrapper, EditProjectWrapper } from './styles';
 
 function EditProject() {

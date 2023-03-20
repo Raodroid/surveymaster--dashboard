@@ -12,7 +12,7 @@ import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import ProjectService from 'services/survey-master-service/project.service';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
-import useParseQueryString from '../../../../../../hooks/useParseQueryString';
+import { useParseQueryString } from '../../../../../../hooks';
 import { onError } from '../../../../../../utils';
 import StyledPagination from '../../../../components/StyledPagination';
 import { projectRoutePath } from '../../util';

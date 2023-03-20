@@ -13,7 +13,7 @@ import { ProjectTypes } from '../../../../../../../type';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../../enums';
 
-function Inputs() {
+function ProjectInputs() {
   const { t } = useTranslation();
 
   const allRoles = useSelector(AuthSelectors.getAllRoles);
@@ -96,4 +96,4 @@ function Inputs() {
     </InputsWrapper>
   );
 }
-export default Inputs;
+export default ProjectInputs;

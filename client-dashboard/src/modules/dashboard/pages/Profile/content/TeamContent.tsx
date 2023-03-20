@@ -18,7 +18,7 @@ import { ColumnsType } from 'antd/lib/table';
 import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
-import useParseQueryString from 'hooks/useParseQueryString';
+import { useParseQueryString } from 'hooks/useParseQueryString';
 import { SearchIcon } from 'icons/SearchIcon';
 import _get from 'lodash/get';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc/useCheckScopeEntityDefault';

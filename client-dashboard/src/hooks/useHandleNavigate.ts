@@ -2,7 +2,7 @@ import qs from 'qs';
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { QsParams } from '../modules/dashboard/pages/Project/ProjectContent/components/project-filter/ProjectFilter';
-import useParseQueryString from './useParseQueryString';
+import { useParseQueryString } from './useParseQueryString';
 
 const useHandleNavigate = (initParams?: Record<string, any>) => {
   const qsParams = useParseQueryString<QsParams>();

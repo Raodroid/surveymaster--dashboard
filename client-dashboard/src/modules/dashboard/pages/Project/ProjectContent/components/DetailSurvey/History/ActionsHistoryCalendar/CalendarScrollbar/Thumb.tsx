@@ -1,4 +1,4 @@
-import useParseQueryString from 'hooks/useParseQueryString';
+import { useParseQueryString } from 'hooks/useParseQueryString';
 import moment from 'moment';
 import qs from 'qs';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';

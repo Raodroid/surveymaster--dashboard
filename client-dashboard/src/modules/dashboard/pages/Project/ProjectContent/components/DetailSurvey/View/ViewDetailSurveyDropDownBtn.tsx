@@ -10,7 +10,7 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import useParseQueryString from '../../../../../../../../hooks/useParseQueryString';
+import { useParseQueryString } from '../../../../../../../../hooks';
 import { useGetProjectByIdQuery } from '../../../../util';
 import { useCheckScopeEntityDefault } from '../../../../../../../common/hoc';
 import {

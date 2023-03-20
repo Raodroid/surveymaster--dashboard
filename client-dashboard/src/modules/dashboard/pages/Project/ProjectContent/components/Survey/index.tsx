@@ -2,7 +2,7 @@ import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { MOMENT_FORMAT } from 'enums';
 import useHandleNavigate from 'hooks/useHandleNavigate';
-import useParseQueryString from 'hooks/useParseQueryString';
+import { useParseQueryString } from 'hooks/useParseQueryString';
 
 import _get from 'lodash/get';
 import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';

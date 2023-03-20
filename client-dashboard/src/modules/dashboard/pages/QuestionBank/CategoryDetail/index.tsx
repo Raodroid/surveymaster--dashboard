@@ -14,7 +14,7 @@ import { PaginationProps, Popover, Table } from 'antd';
 import { GetListQuestionDto, IQuestion } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
-import useParseQueryString from '../../../../../hooks/useParseQueryString';
+import { useParseQueryString } from '../../../../../hooks/useParseQueryString';
 import { useQuery } from 'react-query';
 import { onError, useDebounce } from '../../../../../utils';
 import { QuestionBankService } from '../../../../../services';

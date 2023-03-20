@@ -13,7 +13,7 @@ import { onError } from 'utils/funcs';
 import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
 import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
-import Inputs from './Inputs';
+import Inputs from './ProjectInputs';
 import { AddProjectWrapper } from './styles';
 
 const initialValues: ProjectPayload = {
@@ -59,7 +59,7 @@ function AddProject() {
 
   return (
     <>
-      {canCreate ? (
+      {canCreate && (
         <>
           <ProjectHeader routes={routes} />
           <AddProjectWrapper>
@@ -86,7 +86,7 @@ function AddProject() {
             </Formik>
           </AddProjectWrapper>
         </>
-      ) : null}
+      )}
     </>
   );
 }

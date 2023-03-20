@@ -23,7 +23,7 @@ import { ROUTE_PATH } from '../../../../../enums';
 import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
 import { generatePath, useParams } from 'react-router';
 import { useGetQuestionByQuestionId } from '../util';
-import useParseQueryString from '../../../../../hooks/useParseQueryString';
+import { useParseQueryString } from '../../../../../hooks';
 import DisplayAnswerList from '../AddQuestion/DisplayAnswerList';
 import DisplayTitle from '../AddQuestion/DisplayTitle';
 import { generateRandom } from 'modules/common/funcs';

@@ -1,10 +1,10 @@
 import { Dropdown } from 'antd';
-import useParseQueryString from 'hooks/useParseQueryString';
+import { useParseQueryString } from 'hooks/useParseQueryString';
 import { ArrowDown, FilterOutlined } from 'icons';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectFilterBtn, ProjectFilterWrapper } from '../Header/styles';
-import { FilterOverlay } from './ProjectFilterOverlay';
+import { ProjectFilterOverlay } from './ProjectFilterOverlay';
 
 export interface IFilter {
   counter?: number;
@@ -31,18 +31,23 @@ function ProjectFilter() {
       dateCreation:
         qsParams.createdFrom || qsParams.createdTo ? 'true' : 'false',
     }).filter(elm => elm === 'true');
-
-    if (setCounter) setCounter(list.length);
+    setCounter(list.length);
   }, [qsParams]);
 
   return (
     <ProjectFilterWrapper>
       <Dropdown
-        overlay={<FilterOverlay counter={counter} setCounter={setCounter} />}
+        overlay={
+          <ProjectFilterOverlay counter={counter} setCounter={setCounter} />
+        }
         trigger={['click']}
         placement="bottomRight"
       >
-        <ProjectFilterBtn type="primary" className="flex-j-end">
+        <ProjectFilterBtn
+          type="primary"
+          className="flex-j-end"
+          aria-label={'filter button'}
+        >
           <FilterOutlined />
           {t('common.filters')}
           <div className="counter flex-center">

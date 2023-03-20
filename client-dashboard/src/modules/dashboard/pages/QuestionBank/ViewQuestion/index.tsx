@@ -10,7 +10,7 @@ import QuestionCategoryForm from '../AddQuestion/QuestionCategoryForm';
 import { useTranslation } from 'react-i18next';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import useParseQueryString from 'hooks/useParseQueryString';
+import { useParseQueryString } from 'hooks/useParseQueryString';
 import { PenFilled } from 'icons';
 import templateVariable from 'app/template-variables.module.scss';
 import qs from 'qs';

@@ -148,10 +148,12 @@ export const SurveyDropDownMenu: FC<IDropDownMenu> = props => {
       const response = await SurveyService.getSurveyFile(
         record.latestVersion?.id as string,
       );
+
       const data: {
         SurveyElements: any[];
         SurveyEntry: { SurveyName: string };
       } = _get(response, 'data', {});
+
       const blob = new Blob([JSON.stringify(data, null, 2)], {
         type: 'application/octet-stream',
       });
