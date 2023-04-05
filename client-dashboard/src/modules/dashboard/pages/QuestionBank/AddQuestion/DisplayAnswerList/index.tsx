@@ -12,6 +12,8 @@ import DateTimePicker from './RenderQuestionType/DateTimePicker';
 import Datamatrix from './RenderQuestionType/Datamatrix';
 import Photo from './RenderQuestionType/Photo';
 import TextGraphic from './RenderQuestionType/TextGraphic';
+import { InputWrapper } from './styles';
+import { MatrixTableWithPhotos } from './RenderQuestionType/MatrixTableWithPhotos';
 
 const DisplayAnswerList = () => {
   const { values } = useFormikContext<BaseQuestionVersionDto>();
@@ -46,18 +48,32 @@ const DisplayAnswerList = () => {
             label={t('common.gridLine')}
             className={className}
           />
-          <ControlledInput
-            inputType={INPUT_TYPES.NUMBER}
-            name="numberMax"
-            label={t('common.maxValue')}
-            className={className}
-          />
-          <ControlledInput
-            inputType={INPUT_TYPES.NUMBER}
-            name="numberMin"
-            label={t('common.minValue')}
-            className={className}
-          />
+          <InputWrapper>
+            <ControlledInput
+              inputType={INPUT_TYPES.NUMBER}
+              name="numberMax"
+              label={t('common.maxValue')}
+              className={className}
+            />
+            <ControlledInput
+              inputType={INPUT_TYPES.NUMBER}
+              name="numberMaxLabel"
+              label={t('common.label')}
+            />
+          </InputWrapper>
+          <InputWrapper>
+            <ControlledInput
+              inputType={INPUT_TYPES.NUMBER}
+              name="numberMin"
+              label={t('common.minValue')}
+              className={className}
+            />
+            <ControlledInput
+              inputType={INPUT_TYPES.NUMBER}
+              name="numberMinLabel"
+              label={t('common.label')}
+            />
+          </InputWrapper>
         </DisplayAnswerListWrapper>
       );
     case QuestionType.FORM_FIELD:
@@ -66,6 +82,8 @@ const DisplayAnswerList = () => {
       return <TextGraphic />;
     case QuestionType.DATA_MATRIX:
       return <Datamatrix />;
+    case QuestionType.MATRIX_TABLE_WITH_PHOTOS:
+      return <MatrixTableWithPhotos />;
 
     default:
       return null;

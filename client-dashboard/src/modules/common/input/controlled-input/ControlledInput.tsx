@@ -1,11 +1,22 @@
-import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { FastField, Field, useField } from 'formik';
 import { Form } from 'antd';
+import { FastField, Field, useField } from 'formik';
+import {
+  Dispatch,
+  SetStateAction,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import UncontrollInput from '../uncontrolled-input/UncontrollInput';
 import { ControlledInputProps, INPUT_TYPES } from '../type';
+import UncontrollInput from '../uncontrolled-input/UncontrollInput';
 
-const ControlledInput = (props: ControlledInputProps) => {
+const ControlledInput = (
+  props: ControlledInputProps & {
+    onImageChange?: Dispatch<SetStateAction<Record<string, any>>>;
+  },
+) => {
   const {
     isFastField, //This has to be false if Question is a condition question
     name,

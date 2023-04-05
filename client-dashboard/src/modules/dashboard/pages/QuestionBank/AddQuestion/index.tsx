@@ -26,9 +26,13 @@ const initValue: IAddQuestionFormValue = {
   masterVariableName: '',
   numberStep: undefined,
   numberMin: undefined,
+  numberMinLabel: '',
   numberMax: undefined,
+  numberMaxLabel: '',
   options: undefined,
   matrixType: MatrixType.RADIO_BUTTON,
+  matrixRows: [{ name: '', image: '', description: '' }],
+  matrixColumns: [{ name: '' }],
 };
 
 function transformData(input: IAddQuestionFormValue): IQuestionCreatePostDto {

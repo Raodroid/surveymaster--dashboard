@@ -87,6 +87,7 @@ export enum QuestionType {
   TEXT_ENTRY = 'TEXT_ENTRY',
   SIGNATURE = 'SIGNATURE',
   DATA_MATRIX = 'DATA_MATRIX',
+  MATRIX_TABLE_WITH_PHOTOS = 'MATRIX_TABLE_WITH_PHOTOS',
   FORM_FIELD = 'FORM_FIELD',
   TEXT_GRAPHIC = 'TEXT_GRAPHIC',
 }
@@ -287,13 +288,17 @@ export interface BaseQuestionVersionDto {
   textValidationMin?: number;
   textValidationRegex?: string;
   numberMin?: number;
+  numberMinLabel?: string;
   numberMax?: number;
+  numberMaxLabel?: string;
   options?: IBaseQuestionOptionsVersionDto[];
   dateFormat?: DateFormat;
   timeFormat?: TimeFormat;
   dataMatrix?: IDataMatrixInfo;
   image?: string;
   matrixType?: MatrixType;
+  matrixRows?: any;
+  matrixColumns?: any;
 }
 
 export type QuestionParameter = BaseParameterDto & {

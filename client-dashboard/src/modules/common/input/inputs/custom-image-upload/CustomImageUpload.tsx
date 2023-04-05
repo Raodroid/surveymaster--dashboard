@@ -1,4 +1,10 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  memo,
+  useEffect,
+  useState,
+} from 'react';
 import { Upload } from 'antd';
 import notification from 'customize-components/CustomNotification';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/lib/upload';
@@ -20,7 +26,11 @@ function getBase64(img, callback) {
   reader.readAsDataURL(img);
 }
 
-const CustomImageUpload = (props: CustomUploadProps) => {
+const CustomImageUpload = (
+  props: CustomUploadProps & {
+    onImageChange?: Dispatch<SetStateAction<Record<string, any>>>;
+  },
+) => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>('');
   const { t } = useTranslation();
@@ -95,6 +105,9 @@ const CustomImageUpload = (props: CustomUploadProps) => {
       getBase64(info.file.originFileObj, imgUrl => {
         setLoading(false);
         setImageUrl(imgUrl);
+        if (props.onImageChange) {
+          props.onImageChange({ ...info.file });
+        }
       });
     }
 
