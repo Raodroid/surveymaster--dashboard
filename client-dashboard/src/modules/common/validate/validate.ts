@@ -189,11 +189,21 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
       is: QuestionType.DATA_MATRIX,
       then: Yup.object().shape({
         rows: Yup.array()
-          .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+          .of(
+            Yup.object().shape({
+              name: Yup.string().required(INVALID_FIELDS.REQUIRED),
+              image: Yup.object().nullable(),
+              description: Yup.string(),
+            }),
+          )
           .required(INVALID_FIELDS.REQUIRED)
           .min(1),
         columns: Yup.array()
-          .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+          .of(
+            Yup.object().shape({
+              name: Yup.string().required(INVALID_FIELDS.REQUIRED),
+            }),
+          )
           .required(INVALID_FIELDS.REQUIRED)
           .min(1),
       }),
@@ -250,20 +260,6 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
         )
         .min(1),
     }),
-  matrixRows: Yup.array().of(
-    Yup.object().shape({
-      name: Yup.string().required(INVALID_FIELDS.REQUIRED),
-      image: Yup.object(),
-      description: Yup.string(),
-    }),
-  ),
-  matrixColumns: Yup.array().of(
-    Yup.object().shape({
-      name: Yup.string().required(INVALID_FIELDS.REQUIRED),
-      image: Yup.object(),
-      description: Yup.string(),
-    }),
-  ),
 });
 
 const SURVEY_FORM_SCHEMA = {

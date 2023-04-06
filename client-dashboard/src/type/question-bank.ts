@@ -87,7 +87,6 @@ export enum QuestionType {
   TEXT_ENTRY = 'TEXT_ENTRY',
   SIGNATURE = 'SIGNATURE',
   DATA_MATRIX = 'DATA_MATRIX',
-  MATRIX_TABLE_WITH_PHOTOS = 'MATRIX_TABLE_WITH_PHOTOS',
   FORM_FIELD = 'FORM_FIELD',
   TEXT_GRAPHIC = 'TEXT_GRAPHIC',
 }
@@ -269,8 +268,8 @@ export interface IBaseQuestionOptionsVersionDto {
   id?: number | string; //just useful in case for drag drop
 }
 export interface IDataMatrixInfo {
-  rows: string[];
-  columns: string[];
+  rows: { name: string; image?: any; description?: string }[];
+  columns: { name: string }[];
 }
 export enum MatrixType {
   RADIO_BUTTON = 'RADIO_BUTTON',
@@ -297,8 +296,6 @@ export interface BaseQuestionVersionDto {
   dataMatrix?: IDataMatrixInfo;
   image?: string;
   matrixType?: MatrixType;
-  matrixRows?: any;
-  matrixColumns?: any;
 }
 
 export type QuestionParameter = BaseParameterDto & {

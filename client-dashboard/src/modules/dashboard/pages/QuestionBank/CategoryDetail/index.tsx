@@ -25,7 +25,7 @@ import StyledPagination from '../../../components/StyledPagination';
 import qs from 'qs';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
 import SimpleBar from 'simplebar-react';
-import { CategoryThreeDropDown } from './CategoryDetailHeader/CategoryThreeDropdown/CategoryThreeDropDown.test';
+import { CategoryThreeDropDown } from './CategoryDetailHeader/CategoryThreeDropdown/CategoryThreeDropDown';
 
 interface ICategoryDetailContext {
   params: GetListQuestionDto;

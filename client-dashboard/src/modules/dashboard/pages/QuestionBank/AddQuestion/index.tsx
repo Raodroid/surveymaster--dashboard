@@ -31,8 +31,10 @@ const initValue: IAddQuestionFormValue = {
   numberMaxLabel: '',
   options: undefined,
   matrixType: MatrixType.RADIO_BUTTON,
-  matrixRows: [{ name: '', image: '', description: '' }],
-  matrixColumns: [{ name: '' }],
+  dataMatrix: {
+    rows: [{ name: '' }],
+    columns: [{ name: '' }],
+  },
 };
 
 function transformData(input: IAddQuestionFormValue): IQuestionCreatePostDto {
@@ -77,12 +79,12 @@ const AddQuestion = () => {
           navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
         }
       },
-      onError,
+      onError: onError,
     },
   );
   const onFinish = useCallback(
-    async (values: IAddQuestionFormValue) => {
-      await addQuestionMutation.mutateAsync(transformData(values));
+    (values: IAddQuestionFormValue) => {
+      return addQuestionMutation.mutateAsync(transformData(values));
     },
     [addQuestionMutation],
   );

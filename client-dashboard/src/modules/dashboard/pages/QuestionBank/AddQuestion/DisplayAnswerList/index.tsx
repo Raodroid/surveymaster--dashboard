@@ -13,7 +13,6 @@ import Datamatrix from './RenderQuestionType/Datamatrix';
 import Photo from './RenderQuestionType/Photo';
 import TextGraphic from './RenderQuestionType/TextGraphic';
 import { InputWrapper } from './styles';
-import { MatrixTableWithPhotos } from './RenderQuestionType/MatrixTableWithPhotos';
 
 const DisplayAnswerList = () => {
   const { values } = useFormikContext<BaseQuestionVersionDto>();
@@ -82,8 +81,6 @@ const DisplayAnswerList = () => {
       return <TextGraphic />;
     case QuestionType.DATA_MATRIX:
       return <Datamatrix />;
-    case QuestionType.MATRIX_TABLE_WITH_PHOTOS:
-      return <MatrixTableWithPhotos />;
 
     default:
       return null;

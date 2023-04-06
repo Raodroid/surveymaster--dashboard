@@ -106,7 +106,7 @@ const CustomImageUpload = (
         setLoading(false);
         setImageUrl(imgUrl);
         if (props.onImageChange) {
-          props.onImageChange({ ...info.file });
+          props.onImageChange(info.file);
         }
       });
     }
