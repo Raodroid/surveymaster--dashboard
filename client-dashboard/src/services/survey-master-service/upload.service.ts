@@ -8,10 +8,10 @@ export default class UploadService {
     // type: string,
     subPath?: string,
   ): Promise<AxiosResponse> {
-    return APIService.post(`/surveys/files/get-signed-url`, {
+    return APIService.post(`/${moduleName}/files/get-signed-url`, {
       filename: name,
       // filetype: type,
-      surveyVersionId: '1',
+      subPath,
     });
   }
 

@@ -55,7 +55,7 @@ const DisplayAnswerList = () => {
               className={className}
             />
             <ControlledInput
-              inputType={INPUT_TYPES.NUMBER}
+              inputType={INPUT_TYPES.INPUT}
               name="numberMaxLabel"
               label={t('common.label')}
             />
@@ -68,7 +68,7 @@ const DisplayAnswerList = () => {
               className={className}
             />
             <ControlledInput
-              inputType={INPUT_TYPES.NUMBER}
+              inputType={INPUT_TYPES.INPUT}
               name="numberMinLabel"
               label={t('common.label')}
             />

@@ -268,8 +268,8 @@ export interface IBaseQuestionOptionsVersionDto {
   id?: number | string; //just useful in case for drag drop
 }
 export interface IDataMatrixInfo {
-  rows: { name: string; image?: any; description?: string }[];
-  columns: { name: string }[];
+  rows: { id?: number; name: string; image?: any; description?: string }[];
+  columns: { id?: number; name: string }[];
 }
 export enum MatrixType {
   RADIO_BUTTON = 'RADIO_BUTTON',

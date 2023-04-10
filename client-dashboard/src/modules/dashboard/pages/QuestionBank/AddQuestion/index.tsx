@@ -32,8 +32,8 @@ const initValue: IAddQuestionFormValue = {
   options: undefined,
   matrixType: MatrixType.RADIO_BUTTON,
   dataMatrix: {
-    rows: [{ name: '' }],
-    columns: [{ name: '' }],
+    rows: [{ id: Math.random(), name: '', image: {} }],
+    columns: [{ id: Math.random(), name: '' }],
   },
 };
 
@@ -84,7 +84,20 @@ const AddQuestion = () => {
   );
   const onFinish = useCallback(
     (values: IAddQuestionFormValue) => {
-      return addQuestionMutation.mutateAsync(transformData(values));
+      const newValue = { ...values };
+      if (values.dataMatrix) {
+        const rows = values.dataMatrix.rows;
+        rows.forEach(row => {
+          delete row.id;
+          row.description = '';
+          row.image = '';
+        });
+        const columns = values.dataMatrix.columns;
+        columns.forEach(column => {
+          delete column.id;
+        });
+      }
+      return addQuestionMutation.mutateAsync(transformData(newValue));
     },
     [addQuestionMutation],
   );

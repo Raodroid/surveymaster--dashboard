@@ -22,8 +22,8 @@ const Datamatrix = () => {
       setValues(old => ({
         ...old,
         dataMatrix: {
-          rows: [{ name: '' }],
-          columns: [{ name: '' }],
+          rows: [{ id: Math.random(), name: '', image: {} }],
+          columns: [{ id: Math.random(), name: '' }],
         },
       }));
     };
@@ -43,11 +43,18 @@ const Datamatrix = () => {
           rows: [],
           columns: [],
         };
+        const newItem: { id: number; name: string; image?: {} } = {
+          id: Math.random(),
+          name: '',
+        };
+        if (key === 'rows') {
+          newItem.image = {};
+        }
         return {
           ...s,
           dataMatrix: {
             ...dataMatrix,
-            [key]: [...dataMatrix[key], ''],
+            [key]: [...dataMatrix[key], newItem],
           },
         };
       });
@@ -93,7 +100,7 @@ const Datamatrix = () => {
             <label>{t('matrixWithPhotos.rows')}</label>
           </div>
           {values.dataMatrix?.rows?.map((row, index) => (
-            <div className="cell" key={Math.random()}>
+            <div className="cell" key={row.id}>
               <div className={'input-wrapper'}>
                 <ControlledInput
                   inputType={INPUT_TYPES.INPUT}
@@ -134,7 +141,7 @@ const Datamatrix = () => {
             <label>{t('matrixWithPhotos.columns')}</label>
           </div>
           {values.dataMatrix?.columns?.map((col, index) => (
-            <div className="cell" key={Math.random()}>
+            <div className="cell" key={col.id}>
               <div key={index} className={'input-wrapper'}>
                 <ControlledInput
                   inputType={INPUT_TYPES.INPUT}
@@ -177,7 +184,6 @@ export default Datamatrix;
 
 const Photo = (props: { index: number }) => {
   const { index } = props;
-  const { t } = useTranslation();
   const [imageInfo, setImageInfo] = useState<Record<string, any>>({});
 
   const imageName = useMemo(() => {
@@ -197,15 +203,9 @@ const Photo = (props: { index: number }) => {
         name={`dataMatrix.rows[${index}].image`}
         onImageChange={setImageInfo}
         className="uploadImage"
+        subPath="question"
       />
-      <DescriptionWrapper>
-        <p className="imageName">{imageName}</p>
-        <ControlledInput
-          inputType={INPUT_TYPES.INPUT}
-          placeholder={t('matrixWithPhotos.photoDescription')}
-          name={`dataMatrix.rows[${index}].description`}
-        />
-      </DescriptionWrapper>
+      <p className="imageName">{imageName}</p>
     </PhotosWrapper>
   );
 };
@@ -252,6 +252,7 @@ const DatamatrixWrapper = styled.div`
 
 const PhotosWrapper = styled.div`
   display: flex;
+  align-items: center;
   gap: 12px;
   overflow: hidden;
   margin-right: 58px;
@@ -262,27 +263,6 @@ const PhotosWrapper = styled.div`
 
   .ant-upload-select-picture-card {
     border-radius: 4px;
-    margin: 0;
-  }
-`;
-
-const DescriptionWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 10px;
-
-  padding-top: 8px;
-  max-width: calc(100% - 116px);
-
-  .imageName {
-    margin: 0;
-    min-height: 44px;
-    overflow-wrap: break-word;
-    overflow: hidden;
-  }
-
-  .ant-form-item-INPUT {
     margin: 0;
   }
 `;

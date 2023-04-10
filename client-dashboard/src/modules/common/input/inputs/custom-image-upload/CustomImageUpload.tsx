@@ -39,7 +39,7 @@ const CustomImageUpload = (
     let type = options.file.type;
     let nameImage = options.file.name;
     const moduleName = props.moduleName || 'users';
-    const subPath = props.subPath || 'default';
+    const subPath = props.subPath || 'avatar';
     try {
       const res = await UploadService.getPreSignedUrlUpload(
         moduleName,
