@@ -22,7 +22,7 @@ const Datamatrix = () => {
       setValues(old => ({
         ...old,
         dataMatrix: {
-          rows: [{ id: Math.random(), name: '', image: {} }],
+          rows: [{ id: Math.random(), name: '', image: '' }],
           columns: [{ id: Math.random(), name: '' }],
         },
       }));
@@ -43,12 +43,12 @@ const Datamatrix = () => {
           rows: [],
           columns: [],
         };
-        const newItem: { id: number; name: string; image?: {} } = {
+        const newItem: { id: number; name: string; image?: string } = {
           id: Math.random(),
           name: '',
         };
         if (key === 'rows') {
-          newItem.image = {};
+          newItem.image = '';
         }
         return {
           ...s,
@@ -205,7 +205,10 @@ const Photo = (props: { index: number }) => {
         className="uploadImage"
         subPath="question"
       />
-      <p className="imageName">{imageName}</p>
+      <p className="imageName">
+        {imageName}{' '}
+        hellohellohellohellohellohellohellohellohellohellohellohello.jpeg
+      </p>
     </PhotosWrapper>
   );
 };
@@ -263,6 +266,11 @@ const PhotosWrapper = styled.div`
 
   .ant-upload-select-picture-card {
     border-radius: 4px;
+    margin: 0;
+  }
+
+  .imageName {
+    // width: calc(100% - 114px);
     margin: 0;
   }
 `;

@@ -268,7 +268,7 @@ export interface IBaseQuestionOptionsVersionDto {
   id?: number | string; //just useful in case for drag drop
 }
 export interface IDataMatrixInfo {
-  rows: { id?: number; name: string; image?: any; description?: string }[];
+  rows: { id?: number; name: string; image?: string }[];
   columns: { id?: number; name: string }[];
 }
 export enum MatrixType {

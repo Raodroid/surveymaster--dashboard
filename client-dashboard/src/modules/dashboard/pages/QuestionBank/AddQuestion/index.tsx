@@ -32,7 +32,7 @@ const initValue: IAddQuestionFormValue = {
   options: undefined,
   matrixType: MatrixType.RADIO_BUTTON,
   dataMatrix: {
-    rows: [{ id: Math.random(), name: '', image: {} }],
+    rows: [{ id: Math.random(), name: '', image: '' }],
     columns: [{ id: Math.random(), name: '' }],
   },
 };
@@ -89,8 +89,6 @@ const AddQuestion = () => {
         const rows = values.dataMatrix.rows;
         rows.forEach(row => {
           delete row.id;
-          row.description = '';
-          row.image = '';
         });
         const columns = values.dataMatrix.columns;
         columns.forEach(column => {
