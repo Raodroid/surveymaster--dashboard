@@ -115,6 +115,6 @@ test('useGetQuestionByQuestionId', async () => {
   });
   await waitFor(() => {
     expect(result.current[1]).toBeFalsy();
-    expect(result.current[0]).toEqual([]);
+    expect(result.current[0]).toEqual({});
   });
 });

@@ -268,8 +268,8 @@ export interface IBaseQuestionOptionsVersionDto {
   id?: number | string; //just useful in case for drag drop
 }
 export interface IDataMatrixInfo {
-  rows: string[];
-  columns: string[];
+  rows: { id?: number; name: string; image?: string }[];
+  columns: { id?: number; name: string }[];
 }
 export enum MatrixType {
   RADIO_BUTTON = 'RADIO_BUTTON',
@@ -287,7 +287,9 @@ export interface BaseQuestionVersionDto {
   textValidationMin?: number;
   textValidationRegex?: string;
   numberMin?: number;
+  numberMinLabel?: string;
   numberMax?: number;
+  numberMaxLabel?: string;
   options?: IBaseQuestionOptionsVersionDto[];
   dateFormat?: DateFormat;
   timeFormat?: TimeFormat;

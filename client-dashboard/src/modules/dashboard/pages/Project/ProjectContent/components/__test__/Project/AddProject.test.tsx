@@ -1,8 +1,3 @@
-import { AdminService, ProjectService } from '../../../../../../../../services';
-import {
-  baseAxiosResponse,
-  JestGeneralProviderHoc,
-} from '../../../../../../../../get-mock-data-jest-test';
 import {
   act,
   fireEvent,
@@ -11,12 +6,17 @@ import {
   waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { notification } from 'antd';
+import * as router from 'react-router';
+import {
+  JestGeneralProviderHoc,
+  baseAxiosResponse,
+} from '../../../../../../../../get-mock-data-jest-test';
+import { AuthSelectors } from '../../../../../../../../redux/auth';
+import { AdminService, ProjectService } from '../../../../../../../../services';
+import * as hoc from '../../../../../../../common/hoc/useCheckScopeEntityDefault';
 import { AddProject } from '../../Project';
 import clearAllMocks = jest.clearAllMocks;
-import * as router from 'react-router';
-import * as hoc from '../../../../../../../common/hoc/useCheckScopeEntityDefault';
-import { AuthSelectors } from '../../../../../../../../redux/auth';
-import { notification } from 'antd';
 
 const mockedUseNavigate = jest.fn();
 
@@ -136,9 +136,12 @@ test('AddProject', async () => {
     </JestGeneralProviderHoc>,
   );
 
-  screen.getByText(/add new project/i);
-  screen.getByText(/main information:/i);
-  screen.getByText(/project title/i);
+  await waitFor(() => {
+    screen.getByText(/add new project/i);
+    screen.getByText(/main information:/i);
+    screen.getByText(/project title/i);
+  });
+
   await act(async () => {
     await userEvent.type(
       screen.getByRole('textbox', {
@@ -155,9 +158,14 @@ test('AddProject', async () => {
     );
   });
 
-  fireEvent.click(screen.getByText('External'));
+  await act(async () => {
+    fireEvent.click(screen.getByText('External'));
+  });
 
-  screen.getByText(/project description/i);
+  await waitFor(() => {
+    screen.getByText(/project description/i);
+  });
+
   await act(async () => {
     await userEvent.type(
       screen.getByRole('textbox', {
@@ -166,7 +174,10 @@ test('AddProject', async () => {
       'this is a description',
     );
   });
-  screen.getByText(/person in charge/i);
+
+  await waitFor(() => {
+    screen.getByText(/person in charge/i);
+  });
 
   await act(async () => {
     await userEvent.click(
@@ -184,9 +195,11 @@ test('AddProject', async () => {
     });
   });
 
-  act(() => {
+  await act(async () => {
     fireEvent.click(screen.getByText(/mya/i));
+  });
 
+  await act(async () => {
     fireEvent.click(
       screen.getByRole('button', {
         name: /save project/i,
@@ -203,9 +216,13 @@ test('AddProject', async () => {
     });
   });
 
-  await expect(notificationMock).toHaveBeenCalledWith({
-    message: 'Create successfully',
+  await waitFor(() => {
+    expect(notificationMock).toHaveBeenCalledWith({
+      message: 'Create successfully',
+    });
   });
 
-  await expect(mockedUseNavigate).toHaveBeenCalledWith('/app/project');
+  await waitFor(() => {
+    expect(mockedUseNavigate).toHaveBeenCalledWith('/app/project');
+  });
 });

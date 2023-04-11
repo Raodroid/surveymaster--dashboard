@@ -1,9 +1,9 @@
-import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { FastField, Field, useField } from 'formik';
 import { Form } from 'antd';
+import { FastField, Field, useField } from 'formik';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import UncontrollInput from '../uncontrolled-input/UncontrollInput';
 import { ControlledInputProps, INPUT_TYPES } from '../type';
+import UncontrollInput from '../uncontrolled-input/UncontrollInput';
 
 const ControlledInput = (props: ControlledInputProps) => {
   const {

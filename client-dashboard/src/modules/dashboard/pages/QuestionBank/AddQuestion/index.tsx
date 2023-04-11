@@ -26,9 +26,15 @@ const initValue: IAddQuestionFormValue = {
   masterVariableName: '',
   numberStep: undefined,
   numberMin: undefined,
+  numberMinLabel: '',
   numberMax: undefined,
+  numberMaxLabel: '',
   options: undefined,
   matrixType: MatrixType.RADIO_BUTTON,
+  dataMatrix: {
+    rows: [{ id: Math.random(), name: '', image: '' }],
+    columns: [{ id: Math.random(), name: '' }],
+  },
 };
 
 function transformData(input: IAddQuestionFormValue): IQuestionCreatePostDto {
@@ -73,12 +79,26 @@ const AddQuestion = () => {
           navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
         }
       },
-      onError,
+      onError: onError,
     },
   );
   const onFinish = useCallback(
-    async (values: IAddQuestionFormValue) => {
-      await addQuestionMutation.mutateAsync(transformData(values));
+    (values: IAddQuestionFormValue) => {
+      const newValue = { ...values };
+      if (values.dataMatrix) {
+        const rows = values.dataMatrix.rows;
+        rows.forEach(row => {
+          delete row.id;
+          if (row.image) {
+            row.image = (row.image as any)?.response?.url;
+          }
+        });
+        const columns = values.dataMatrix.columns;
+        columns.forEach(column => {
+          delete column.id;
+        });
+      }
+      return addQuestionMutation.mutateAsync(transformData(newValue));
     },
     [addQuestionMutation],
   );

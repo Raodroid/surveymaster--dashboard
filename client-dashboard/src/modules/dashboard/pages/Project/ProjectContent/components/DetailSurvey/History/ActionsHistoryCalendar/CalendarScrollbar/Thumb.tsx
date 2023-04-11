@@ -18,7 +18,7 @@ const MIN_ACTIONS_HISTORY_HEIGHT = 478;
 const MAX_ACTIONS_HISTORY_HEIGHT = 1200;
 const MIN_MONTHS_HEIGHT = MIN_ACTIONS_HISTORY_HEIGHT - INPUTS_HEIGHT;
 const MAX_WHEEL_STEP_DISTANCE = 6;
-const MAX_ARROW_KEY_STEP_DISTANCE = 2;
+const MAX_ARROW_KEY_STEP_DISTANCE = 4;
 
 enum DIRECTION {
   UP = 'up',
@@ -203,9 +203,9 @@ function Thumb() {
 
   const handleScrollByWheel = useCallback(
     e => {
-      const isOver = e.path.some(
-        path => path.id === ACTIONS_HISTORY_ID.MONTHS_WRAPPER,
-      );
+      const isOver = e.path
+        ? e.path.some(path => path.id === ACTIONS_HISTORY_ID.MONTHS_WRAPPER)
+        : e.target.id === ACTIONS_HISTORY_ID.THUMB;
       if (!isOver || !months || !thumb) return;
 
       const direction = e.deltaY < 0 ? DIRECTION.UP : DIRECTION.DOWN;

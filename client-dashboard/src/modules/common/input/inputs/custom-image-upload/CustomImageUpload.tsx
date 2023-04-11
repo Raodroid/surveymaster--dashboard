@@ -1,4 +1,10 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  memo,
+  useEffect,
+  useState,
+} from 'react';
 import { Upload } from 'antd';
 import notification from 'customize-components/CustomNotification';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/lib/upload';
@@ -12,6 +18,7 @@ export type CustomUploadProps = UploadProps &
     value: string;
     moduleName?: string;
     subPath?: string;
+    onImageChange?: Dispatch<SetStateAction<Record<string, any>>>;
   };
 
 function getBase64(img, callback) {
@@ -29,7 +36,7 @@ const CustomImageUpload = (props: CustomUploadProps) => {
     let type = options.file.type;
     let nameImage = options.file.name;
     const moduleName = props.moduleName || 'users';
-    const subPath = props.subPath || 'default';
+    const subPath = props.subPath || 'avatar';
     try {
       const res = await UploadService.getPreSignedUrlUpload(
         moduleName,
@@ -95,6 +102,9 @@ const CustomImageUpload = (props: CustomUploadProps) => {
       getBase64(info.file.originFileObj, imgUrl => {
         setLoading(false);
         setImageUrl(imgUrl);
+        if (props.onImageChange) {
+          props.onImageChange(info.file);
+        }
       });
     }
 

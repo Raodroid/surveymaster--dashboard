@@ -63,8 +63,11 @@ export const surveyMock: ISurvey = {
             title: 'what is your breakfast',
             type: QuestionType.DATA_MATRIX,
             dataMatrix: {
-              rows: ['item1', 'item 2'],
-              columns: ['Quantity', 'Coffeee'],
+              rows: [
+                { name: 'item 1', image: '' },
+                { name: 'item 2', image: '' },
+              ],
+              columns: [{ name: 'Quantity' }, { name: 'Coffeee' }],
             },
             latestVersionOfQuestionId: '60',
             latestCompletedVersionOfQuestionId: '60',
@@ -92,8 +95,11 @@ export const surveyMock: ISurvey = {
             title: 'what is your breakfast',
             type: QuestionType.DATA_MATRIX,
             dataMatrix: {
-              rows: ['item1', 'item 2'],
-              columns: ['Quantity', 'Coffeee'],
+              rows: [
+                { name: 'item 1', image: '' },
+                { name: 'item 2', image: '' },
+              ],
+              columns: [{ name: 'Quantity' }, { name: 'Coffeee' }],
             },
             latestVersionOfQuestionId: '60',
             latestCompletedVersionOfQuestionId: '60',

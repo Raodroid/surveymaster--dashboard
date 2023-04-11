@@ -114,8 +114,8 @@ const EditQuestion = () => {
       numberMax: currentVersionQuestionData?.numberMax || 10,
       numberMin: currentVersionQuestionData?.numberMin || 1,
       dataMatrix: currentVersionQuestionData?.dataMatrix || {
-        rows: [''],
-        columns: [''],
+        rows: [{ name: '' }],
+        columns: [{ name: '' }],
       },
       matrixType: currentVersionQuestionData?.matrixType,
       timeFormat: currentVersionQuestionData?.timeFormat,

@@ -12,6 +12,7 @@ import DateTimePicker from './RenderQuestionType/DateTimePicker';
 import Datamatrix from './RenderQuestionType/Datamatrix';
 import Photo from './RenderQuestionType/Photo';
 import TextGraphic from './RenderQuestionType/TextGraphic';
+import { InputWrapper } from './styles';
 
 const DisplayAnswerList = () => {
   const { values } = useFormikContext<BaseQuestionVersionDto>();
@@ -46,18 +47,32 @@ const DisplayAnswerList = () => {
             label={t('common.gridLine')}
             className={className}
           />
-          <ControlledInput
-            inputType={INPUT_TYPES.NUMBER}
-            name="numberMax"
-            label={t('common.maxValue')}
-            className={className}
-          />
-          <ControlledInput
-            inputType={INPUT_TYPES.NUMBER}
-            name="numberMin"
-            label={t('common.minValue')}
-            className={className}
-          />
+          <InputWrapper>
+            <ControlledInput
+              inputType={INPUT_TYPES.NUMBER}
+              name="numberMax"
+              label={t('common.maxValue')}
+              className={className}
+            />
+            <ControlledInput
+              inputType={INPUT_TYPES.INPUT}
+              name="numberMaxLabel"
+              label={t('common.label')}
+            />
+          </InputWrapper>
+          <InputWrapper>
+            <ControlledInput
+              inputType={INPUT_TYPES.NUMBER}
+              name="numberMin"
+              label={t('common.minValue')}
+              className={className}
+            />
+            <ControlledInput
+              inputType={INPUT_TYPES.INPUT}
+              name="numberMinLabel"
+              label={t('common.label')}
+            />
+          </InputWrapper>
         </DisplayAnswerListWrapper>
       );
     case QuestionType.FORM_FIELD:

@@ -160,10 +160,12 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
     is: QuestionType.SLIDER,
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
+  numberMinLabel: Yup.string(),
   numberMax: Yup.string().when('type', {
     is: QuestionType.SLIDER,
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
+  numberMaxLabel: Yup.string(),
   numberStep: Yup.string().when('type', {
     is: QuestionType.SLIDER,
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
@@ -187,11 +189,21 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
       is: QuestionType.DATA_MATRIX,
       then: Yup.object().shape({
         rows: Yup.array()
-          .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+          .of(
+            Yup.object().shape({
+              name: Yup.string().required(INVALID_FIELDS.REQUIRED),
+              image: Yup.object().nullable(),
+              description: Yup.string(),
+            }),
+          )
           .required(INVALID_FIELDS.REQUIRED)
           .min(1),
         columns: Yup.array()
-          .of(Yup.string().required(INVALID_FIELDS.REQUIRED))
+          .of(
+            Yup.object().shape({
+              name: Yup.string().required(INVALID_FIELDS.REQUIRED),
+            }),
+          )
           .required(INVALID_FIELDS.REQUIRED)
           .min(1),
       }),

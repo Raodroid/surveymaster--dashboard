@@ -14,6 +14,7 @@ import { projectSurveyParams } from '../../../index';
 export enum ACTIONS_HISTORY_ID {
   MONTHS = 'actions-history-months',
   MONTHS_WRAPPER = 'actions-history-months-wrapper',
+  THUMB = 'actions-history-thumb',
 }
 
 function CalendarScrollbar() {
