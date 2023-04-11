@@ -18,6 +18,7 @@ export type CustomUploadProps = UploadProps &
     value: string;
     moduleName?: string;
     subPath?: string;
+    onImageChange?: Dispatch<SetStateAction<Record<string, any>>>;
   };
 
 function getBase64(img, callback) {
@@ -26,11 +27,7 @@ function getBase64(img, callback) {
   reader.readAsDataURL(img);
 }
 
-const CustomImageUpload = (
-  props: CustomUploadProps & {
-    onImageChange?: Dispatch<SetStateAction<Record<string, any>>>;
-  },
-) => {
+const CustomImageUpload = (props: CustomUploadProps) => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>('');
   const { t } = useTranslation();

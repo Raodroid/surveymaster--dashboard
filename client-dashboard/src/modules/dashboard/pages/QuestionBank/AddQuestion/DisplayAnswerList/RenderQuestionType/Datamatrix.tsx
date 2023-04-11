@@ -187,10 +187,10 @@ const Photo = (props: { index: number }) => {
   const [imageInfo, setImageInfo] = useState<Record<string, any>>({});
 
   const imageName = useMemo(() => {
-    if (imageInfo.name && imageInfo.name.length >= 36) {
+    if (imageInfo.name && imageInfo.name.length >= 34) {
       const length = imageInfo.name.length;
       const name = imageInfo.name.split('');
-      name.splice(12, length - 32, '...');
+      name.splice(18, length - 32, '...');
       return name.join('');
     }
     return imageInfo.name;
@@ -205,10 +205,8 @@ const Photo = (props: { index: number }) => {
         className="uploadImage"
         subPath="question"
       />
-      <p className="imageName">
-        {imageName}{' '}
-        hellohellohellohellohellohellohellohellohellohellohellohello.jpeg
-      </p>
+
+      <div className="imageName">{imageName}</div>
     </PhotosWrapper>
   );
 };
@@ -257,7 +255,6 @@ const PhotosWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  overflow: hidden;
   margin-right: 58px;
 
   .ant-form-item-IMAGE_UPLOAD {
@@ -270,7 +267,7 @@ const PhotosWrapper = styled.div`
   }
 
   .imageName {
-    // width: calc(100% - 114px);
-    margin: 0;
+    word-break: break-all;
+    min-width: 30px;
   }
 `;

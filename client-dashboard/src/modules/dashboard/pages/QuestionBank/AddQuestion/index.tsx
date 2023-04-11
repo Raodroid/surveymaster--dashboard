@@ -89,6 +89,9 @@ const AddQuestion = () => {
         const rows = values.dataMatrix.rows;
         rows.forEach(row => {
           delete row.id;
+          if (row.image) {
+            row.image = (row.image as any)?.response?.url;
+          }
         });
         const columns = values.dataMatrix.columns;
         columns.forEach(column => {
