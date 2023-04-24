@@ -9,6 +9,7 @@ import { useFormikContext } from 'formik';
 import { generateRandom } from '../../../../../common/funcs';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '../../../../../../enums';
+import TextGraphic from '../DisplayAnswerList/RenderQuestionType/TextGraphic';
 
 const AddQuestionDetailForm = () => {
   const isViewMode = useMatch({
@@ -20,7 +21,7 @@ const AddQuestionDetailForm = () => {
 
   const { t } = useTranslation();
 
-  const { setFieldValue, setValues } = useFormikContext();
+  const { setFieldValue, setValues, values } = useFormikContext<any>();
 
   const handleTextFieldChange = value => {
     switch (value) {
@@ -104,6 +105,7 @@ const AddQuestionDetailForm = () => {
         aria-label={'title'}
         label={t('common.question')}
       />
+      {values.type !== QuestionType.TEXT_GRAPHIC && <TextGraphic />}
     </QuestionDetailFormWrapper>
   );
 };
