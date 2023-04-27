@@ -98,7 +98,8 @@ const AddQuestion = () => {
           delete column.id;
         });
       }
-      return addQuestionMutation.mutateAsync(transformData(newValue));
+      const payload = transformData(newValue);
+      return addQuestionMutation.mutateAsync(payload);
     },
     [addQuestionMutation],
   );
