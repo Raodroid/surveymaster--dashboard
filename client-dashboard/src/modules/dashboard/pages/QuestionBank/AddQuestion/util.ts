@@ -46,12 +46,9 @@ export const transformQuestionData = (
     delete result.dataMatrix;
     delete result.matrixType;
   }
-  if (result.type !== QuestionType.TEXT_GRAPHIC) {
-    delete result.image;
-  } else {
-    if ((result.image as any)?.response?.url)
-      result.image = (result.image as any)?.response?.url;
-  }
+
+  if (result.image) result.image = (result.image as any)?.response?.url || '';
+
   return result;
 };
 
