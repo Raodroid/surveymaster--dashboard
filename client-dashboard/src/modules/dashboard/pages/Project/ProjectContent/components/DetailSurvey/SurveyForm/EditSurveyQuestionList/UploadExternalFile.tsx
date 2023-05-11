@@ -663,30 +663,34 @@ const DisplayAnswer = props => {
   const expandedRowRender = (record: questionValueType) => {
     const [newVersions] = determineVersionOfSurveyQuestion(record);
 
-    return (
-      <Table
-        dataSource={(newVersions || []).reduce(
-          (res: IExpandableTable[], v: IQuestionVersion) => {
-            if (v.id === record.questionVersionId) return res;
-            return [
-              ...res,
-              {
-                createdAt: v.createdAt,
-                questionVersionId: v.id as string,
-                parameter: record.parameter,
-                type: record.type,
-                category: record.category,
-                questionTitle: v.title,
-              },
-            ];
+    const dataSource = (newVersions || []).reduce(
+      (res: IExpandableTable[], v: IQuestionVersion) => {
+        if (v.id === record.questionVersionId) return res;
+        return [
+          ...res,
+          {
+            createdAt: v.createdAt,
+            questionVersionId: v.id as string,
+            parameter: record.parameter,
+            type: record.type,
+            category: record.category,
+            questionTitle: v.title,
           },
-          [],
-        )}
+        ];
+      },
+      [],
+    );
+
+    return dataSource.length > 0 ? (
+      <Table
+        dataSource={dataSource}
         columns={expandTableColumn}
         showHeader={false}
         pagination={false}
         rowClassName={() => 'padding-top'}
       />
+    ) : (
+      <div className="empty-expanded" />
     );
   };
 
@@ -1165,5 +1169,9 @@ const DisplayAnswerWrapper = styled.div`
   }
   .ant-table-expanded-row {
     transform: translateX(-4px);
+  }
+
+  tr:has(td .empty-expanded) {
+    display: none;
   }
 `;
