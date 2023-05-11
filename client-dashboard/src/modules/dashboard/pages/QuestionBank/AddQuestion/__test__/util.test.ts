@@ -41,6 +41,7 @@ describe('transformQuestionData', () => {
         { sort: 2, text: '2' },
       ],
       title: '',
+      image: '',
       type: 'MULTIPLE_CHOICE',
     });
   });
@@ -55,6 +56,7 @@ describe('transformQuestionData', () => {
         { imageUrl: '/', sort: 2, text: '2' },
       ],
       title: '',
+      image: '',
       type: 'PHOTO',
     });
   });
@@ -66,6 +68,7 @@ describe('transformQuestionData', () => {
         { sort: 2, text: '2' },
       ],
       title: '',
+      image: '',
       type: 'RADIO_BUTTONS',
     });
   });
@@ -77,6 +80,7 @@ describe('transformQuestionData', () => {
         { sort: 2, text: '2' },
       ],
       title: '',
+      image: '',
       type: 'FORM_FIELD',
     });
   });
@@ -90,6 +94,7 @@ describe('transformQuestionData', () => {
       numberMin: 1,
       numberStep: 2,
       title: '',
+      image: '',
       type: 'SLIDER',
     });
   });
@@ -101,6 +106,7 @@ describe('transformQuestionData', () => {
         { sort: 2, text: '2' },
       ],
       title: '',
+      image: '',
       type: 'FORM_FIELD',
     });
   });
@@ -109,6 +115,7 @@ describe('transformQuestionData', () => {
     expect(transformQuestionData(input)).toEqual({
       dateFormat: 'DD_MM_YYYY',
       title: '',
+      image: '',
       type: 'DATE_PICKER',
     });
   });
@@ -117,6 +124,7 @@ describe('transformQuestionData', () => {
     expect(transformQuestionData(input)).toEqual({
       dataMatrix: { columns: [], rows: [] },
       title: '',
+      image: '',
       type: 'DATA_MATRIX',
     });
   });
