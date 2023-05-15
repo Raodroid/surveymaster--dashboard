@@ -105,7 +105,7 @@ test('AddQuestionDetailForm: render base content', async () => {
     screen.getByRole('button', { name: /add one more question/i });
     screen.getByRole('columnheader', { name: /order/i });
     screen.getByRole('columnheader', { name: /answer/i });
-    screen.getByText(/upload/i);
+    screen.getAllByText(/upload/i);
     expect(screen.getAllByRole('row').length).toBe(2);
   });
   await act(async () => {

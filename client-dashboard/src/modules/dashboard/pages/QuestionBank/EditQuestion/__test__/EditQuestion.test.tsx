@@ -208,6 +208,7 @@ test('EditQuestionDetailForm: status = COMPLETED success', async () => {
     expect(createVersionQuestionAPI).toHaveBeenCalledWith({
       version: {
         type: 'TEXT_ENTRY',
+        image: '',
         title: 'What is your name? and your middle name?',
         status: 'DRAFT',
       },
@@ -265,6 +266,7 @@ test('EditQuestionDetailForm: status = DRAFT failed', async () => {
     expect(updateVersionQuestionAPI).toHaveBeenCalledWith({
       id: '69',
       version: {
+        image: '',
         type: 'TEXT_ENTRY',
         title: 'What is your name? and your middle name?',
       },
