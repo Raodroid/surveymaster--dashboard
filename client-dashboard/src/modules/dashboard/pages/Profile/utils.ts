@@ -5,7 +5,6 @@ export const postPutInitialValues: PostPutMember = {
   firstName: '',
   lastName: '',
   email: '',
-  displayName: '',
   roles: [],
   departmentName: '',
 };

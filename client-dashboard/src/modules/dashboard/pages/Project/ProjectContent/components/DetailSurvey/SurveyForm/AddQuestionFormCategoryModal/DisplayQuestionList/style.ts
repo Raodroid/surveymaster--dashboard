@@ -11,4 +11,9 @@ export const DisplayQuestionListWrapper = styled.div`
     flex-direction: column;
     gap: 0.5rem;
   }
+  > div.line {
+    border-bottom: 1px solid #f3eef3;
+    width: 100%;
+    margin: 1rem 0;
+  }
 `;

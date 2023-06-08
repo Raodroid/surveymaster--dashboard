@@ -14,7 +14,6 @@ export interface UserUpdatedDto {
   email?: string;
   phone?: string;
   avatar?: string;
-  displayName?: string; // new field
   departmentName?: string;
 }
 
@@ -23,7 +22,6 @@ export interface PostPutMember {
   firstName?: string;
   lastName?: string;
   email?: string;
-  displayName?: string;
   description?: string;
   roles?: number[];
   departmentName?: string;
