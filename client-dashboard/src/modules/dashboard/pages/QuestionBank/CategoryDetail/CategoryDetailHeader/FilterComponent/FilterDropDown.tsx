@@ -235,7 +235,7 @@ export const FilerDropdown: FC<IFilerDropdown> = props => {
                     aria-label="subCategoryIds"
                     mode={'multiple'}
                     maxTagCount="responsive"
-                    options={(values?.categoryIds || []).reduce(
+                    options={(values?.body?.categoryIds || []).reduce(
                       (res: IOptionItem[], id) => {
                         const x = categories?.find(i => i.id === id);
                         if (!x) return res;

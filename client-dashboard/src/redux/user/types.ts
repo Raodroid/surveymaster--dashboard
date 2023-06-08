@@ -42,7 +42,6 @@ export interface UserPayload {
   userName?: string;
   phone?: string;
   description?: string;
-  displayName?: string;
   roles?: Array<number>;
   password?: string;
   phonePrefix?: string;

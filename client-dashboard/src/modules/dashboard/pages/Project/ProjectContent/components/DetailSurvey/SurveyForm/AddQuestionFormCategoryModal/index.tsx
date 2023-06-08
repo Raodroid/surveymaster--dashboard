@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
-import { Button, Input, MenuProps } from 'antd';
+import { Button, Input, Tree } from 'antd';
+import type { DataNode } from 'antd/es/tree';
 import {
   IGetParams,
   IQuestion,
@@ -12,7 +13,7 @@ import { QuestionBankService } from 'services';
 import { useDebounce, onError } from 'utils';
 import {
   AddQuestionFormCategoryModalWrapper,
-  CategoryMenuWrapper,
+  // CategoryMenuWrapper,
 } from './style';
 import { DisplayQuestionList } from './DisplayQuestionList/DisplayQuestionList';
 import { useTranslation } from 'react-i18next';
@@ -21,28 +22,6 @@ import { useFormikContext } from 'formik';
 import { IAddSurveyFormValues } from '../SurveyForm';
 import _get from 'lodash/get';
 import SimpleBar from 'simplebar-react';
-
-const initParams = {
-  take: 10,
-  page: 1,
-  isDeleted: false,
-};
-
-type MenuItem = Required<MenuProps>['items'][number];
-
-function getItem(
-  label: React.ReactNode,
-  key?: React.Key | null,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem;
-}
 
 interface IAddQuestionFormCategoryModal {
   open: boolean;
@@ -56,7 +35,7 @@ const AddQuestionFormCategoryModal: FC<
   const [searchTxt, setSearchTxt] = useState<string>('');
   const [searchQuestionTxt, setSearchQuestionTxt] = useState<string>('');
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [selectedQuestionIdList, setSelectedQuestionIdList] = useState<
     string[]
   >([]);
@@ -70,14 +49,19 @@ const AddQuestionFormCategoryModal: FC<
 
   const currentParam = useMemo<IGetParams>(
     () => ({
-      ...initParams,
       selectAll: true,
       q: debounceSearchText,
     }),
     [debounceSearchText],
   );
 
-  const getCategoryListQuery = useQuery(
+  const onCheck = (checkedKeys: string[]) => {
+    console.log('\n ==> checkedKeys =', checkedKeys);
+    setSelectedCategoryIds(checkedKeys);
+    if (!checkedKeys.length) setSelectedQuestionIdList([]);
+  };
+
+  const { data, isLoading, isFetching } = useQuery(
     ['getCategoryList', currentParam],
     () => {
       return QuestionBankService.getCategories(currentParam);
@@ -85,54 +69,66 @@ const AddQuestionFormCategoryModal: FC<
     { onError, enabled: open, refetchOnWindowFocus: false },
   );
 
-  const categoryData = useMemo(() => {
-    if (!getCategoryListQuery.data) return [];
-    return getCategoryListQuery.data.data.data.reduce(
-      (current: MenuItem[], category: IQuestionCategory) => {
-        return [...current, getItem(category.name, category.id)];
+  const categoryTreeData = useMemo(() => {
+    if (!data) return [];
+    return data.data.data.reduce(
+      (prevArr: DataNode[], category: IQuestionCategory) => {
+        const { id: parentKey, name: parentTitle, children = [] } = category;
+        const childrenTree = children.map(item => ({
+          key: `${item.id}`,
+          title: item.name,
+        }));
+        return [
+          ...prevArr,
+          {
+            key: `${parentKey}`,
+            title: parentTitle,
+            children: childrenTree,
+          },
+        ];
       },
       [],
     );
-  }, [getCategoryListQuery.data]);
+  }, [data]);
+  // console.log('\n ==> categoryTreeData', categoryTreeData);
 
   const debounceSearchTextQuestion = useDebounce(searchQuestionTxt);
 
   const getQuestionByCategoryIdListQuery = useQuery(
     [
       'getQuestionByCategoryIdList',
-      selectedCategoryId,
+      selectedCategoryIds,
       debounceSearchTextQuestion,
     ],
     () => {
       return QuestionBankService.getQuestions({
-        categoryIds: [selectedCategoryId],
+        body: { subCategoryIds: selectedCategoryIds },
         q: debounceSearchTextQuestion,
         hasLatestCompletedVersion: true,
         isDeleted: false,
+        selectAll: true,
       });
     },
-    { onError, enabled: !!selectedCategoryId, refetchOnWindowFocus: false },
+    { onError, enabled: !!selectedCategoryIds, refetchOnWindowFocus: false },
   );
 
   const questions = useMemo<IQuestion[]>(
     () => _get(getQuestionByCategoryIdListQuery.data, 'data.data', []),
     [getQuestionByCategoryIdListQuery.data],
   );
+  // console.log('\n ==> questions', questions);
 
   const handleTyping = useCallback(
     e => {
       setSearchTxt(e.target.value);
-      setSelectedCategoryId('');
+      setSelectedCategoryIds([]);
     },
     [setSearchTxt],
   );
-  const handleSelect = useCallback(({ key }) => {
-    setSelectedCategoryId(key);
-  }, []);
 
   const onCloseModal = useCallback(() => {
     onCancel();
-    setSelectedCategoryId('');
+    setSelectedCategoryIds([]);
   }, [onCancel]);
 
   const handleAddQuestions = useCallback(async () => {
@@ -217,7 +213,7 @@ const AddQuestionFormCategoryModal: FC<
           <div className={'category-column'} ref={wrapperRef}>
             <HannahCustomSpin
               parentRef={wrapperRef}
-              spinning={getCategoryListQuery.isLoading}
+              spinning={isLoading || isFetching}
             />
             <label className={'label-input'}>
               {t('common.selectCategory')}
@@ -229,15 +225,20 @@ const AddQuestionFormCategoryModal: FC<
               value={searchTxt}
               onChange={handleTyping}
             />
-            <CategoryMenuWrapper items={categoryData} onSelect={handleSelect} />
+            {/* <CategoryMenuWrapper items={categoryData} onSelect={handleSelect} /> */}
+            <Tree
+              checkable
+              onCheck={onCheck as any}
+              checkedKeys={selectedCategoryIds}
+              treeData={categoryTreeData}
+            />
           </div>
         </SimpleBar>
-        {selectedCategoryId && (
+        {selectedCategoryIds.length ? (
           <>
             <span className={'border'} style={{ borderRight: 0 }} />
             <SimpleBar>
               <DisplayQuestionList
-                selectedCategoryId={selectedCategoryId}
                 selectedQuestionIdList={selectedQuestionIdList}
                 setSelectedQuestionIdList={setSelectedQuestionIdList}
                 questions={questions}
@@ -246,7 +247,7 @@ const AddQuestionFormCategoryModal: FC<
               />{' '}
             </SimpleBar>
           </>
-        )}
+        ) : null}
       </div>
     </AddQuestionFormCategoryModalWrapper>
   );

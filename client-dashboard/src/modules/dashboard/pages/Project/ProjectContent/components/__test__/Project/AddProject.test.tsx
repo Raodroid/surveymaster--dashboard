@@ -67,7 +67,6 @@ beforeEach(() => {
           activated: true,
           avatar: null,
           isDisableEmailNotification: false,
-          displayName: null,
           departmentName: null,
           userRoles: [
             {
@@ -96,7 +95,6 @@ beforeEach(() => {
           activated: true,
           avatar: null,
           isDisableEmailNotification: false,
-          displayName: null,
           departmentName: null,
           userRoles: [
             {

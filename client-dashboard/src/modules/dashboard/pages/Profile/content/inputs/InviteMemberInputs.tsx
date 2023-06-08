@@ -37,12 +37,6 @@ function InviteMemberInputs(props: { edit: boolean }) {
       </div>
       <ControlledInput
         inputType={INPUT_TYPES.INPUT}
-        type={'text'}
-        name="displayName"
-        label={t('common.displayName')}
-      />
-      <ControlledInput
-        inputType={INPUT_TYPES.INPUT}
         type={'email'}
         name="email"
         disabled={edit}

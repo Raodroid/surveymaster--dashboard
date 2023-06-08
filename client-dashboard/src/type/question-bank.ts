@@ -7,7 +7,6 @@ export interface UserUpdatedDto {
   phonePrefix: string;
   phone: string;
   avatar: string;
-  displayName: string; // new field
   scientificDegree: string; // new field
 }
 
@@ -345,11 +344,11 @@ export interface IGetParams {
 }
 
 export type GetListQuestionDto = IGetParams & {
-  categoryIds?: string[];
-  subCategoryIds?: string[];
   types?: QuestionType[];
   hasLatestCompletedVersion?: boolean;
   body?: {
     masterVariableNames?: string[];
+    categoryIds?: string[];
+    subCategoryIds?: string[];
   };
 };

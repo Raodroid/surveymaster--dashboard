@@ -108,21 +108,9 @@ function UserForm() {
                     <ControlledInput
                       inputType={INPUT_TYPES.INPUT}
                       type={'text'}
-                      name="displayName"
-                      label={t('common.displayName')}
-                    />
-                    <ControlledInput
-                      inputType={INPUT_TYPES.INPUT}
-                      type={'text'}
                       name="departmentName"
                       label={t('common.departmentName')}
                     />
-                    {/* <ControlledInput
-                    inputType={INPUT_TYPES.INPUT}
-                    type={'tel'}
-                    name="phone"
-                    label={t('common.phoneNumber')}
-                  /> */}
                   </SimpleBar>
                 </div>
 

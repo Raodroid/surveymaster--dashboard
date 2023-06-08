@@ -4,10 +4,8 @@ import { Input } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
 import { DisplayQuestionListWrapper } from './style';
 import { useTranslation } from 'react-i18next';
-import SimpleBar from 'simplebar';
 
 interface IDisplayQuestionList {
-  selectedCategoryId: string;
   selectedQuestionIdList: string[];
   setSelectedQuestionIdList: (e?: any) => void;
   questions: IQuestion[];

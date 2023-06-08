@@ -32,7 +32,6 @@ function UpdateMemberModal(props: UpdateModal) {
           firstName: userData.firstName,
           lastName: userData.lastName,
           email: userData.email,
-          displayName: userData.displayName,
           departmentName: userData.departmentName,
           roles: userData.userRoles?.map(elm => elm.roleId),
         }
