@@ -22,6 +22,7 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
     setSearchQuestionTxt,
   } = props;
   const { t } = useTranslation();
+  const isSelectAll = selectedQuestionIdList.length === questions.length;
 
   const options = useMemo<IOptionItem[]>(() => {
     const result: IOptionItem[] = [];
@@ -51,6 +52,17 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
     [setSearchQuestionTxt],
   );
 
+  const selectAll = useCallback(() => {
+    const listQuestionIds = questions.map(
+      item => item.latestCompletedVersion.id,
+    );
+    const newSelectedQuestionIds =
+      selectedQuestionIdList.length === listQuestionIds.length
+        ? []
+        : listQuestionIds;
+    setSelectedQuestionIdList(newSelectedQuestionIds);
+  }, [questions, selectedQuestionIdList, setSelectedQuestionIdList]);
+
   return (
     <DisplayQuestionListWrapper>
       <label className={'label-input'}>{t('common.selectQuestion')}</label>
@@ -61,6 +73,10 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
         value={searchQuestionTxt}
         onChange={handleTyping}
       />
+      <Checkbox checked={isSelectAll} onChange={selectAll}>
+        {t('common.selectAll')}
+      </Checkbox>
+      <div className="line" />
       <Checkbox.Group
         value={selectedQuestionIdList}
         options={options}

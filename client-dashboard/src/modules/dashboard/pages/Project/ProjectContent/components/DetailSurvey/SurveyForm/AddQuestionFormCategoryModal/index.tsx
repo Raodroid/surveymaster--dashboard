@@ -56,7 +56,6 @@ const AddQuestionFormCategoryModal: FC<
   );
 
   const onCheck = (checkedKeys: string[]) => {
-    console.log('\n ==> checkedKeys =', checkedKeys);
     setSelectedCategoryIds(checkedKeys);
     if (!checkedKeys.length) setSelectedQuestionIdList([]);
   };
