@@ -8,7 +8,7 @@
     "build:dev-server": "env-cmd -f .env.dev-server craco build",
     "build:stg": "env-cmd -f .env.stg craco build",
     "deploy:dev-server": "aws s3 sync build/ s3://eg-dev-server-survey-master-admin-origin --cache-control no-cache",
-    "deploy:stg": "aws s3 sync build/ s3://sm-stg-survey-master-bucket-origin --cache-control no-cache",
+    "deploy:stg": "aws s3 sync build/ s3://sm-stg-survey-master-admin-origin --cache-control no-cache",
     "invalidate:dev-server": "aws configure set preview.cloudfront true && aws cloudfront create-invalidation --distribution-id E1FZTWZAHX0593 --paths '/*'",
     "invalidate:stg": "aws configure set preview.cloudfront true && aws cloudfront create-invalidation --distribution-id EI45866BA68ES --paths '/*'",
     "test": "craco test",
