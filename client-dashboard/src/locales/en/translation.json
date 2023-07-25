@@ -524,6 +524,7 @@
   },
   "matrixWithPhotos": {
     "rows": "Rows",
+    "keyPath": "Key Path",
     "columns": "Columns",
     "rowName": "Row Name",
     "columnName": "Column Name",

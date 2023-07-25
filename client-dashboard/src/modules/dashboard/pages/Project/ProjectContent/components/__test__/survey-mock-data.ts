@@ -64,8 +64,8 @@ export const surveyMock: ISurvey = {
             type: QuestionType.DATA_MATRIX,
             dataMatrix: {
               rows: [
-                { name: 'item 1', image: '' },
-                { name: 'item 2', image: '' },
+                { name: 'item 1', keyPath: '', image: '' },
+                { name: 'item 2', keyPath: '', image: '' },
               ],
               columns: [{ name: 'Quantity' }, { name: 'Coffeee' }],
             },
@@ -96,8 +96,8 @@ export const surveyMock: ISurvey = {
             type: QuestionType.DATA_MATRIX,
             dataMatrix: {
               rows: [
-                { name: 'item 1', image: '' },
-                { name: 'item 2', image: '' },
+                { name: 'item 1', keyPath: '', image: '' },
+                { name: 'item 2', keyPath: '', image: '' },
               ],
               columns: [{ name: 'Quantity' }, { name: 'Coffeee' }],
             },
