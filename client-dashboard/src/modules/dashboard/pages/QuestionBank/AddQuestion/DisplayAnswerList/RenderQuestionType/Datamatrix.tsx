@@ -17,17 +17,17 @@ const Datamatrix = () => {
   const { t } = useTranslation();
   const { values, setValues } = useFormikContext<IAddQuestionFormValue>();
 
-  useEffect(() => {
-    return () => {
-      setValues(old => ({
-        ...old,
-        dataMatrix: {
-          rows: [{ id: Math.random(), name: '', image: '' }],
-          columns: [{ id: Math.random(), name: '' }],
-        },
-      }));
-    };
-  }, [setValues]);
+  // useEffect(() => {
+  //   return () => {
+  //     setValues(old => ({
+  //       ...old,
+  //       dataMatrix: {
+  //         rows: [{ id: Math.random(), name: '', image: '', keyPath: '' }],
+  //         columns: [{ id: Math.random(), name: '' }],
+  //       },
+  //     }));
+  //   };
+  // }, [setValues]);
 
   const isViewMode = useMatch({
     path: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION,
@@ -43,12 +43,19 @@ const Datamatrix = () => {
           rows: [],
           columns: [],
         };
-        const newItem: { id: number; name: string; image?: string } = {
+        const newItem: {
+          id: number;
+          name: string;
+          keyPath: string;
+          image?: string;
+        } = {
           id: Math.random(),
           name: '',
+          keyPath: '',
         };
         if (key === 'rows') {
           newItem.image = '';
+          newItem.keyPath = '';
         }
         return {
           ...s,
@@ -126,6 +133,15 @@ const Datamatrix = () => {
                     <TrashOutlined className={'trash-icon'} />
                   </Button>
                 )}
+              </div>
+              <div className={'input-wrapper'}>
+                <ControlledInput
+                  style={{ maxWidth: isViewMode ? 'auto' : 266 }}
+                  inputType={INPUT_TYPES.INPUT}
+                  name={`dataMatrix.rows[${index}].keyPath`}
+                  placeholder={t('matrixWithPhotos.keyPath')}
+                  className={className}
+                />
               </div>
               <Photo index={index} />
             </div>
@@ -242,7 +258,7 @@ const DatamatrixWrapper = styled.div`
       .cell {
         display: flex;
         flex-direction: column;
-        min-height: 160px;
+        min-height: 220px;
       }
     }
   }

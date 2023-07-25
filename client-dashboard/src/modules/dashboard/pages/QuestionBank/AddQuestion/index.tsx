@@ -32,7 +32,7 @@ const initValue: IAddQuestionFormValue = {
   options: undefined,
   matrixType: MatrixType.RADIO_BUTTON,
   dataMatrix: {
-    rows: [{ id: Math.random(), name: '', image: '' }],
+    rows: [{ id: Math.random(), name: '', keyPath: '', image: '' }],
     columns: [{ id: Math.random(), name: '' }],
   },
 };
