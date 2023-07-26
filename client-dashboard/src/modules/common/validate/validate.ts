@@ -209,12 +209,11 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
           .min(1),
       }),
     }),
-  image: Yup.object()
-    .nullable()
-    .when('type', {
-      is: QuestionType.TEXT_GRAPHIC,
-      then: Yup.object().required(INVALID_FIELDS.REQUIRED),
-    }),
+  image: Yup.object().nullable(),
+  // .when('type', {
+  //   is: QuestionType.TEXT_GRAPHIC,
+  //   then: Yup.object().required(INVALID_FIELDS.REQUIRED),
+  // }),
   options: Yup.array()
     .when('type', {
       is: QuestionType.MULTIPLE_CHOICE,
