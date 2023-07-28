@@ -241,6 +241,7 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
         .of(
           Yup.object().shape({
             text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+            keyPath: Yup.string().required(INVALID_FIELDS.REQUIRED),
           }),
         )
         .min(1),

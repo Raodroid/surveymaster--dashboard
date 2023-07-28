@@ -99,6 +99,7 @@ const AddQuestion = () => {
         });
       }
       const payload = transformData(newValue);
+      // console.log('payload =', payload);
       return addQuestionMutation.mutateAsync(payload);
     },
     [addQuestionMutation],

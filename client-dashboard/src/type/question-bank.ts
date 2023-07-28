@@ -73,6 +73,7 @@ export interface IQuestionVersionOption {
   questionVersion?: IQuestionVersion;
   sort: number;
   imageUrl?: string;
+  keyPath?: string;
   text?: string;
 }
 
@@ -264,6 +265,7 @@ export interface IBaseQuestionOptionsVersionDto {
   sort: number;
   imageUrl?: string;
   text?: string;
+  keyPath?: string;
   id?: number | string; //just useful in case for drag drop
 }
 export interface IDataMatrixInfo {

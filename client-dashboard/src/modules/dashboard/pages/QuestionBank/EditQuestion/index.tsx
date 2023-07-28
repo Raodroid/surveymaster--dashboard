@@ -102,6 +102,7 @@ const EditQuestion = () => {
         id: opt.sort,
         sort: opt.sort,
         text: opt.text,
+        keyPath: opt?.keyPath || '',
         imageUrl: opt.imageUrl,
       })) || [
         {
@@ -166,10 +167,11 @@ const EditQuestion = () => {
     async (values: IEditQuestionFormValue) => {
       const newValues = {
         ...values,
-        options: values?.options?.map(({ text, imageUrl }, idx) => ({
+        options: values?.options?.map(({ text, imageUrl, keyPath }, idx) => ({
           text,
           imageUrl,
           sort: idx + 1,
+          keyPath,
         })),
       };
 
