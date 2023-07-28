@@ -17,6 +17,7 @@ export const transformQuestionData = (
     result.options = input?.options?.map((opt, index) => ({
       sort: index + 1,
       text: opt.text,
+      keyPath: opt.keyPath,
     }));
   }
   if (result.type === QuestionType.PHOTO) {

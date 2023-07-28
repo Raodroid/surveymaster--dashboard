@@ -75,12 +75,23 @@ const MultipleChoice = () => {
         dataIndex: 'question',
         render: (value, record, index) => {
           return (
-            <ControlledInput
-              inputType={INPUT_TYPES.INPUT}
-              name={`options[${index}].text`}
-              className={className}
-              aria-label={`options[${index}].text`}
-            />
+            <div style={{ display: 'flex' }}>
+              <ControlledInput
+                inputType={INPUT_TYPES.INPUT}
+                name={`options[${index}].text`}
+                className={className}
+                aria-label={`options[${index}].text`}
+                placeholder={'Title'}
+              />
+              <ControlledInput
+                style={{ marginLeft: 10 }}
+                inputType={INPUT_TYPES.INPUT}
+                name={`options[${index}].keyPath`}
+                className={className}
+                aria-label={`options[${index}].keyPath`}
+                placeholder={'Key Path'}
+              />
+            </div>
           );
         },
       },
