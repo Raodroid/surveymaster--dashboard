@@ -89,7 +89,7 @@ const MultipleChoice = () => {
                 name={`options[${index}].keyPath`}
                 className={className}
                 aria-label={`options[${index}].keyPath`}
-                placeholder={'Key'}
+                placeholder={'Key Path'}
               />
             </div>
           );
