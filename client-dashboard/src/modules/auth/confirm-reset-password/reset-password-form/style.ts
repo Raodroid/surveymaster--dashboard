@@ -28,52 +28,8 @@ export const ResetPasswordFormWrapper = styled.div<{ isError?: boolean }>`
       margin-top: 4px;
     }
   }
-  .ant-spin-nested-loading {
-    width: 100%;
-    .ant-spin-container {
-      display: flex;
-      flex-flow: column;
-      align-items: center;
-      .ant-avatar {
-        display: flex;
-        min-width: 5.714rem;
-        height: 5.714rem;
-        margin-bottom: 1.429rem;
-        .anticon-user {
-          margin: auto;
-          svg {
-            width: 2.857rem;
-            height: 2.857rem;
-          }
-        }
-      }
-      > p {
-        margin-bottom: 0.286rem;
-        line-height: 2rem;
-        &.title {
-          font-size: 20px;
-        }
-        &.fullname {
-          font-size: 16px;
-        }
-      }
-      > span {
-        font-size: 0.857rem;
-        margin-bottom: 3.286rem;
-        line-height: 1.143rem;
-      }
-    }
-  }
   .ant-col.ant-form-item-label {
     margin-bottom: 0.571rem;
-  }
-
-  .line {
-    position: absolute;
-    height: 1px;
-    background-color: #f3eef3;
-    width: 100%;
-    top: 18.214rem;
   }
 
   .confirmation-code {

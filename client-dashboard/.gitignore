@@ -25,6 +25,7 @@ yarn-error.log*
 .env.staging
 .env.stg
 .env.stg2
+.env.dev
 
 .createI18nex
 

@@ -1,14 +1,14 @@
 import React from 'react';
 import { ConfirmResetPasswordForm, ResetPasswordForm } from '..';
 import { ConfirmResetPasswordPageStyled } from './style';
-import { useQuery } from 'utils/funcs';
 import requireAuthentication from 'modules/common/hoc/requireAuthentication';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 
 const ConfirmResetPasswordPage = () => {
-  let query = useQuery();
-  const email = query.get('email') as string;
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get('email');
+
   return (
     <ConfirmResetPasswordPageStyled>
       <div className="row-1 border">

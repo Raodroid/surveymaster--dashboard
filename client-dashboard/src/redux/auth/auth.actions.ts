@@ -229,10 +229,12 @@ export default class AuthAction {
       callback,
     });
 
-  static confirmresetSuccess = (email: string): StandardAction<string> =>
+  static confirmResetPasswordSuccess = (
+    email: string,
+  ): StandardAction<string> =>
     createPayloadAction(AuthAction.TYPES.CONFIRM_RESET_PASSWORD.SUCCESS, email);
 
-  static confirmresetError = (error?: string): StandardAction =>
+  static confirmResetPasswordError = (error?: string): StandardAction =>
     createPayloadAction(
       AuthAction.TYPES.CONFIRM_RESET_PASSWORD.FAILURE,
       undefined,

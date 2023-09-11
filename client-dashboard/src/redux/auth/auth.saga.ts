@@ -46,8 +46,8 @@ const {
   getProfileFail,
   resetError,
   resetSuccess,
-  confirmresetError,
-  confirmresetSuccess,
+  confirmResetPasswordError,
+  confirmResetPasswordSuccess,
   userConfirmTextSmsSuccess,
   userConfirmTextSmsFail,
   getAllRoleSuccess,
@@ -291,22 +291,18 @@ export function* handleConfirmResetPassword(
   action: StandardAction<ConfirmResetPasswordPayload>,
 ) {
   const { payload } = action;
-  const i18n = getI18n();
   if (payload) {
     const { email, callback } = payload;
     try {
       yield call(CognitoService.confirmForgotPassword, {
         email,
       });
-      yield put(confirmresetSuccess(email));
-      const params = new URLSearchParams({
-        email: email,
-      }).toString();
-      history.replace(ROUTE_PATH.RESET_PASSWORD + '?' + params);
+
+      yield put(confirmResetPasswordSuccess(email));
       if (callback) callback();
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || error?.message;
-      yield put(confirmresetError(errorMessage));
+      yield put(confirmResetPasswordError(errorMessage));
       errorNotification({
         error,
         i18nKey: 'common.confirmResetPasswordFail',

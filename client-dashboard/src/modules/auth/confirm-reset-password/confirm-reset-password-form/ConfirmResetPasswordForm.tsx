@@ -10,6 +10,8 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import { ConfirmResetPasswordFormRoot } from './style';
 import { emailYup } from 'modules/common/validate/validate';
 import { FormWrapper } from 'modules/common/styles';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_PATH } from 'enums';
 
 const layout = {
   wrapperCol: {
@@ -35,9 +37,14 @@ const ConfirmResetPasswordSchema = Yup.object().shape({
 const ConfirmResetPasswordForm = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const onFinish = (values: { email: string }) => {
-    dispatch(AuthAction.confirmResetPassword(values.email));
+    const callback = () =>
+      navigate(`${ROUTE_PATH.RESET_PASSWORD}?email=${values.email}`);
+    dispatch(AuthAction.confirmResetPassword(values.email, callback));
   };
+
   const isConfirmingResetPassword = useSelector(
     AuthSelectors.getIsConfirmingResetPassword,
   );
