@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { CloseIcon } from 'icons';
 import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
-import { FORGOT_PASSWORD_FIELD } from 'modules/common/validate/validate';
+import { CHANGE_PASSWORD_FIELD } from 'modules/common/validate/validate';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
@@ -26,7 +26,7 @@ function ChangePasswordModal(props: ChangePassword) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const ResetPasswordSchema = Yup.object().shape(FORGOT_PASSWORD_FIELD);
+  const ResetPasswordSchema = Yup.object().shape(CHANGE_PASSWORD_FIELD);
   const isResettingPasswordForm = useSelector(
     AuthSelectors.getIsResettingPassword,
   );

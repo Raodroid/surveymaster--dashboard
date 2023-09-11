@@ -12,11 +12,7 @@ import { FORGOT_PASSWORD_FIELD } from 'modules/common/validate/validate';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { FormWrapper } from 'modules/common/styles';
-import { useQuery } from 'react-query';
-import { ProfileService } from 'services';
-import { UserOutlined, LoadingOutlined } from '@ant-design/icons';
 import { ResetPasswordFormWrapper } from './style';
-import { onError } from '../../../../utils';
 import ReactCodeInput from 'react-verification-code-input';
 
 const layout = {
@@ -59,17 +55,6 @@ const ResetPasswordForm: React.FC<Props> = props => {
     AuthSelectors.getIsResettingPassword,
   );
 
-  const { data, isLoading } = useQuery(
-    ['getPublicProfile', email],
-    () => (email ? ProfileService.getPublicProfile(email) : null),
-    {
-      onError,
-      refetchOnWindowFocus: false,
-    },
-  );
-
-  const { firstName, lastName, avatar } = data?.data || {};
-
   const openNotification = useCallback(() => {
     notification.success({
       message: 'Reset password successful',
@@ -80,17 +65,6 @@ const ResetPasswordForm: React.FC<Props> = props => {
     openNotification();
     navigate(ROUTE_PATH.LOGIN);
   }, [navigate, openNotification]);
-  const handleResend = (values: { email: string }) => {
-    dispatch(AuthAction.confirmResetPassword(values.email, resendNotification));
-  };
-  const isConfirmingResetPassword = useSelector(
-    AuthSelectors.getIsConfirmingResetPassword,
-  );
-  const resendNotification = useCallback(() => {
-    notification.success({
-      message: 'Resend code successful',
-    });
-  }, []);
 
   const onFinish = (values: { password: string; verifyPassword: string }) => {
     dispatch(
@@ -115,13 +89,6 @@ const ResetPasswordForm: React.FC<Props> = props => {
 
   return (
     <ResetPasswordFormWrapper isError={isError}>
-      <Spin spinning={isLoading}>
-        <Avatar icon={<UserOutlined />} src={avatar} />
-        <p className="title">{t('common.resetYourPassword')}</p>
-        <p className="fullname">{`${firstName} ${lastName}`}</p>
-        <span>{email}</span>
-      </Spin>
-      <div className="line" />
       <Formik
         onSubmit={onFinish}
         initialValues={initialValues}
@@ -135,12 +102,6 @@ const ResetPasswordForm: React.FC<Props> = props => {
               onFinish={handleSubmit}
               className="reset-password-form"
             >
-              {/* <ControlledInput
-                inputType={INPUT_TYPES.INPUT}
-                type={'text'}
-                name="confirmationCode"
-                placeholder={'Your code was sent on email'}
-              /> */}
               <p className="confirmation-code">
                 Enter the confirmation code sent to {email}
               </p>
@@ -167,26 +128,6 @@ const ResetPasswordForm: React.FC<Props> = props => {
                 placeholder={t('common.retypeNewPassword')}
                 label={t('common.confirmYourNewPassword')}
               />
-              <Form.Item>
-                <div className={'resend-code-section'}>
-                  <span>{t('common.dontReceiveCode')}</span>{' '}
-                  {!isConfirmingResetPassword ? (
-                    <a href=" " onClick={() => handleResend({ email })}>
-                      {t('common.resendCode')}
-                    </a>
-                  ) : (
-                    <>
-                      <p>{t('common.resendCode')}</p>
-                      <Spin
-                        indicator={
-                          <LoadingOutlined style={{ fontSize: 12 }} spin />
-                        }
-                        size="small"
-                      />
-                    </>
-                  )}
-                </div>
-              </Form.Item>
               <Form.Item>
                 <Button
                   type={'primary'}
