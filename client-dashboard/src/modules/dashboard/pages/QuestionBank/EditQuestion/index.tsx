@@ -165,6 +165,8 @@ const EditQuestion = () => {
   );
   const onFinish = useCallback(
     async (values: IEditQuestionFormValue) => {
+      const { masterCategoryId, masterSubCategoryId, masterVariableName } =
+        values;
       const newValues = {
         ...values,
         options: values?.options?.map(({ text, imageUrl, keyPath }, idx) => ({
@@ -181,8 +183,15 @@ const EditQuestion = () => {
         newValues.status = QuestionVersionStatus.DRAFT;
       }
 
-      const newVal = transformData(newValues, currentVersionQuestionData);
+      const newVal = {
+        ...transformData(newValues, currentVersionQuestionData),
+        masterCategoryId,
+        masterSubCategoryId,
+        masterVariableName,
+      };
+
       if (!newVal) return;
+      // console.log('newVal =', newVal);
 
       await updateQuestionMutation.mutateAsync(
         newVal as IQuestionVersionPutUpdateDtoExtendId,
