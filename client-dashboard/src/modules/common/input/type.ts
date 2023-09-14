@@ -8,7 +8,6 @@ import { SliderBaseProps } from 'antd/lib/slider';
 import { DATE_PICKER_TYPES } from 'enums';
 import { CustomRadioButtonGroupProps } from './inputs/custom-group-radio-button/CustomGroupRadioButton';
 import { CustomInputMaskProps } from './input-mask/BaseInputMask';
-import { CustomUploadProps } from './inputs/custom-image-upload/CustomImageUpload';
 import { Dispatch, SetStateAction } from 'react';
 
 export enum INPUT_TYPES {
