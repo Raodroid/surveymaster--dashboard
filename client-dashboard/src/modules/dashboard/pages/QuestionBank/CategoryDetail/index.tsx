@@ -55,7 +55,12 @@ const getQuestion = (params: GetListQuestionDto) => {
       delete newParams[key];
     }
   }
-  return QuestionBankService.getQuestions(newParams);
+
+  const { categoryIds, subCategoryIds } = newParams as any;
+  return QuestionBankService.getQuestions({
+    ...newParams,
+    body: { categoryIds, subCategoryIds },
+  });
 };
 
 const CategoryDetail = () => {

@@ -1,9 +1,10 @@
-import React, { Dispatch, FC, SetStateAction, useCallback } from 'react';
+import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import {
   GetListQuestionDto,
   IOptionItem,
   QuestionType,
+  IQuestionCategory,
 } from '../../../../../../../type';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +20,6 @@ import { INPUT_TYPES } from '../../../../../../common/input/type';
 import styled from 'styled-components';
 import templateVariable from '../../../../../../../app/template-variables.module.scss';
 import { transformEnumToOption } from '../../../../../../../utils';
-import { values } from 'lodash';
 
 const CHECKBOX_KEY = {
   filterByCategory: 'filterByCategory',
@@ -81,11 +81,25 @@ interface IFormValue extends GetListQuestionDto {
   filterBySubCategory: boolean;
 }
 
+const getChildCategoryOptions = (parentCategories: IQuestionCategory[]) =>
+  parentCategories.reduce((preV: IOptionItem[], category) => {
+    if (!category.children?.length) return preV;
+
+    const subCategories = category?.children.map(c => ({
+      label: `${c.name}`,
+      value: `${c.id}`,
+    }));
+    return [...preV, ...subCategories];
+  }, []);
+
 export const FilerDropdown: FC<IFilerDropdown> = props => {
   const { numOfFilter, setNumOfFilter } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { categories, categoryOptions, isLoading } = useGetAllCategories();
+  const [subCategoryOptions, setSubCategoryOptions] = useState<IOptionItem[]>(
+    getChildCategoryOptions(categories),
+  );
 
   const onFinish = useCallback(
     (values: IFormValue) => {
@@ -212,7 +226,15 @@ export const FilerDropdown: FC<IFilerDropdown> = props => {
                     options={categoryOptions}
                     mode={'multiple'}
                     maxTagCount="responsive"
-                    onChange={() => {
+                    onChange={(selectedCategoryIds: any) => {
+                      const subOptions = getChildCategoryOptions(
+                        selectedCategoryIds.length
+                          ? categories.filter(c =>
+                              selectedCategoryIds.includes(c.id),
+                            )
+                          : categories,
+                      );
+                      setSubCategoryOptions(subOptions);
                       setFieldValue('subCategoryIds', []);
                     }}
                   />
@@ -235,20 +257,7 @@ export const FilerDropdown: FC<IFilerDropdown> = props => {
                     aria-label="subCategoryIds"
                     mode={'multiple'}
                     maxTagCount="responsive"
-                    options={(values?.body?.categoryIds || []).reduce(
-                      (res: IOptionItem[], id) => {
-                        const x = categories?.find(i => i.id === id);
-                        if (!x) return res;
-                        x.children?.forEach(child => {
-                          res.push({
-                            label: child.name as string,
-                            value: child.id as string,
-                          });
-                        });
-                        return res;
-                      },
-                      [],
-                    )}
+                    options={subCategoryOptions}
                   />
                 </div>
               </div>
