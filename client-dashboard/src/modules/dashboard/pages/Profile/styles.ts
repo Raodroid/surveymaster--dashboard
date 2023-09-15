@@ -438,7 +438,7 @@ export const InviteMemberFormWrapper = styled.div`
     margin: 0 24px;
     flex: 1;
   }
-  .invitation-link {
+  .sent-invitation {
     height: 32px;
     margin-bottom: 28px;
     font-weight: 500;
