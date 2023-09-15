@@ -64,22 +64,10 @@ function TeamForm() {
                   <Button
                     type="primary"
                     htmlType="submit"
-                    className="submit-btn secondary-btn"
+                    className="submit-btn secondary-btn sent-invitation"
                     loading={mutationInviteMember.isLoading}
                   >
                     {t('common.sendInvitation')}
-                  </Button>
-                </div>
-
-                <Divider />
-
-                <div className="flex">
-                  <Button
-                    type="primary"
-                    className="invitation-link info-btn"
-                    // loading={mutationInviteMember.isLoading}
-                  >
-                    {t('common.copyInvitationLink')}
                   </Button>
                 </div>
               </div>
