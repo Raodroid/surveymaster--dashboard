@@ -18,14 +18,14 @@ function AddSurvey() {
     () => [
       {
         name: project?.name || '...',
-        href: projectRoutePath.DETAIL_SURVEY.ROOT,
+        href: projectRoutePath.SURVEY.replace(':projectId', project.id),
       },
       {
         name: t('common.addNewSurvey'),
         href: projectRoutePath.ADD_NEW_SURVEY,
       },
     ],
-    [project?.name, t],
+    [project?.name, project.id, t],
   );
 
   return (
