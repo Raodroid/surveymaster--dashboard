@@ -15,6 +15,8 @@ import { postPutInitialValues } from '../../utils';
 import InviteMemberInputs from '../inputs/InviteMemberInputs';
 import { UpdateMemberModalStyled } from './styles';
 import { INVITE_MEMBER_SCHEMA } from '../../../../../common/validate/validate';
+import { AuthSelectors } from 'redux/auth';
+import { useSelector } from 'react-redux';
 
 interface UpdateModal extends Omit<ProfileModal, 'userId'> {
   userData?: UserPayload;
@@ -25,6 +27,8 @@ function UpdateMemberModal(props: UpdateModal) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
+  const allRoles = useSelector(AuthSelectors.getAllRoles);
+
   const userInit = useMemo<PostPutMember>(() => {
     return userData
       ? {
@@ -33,7 +37,7 @@ function UpdateMemberModal(props: UpdateModal) {
           lastName: userData.lastName,
           email: userData.email,
           departmentName: userData.departmentName,
-          roles: userData.userRoles?.map(elm => elm.roleId),
+          roles: userData.userRoles?.map(elm => allRoles[elm.roleId].name),
         }
       : postPutInitialValues;
   }, [userData]);
@@ -51,7 +55,10 @@ function UpdateMemberModal(props: UpdateModal) {
   );
 
   const handleFinish = (payload: PostPutMember) => {
-    mutationUpdateMember.mutateAsync(payload);
+    mutationUpdateMember.mutateAsync({
+      ...payload,
+      roles: payload.roles?.map((value: any) => value.id),
+    });
   };
 
   return (
