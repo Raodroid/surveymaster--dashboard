@@ -57,7 +57,13 @@ function UpdateMemberModal(props: UpdateModal) {
   const handleFinish = (payload: PostPutMember) => {
     mutationUpdateMember.mutateAsync({
       ...payload,
-      roles: payload.roles?.map((value: any) => value.id),
+      roles: payload.roles?.map((value: any) => {
+        if (typeof value === 'string') {
+          return Object.values(allRoles).find(role => role.id === value).id;
+        } else {
+          return value.id;
+        }
+      }),
     });
   };
 
