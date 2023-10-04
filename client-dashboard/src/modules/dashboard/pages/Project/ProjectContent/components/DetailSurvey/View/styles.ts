@@ -13,8 +13,8 @@ export const ViewSurveyWrapper = styled.div`
   }
 
   .ant-form {
-    height: 100%;
+    height: 91.5%;
     overflow-y: auto;
-    padding: 40px 40px 76px;
+    padding: 40px 40px 40px;
   }
 `;
