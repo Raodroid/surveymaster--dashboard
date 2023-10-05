@@ -10,3 +10,4 @@ export { default as CustomImageUpload } from './custom-image-upload/CustomImageU
 export { default as CustomRating } from './custom-rating/CustomRating';
 export { default as CustomCheckableTag } from './custom-checkableTag/CustomCheckableTag';
 export { default as CustomSlider } from './custom-slider/CustomSlider';
+export { default as CustomInputDebounce } from './custom-input-debounce/CustomInputDebounce';

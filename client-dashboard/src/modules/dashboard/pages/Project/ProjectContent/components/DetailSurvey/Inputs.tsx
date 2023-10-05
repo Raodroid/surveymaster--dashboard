@@ -27,6 +27,7 @@ function Inputs(props: {
       </div>
       <div className="flex-j-between title-wrapper">
         <ControlledInput
+          isFastField
           name="name"
           label={
             project.type === ProjectTypes.EXTERNAL
@@ -48,6 +49,7 @@ function Inputs(props: {
       {!hideRemarks && (
         <ControlledInput
           name="remark"
+          isFastField
           label="Survey Remarks"
           className={`surveyRemarks ${disabled ? 'view-mode' : ''}`}
           // disabled={disabled}
