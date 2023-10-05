@@ -10,14 +10,11 @@ function InviteMemberInputs(props: { edit: boolean }) {
   const { t } = useTranslation();
 
   const allRoles = useSelector(AuthSelectors.getAllRoles);
-
-  // Select filter by value
   const optionsList = useMemo(() => {
     return Object.values(allRoles).map(elm => {
       return {
         label: elm.name,
-        value: elm.name,
-        id: elm.id,
+        value: elm.id,
       };
     });
   }, [allRoles]);
@@ -56,9 +53,9 @@ function InviteMemberInputs(props: { edit: boolean }) {
         inputType={INPUT_TYPES.SELECT}
         type={'text'}
         name="roles"
+        optionFilterProp="label"
         label={t('common.authentication')}
         options={optionsList}
-        isOptionValue
       />
     </>
   );

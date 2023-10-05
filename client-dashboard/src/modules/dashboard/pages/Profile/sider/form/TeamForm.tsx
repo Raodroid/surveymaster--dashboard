@@ -31,17 +31,11 @@ function TeamForm() {
   );
 
   const handleFinish = (payload: PostPutMember, actions) => {
-    return mutationInviteMember.mutateAsync(
-      {
-        ...payload,
-        roles: payload.roles?.map((value: any) => value.id),
+    return mutationInviteMember.mutateAsync(payload, {
+      onSuccess: () => {
+        actions.resetForm();
       },
-      {
-        onSuccess: () => {
-          actions.resetForm();
-        },
-      },
-    );
+    });
   };
 
   return (
