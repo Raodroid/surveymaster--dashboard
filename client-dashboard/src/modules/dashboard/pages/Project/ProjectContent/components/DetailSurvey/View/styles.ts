@@ -10,10 +10,11 @@ export const ViewSurveyWrapper = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+    height: 40px;
   }
 
   .ant-form {
-    height: 91.5%;
+    height: calc(100% - 40px);
     overflow-y: auto;
     padding: 40px 40px 40px;
   }
