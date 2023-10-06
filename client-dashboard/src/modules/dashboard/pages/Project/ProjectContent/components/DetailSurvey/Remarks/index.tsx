@@ -231,6 +231,7 @@ function Remarks() {
                   <div className={'version-section'}>
                     {surveyData.versions?.map(ver => (
                       <ViewDetailSurveyDropDownMenuButton
+                        key={ver.id}
                         surveyVersion={ver}
                         callbackLoading={toggleIsCallingAPI}
                       />
