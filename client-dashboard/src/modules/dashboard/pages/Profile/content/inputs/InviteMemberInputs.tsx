@@ -53,6 +53,7 @@ function InviteMemberInputs(props: { edit: boolean }) {
         inputType={INPUT_TYPES.SELECT}
         type={'text'}
         name="roles"
+        optionFilterProp="label"
         label={t('common.authentication')}
         options={optionsList}
       />
