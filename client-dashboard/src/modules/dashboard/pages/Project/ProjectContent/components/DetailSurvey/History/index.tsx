@@ -42,10 +42,13 @@ function ActionHistory() {
       },
       {
         name: currentSurveyVersion?.name || '...',
-        href: generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
-          projectId: params.projectId,
-          surveyId: params.surveyId,
-        }),
+        href: generatePath(
+          `${projectRoutePath.DETAIL_SURVEY.ROOT}?version=${currentSurveyVersion?.displayId}`,
+          {
+            projectId: params.projectId,
+            surveyId: params.surveyId,
+          },
+        ),
       },
       {
         name: t('common.actionsHistory'),
