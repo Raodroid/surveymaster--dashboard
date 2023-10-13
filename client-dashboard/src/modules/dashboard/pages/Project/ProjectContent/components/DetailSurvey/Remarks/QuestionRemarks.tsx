@@ -12,6 +12,7 @@ const columns: ColumnsType<ISurveyQuestion> = [
     title: '',
     dataIndex: 'remark',
     key: 'id',
+    shouldCellUpdate: (record, prevRecord) => false,
     render: (_, record: ISurveyQuestion, index: number) => (
       <Remark index={index} />
     ),
