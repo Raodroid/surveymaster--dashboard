@@ -5,38 +5,46 @@ export const transformQuestionData = (
 ): BaseQuestionVersionDto => {
   const result = { ...input };
   if (
-    ![
+    [
       QuestionType.MULTIPLE_CHOICE,
       QuestionType.RADIO_BUTTONS,
       QuestionType.FORM_FIELD,
       QuestionType.PHOTO,
+      QuestionType.RANK_ORDER,
     ].includes(result.type)
   ) {
-    delete result?.options;
+    if (result.type === QuestionType.PHOTO) {
+      result.options = input?.options?.map((opt, index) => ({
+        sort: index + 1,
+        text: opt.text,
+        imageUrl: (opt as any)?.imageUrl.response?.url || opt.imageUrl,
+      }));
+    } else {
+      result.options = input?.options?.map((opt, index) => ({
+        sort: index + 1,
+        text: opt.text,
+        keyPath: opt.keyPath,
+      }));
+    }
   } else {
-    result.options = input?.options?.map((opt, index) => ({
-      sort: index + 1,
-      text: opt.text,
-      keyPath: opt.keyPath,
-    }));
-  }
-  if (result.type === QuestionType.PHOTO) {
-    result.options = input?.options?.map((opt, index) => ({
-      sort: index + 1,
-      text: opt.text,
-      imageUrl: (opt as any)?.imageUrl.response?.url || opt.imageUrl,
-    }));
+    delete result?.options;
   }
 
-  if (result.type !== QuestionType.SLIDER) {
-    delete result?.numberMax;
-    delete result?.numberMin;
-    delete result?.numberStep;
-  } else {
+  if (result.type === QuestionType.SLIDER) {
     result.numberMax = stringToInt(input.numberMax);
     result.numberMin = stringToInt(input.numberMin);
     result.numberStep = stringToInt(input.numberStep);
+  } else if (result.type === QuestionType.TEXT_NUMBER) {
+    result.numberMax = stringToInt(input.numberMax);
+    result.numberMin = stringToInt(input.numberMin);
+    result.maxDecimal = stringToInt(input.maxDecimal);
+  } else {
+    delete result?.numberMax;
+    delete result?.numberMin;
+    delete result?.numberStep;
+    delete result?.maxDecimal;
   }
+
   if (result.type !== QuestionType.TIME_PICKER) {
     delete result.timeFormat;
   }
