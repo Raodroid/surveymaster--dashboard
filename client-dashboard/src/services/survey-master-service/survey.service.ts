@@ -1,9 +1,10 @@
 import { AxiosResponse } from 'axios';
 import {
   IGetParams,
-  IPostSurveyBodyDto,
+  CreateSurveyBodyDto,
   IPostSurveyVersionBodyDto,
   IPutSurveyVersionBodyDtoExtendId,
+  ISurvey,
 } from 'type';
 import APIService from './base.service';
 
@@ -20,7 +21,9 @@ export default class SurveyService {
     return APIService.get(`/surveys/version/${surveyVersionId}/file`);
   }
 
-  static getSurveyById(id: string | undefined): Promise<AxiosResponse> {
+  static getSurveyById(
+    id: string | undefined,
+  ): Promise<AxiosResponse<ISurvey>> {
     return APIService.get(`/surveys/${id}`);
   }
 
@@ -38,7 +41,7 @@ export default class SurveyService {
     return APIService.get(`/surveys/${surveyId}/histories`, { params });
   }
 
-  static createSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
+  static createSurvey(props: CreateSurveyBodyDto): Promise<AxiosResponse> {
     return APIService.post('/surveys', props);
   }
   static createSurveyVersion(
@@ -47,7 +50,7 @@ export default class SurveyService {
     return APIService.post('/surveys/version', props);
   }
   static duplicateSurvey(
-    props: IPostSurveyBodyDto & { surveyId: string },
+    props: CreateSurveyBodyDto & { surveyId: string },
   ): Promise<AxiosResponse> {
     const { surveyId } = props;
     return APIService.post(`/surveys/${surveyId}/duplicate`, props);

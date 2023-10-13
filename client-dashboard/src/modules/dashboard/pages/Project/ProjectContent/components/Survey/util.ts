@@ -3,7 +3,7 @@ import { SurveyService } from '../../../../../../../services';
 import { onError } from '../../../../../../../utils';
 import { useMemo } from 'react';
 import _get from 'lodash/get';
-import { ISurvey, ISurveyVersion } from '../../../../../../../type';
+import { ISurvey, ISurveyVersion } from '@/type';
 import { useParseQueryString } from '../../../../../../../hooks';
 
 export const useGetSurveyById = (
@@ -26,7 +26,10 @@ export const useGetSurveyById = (
     },
   );
 
-  const surveyData = useMemo<ISurvey>(() => _get(data, 'data', {}), [data]);
+  const surveyData = useMemo<ISurvey>(
+    () => _get(data, 'data', { displayId: '', projectId: '', createdAt: '' }),
+    [data],
+  );
 
   const currentSurveyVersion = useMemo<ISurveyVersion | undefined>(
     () => surveyData.versions?.find(ver => ver.displayId === qsParams.version),

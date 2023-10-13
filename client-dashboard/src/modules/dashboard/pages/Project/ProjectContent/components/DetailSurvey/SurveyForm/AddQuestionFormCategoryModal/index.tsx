@@ -1,37 +1,29 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { Button, Input, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
-import {
-  IGetParams,
-  IQuestion,
-  IQuestionCategory,
-  ISurveyQuestionDto,
-  QuestionType,
-} from 'type';
+import { IGetParams, IQuestion, IQuestionCategory } from 'type';
 import { useQuery } from 'react-query';
 import { QuestionBankService } from 'services';
 import { useDebounce, onError } from 'utils';
-import {
-  AddQuestionFormCategoryModalWrapper,
-  // CategoryMenuWrapper,
-} from './style';
+import { AddQuestionFormCategoryModalWrapper } from './style';
 import { DisplayQuestionList } from './DisplayQuestionList/DisplayQuestionList';
 import { useTranslation } from 'react-i18next';
 import HannahCustomSpin from '../../../../../../../components/HannahCustomSpin';
-import { useFormikContext } from 'formik';
-import { IAddSurveyFormValues } from '../SurveyForm';
+import { useField } from 'formik';
+import { questionValueType } from '../SurveyForm';
 import _get from 'lodash/get';
 import SimpleBar from 'simplebar-react';
 
 interface IAddQuestionFormCategoryModal {
   open: boolean;
   onCancel: () => void;
+  fieldName: string;
 }
 
 const AddQuestionFormCategoryModal: FC<
   IAddQuestionFormCategoryModal
 > = props => {
-  const { open, onCancel } = props;
+  const { open, onCancel, fieldName } = props;
   const [searchTxt, setSearchTxt] = useState<string>('');
   const [searchQuestionTxt, setSearchQuestionTxt] = useState<string>('');
 
@@ -39,7 +31,8 @@ const AddQuestionFormCategoryModal: FC<
   const [selectedQuestionIdList, setSelectedQuestionIdList] = useState<
     string[]
   >([]);
-  const { setFieldValue, values } = useFormikContext<IAddSurveyFormValues>();
+
+  const [{ value }, , { setValue }] = useField<questionValueType[]>(fieldName);
 
   const wrapperRef = useRef<any>();
 
@@ -131,25 +124,16 @@ const AddQuestionFormCategoryModal: FC<
   }, [onCancel]);
 
   const handleAddQuestions = useCallback(async () => {
-    let sort = values.version.questions.length + 1;
-    const newValues = selectedQuestionIdList.reduce(
-      (
-        result: Array<
-          ISurveyQuestionDto & {
-            type: QuestionType | string;
-            category: string;
-            id?: string;
-          }
-        >,
-        chosenQuestionVersionId,
-      ) => {
+    let sort = value.length + 1;
+    const newValues: questionValueType[] = selectedQuestionIdList.reduce(
+      (result: questionValueType[], chosenQuestionVersionId) => {
         const question = questions.find(
           (q: IQuestion) =>
             q.latestCompletedVersion.id === chosenQuestionVersionId,
         ) as IQuestion;
 
         if (
-          values.version.questions.some(
+          value.some(
             q => q.id === question?.id, // check if chosen version is in the same question but different version
           )
         ) {
@@ -171,18 +155,9 @@ const AddQuestionFormCategoryModal: FC<
       },
       [],
     );
-    setFieldValue('version.questions', [
-      ...values.version.questions,
-      ...newValues,
-    ]);
+    setValue([...value, ...newValues]);
     onCancel();
-  }, [
-    onCancel,
-    questions,
-    selectedQuestionIdList,
-    setFieldValue,
-    values.version.questions,
-  ]);
+  }, [onCancel, questions, selectedQuestionIdList, setValue, value]);
 
   return (
     <AddQuestionFormCategoryModalWrapper
@@ -233,7 +208,7 @@ const AddQuestionFormCategoryModal: FC<
             />
           </div>
         </SimpleBar>
-        {selectedCategoryIds.length ? (
+        {!!selectedCategoryIds.length && (
           <>
             <span className={'border'} style={{ borderRight: 0 }} />
             <SimpleBar>
@@ -243,10 +218,10 @@ const AddQuestionFormCategoryModal: FC<
                 questions={questions}
                 searchQuestionTxt={searchQuestionTxt}
                 setSearchQuestionTxt={setSearchQuestionTxt}
-              />{' '}
+              />
             </SimpleBar>
           </>
-        ) : null}
+        )}
       </div>
     </AddQuestionFormCategoryModalWrapper>
   );

@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
 import {
-  IPostSurveyBodyDto,
+  CreateSurveyBodyDto,
   ISurvey,
   ProjectTypes,
 } from '../../../../../../../type';
@@ -56,7 +56,7 @@ export const SurveyDropDownMenu: FC<IDropDownMenu> = props => {
   );
 
   const duplicateMutation = useMutation(
-    (data: IPostSurveyBodyDto & { surveyId: string }) => {
+    (data: CreateSurveyBodyDto & { surveyId: string }) => {
       return SurveyService.duplicateSurvey(data as any);
     },
     {

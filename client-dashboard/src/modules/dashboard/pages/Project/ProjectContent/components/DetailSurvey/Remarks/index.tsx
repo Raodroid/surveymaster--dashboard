@@ -53,6 +53,7 @@ interface IRemarkForm extends ISurveyVersion {
   displaySurveyId: string; // init value for Inputs component
 }
 const initISurveyVersion: IRemarkForm = {
+  surveyFlowElements: [],
   displayId: '',
   displaySurveyId: '',
   name: '',

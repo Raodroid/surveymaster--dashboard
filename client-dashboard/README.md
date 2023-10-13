@@ -25,14 +25,14 @@
 
 ## Test Framework
 
-A Behaviour Driven Develpment (BDD) model is at the heart of the testing frameork.
+ExtraSurveyFlowElement Behaviour Driven Develpment (BDD) model is at the heart of the testing frameork.
 
 - **[Tests Data Management](Link)**
 - **[BDD Tests Cases](Link)**
 
 ## System Operations
 
-A highly automated continuous delivery pipeline based on the [Code On Tap](http://codeontap.io/) OR [Jenkins](https://www.jenkins.io/) is used for confident deployment of new features.
+ExtraSurveyFlowElement highly automated continuous delivery pipeline based on the [Code On Tap](http://codeontap.io/) OR [Jenkins](https://www.jenkins.io/) is used for confident deployment of new features.
 
 - **[DevOps Framework](Link)**
 - **[System Access](Link)**

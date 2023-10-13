@@ -6,7 +6,7 @@ import {
   IQuestionCreatePostDto,
   IQuestionVersionPatchUpdateDtoExtendId,
   IQuestionVersionPostNewDto,
-} from '../../type';
+} from '@/type';
 
 export default class QuestionBankService {
   static getCategories(params: IGetParams): Promise<AxiosResponse> {
