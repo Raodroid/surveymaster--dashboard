@@ -12,6 +12,7 @@ import {
   CustomRating,
   CustomCheckableTag,
   CustomSlider,
+  CustomInputDebounce,
 } from '../inputs';
 import { UncontrolledInputProps, INPUT_TYPES } from '../type';
 import CustomGroupCheckbox from '../inputs/custom-group-checkbox/CustomGroupCheckbox';
@@ -31,6 +32,7 @@ const ControlledInput = (props: UncontrolledInputProps) => {
     | typeof CustomRating
     | typeof CustomCheckableTag
     | typeof CustomSlider
+    | typeof CustomInputDebounce
     | typeof CustomSelect = null;
   const { inputType, isUnStyleDisabled, ...rest } = props;
   let ignoreBlur = false;
@@ -38,6 +40,9 @@ const ControlledInput = (props: UncontrolledInputProps) => {
   switch (inputType) {
     case INPUT_TYPES.INPUT:
       Input = CustomInput;
+      break;
+    case INPUT_TYPES.INPUT_DEBOUNCE:
+      Input = CustomInputDebounce;
       break;
     case INPUT_TYPES.SELECT:
       Input = CustomSelect;

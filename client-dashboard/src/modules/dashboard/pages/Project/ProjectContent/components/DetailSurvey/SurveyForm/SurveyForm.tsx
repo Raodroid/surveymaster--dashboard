@@ -561,7 +561,11 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                     />
                   )}
                   <ControlledInput
-                    inputType={INPUT_TYPES.INPUT}
+                    inputType={
+                      isEditMode
+                        ? INPUT_TYPES.INPUT_DEBOUNCE
+                        : INPUT_TYPES.INPUT
+                    }
                     name="version.name"
                     className={className}
                     label={
@@ -571,7 +575,11 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                     }
                   />
                   <ControlledInput
-                    inputType={INPUT_TYPES.TEXTAREA}
+                    inputType={
+                      isEditMode
+                        ? INPUT_TYPES.INPUT_DEBOUNCE
+                        : INPUT_TYPES.TEXTAREA
+                    }
                     name="version.remark"
                     label={t('common.surveyRemarks')}
                     className={className}
