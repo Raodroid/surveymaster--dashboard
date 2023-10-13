@@ -17,7 +17,9 @@ import { DynamicSelect } from '../DisplayAnswer/DisplayAnswer';
 import { useInfiniteQuery } from 'react-query';
 import { QuestionBankService } from '../../../../../../../../../../../../services';
 import { questionValueType } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
-import { initNewRowValue } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/GroupSurveyButton/GroupSurveyButton';
+import GroupSurveyButton, {
+  initNewRowValue,
+} from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/GroupSurveyButton/GroupSurveyButton';
 
 const initParams: GetListQuestionDto = {
   q: '',
@@ -143,7 +145,7 @@ const SurveyQuestions: FC<{
               <ControlledInput
                 style={{ width: '100%' }}
                 inputType={INPUT_TYPES.INPUT}
-                name={`${fieldName}.parameter`}
+                name={`${fieldName}[${index}].parameter`}
               />
             </>
           );
@@ -184,7 +186,7 @@ const SurveyQuestions: FC<{
       {
         title: t('common.remark'),
         dataIndex: 'remark',
-        render: (value, record, index) => (
+        render: () => (
           <ControlledInput
             style={{ width: '100%' }}
             inputType={INPUT_TYPES.INPUT}
@@ -197,30 +199,29 @@ const SurveyQuestions: FC<{
         dataIndex: 'action',
         width: 60,
         render: (value, record, index) => (
-          <div className={'flex gap-3 items-center'}>
-            <Button
-              size={'small'}
-              className={'px-2'}
-              shape="circle"
-              onClick={addQuestion}
-              type={'primary'}
-            >
-              +
-            </Button>
-            <Button
-              size={'small'}
-              className={'px-2'}
-              danger
-              shape="circle"
-              onClick={() => removeQuestion(index)}
-            >
-              -
-            </Button>
-          </div>
+          <Button
+            size={'small'}
+            className={'px-2'}
+            danger
+            shape="circle"
+            onClick={() => removeQuestion(index)}
+          >
+            -
+          </Button>
         ),
       },
     ],
-    [addQuestion, removeQuestion, t],
+    [
+      fetchNextPage,
+      fieldName,
+      hasNextPage,
+      index,
+      isLoading,
+      normalizeByQuestionId,
+      questionOption,
+      removeQuestion,
+      t,
+    ],
   );
 
   return (
@@ -233,6 +234,7 @@ const SurveyQuestions: FC<{
         pagination={false}
         setDataTable={setValue}
       />
+      <GroupSurveyButton questionBlockIndex={index} />
     </div>
   );
 };

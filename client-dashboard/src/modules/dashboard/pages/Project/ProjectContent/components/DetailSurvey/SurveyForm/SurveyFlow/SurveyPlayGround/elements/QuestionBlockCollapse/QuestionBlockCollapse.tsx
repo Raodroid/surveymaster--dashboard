@@ -4,19 +4,21 @@ import { INPUT_TYPES } from '@/modules/common/input/type';
 import { ControlledInput } from '../../../../../../../../../../../common';
 import { FileIconOutlined, TrashOutlined } from '@/icons';
 import { useTranslation } from 'react-i18next';
-import { PlusCircleOutlined } from '@ant-design/icons';
 import SurveyQuestions from '../SurveyQuestion/SurveyQuestions';
 import { SubSurveyFlowElement, SubSurveyFlowElementDto } from '@/type';
 import { objectKeys } from '@/utils';
+import { useField } from 'formik';
 
 const { Panel } = Collapse;
 
 const QuestionBlockCollapse: FC<{
-  record: SubSurveyFlowElementDto;
   index: number;
 }> = props => {
   const { t } = useTranslation();
-  const { record, index } = props;
+  const { index } = props;
+  const [{ value }, , { setValue }] = useField<SubSurveyFlowElementDto[]>(
+    'version.surveyFlowElements',
+  );
 
   const [activeKey, setActiveKey] = useState<number[]>([]);
 
@@ -26,8 +28,16 @@ const QuestionBlockCollapse: FC<{
     );
   };
 
-  const questionLength = record.surveyQuestions?.length;
-  const { type, blockDescription } = record;
+  const record = value[index];
+
+  const questionLength = value[index]?.surveyQuestions?.length;
+
+  const handleRemoveBlock = () =>
+    setValue(value.filter((i, idx) => idx !== index));
+
+  const handleDuplicateBlock = () => {
+    setValue([...value, value[index]]);
+  };
 
   return (
     <>
@@ -50,7 +60,7 @@ const QuestionBlockCollapse: FC<{
                   value: SubSurveyFlowElement[i],
                 }))}
               />
-              {type && (
+              {record.type && (
                 <>
                   <BlockNameInput
                     fieldName={`version.surveyFlowElements[${index}].blockDescription`}
@@ -75,20 +85,26 @@ const QuestionBlockCollapse: FC<{
         >
           <SurveyQuestions index={index} />
         </Panel>
-        <div className={'absolute right-3 bottom-6'}>
+        <div className={'absolute right-3 top-6'}>
           <div className={'flex gap-3'}>
-            <Tooltip title={t('common.addBelow')}>
-              <Button size={'small'} type={'text'} className={'px-2'}>
-                <PlusCircleOutlined />
-              </Button>
-            </Tooltip>
             <Tooltip title={t('common.duplicate')}>
-              <Button size={'small'} type={'text'} className={'px-2'}>
+              <Button
+                size={'small'}
+                type={'text'}
+                className={'px-2'}
+                onClick={handleDuplicateBlock}
+              >
                 <FileIconOutlined />
               </Button>
             </Tooltip>
             <Tooltip title={t('common.remove')}>
-              <Button size={'small'} type={'text'} className={'px-2'} danger>
+              <Button
+                size={'small'}
+                type={'text'}
+                className={'px-2'}
+                danger
+                onClick={handleRemoveBlock}
+              >
                 <TrashOutlined />
               </Button>
             </Tooltip>

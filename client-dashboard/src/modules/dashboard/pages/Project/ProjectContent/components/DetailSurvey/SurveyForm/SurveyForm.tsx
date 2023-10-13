@@ -638,7 +638,7 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                 )}{' '}
               </div>
 
-              <div className={'SurveyFormWrapper__question'}>
+              <div className={'SurveyFormWrapper__question mb-[2.5rem]'}>
                 {isExternalProject ? (
                   <QuestionSurveyList
                     isExternalProject={true}
@@ -647,13 +647,13 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                 ) : (
                   <SurveyPlayGround />
                 )}
-                {(isExternalProject ||
-                  values?.template === SurveyTemplateEnum.NEW) && (
-                  <QuestionSurveyList
-                    isExternalProject={true}
-                    setExcelUploadFile={setExcelUploadFile}
-                  />
-                )}
+                {/*{(isExternalProject ||*/}
+                {/*  values?.template === SurveyTemplateEnum.NEW) && (*/}
+                {/*  <QuestionSurveyList*/}
+                {/*    isExternalProject={true}*/}
+                {/*    setExcelUploadFile={setExcelUploadFile}*/}
+                {/*  />*/}
+                {/*)}*/}
               </div>
               <div className={'SurveyFormWrapper__submit_btn'}>
                 {!isViewMode && (

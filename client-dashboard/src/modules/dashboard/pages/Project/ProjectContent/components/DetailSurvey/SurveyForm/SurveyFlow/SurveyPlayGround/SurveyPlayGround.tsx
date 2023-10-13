@@ -18,7 +18,7 @@ const columns: ColumnsType<SubSurveyFlowElementDto> = [
       return (
         <div className={'w-full inline-flex gap-6 items-center'}>
           <DragHandle />
-          <QuestionBlockCollapse record={record} index={index} />
+          <QuestionBlockCollapse index={index} />
         </div>
       );
     },
@@ -59,7 +59,9 @@ const SurveyPlayGround = () => {
         // renderRowClassName={renderRowClassName}
         setDataTable={setDataTable}
       />
-      <Button onClick={handleAddElement}>Add Element</Button>
+      <Button className={'py-3 w-full'} onClick={handleAddElement}>
+        Add Element
+      </Button>
     </SurveyPlayGroundWrapper>
   );
 };

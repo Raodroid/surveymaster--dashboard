@@ -1,0 +1,20 @@
+@tailwind utilities;
+
+@layer utilities {
+    .h-screen {
+        height: 100vh;
+        height: 100dvh;
+    }
+    .w-screen {
+        width: 100vw;
+        width: 100dvw;
+    }
+    .min-h-screen {
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+    .min-w-screen {
+        min-width: 100vw;
+        min-width: 100dvw;
+    }
+}

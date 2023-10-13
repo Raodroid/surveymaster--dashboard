@@ -31,7 +31,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import './locales/i18n';
 import { notification } from 'antd';
 import styled from 'styled-components/macro';
-
+import './index.css';
 import './app/index.sass';
 import { ScrollbarProvider } from './scrollbarContext/useScrollBar';
 import { CloseIcon } from './icons';
