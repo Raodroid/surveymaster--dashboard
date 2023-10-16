@@ -2,14 +2,15 @@ import { AxiosResponse } from 'axios';
 import { ProjectPayload } from 'interfaces';
 import { IGetParams } from 'type';
 import APIService from './base.service';
+import { EntityEnum } from '@/enums';
 
 export default class ProjectService {
   static getProjects(params: IGetParams): Promise<AxiosResponse> {
-    return APIService.get('projects', { params });
+    return APIService.get(EntityEnum.PROJECT, { params });
   }
 
   static getProjectById(id: string | undefined): Promise<AxiosResponse> {
-    return APIService.get(`projects/${id}`);
+    return APIService.get(`${EntityEnum.PROJECT}/${id}`);
   }
 
   static createProject(payload: ProjectPayload): Promise<AxiosResponse> {
@@ -17,16 +18,18 @@ export default class ProjectService {
   }
 
   static updateProject(payload: ProjectPayload): Promise<AxiosResponse> {
-    return APIService.put(`projects/${payload.id}`, payload);
+    return APIService.put(`${EntityEnum.PROJECT}/${payload.id}`, payload);
   }
 
   static deleteProject(payload: { projectId: string }): Promise<AxiosResponse> {
-    return APIService.delete(`projects/${payload.projectId}`);
+    return APIService.delete(`${EntityEnum.PROJECT}/${payload.projectId}`);
   }
 
   static restoreProject(payload: {
     projectId: string;
   }): Promise<AxiosResponse> {
-    return APIService.post(`projects/${payload.projectId}/restore`);
+    return APIService.post(
+      `${EntityEnum.PROJECT}/${payload.projectId}/restore`,
+    );
   }
 }

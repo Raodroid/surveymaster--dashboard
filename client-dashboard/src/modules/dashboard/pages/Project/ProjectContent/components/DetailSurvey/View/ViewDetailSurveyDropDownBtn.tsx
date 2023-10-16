@@ -64,7 +64,7 @@ export const ViewDetailSurveyDropDownMenuButton: FC<
   const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
   const { canUpdate, canRead } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.SURVEYS,
+    SCOPE_CONFIG.ENTITY.SURVEY,
   );
 
   const items = useMemo(() => {

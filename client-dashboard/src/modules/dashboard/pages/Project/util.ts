@@ -8,7 +8,7 @@ import { IProject } from '../../../../type';
 import { onError } from '../../../../utils';
 
 export const useGetAllProjects = () => {
-  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECTS);
+  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
   const getAllProjectQuery = useQuery(
     ['getAllProjects', canRead],
     () =>

@@ -17,7 +17,7 @@ const Project = () => {
   const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');
 
   const { canRead: canReadSurvey } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.SURVEYS,
+    SCOPE_CONFIG.ENTITY.SURVEY,
   );
 
   const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);

@@ -56,7 +56,7 @@ function ProjectTable() {
   const [projectId, setProjectId] = useState('');
 
   const { canRead, canRestore, canDelete, canUpdate } =
-    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECTS);
+    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
 
   const handleNavigate = useHandleNavigate(initParams);
 

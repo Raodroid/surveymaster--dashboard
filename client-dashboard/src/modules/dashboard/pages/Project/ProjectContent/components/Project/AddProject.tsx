@@ -10,7 +10,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router';
 import ProjectService from 'services/survey-master-service/project.service';
 import { onError } from 'utils/funcs';
-import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
+import { PROJECT_FORM_SCHEMA } from '@/modules/common/validate/validate';
 import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import ProjectInputs from './ProjectInputs';
@@ -29,9 +29,7 @@ function AddProject() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { canCreate } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.PROJECTS,
-  );
+  const { canCreate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
 
   const routes: IBreadcrumbItem[] = useMemo(
     () => [

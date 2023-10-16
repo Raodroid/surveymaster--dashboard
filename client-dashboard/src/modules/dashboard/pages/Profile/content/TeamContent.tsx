@@ -102,7 +102,7 @@ function TeamContent() {
   }, [currentRoles]);
 
   const { canUpdate, canDelete, canRestore, canRead } =
-    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USER);
 
   const baseParams = useMemo<IGetParams>(() => {
     if (qsParams.q) setSearch(qsParams.q);

@@ -18,10 +18,10 @@ export const mainMenuItem = [
 
 const MainMenu = () => {
   const { canRead: canReadQuestion } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.QUESTIONS,
+    SCOPE_CONFIG.ENTITY.QUESTION,
   );
   const { canRead: canReadProject } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.PROJECTS,
+    SCOPE_CONFIG.ENTITY.PROJECT,
   );
   const menuItems = useMemo<ItemType[]>(() => {
     const result: ItemType[] = [];

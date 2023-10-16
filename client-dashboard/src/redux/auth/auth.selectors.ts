@@ -47,8 +47,8 @@ export default class AuthSelectors {
 
   static getCurrentScopes = createSelector(AuthSelectors.getProfile, user => {
     if (!user) return [];
-    if (user && user.userRoles) {
-      return getAllScopes(user.userRoles[0].role.roleScopes);
+    if (user && user.roles) {
+      return getAllScopes(user.roles);
     }
     return [];
   });

@@ -20,6 +20,11 @@
     "foods": "Foods"
   },
   "common": {
+    "addElement": "Add Element",
+    "EndSurvey": "End Survey",
+    "EmbeddedData": "Embedded Data",
+    "Branch": "Branch",
+    "Block": "Block",
     "label": "Label",
     "matrixType": "Matrix Type",
     "surveyType": "Survey Type",

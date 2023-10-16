@@ -7,7 +7,7 @@ import { SCOPE_CONFIG } from 'enums';
 
 const QuestionBankSider = () => {
   const { canCreate } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.QUESTIONS,
+    SCOPE_CONFIG.ENTITY.QUESTION,
   );
   return (
     <QuestionBankSiderWrapper>

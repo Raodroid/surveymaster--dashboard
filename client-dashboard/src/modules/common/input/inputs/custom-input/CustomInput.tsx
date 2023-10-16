@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { Input } from 'antd';
 import { InputProps } from 'antd/lib/input';
 import { OnchangeType } from '../../type';

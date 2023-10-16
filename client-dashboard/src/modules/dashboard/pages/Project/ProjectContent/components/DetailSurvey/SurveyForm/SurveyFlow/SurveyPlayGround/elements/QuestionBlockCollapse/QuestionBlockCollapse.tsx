@@ -1,15 +1,24 @@
 import React, { FC, useState } from 'react';
 import { Button, Collapse, Tooltip } from 'antd';
-import { INPUT_TYPES } from '@/modules/common/input/type';
-import { ControlledInput } from '../../../../../../../../../../../common';
 import { FileIconOutlined, TrashOutlined } from '@/icons';
 import { useTranslation } from 'react-i18next';
 import SurveyQuestions from '../SurveyQuestion/SurveyQuestions';
 import { SubSurveyFlowElement, SubSurveyFlowElementDto } from '@/type';
-import { objectKeys } from '@/utils';
 import { useField } from 'formik';
+import Branch from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/QuestionBlockCollapse/types/Branch/Branch';
+import Block from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/QuestionBlockCollapse/types/Block/Block';
+import Embedded from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/QuestionBlockCollapse/types/Embedded/Embedded';
+import EndSurvey from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/QuestionBlockCollapse/types/EndSurvey/EndSurvey';
+import { QuestionBlockProps } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/QuestionBlockCollapse/types/type';
 
 const { Panel } = Collapse;
+
+const typeMap: Record<SubSurveyFlowElement, FC<QuestionBlockProps>> = {
+  [SubSurveyFlowElement.END_SURVEY]: EndSurvey,
+  [SubSurveyFlowElement.BLOCK]: Block,
+  [SubSurveyFlowElement.BRANCH]: Branch,
+  [SubSurveyFlowElement.EMBEDDED_DATA]: Embedded,
+};
 
 const QuestionBlockCollapse: FC<{
   index: number;
@@ -30,7 +39,10 @@ const QuestionBlockCollapse: FC<{
 
   const record = value[index];
 
-  const questionLength = value[index]?.surveyQuestions?.length;
+  const questionLength = record?.surveyQuestions?.length;
+  const type = record?.type;
+
+  const TypeComponent = typeMap[type];
 
   const handleRemoveBlock = () =>
     setValue(value.filter((i, idx) => idx !== index));
@@ -50,34 +62,18 @@ const QuestionBlockCollapse: FC<{
                 e.stopPropagation();
               }}
             >
-              <ControlledInput
-                className={'w-[100px]'}
-                label={t('common.type')}
-                name={`version.surveyFlowElements[${index}].type`}
-                inputType={INPUT_TYPES.SELECT}
-                options={objectKeys(SubSurveyFlowElement).map(i => ({
-                  label: i,
-                  value: SubSurveyFlowElement[i],
-                }))}
-              />
-              {record.type && (
-                <>
-                  <BlockNameInput
-                    fieldName={`version.surveyFlowElements[${index}].blockDescription`}
-                  />
+              <TypeComponent index={index} />
 
-                  <Button
-                    className={'px-2'}
-                    size={'small'}
-                    type={'text'}
-                    onClick={() => {
-                      toggleActiveKey(record.sort);
-                    }}
-                  >
-                    ({questionLength} Question{questionLength ? 's' : ''})
-                  </Button>
-                </>
-              )}
+              <Button
+                className={'px-2'}
+                size={'small'}
+                type={'text'}
+                onClick={() => {
+                  toggleActiveKey(record.sort);
+                }}
+              >
+                ({questionLength} Question{questionLength ? 's' : ''})
+              </Button>
             </div>
           }
           key={record.sort}
@@ -116,15 +112,3 @@ const QuestionBlockCollapse: FC<{
 };
 
 export default QuestionBlockCollapse;
-
-const BlockNameInput: FC<{ fieldName: string }> = props => {
-  const { fieldName } = props;
-  return (
-    <ControlledInput
-      className={'w-[200px] hide-helper-text'}
-      inputType={INPUT_TYPES.INPUT}
-      name={fieldName}
-      label={'Block:'}
-    />
-  );
-};

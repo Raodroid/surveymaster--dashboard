@@ -2,6 +2,7 @@ import { NotificationType } from 'aws-sdk/clients/budgets';
 import { UserUpdatedDto } from 'interfaces';
 import APIService from './base.service';
 import { AxiosResponse } from 'axios';
+import { EntityEnum } from '@/enums';
 
 export default class UserService {
   static getProfile(): Promise<any> {
@@ -19,7 +20,7 @@ export default class UserService {
   }): Promise<any> {
     const { id, disabledNotificationTypes, isDisableEmailNotification } =
       payload;
-    return APIService.patch(`users/${id}/email-notification`, {
+    return APIService.patch(`${EntityEnum.USER}/${id}/email-notification`, {
       disabledNotificationTypes,
       isDisableEmailNotification,
     });
@@ -29,7 +30,9 @@ export default class UserService {
     userId: string;
     roles: number[];
   }): Promise<any> {
-    return APIService.get(`users/${params.userId}`, { params: params });
+    return APIService.get(`${EntityEnum.USER}/${params.userId}`, {
+      params: params,
+    });
   }
 
   static deactivateProfile(): Promise<AxiosResponse> {

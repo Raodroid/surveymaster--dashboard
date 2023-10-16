@@ -50,7 +50,7 @@ const ViewQuestion = () => {
   const params = useParams<{ questionId?: string }>();
 
   const { canDelete, canUpdate } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.QUESTIONS,
+    SCOPE_CONFIG.ENTITY.QUESTION,
   );
 
   const [questionData, isLoading] = useGetQuestionByQuestionId(

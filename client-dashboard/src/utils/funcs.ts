@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import useWindowSize from 'modules/common/hoc/useWindowSize';
-import { mobileSize } from '../enums';
+import { mobileSize } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 
 declare global {
@@ -48,12 +48,13 @@ export const errorNotification = (input: IErr) => {
 
 export const getAllScopes = (roleData: Role[]) => {
   const scopes: Record<string, boolean> = {};
-  const scopesArr: Scope[] = [];
+  let scopesArr: Scope[] = [];
+
   roleData.forEach(role => {
-    const scope = role.scope;
-    if (!scopes[scope.id]) {
-      scopesArr.push(scope);
-      scopes[scope.id] = true;
+    const scope = role.scopes;
+    if (!scopes[role?.id] && scope) {
+      scopesArr = [...scopesArr, ...scope];
+      scopes[role?.id] = true;
     }
   });
   return scopesArr;

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { SurveyPlayGroundWrapper } from './style';
 import { DragTable } from '@/modules/dashboard/components/DragTable/DragTable';
 import { size } from '@/enums';
@@ -8,8 +8,8 @@ import QuestionBlockCollapse from './elements/QuestionBlockCollapse/QuestionBloc
 
 import { EmptyString, SubSurveyFlowElementDto } from '@/type';
 import { useField } from 'formik';
-import { Button } from 'antd';
 import DragHandle from '../../../../../../../../../../customize-components/DragHandle';
+import AddNewBlockElement from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/AddNewBlockElement/AddNewBlockElement';
 
 const columns: ColumnsType<SubSurveyFlowElementDto> = [
   {
@@ -34,20 +34,6 @@ const SurveyPlayGround = () => {
     Array<EmptyString<SubSurveyFlowElementDto>>
   >('version.surveyFlowElements');
 
-  const handleAddElement = useCallback(() => {
-    setValue([
-      ...value,
-      {
-        sort: Math.random(),
-        type: '',
-        blockDescription: '',
-        surveyQuestions: [],
-        branchLogics: [],
-        listEmbeddedData: [],
-      },
-    ]);
-  }, [setValue, value]);
-
   return (
     <SurveyPlayGroundWrapper>
       <DragTable
@@ -59,9 +45,7 @@ const SurveyPlayGround = () => {
         // renderRowClassName={renderRowClassName}
         setDataTable={setDataTable}
       />
-      <Button className={'py-3 w-full'} onClick={handleAddElement}>
-        Add Element
-      </Button>
+      <AddNewBlockElement />
     </SurveyPlayGroundWrapper>
   );
 };

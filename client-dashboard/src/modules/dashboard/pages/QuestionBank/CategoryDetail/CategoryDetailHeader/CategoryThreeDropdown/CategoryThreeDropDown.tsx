@@ -41,7 +41,7 @@ export const CategoryThreeDropDown: FC<IDropDownMenu> = props => {
   const setLoading = context?.setLoading;
   const navigate = useNavigate();
   const { canCreate, canDelete, canUpdate } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.QUESTIONS,
+    SCOPE_CONFIG.ENTITY.QUESTION,
   );
 
   const deleteMutation = useMutation(

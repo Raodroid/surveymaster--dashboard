@@ -52,7 +52,7 @@ export const SurveyDropDownMenu: FC<IDropDownMenu> = props => {
   const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
   const { canUpdate, canRead, canDelete } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.QUESTIONS,
+    SCOPE_CONFIG.ENTITY.QUESTION,
   );
 
   const duplicateMutation = useMutation(

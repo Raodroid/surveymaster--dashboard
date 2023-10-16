@@ -7,58 +7,61 @@ import {
   IQuestionVersionPatchUpdateDtoExtendId,
   IQuestionVersionPostNewDto,
 } from '@/type';
+import { EntityEnum } from '@/enums';
 
 export default class QuestionBankService {
   static getCategories(params: IGetParams): Promise<AxiosResponse> {
-    return APIService.get('/categories', { params });
+    return APIService.get(EntityEnum.CATEGORY, { params });
   }
   static getQuestions(params: GetListQuestionDto): Promise<AxiosResponse> {
     const { body, ...rest } = params;
-    return APIService.post(`/questions/query`, body, { params: rest });
+    return APIService.post(`/${EntityEnum.QUESTION}/query`, body, {
+      params: rest,
+    });
   }
   static getQuestionById(props): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.get(`/questions/${id}`);
+    return APIService.get(`/${EntityEnum.QUESTION}/${id}`);
   }
   static deleteQuestion(props): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.delete(`/questions/${id}`);
+    return APIService.delete(`/${EntityEnum.QUESTION}/${id}`);
   }
   static duplicateQuestion(props): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.post(`/questions/${id}/duplicate`);
+    return APIService.post(`/${EntityEnum.QUESTION}/${id}/duplicate`);
   }
   static restoreQuestionByQuestionId(props): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.post(`/questions/${id}/restore`);
+    return APIService.post(`/${EntityEnum.QUESTION}/${id}/restore`);
   }
   static changeStatusQuestion(
     props: IQuestionVersionPatchUpdateDtoExtendId,
   ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
-    return APIService.patch(`/questions/version/${id}`, rest);
+    return APIService.patch(`/${EntityEnum.QUESTION}/version/${id}`, rest);
   }
   static createQuestionVersion(
     props: IQuestionVersionPostNewDto,
   ): Promise<AxiosResponse> {
-    return APIService.post(`/questions/version/`, props);
+    return APIService.post(`/${EntityEnum.QUESTION}/version/`, props);
   }
   static updateDraftQuestion(
     props: IQuestionVersionPatchUpdateDtoExtendId,
   ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
-    return APIService.put(`/questions/version/${id}`, rest);
+    return APIService.put(`/${EntityEnum.QUESTION}/version/${id}`, rest);
   }
   static addQuestion(props: IQuestionCreatePostDto): Promise<AxiosResponse> {
-    return APIService.post(`/questions`, props);
+    return APIService.post(`/${EntityEnum.QUESTION}`, props);
   }
 
   static deleteQuestionVersion(props): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.delete(`/questions/version/${id}`);
+    return APIService.delete(`/${EntityEnum.QUESTION}/version/${id}`);
   }
   static restoreQuestionByVersionId(props): Promise<AxiosResponse> {
     const { id } = props;
-    return APIService.post(`/questions/${id}/restore`);
+    return APIService.post(`/${EntityEnum.QUESTION}/${id}/restore`);
   }
 }
