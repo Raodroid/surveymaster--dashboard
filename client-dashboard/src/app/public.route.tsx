@@ -11,6 +11,7 @@ import {
 import { NotFoundPage } from 'modules/common-pages';
 import { ROUTE_PATH } from 'enums';
 import { CustomSpinSuspense } from 'modules/common/styles';
+import SurveyTree from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/SurveyTree';
 
 const SignInUpPage = lazy(
   () => import('modules/auth/sign-in-wrapper/SignInPage'),
@@ -19,6 +20,7 @@ const SignInUpPage = lazy(
 export const NoAuthenticationRoutes = () => (
   <Suspense fallback={<CustomSpinSuspense />}>
     <Routes>
+      <Route path={'/Hannah'} element={<SurveyTree />} />
       <Route path={ROUTE_PATH.LOGIN} element={<SignInUpPage />} />
 
       <Route path={ROUTE_PATH.VERIFY} element={<VerifyPage />} />

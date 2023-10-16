@@ -49,7 +49,7 @@ export interface SubBranchLogicDto {
 
   qId?: string;
   choiceType?: BranchChoiceType;
-  optionSort?: 0;
+  optionSort?: number;
   leftOperand?: string;
   operator?: LogicOperator;
   rightOperand?: string;
@@ -62,6 +62,7 @@ export interface SubSurveyFlowElementDto {
   surveyQuestions?: ISurveyQuestionDto[];
   branchLogics?: SubBranchLogicDto[];
   listEmbeddedData?: SubEmbeddedDataDto[];
+  children?: SubSurveyFlowElementDto[];
 }
 export interface SurveyFlowElementResponseDto {
   createdAt: Date | string;

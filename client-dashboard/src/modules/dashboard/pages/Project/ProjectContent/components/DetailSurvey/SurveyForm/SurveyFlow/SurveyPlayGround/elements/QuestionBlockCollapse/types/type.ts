@@ -1,3 +1,3 @@
 export type QuestionBlockProps = {
-  index: number;
+  index?: number;
 };
