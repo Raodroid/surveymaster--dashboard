@@ -1,4 +1,5 @@
 import { BaseQuestionVersionDto, QuestionType } from '../../../../../type';
+import toInteger from 'lodash/toInteger';
 
 export const transformQuestionData = (
   input: BaseQuestionVersionDto,
@@ -37,7 +38,7 @@ export const transformQuestionData = (
   } else if (result.type === QuestionType.TEXT_NUMBER) {
     result.numberMax = stringToInt(input.numberMax);
     result.numberMin = stringToInt(input.numberMin);
-    result.maxDecimal = stringToInt(input.maxDecimal);
+    result.maxDecimal = stringToInt(toInteger(input.maxDecimal));
   } else {
     delete result?.numberMax;
     delete result?.numberMin;
