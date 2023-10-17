@@ -29,7 +29,7 @@ import { onError } from '../../../../../utils';
 import moment, { Moment } from 'moment';
 import HannahCustomSpin from '../../../components/HannahCustomSpin';
 import { SCOPE_CONFIG } from 'enums';
-import { useCheckScopeEntityDefault } from '../../../../common/hoc';
+import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
 
 const formSchema = Yup.object();

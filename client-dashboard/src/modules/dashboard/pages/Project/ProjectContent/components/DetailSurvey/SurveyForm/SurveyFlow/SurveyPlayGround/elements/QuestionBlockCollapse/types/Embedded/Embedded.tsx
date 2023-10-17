@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 const Embedded: FC<QuestionBlockProps> = props => {
   const { t } = useTranslation();
-  const { index } = props;
+  const { fieldName } = props;
   return <div>Embedded</div>;
 };
 

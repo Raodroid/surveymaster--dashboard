@@ -1,18 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { Tree } from 'antd';
 import { DataNode, TreeProps } from 'antd/es/tree';
-import QuesionTestBlock from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/RenderTittle';
-import { SubSurveyFlowElement, SubSurveyFlowElementDto } from '@/type';
-
-type X = Omit<SubSurveyFlowElementDto, 'children'> &
-  DataNode & { title?: React.ReactNode | ((data: X) => React.ReactNode) };
-
-export type Z = X & { children?: X[] };
+import templateVariable from '@/app/template-variables.module.scss';
+import { DragIcon } from '@/icons';
+import { useField } from 'formik';
+import { SurveyDataTreeNode } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
 
 const loop = (
-  data: DataNode[],
+  data: SurveyDataTreeNode[],
   key: React.Key,
-  callback: (node: DataNode, i: number, data: DataNode[]) => void,
+  callback: (
+    node: SurveyDataTreeNode,
+    i: number,
+    data: SurveyDataTreeNode[],
+  ) => void,
 ) => {
   for (let i = 0; i < data.length; i++) {
     if (data[i].key === key) {
@@ -24,95 +25,29 @@ const loop = (
   }
 };
 
-export const abc: Array<Z> = [
-  {
-    title: d => {
-      return <QuesionTestBlock record={d} />;
-    },
-    key: 'p1_0',
-    type: SubSurveyFlowElement.BLOCK,
-    sort: 1,
-    children: [
-      {
-        title: d => {
-          return d.blockDescription;
-        },
-        blockDescription: 'ABH',
-        key: 'p1_0_0',
-        type: SubSurveyFlowElement.BRANCH,
-        sort: 0,
-      },
-    ],
-  },
-  {
-    title: d => {
-      return <QuesionTestBlock record={d} />;
-    },
-    key: 'p2_1',
-    type: SubSurveyFlowElement.BRANCH,
-    sort: 2,
-    children: [
-      {
-        title: d => {
-          return d.blockDescription;
-        },
-        blockDescription: 'chhild parent 111',
-        key: 'p2_1_0',
-        type: SubSurveyFlowElement.BRANCH,
-        sort: 0,
-        children: [
-          {
-            title: d => {
-              return d.blockDescription;
-            },
-            blockDescription: 'chhild parent 111',
-            key: 'p2_1_0_0',
-            type: SubSurveyFlowElement.BRANCH,
-            sort: 0,
-          },
-          {
-            title: d => {
-              return d.blockDescription;
-            },
-            blockDescription: 'chhild parent 222',
-            key: 'p2_1_0_1',
-            type: SubSurveyFlowElement.BRANCH,
-            sort: 0,
-          },
-        ],
-      },
-      {
-        title: d => {
-          return d.blockDescription;
-        },
-        blockDescription: 'chhild parent 222',
-        key: 'p2_1_1',
-        type: SubSurveyFlowElement.BRANCH,
-        sort: 0,
-      },
-    ],
-  },
-];
-
 const SurveyTree = () => {
-  const [gData, setGData] = useState<DataNode[]>(abc);
+  const [{ value: gData }, , { setValue: setGData }] = useField<
+    Array<SurveyDataTreeNode>
+  >('version.surveyFlowElements');
 
-  const onDrop: TreeProps['onDrop'] = useCallback(info => {
-    const dropKey = info.node.key;
-    const dragKey = info.dragNode.key;
-    const dropPos = info.node.pos.split('-');
-    const dropPosition =
-      info.dropPosition - Number(dropPos[dropPos.length - 1]);
+  // const [gData, setGData] = useState<SurveyDataTreeNode[]>([]);
 
-    console.log({ dropKey, dragKey, info });
+  const onDrop: TreeProps['onDrop'] = useCallback(
+    info => {
+      const dropKey = info.node.key;
+      const dragKey = info.dragNode.key;
+      const dropPos = info.node.pos.split('-');
+      const dropPosition =
+        info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
-    //prevent drag
-    //case 1
-    setGData(oldState => {
-      const data = [...oldState];
-      debugger;
+      console.log({ dropKey, dragKey, info });
+
+      //prevent drag
+      //case 1
+
+      const data = [...gData];
       // Find dragObject
-      let dragObj: DataNode;
+      let dragObj: SurveyDataTreeNode;
       loop(data, dragKey, (item, index, arr) => {
         arr.splice(index, 1);
         dragObj = item;
@@ -138,7 +73,7 @@ const SurveyTree = () => {
           // item to the tail of the children
         });
       } else {
-        let ar: DataNode[] = [];
+        let ar: SurveyDataTreeNode[] = [];
         let i: number;
         loop(data, dropKey, (_item, index, arr) => {
           ar = arr;
@@ -150,13 +85,28 @@ const SurveyTree = () => {
           ar.splice(i! + 1, 0, dragObj!);
         }
       }
-      return data;
-    });
-  }, []);
+      setGData(data);
+    },
+    [gData, setGData],
+  );
 
   return (
     <div className={'w-screen'}>
-      <Tree draggable blockNode onDrop={onDrop} treeData={gData} />
+      <Tree
+        draggable={{
+          icon: (
+            <DragIcon
+              style={{
+                cursor: 'grab',
+                color: templateVariable.text_primary_color,
+              }}
+            />
+          ),
+        }}
+        blockNode
+        onDrop={onDrop}
+        treeData={gData as DataNode[]}
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@/modules/common/input/type';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,7 @@ import { QuestionBlockProps } from '@/modules/dashboard/pages/Project/ProjectCon
 
 const Block: FC<QuestionBlockProps> = props => {
   const { t } = useTranslation();
-  const { index } = props;
+  const { fieldName } = props;
   return (
     <>
       <ControlledInput
@@ -14,13 +14,13 @@ const Block: FC<QuestionBlockProps> = props => {
         className={'w-[100px]'}
         label={t('common.type')}
         inputType={INPUT_TYPES.INPUT}
-        name={`version.surveyFlowElements[${index}].type`}
+        name={`${fieldName}.type`}
       />
 
       <ControlledInput
         className={'w-[200px] hide-helper-text'}
         inputType={INPUT_TYPES.INPUT}
-        name={`version.surveyFlowElements[${index}].blockDescription`}
+        name={`${fieldName}.blockDescription`}
         label={'Block:'}
       />
     </>
