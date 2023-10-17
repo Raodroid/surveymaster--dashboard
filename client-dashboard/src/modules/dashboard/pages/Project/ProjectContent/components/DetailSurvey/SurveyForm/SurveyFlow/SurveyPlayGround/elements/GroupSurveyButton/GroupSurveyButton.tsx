@@ -21,10 +21,10 @@ export const initNewRowValue: questionValueType = {
   category: '',
 };
 
-const GroupSurveyButton = (props: { questionBlockIndex: number }) => {
-  const { questionBlockIndex } = props;
+const GroupSurveyButton = (props: { fieldNameRoot: string }) => {
+  const { fieldNameRoot } = props;
 
-  const fieldName = `version.surveyFlowElements[${questionBlockIndex}].surveyQuestions`;
+  const fieldName = `${fieldNameRoot}.surveyQuestions`;
   const [{ value }, , { setValue }] = useField<questionValueType[]>(fieldName);
 
   const { t } = useTranslation();

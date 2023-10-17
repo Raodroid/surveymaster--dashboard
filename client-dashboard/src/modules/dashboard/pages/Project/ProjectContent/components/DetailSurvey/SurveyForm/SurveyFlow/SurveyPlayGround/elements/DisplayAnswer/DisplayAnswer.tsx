@@ -41,6 +41,7 @@ import ThreeDotsDropdown from '@/customize-components/ThreeDotsDropdown';
 import { MenuDropDownWrapper } from '@/customize-components/styles';
 import { Refresh, SuffixIcon, TrashOutlined } from '@/icons';
 import { DisplayAnswerWrapper } from './style';
+import { useUpdateSurveyTreeData } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
 
 const initParams: GetListQuestionDto = {
   q: '',
@@ -215,7 +216,6 @@ const DisplayAnswer = (props: {
         render: (value, record, index) => {
           return (
             <DynamicSelect
-              index={index}
               setSearchTxt={setSearchTxt}
               normalizeByQuestionId={normalizeByQuestionId}
               questionOption={questionOption}
@@ -263,6 +263,7 @@ const DisplayAnswer = (props: {
       isExternalProject,
       isLoading,
       normalizeByQuestionId,
+      questionBlockIndex,
       questionOption,
       t,
     ],
@@ -450,7 +451,7 @@ const DisplayAnswer = (props: {
           renderRowClassName={renderRowClassName}
         />
 
-        <GroupSurveyButton questionBlockIndex={questionBlockIndex} />
+        <GroupSurveyButton fieldNameRoot={fieldName} />
       </DisplayAnswerWrapper>
     );
   }
@@ -498,7 +499,6 @@ interface IDynamicSelectQuestion {
   hasNextPage?: boolean;
   fetchNextPage: () => void;
   isLoading: boolean;
-  index: number;
   fieldName: string;
 }
 
@@ -510,7 +510,6 @@ export const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
     hasNextPage,
     fetchNextPage,
     isLoading,
-    index,
     fieldName,
   } = props;
   const { t } = useTranslation();
@@ -521,18 +520,18 @@ export const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
   const currQuestionVersionCreatedAt = value.createdAt;
 
   const options = useMemo<IOptionItem[]>(() => {
-    const currQuestionVersionId = value?.[index]?.questionVersionId;
+    const currQuestionVersionId = value?.questionVersionId;
     if (currQuestionVersionId) {
       return [
         ...questionOption,
         {
-          label: value[index].questionTitle,
+          label: value.questionTitle,
           value: currQuestionVersionId,
         },
       ];
     }
     return questionOption;
-  }, [index, questionOption, value]);
+  }, [questionOption, value]);
 
   const fetch = useCallback(
     async target => {
@@ -558,34 +557,25 @@ export const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
   );
 
   const handleOnChange = useCallback(
-    value => {
-      const chooseQuestion = normalizeByQuestionId[value];
-      if (chooseQuestion) {
-        setValue(
-          value.reduce((res, i, idx) => {
-            if (idx !== index) return res;
+    questionId => {
+      const chooseQuestion = normalizeByQuestionId[questionId];
 
-            return [
-              ...res,
-              {
-                ...i,
-                category: chooseQuestion.masterCategory?.name as string,
-                type: chooseQuestion.latestCompletedVersion.type as string,
-                questionTitle: chooseQuestion.latestCompletedVersion
-                  .title as string,
-                id: chooseQuestion.latestCompletedVersion.questionId,
-                questionVersionId: chooseQuestion.latestCompletedVersion.id,
-                versions: chooseQuestion.versions,
-                createdAt: chooseQuestion.createdAt,
-              },
-            ];
-          }, []),
-        );
+      if (chooseQuestion) {
+        setValue({
+          ...value,
+          category: chooseQuestion.masterCategory?.name as string,
+          type: chooseQuestion.latestCompletedVersion.type as string,
+          questionTitle: chooseQuestion.latestCompletedVersion.title as string,
+          id: chooseQuestion.latestCompletedVersion.questionId,
+          questionVersionId: chooseQuestion.latestCompletedVersion.id as string,
+          versions: chooseQuestion.versions,
+          createdAt: chooseQuestion.createdAt,
+        });
 
         setSearchTxt('');
       }
     },
-    [normalizeByQuestionId, setValue, setSearchTxt, index],
+    [normalizeByQuestionId, setValue, value, setSearchTxt],
   );
 
   const isNewQuestion = !(
@@ -617,7 +607,7 @@ export const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
           style={{ width: '100%' }}
           placeholder={t('common.selectQuestion')}
           disabled
-          name={`version.questions[${index}].questionTitle`}
+          name={`${fieldName}.questionTitle`}
         />
       ) : (
         <ControlledInput
@@ -632,7 +622,7 @@ export const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
           options={options}
           placeholder={t('common.selectQuestion')}
           onChange={handleOnChange}
-          name={`version.questions[${index}].questionVersionId`}
+          name={`${fieldName}.questionVersionId`}
         />
       )}
     </div>

@@ -6,7 +6,7 @@ const SurveyPlayGround = () => {
   return (
     <SurveyPlayGroundWrapper>
       <SurveyTree />
-      <AddNewBlockElement />
+      <AddNewBlockElement fieldName={'version.surveyFlowElements'} />
     </SurveyPlayGroundWrapper>
   );
 };

@@ -1,8 +1,8 @@
 import { SubSurveyFlowElementDto } from '@/type';
 import { DataNode } from 'antd/es/tree';
-import QuestionTestBlock from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/RenderTittle';
-import { ReactNode } from 'react';
+import { ReactNode, useCallback } from 'react';
 import * as React from 'react';
+import { useField } from 'formik';
 
 type GeneralDataNode = Pick<
   DataNode,
@@ -32,14 +32,13 @@ export const transformToSurveyDataTreeNode = (
   return data.map((i, index) => {
     const fieldName = !parentFieldName
       ? `version.surveyFlowElements[${index}]`
-      : `${parentFieldName}.children.[${index}]`;
+      : `${parentFieldName}.children[${index}]`;
 
     const { children, ...rest } = i;
     const node: SurveyDataTreeNode = {
       ...rest,
       key: fieldName,
       fieldName,
-      title: d => <QuestionTestBlock record={d} />,
     };
 
     if (i?.children) {
@@ -51,3 +50,21 @@ export const transformToSurveyDataTreeNode = (
     return node;
   });
 };
+
+export const useUpdateSurveyTreeData = () => {
+  const [{ value: surveyFlowElements }, , { setValue: setSurveyFlowElements }] =
+    useField<SubSurveyFlowElementDto[]>('version.surveyFlowElements');
+
+  const calcLevel = useCallback((fieldName: string): string[] | null => {
+    return fieldName.match(/\[[0-9]+\]/gm);
+  }, []);
+
+  return {
+    surveyFlowElements,
+    setSurveyFlowElements,
+    calcLevel,
+  };
+};
+
+export const getParentNodeFieldName = fieldName =>
+  fieldName.match(/(.*(?=\[))(.*(?=\[))/)?.[0] || 'version.surveyFlowElements';

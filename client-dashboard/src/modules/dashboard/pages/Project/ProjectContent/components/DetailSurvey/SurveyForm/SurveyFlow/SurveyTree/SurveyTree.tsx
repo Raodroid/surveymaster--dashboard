@@ -1,10 +1,15 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Tree } from 'antd';
 import { DataNode, TreeProps } from 'antd/es/tree';
 import templateVariable from '@/app/template-variables.module.scss';
 import { DragIcon } from '@/icons';
 import { useField } from 'formik';
-import { SurveyDataTreeNode } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
+import {
+  SurveyDataTreeNode,
+  transformToSurveyDataTreeNode,
+} from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
+import QuestionTestBlock from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/RenderTittle';
+import * as React from 'react';
 
 const loop = (
   data: SurveyDataTreeNode[],
@@ -26,11 +31,17 @@ const loop = (
 };
 
 const SurveyTree = () => {
-  const [{ value: gData }, , { setValue: setGData }] = useField<
+  const [{ value }, , { setValue: setGData }] = useField<
     Array<SurveyDataTreeNode>
   >('version.surveyFlowElements');
 
-  // const [gData, setGData] = useState<SurveyDataTreeNode[]>([]);
+  const gData = useMemo(() => {
+    return transformToSurveyDataTreeNode(value);
+  }, [value]);
+
+  useEffect(() => {
+    console.log(gData);
+  }, [gData]);
 
   const onDrop: TreeProps['onDrop'] = useCallback(
     info => {
@@ -91,7 +102,7 @@ const SurveyTree = () => {
   );
 
   return (
-    <div className={'w-screen'}>
+    <div className={''}>
       <Tree
         draggable={{
           icon: (
@@ -103,6 +114,9 @@ const SurveyTree = () => {
             />
           ),
         }}
+        titleRender={d => (
+          <QuestionTestBlock record={d as SurveyDataTreeNode} />
+        )}
         blockNode
         onDrop={onDrop}
         treeData={gData as DataNode[]}

@@ -174,7 +174,10 @@ const AddQuestionFormCategoryModal: FC<
           {t('common.add')} {selectedQuestionIdList.length}{' '}
           {t(
             `common.${
-              selectedQuestionIdList.length === 1 ? 'question' : 'questions'
+              selectedQuestionIdList.length === 1 ||
+              !selectedQuestionIdList.length
+                ? 'question'
+                : 'questions'
             }`,
           )}
         </Button>

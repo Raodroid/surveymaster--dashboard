@@ -1,38 +1,48 @@
-import React, { useCallback } from 'react';
+import React, { FC, useCallback } from 'react';
 import { Button } from 'antd';
 import { useField } from 'formik';
-import {
-  EmptyString,
-  SubSurveyFlowElement,
-  SubSurveyFlowElementDto,
-} from '@/type';
+import { EmptyString, SubSurveyFlowElement } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { useToggle } from '@/utils';
+import { SurveyDataTreeNode } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
 
-const AddNewBlockElement = () => {
+const rootPath = 'version.surveyFlowElements';
+
+const defaultNode: SurveyDataTreeNode = {
+  sort: Math.random(),
+  type: SubSurveyFlowElement.BRANCH,
+  blockDescription: '',
+  surveyQuestions: [],
+  branchLogics: [],
+  listEmbeddedData: [],
+  children: [],
+  key: '',
+  title: '',
+  fieldName: '',
+};
+const AddNewBlockElement: FC<{ fieldName: string }> = props => {
+  const { fieldName } = props;
   const { t } = useTranslation();
   const [show, toggleShow] = useToggle();
 
-  const [{ value }, , { setValue }] = useField<
-    Array<EmptyString<SubSurveyFlowElementDto>>
-  >('version.surveyFlowElements');
+  const [{ value: treeRoot }, , { setValue: setTreeRoot }] =
+    useField<Array<EmptyString<SurveyDataTreeNode>>>(fieldName);
+
+  const [{ value }, , { setValue }] = useField<SurveyDataTreeNode>(fieldName);
 
   const handleAddElement = useCallback(
     (type: SubSurveyFlowElement) => {
       toggleShow();
-      setValue([
+      if (fieldName === rootPath) {
+        setTreeRoot([...treeRoot, { ...defaultNode, type }]);
+        return;
+      }
+      setValue({
         ...value,
-        {
-          sort: Math.random(),
-          type,
-          blockDescription: '',
-          surveyQuestions: [],
-          branchLogics: [],
-          listEmbeddedData: [],
-        },
-      ]);
+        children: [...(value?.children || []), { ...defaultNode, type }],
+      });
     },
-    [setValue, toggleShow, value],
+    [fieldName, setTreeRoot, setValue, toggleShow, treeRoot, value],
   );
 
   return (

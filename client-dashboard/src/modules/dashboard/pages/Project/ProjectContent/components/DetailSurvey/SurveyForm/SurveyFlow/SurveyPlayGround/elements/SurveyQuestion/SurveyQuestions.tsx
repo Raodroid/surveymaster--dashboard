@@ -30,14 +30,14 @@ const initParams: GetListQuestionDto = {
 };
 
 const SurveyQuestions: FC<{
-  index: number;
+  fieldName: string;
 }> = props => {
-  const { index } = props;
+  const { fieldName } = props;
   const { t } = useTranslation();
 
-  const fieldName = `version.surveyFlowElements[${index}].surveyQuestions`;
-
-  const [{ value }, , { setValue }] = useField<questionValueType[]>(fieldName);
+  const [{ value }, , { setValue }] = useField<questionValueType[]>(
+    `${fieldName}.surveyQuestions`,
+  );
   const removeQuestion = useCallback(
     (questionIndex: number) => {
       setValue(value.filter((i, idx) => idx !== questionIndex));
@@ -135,22 +135,22 @@ const SurveyQuestions: FC<{
           );
         },
       },
-      {
-        title: t('common.parameter'),
-        dataIndex: 'parameter',
-        width: 200,
-        render: (value, record, index) => {
-          return (
-            <>
-              <ControlledInput
-                style={{ width: '100%' }}
-                inputType={INPUT_TYPES.INPUT}
-                name={`${fieldName}[${index}].parameter`}
-              />
-            </>
-          );
-        },
-      },
+      // {
+      //   title: t('common.parameter'),
+      //   dataIndex: 'parameter',
+      //   width: 200,
+      //   render: (value, record, index) => {
+      //     return (
+      //       <>
+      //         <ControlledInput
+      //           style={{ width: '100%' }}
+      //           inputType={INPUT_TYPES.INPUT}
+      //           name={`${fieldName}[${index}].parameter`}
+      //         />
+      //       </>
+      //     );
+      //   },
+      // },
       {
         title: t('common.category'),
         dataIndex: 'category',
@@ -171,14 +171,13 @@ const SurveyQuestions: FC<{
         render: (value, record, questionIndex) => {
           return (
             <DynamicSelect
-              index={index}
               setSearchTxt={setSearchTxt}
               normalizeByQuestionId={normalizeByQuestionId}
               questionOption={questionOption}
               hasNextPage={hasNextPage}
               fetchNextPage={fetchNextPage}
               isLoading={isLoading}
-              fieldName={`version.surveyFlowElements[${index}].surveyQuestions[${questionIndex}].questionVersionId`}
+              fieldName={`${fieldName}.surveyQuestions[${questionIndex}]`}
             />
           );
         },
@@ -215,7 +214,6 @@ const SurveyQuestions: FC<{
       fetchNextPage,
       fieldName,
       hasNextPage,
-      index,
       isLoading,
       normalizeByQuestionId,
       questionOption,
@@ -234,7 +232,7 @@ const SurveyQuestions: FC<{
         pagination={false}
         setDataTable={setValue}
       />
-      <GroupSurveyButton questionBlockIndex={index} />
+      <GroupSurveyButton fieldNameRoot={fieldName} />
     </div>
   );
 };

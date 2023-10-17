@@ -29,7 +29,6 @@ import { TemplateOption } from './SurveyTemplateOption';
 import { useGetSurveyById } from '../../Survey/util';
 import HannahCustomSpin from '../../../../../../components/HannahCustomSpin';
 import { useGetProjectByIdQuery } from '../../../../util';
-import UploadExternalFile from './EditSurveyQuestionList/UploadExternalFile';
 import {
   SURVEY_EXTERNAL_FORM_SCHEMA,
   SURVEY_INTERNAL_FORM_SCHEMA,
@@ -713,9 +712,9 @@ const QuestionSurveyList: FC<{
             : t('common.surveyQuestionList')}
         </div>
 
-        {!isViewMode && (
-          <UploadExternalFile setExcelUploadFile={setExcelUploadFile} />
-        )}
+        {/*{!isViewMode && (*/}
+        {/*  <UploadExternalFile setExcelUploadFile={setExcelUploadFile} />*/}
+        {/*)}*/}
 
         {isViewMode && (
           <ViewSurveyQuestionList questions={currentSurveyVersion?.questions} />
