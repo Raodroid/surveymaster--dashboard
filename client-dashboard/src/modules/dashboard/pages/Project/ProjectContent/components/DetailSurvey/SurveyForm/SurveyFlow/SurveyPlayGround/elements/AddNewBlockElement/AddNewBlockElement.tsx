@@ -20,7 +20,9 @@ const defaultNode: SurveyDataTreeNode = {
   title: '',
   fieldName: '',
 };
-const AddNewBlockElement: FC<{ fieldName: string }> = props => {
+const AddNewBlockElement: FC<{
+  fieldName: string;
+}> = props => {
   const { fieldName } = props;
   const { t } = useTranslation();
   const [show, toggleShow] = useToggle();

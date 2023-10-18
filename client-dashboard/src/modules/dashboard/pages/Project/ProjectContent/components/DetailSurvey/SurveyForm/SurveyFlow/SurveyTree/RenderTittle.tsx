@@ -10,6 +10,7 @@ import Branch from '@/modules/dashboard/pages/Project/ProjectContent/components/
 import Embedded from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/QuestionBlockCollapse/types/Embedded/Embedded';
 import { useTranslation } from 'react-i18next';
 import {
+  calcLevelNodeByFieldName,
   getParentNodeFieldName,
   SurveyDataTreeNode,
 } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
@@ -40,15 +41,16 @@ const QuestionTestBlock: FC<{ record: SurveyDataTreeNode }> = props => {
 
   const questionLength = record?.surveyQuestions?.length;
 
+  console.log(JSON.stringify(parentNodeValue));
   const handleRemoveBlock = () => {
-    const x = parentNodeValue.findIndex(node => node.fieldName === fieldName);
-    const y = parentNodeValue.filter(node => node.fieldName !== fieldName);
-    console.log({ parentNodeValue });
-    console.log({ x, y, fieldName });
+    const currentBlockLevel = calcLevelNodeByFieldName(fieldName);
+    // console.log(JSON.stringify(parentNodeValue));
 
-    // setParentNodeValue(
-    //   parentNodeValue.filter(node => node.fieldName !== fieldName),
-    // );
+    setParentNodeValue(
+      parentNodeValue.filter(
+        (node, idx) => `[${idx}]` !== currentBlockLevel?.at(-1),
+      ),
+    );
   };
 
   const handleDuplicateBlock = () => {
@@ -117,7 +119,9 @@ const QuestionTestBlock: FC<{ record: SurveyDataTreeNode }> = props => {
           </div>
         </div>
         <div className={'w-full'}>
-          <AddNewBlockElement fieldName={fieldName} />
+          {record.type === SubSurveyFlowElement.BRANCH && (
+            <AddNewBlockElement fieldName={fieldName} />
+          )}
         </div>
       </Collapse>
     </>

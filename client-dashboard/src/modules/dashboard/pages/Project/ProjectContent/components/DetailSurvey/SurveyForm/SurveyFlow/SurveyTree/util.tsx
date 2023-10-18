@@ -1,7 +1,6 @@
 import { SubSurveyFlowElementDto } from '@/type';
 import { DataNode } from 'antd/es/tree';
 import { ReactNode, useCallback } from 'react';
-import * as React from 'react';
 import { useField } from 'formik';
 
 type GeneralDataNode = Pick<
@@ -55,16 +54,14 @@ export const useUpdateSurveyTreeData = () => {
   const [{ value: surveyFlowElements }, , { setValue: setSurveyFlowElements }] =
     useField<SubSurveyFlowElementDto[]>('version.surveyFlowElements');
 
-  const calcLevel = useCallback((fieldName: string): string[] | null => {
-    return fieldName.match(/\[[0-9]+\]/gm);
-  }, []);
 
   return {
     surveyFlowElements,
     setSurveyFlowElements,
-    calcLevel,
   };
 };
-
+export const calcLevelNodeByFieldName = (fieldName: string): string[] | null => {
+  return fieldName.match(/\[[0-9]+\]/gm);
+}
 export const getParentNodeFieldName = fieldName =>
   fieldName.match(/(.*(?=\[))(.*(?=\[))/)?.[0] || 'version.surveyFlowElements';
