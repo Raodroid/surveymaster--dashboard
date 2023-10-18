@@ -1,6 +1,6 @@
 import { Button, Collapse, Tooltip } from 'antd';
 import { FileIconOutlined, TrashOutlined } from '@/icons';
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, memo, useCallback, useMemo, useState } from 'react';
 
 import { SubSurveyFlowElement } from '@/type';
 import { QuestionBlockProps } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/QuestionBlockCollapse/types/type';
@@ -15,8 +15,11 @@ import {
   SurveyDataTreeNode,
 } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
 import { useField } from 'formik';
-import SurveyQuestions from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/SurveyQuestion/SurveyQuestions';
 import AddNewBlockElement from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/AddNewBlockElement/AddNewBlockElement';
+import { ControlledInput } from '@/modules/common';
+import { INPUT_TYPES } from '@/modules/common/input/type';
+import { transformEnumToOption } from '@/utils';
+
 const { Panel } = Collapse;
 
 const typeMap: Record<SubSurveyFlowElement, FC<QuestionBlockProps>> = {
@@ -39,12 +42,21 @@ const QuestionTestBlock: FC<{ record: SurveyDataTreeNode }> = props => {
 
   const [{ value }] = useField<SurveyDataTreeNode>(fieldName);
 
-  const questionLength = record?.surveyQuestions?.length;
+  const chilrenLength = useMemo<number>(() => {
+    switch (record.type) {
+      case SubSurveyFlowElement.BLOCK:
+        return record?.surveyQuestions?.length || 0;
+      case SubSurveyFlowElement.BRANCH:
+        return record?.branchLogics?.length || 0;
+      case SubSurveyFlowElement.EMBEDDED_DATA:
+        return record?.listEmbeddedData?.length || 0;
+      default:
+        return 0;
+    }
+  }, [record]);
 
-  console.log(JSON.stringify(parentNodeValue));
   const handleRemoveBlock = () => {
     const currentBlockLevel = calcLevelNodeByFieldName(fieldName);
-    // console.log(JSON.stringify(parentNodeValue));
 
     setParentNodeValue(
       parentNodeValue.filter(
@@ -57,7 +69,7 @@ const QuestionTestBlock: FC<{ record: SurveyDataTreeNode }> = props => {
     setParentNodeValue([...parentNodeValue, value]);
   };
 
-  const [activeKey, setActiveKey] = useState<string | undefined>(undefined);
+  const [activeKey, setActiveKey] = useState<string | undefined>(fieldName);
 
   const toggleActiveKey = useCallback(() => {
     setActiveKey(s => (s ? undefined : fieldName));
@@ -65,67 +77,84 @@ const QuestionTestBlock: FC<{ record: SurveyDataTreeNode }> = props => {
 
   return (
     <>
-      <Collapse ghost className={'w-full'} activeKey={activeKey}>
-        <Panel
-          header={
-            <div
-              className={'flex gap-3'}
-              onChange={e => {
-                e.stopPropagation();
-              }}
-            >
-              <TypeComponent fieldName={fieldName} />
-              <span></span>{' '}
-              <Button
-                className={'px-2'}
-                size={'small'}
-                type={'text'}
-                onClick={() => {
-                  toggleActiveKey();
+      <div className={'p-6 border'}>
+        <Collapse ghost className={'w-full'} activeKey={activeKey}>
+          <Panel
+            key={fieldName}
+            showArrow={false}
+            header={
+              <div
+                className={'flex gap-3'}
+                onChange={e => {
+                  e.stopPropagation();
                 }}
               >
-                ({questionLength} Question{questionLength ? 's' : ''})
-              </Button>
+                <ControlledInput
+                  className={'w-[200px] view-mode'}
+                  label={t('common.type')}
+                  inputType={INPUT_TYPES.SELECT}
+                  options={transformEnumToOption(SubSurveyFlowElement, i =>
+                    t(`common.${i}`),
+                  )}
+                  name={`${fieldName}.type`}
+                />
+                {record.type === SubSurveyFlowElement.BLOCK && (
+                  <ControlledInput
+                    className={'w-[200px] hide-helper-text'}
+                    inputType={INPUT_TYPES.INPUT}
+                    name={`${fieldName}.blockDescription`}
+                    label={t('common.blockDescription')}
+                  />
+                )}
+
+                <Button
+                  className={'px-2'}
+                  size={'small'}
+                  type={'text'}
+                  onClick={toggleActiveKey}
+                >
+                  ({chilrenLength} item{chilrenLength ? 's' : ''})
+                </Button>
+              </div>
+            }
+          >
+            <TypeComponent fieldName={fieldName} />
+          </Panel>
+
+          <div className={'absolute right-3 top-6'}>
+            <div className={'flex gap-3'}>
+              <Tooltip title={t('common.duplicate')}>
+                <Button
+                  size={'small'}
+                  type={'text'}
+                  className={'px-2'}
+                  onClick={handleDuplicateBlock}
+                >
+                  <FileIconOutlined />
+                </Button>
+              </Tooltip>
+              <Tooltip title={t('common.remove')}>
+                <Button
+                  size={'small'}
+                  type={'text'}
+                  className={'px-2'}
+                  danger
+                  onClick={handleRemoveBlock}
+                >
+                  <TrashOutlined />
+                </Button>
+              </Tooltip>
             </div>
-          }
-          key={fieldName}
-          showArrow={false}
-        >
-          <SurveyQuestions fieldName={fieldName} />
-        </Panel>
-        <div className={'absolute right-3 top-6'}>
-          <div className={'flex gap-3'}>
-            <Tooltip title={t('common.duplicate')}>
-              <Button
-                size={'small'}
-                type={'text'}
-                className={'px-2'}
-                onClick={handleDuplicateBlock}
-              >
-                <FileIconOutlined />
-              </Button>
-            </Tooltip>
-            <Tooltip title={t('common.remove')}>
-              <Button
-                size={'small'}
-                type={'text'}
-                className={'px-2'}
-                danger
-                onClick={handleRemoveBlock}
-              >
-                <TrashOutlined />
-              </Button>
-            </Tooltip>
           </div>
-        </div>
-        <div className={'w-full'}>
-          {record.type === SubSurveyFlowElement.BRANCH && (
-            <AddNewBlockElement fieldName={fieldName} />
-          )}
-        </div>
-      </Collapse>
+          <div className={'w-full'}>
+            {record.type === SubSurveyFlowElement.BRANCH && (
+              <AddNewBlockElement fieldName={fieldName} />
+            )}
+          </div>
+        </Collapse>
+      </div>
     </>
   );
 };
 
-export default QuestionTestBlock;
+export default memo(QuestionTestBlock);

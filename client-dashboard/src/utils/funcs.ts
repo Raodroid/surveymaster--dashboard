@@ -167,7 +167,6 @@ export const useDebounce = (value: string, time: number = 500) => {
 };
 
 export const onError = (error: any) => {
-  console.error(error);
   notification.error({ message: error.response?.data?.message });
 };
 
@@ -184,8 +183,8 @@ export const transformEnumToOption = (
   translatePathKey?: (key) => string,
 ): Array<{ label: string; value: string }> => {
   return Object.keys(T).map(key => ({
-    value: key,
-    label: translatePathKey ? translatePathKey(key) : key,
+    value: T[key],
+    label: translatePathKey ? translatePathKey([T[key]]) : key,
   }));
 };
 

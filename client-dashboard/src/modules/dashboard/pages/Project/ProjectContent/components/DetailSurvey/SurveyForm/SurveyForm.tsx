@@ -37,6 +37,7 @@ import ViewSurveyQuestionList from './ViewSurveyQuestionList';
 import SimpleBar from 'simplebar-react';
 import { useToggle } from '../../../../../../../../utils';
 import SurveyPlayGround from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/SurveyPlayGround';
+import { transformSurveyVersion } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/util';
 
 const { confirm } = Modal;
 
@@ -442,23 +443,8 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
         }
 
         const transformValue: CreateSurveyBodyDto = {
-          ...rest,
-          version: {
-            ...version,
-            surveyFlowElements: version?.surveyFlowElements?.map(
-              (flow, index) => ({
-                ...flow,
-                sort: index + 1,
-                surveyQuestions: (flow.surveyQuestions || []).map(
-                  (q, qIndex) => ({
-                    questionVersionId: q.questionVersionId,
-                    sort: qIndex + 1,
-                    remark: q.remark,
-                  }),
-                ),
-              }),
-            ),
-          },
+          version: transformSurveyVersion(values),
+          projectId: values.projectId,
         };
 
         // if (isEditMode) {
@@ -660,7 +646,6 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
                     type="primary"
                     className="info-btn"
                     htmlType="submit"
-                    disabled={!isValid || !dirty}
                     loading={actionLoading}
                   >
                     {t('common.saveSurvey')}

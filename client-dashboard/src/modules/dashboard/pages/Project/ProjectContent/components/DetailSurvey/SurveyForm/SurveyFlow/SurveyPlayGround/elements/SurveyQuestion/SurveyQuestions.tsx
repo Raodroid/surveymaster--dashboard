@@ -94,7 +94,7 @@ const SurveyQuestions: FC<{
           const latestQuestionVersionId = q.latestCompletedVersion?.id;
           const latestQuestionId = q?.id;
           if (
-            value.some(
+            (value || [])?.some(
               z =>
                 z.id === latestQuestionId || // check if chosen version is in the same question but different version
                 z.questionVersionId === latestQuestionVersionId, //check and filter out questions were automatically filled after uploading file

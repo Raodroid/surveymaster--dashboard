@@ -25,7 +25,6 @@ import {
   IOptionItem,
   IQuestion,
   IQuestionVersion,
-  SubSurveyFlowElement,
 } from '@/type';
 import { QuestionBankService } from '@/services';
 import { MOMENT_FORMAT, ROUTE_PATH, size } from '@/enums';
@@ -41,7 +40,6 @@ import ThreeDotsDropdown from '@/customize-components/ThreeDotsDropdown';
 import { MenuDropDownWrapper } from '@/customize-components/styles';
 import { Refresh, SuffixIcon, TrashOutlined } from '@/icons';
 import { DisplayAnswerWrapper } from './style';
-import { useUpdateSurveyTreeData } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
 
 const initParams: GetListQuestionDto = {
   q: '',
@@ -66,7 +64,7 @@ const DisplayAnswer = (props: {
   const [{ value }, , { setValue }] = useField<questionValueType[]>(fieldName);
 
   const [searchTxt, setSearchTxt] = useState<string>('');
-  const { values, setValues, setFieldValue, initialValues } =
+  const { setValues, setFieldValue, initialValues } =
     useFormikContext<IAddSurveyFormValues>();
 
   const createSurveyRouteMath = useMatch({

@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { useField } from 'formik';
 import { EmptyString, SubSurveyFlowElement } from '@/type';
 import { useTranslation } from 'react-i18next';
-import { useToggle } from '@/utils';
+import { objectKeys, useToggle } from '@/utils';
 import { SurveyDataTreeNode } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
 
 const rootPath = 'version.surveyFlowElements';
@@ -58,8 +58,12 @@ const AddNewBlockElement: FC<{
             </Button>
           </div>
           <div className={'flex gap-3 items-center'}>
-            {Object.keys(SubSurveyFlowElement).map(key => (
+            {objectKeys(SubSurveyFlowElement).map(key => (
               <Button
+                // disabled={
+                //   SubSurveyFlowElement[key] === SubSurveyFlowElement.BRANCH
+                // }
+                key={key}
                 onClick={() => {
                   handleAddElement(SubSurveyFlowElement[key]);
                 }}

@@ -43,6 +43,7 @@ export interface SubEmbeddedDataDto {
 }
 
 export interface SubBranchLogicDto {
+  blockId: string;
   sort: number;
   conjunction: Conjunction;
   logicType: BranchLogicType;

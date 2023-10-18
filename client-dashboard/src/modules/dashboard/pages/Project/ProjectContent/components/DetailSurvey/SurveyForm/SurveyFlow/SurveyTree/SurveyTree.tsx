@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Tree } from 'antd';
 import { DataNode, TreeProps } from 'antd/es/tree';
 import templateVariable from '@/app/template-variables.module.scss';
@@ -38,10 +38,6 @@ const SurveyTree = () => {
   const gData = useMemo(() => {
     return transformToSurveyDataTreeNode(value);
   }, [value]);
-
-  useEffect(() => {
-    console.log(gData);
-  }, [gData]);
 
   const onDrop: TreeProps['onDrop'] = useCallback(
     info => {
