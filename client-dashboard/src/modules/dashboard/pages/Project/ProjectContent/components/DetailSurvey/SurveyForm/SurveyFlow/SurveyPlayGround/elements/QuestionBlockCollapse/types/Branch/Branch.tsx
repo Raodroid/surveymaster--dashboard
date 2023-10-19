@@ -8,25 +8,29 @@ import {
   BranchLogicType,
   Conjunction,
   EmptyString,
-  LogicOperator,
   SubBranchLogicDto,
 } from '@/type';
 import { Button } from 'antd';
 import { objectKeys, transformEnumToOption } from '@/utils';
-import { genQualtricsBlockId } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/utils';
+import EmbeddedBlockChoice from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/QuestionBlockCollapse/types/Branch/EmbeddedBlockChoice/EmbeddedBlockChoice';
+import QuestionChoice from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/elements/QuestionBlockCollapse/types/Branch/QuestionChoice/QuestionChoice';
 
 const defaultLogicBranch: EmptyString<SubBranchLogicDto> = {
-  blockId: genQualtricsBlockId(),
   sort: Math.random(),
   conjunction: Conjunction.AND,
   logicType: BranchLogicType.QUESTION,
-
+  blockId: '',
   qId: '',
   choiceType: '',
   optionSort: '',
   leftOperand: '',
   operator: '',
   rightOperand: '',
+};
+
+const componentMap: Record<BranchLogicType, FC<any>> = {
+  [BranchLogicType.EMBEDDED_FIELD]: EmbeddedBlockChoice,
+  [BranchLogicType.QUESTION]: QuestionChoice,
 };
 
 const Branch: FC<QuestionBlockProps> = props => {
@@ -42,52 +46,46 @@ const Branch: FC<QuestionBlockProps> = props => {
         name={fieldName}
         render={({ push, remove }) => (
           <div>
-            {(branchLogics || []).map((list, index) => (
-              <div className={'flex gap-3'} key={index}>
-                {index !== 0 && (
+            {(branchLogics || []).map((list, index) => {
+              const { logicType } = list;
+
+              const LogicComponent = componentMap[logicType];
+              return (
+                <div className={'flex gap-3'} key={index}>
+                  {index !== 0 && (
+                    <ControlledInput
+                      className={'w-[100px]'}
+                      inputType={INPUT_TYPES.SELECT}
+                      name={`${fieldName}[${index}].conjunction`}
+                      options={objectKeys(Conjunction).map(key => ({
+                        value: Conjunction[key],
+                        label: Conjunction[key],
+                      }))}
+                    />
+                  )}
                   <ControlledInput
-                    className={'w-[100px]'}
+                    className={'w-[150px]'}
                     inputType={INPUT_TYPES.SELECT}
-                    name={`${fieldName}[${index}].conjunction`}
-                    options={objectKeys(Conjunction).map(key => ({
-                      value: Conjunction[key],
-                      label: Conjunction[key],
-                    }))}
+                    name={`${fieldName}[${index}].logicType`}
+                    options={transformEnumToOption(BranchLogicType, i =>
+                      t(`common.${i}`),
+                    )}
                   />
-                )}
-                <ControlledInput
-                  className={'w-[150px]'}
-                  inputType={INPUT_TYPES.SELECT}
-                  name={`${fieldName}[${index}].logicType`}
-                  options={transformEnumToOption(BranchLogicType, i =>
-                    t(`common.${i}`),
-                  )}
-                />
-                <ControlledInput
-                  placeholder={'LogicOperator'}
-                  className={'w-[150px]'}
-                  inputType={INPUT_TYPES.SELECT}
-                  name={`${fieldName}[${index}].operator`}
-                  options={transformEnumToOption(LogicOperator, i =>
-                    t(`common.${i}`),
-                  )}
-                />
-                <ControlledInput
-                  className={'w-[100px]'}
-                  inputType={INPUT_TYPES.INPUT}
-                  name={`${fieldName}[${index}].value`}
-                />
-                <Button
-                  size={'small'}
-                  className={'px-2'}
-                  danger
-                  shape="circle"
-                  onClick={() => remove(index)}
-                >
-                  -
-                </Button>
-              </div>
-            ))}
+
+                  <LogicComponent fieldName={fieldName} index={index} />
+
+                  <Button
+                    size={'small'}
+                    className={'px-2'}
+                    danger
+                    shape="circle"
+                    onClick={() => remove(index)}
+                  >
+                    -
+                  </Button>
+                </div>
+              );
+            })}
             <div>
               <Button
                 className={'w-full'}

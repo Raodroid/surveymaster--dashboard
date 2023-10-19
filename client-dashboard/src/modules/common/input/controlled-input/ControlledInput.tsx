@@ -43,8 +43,9 @@ const ControlledInput = (props: ControlledInputProps) => {
       option: { value: string | number; label: string },
     ) => {
       if (!isOptionValue) {
-        onChange && onChange(value);
         setValue(value);
+
+        onChange && onChange(value);
       } else setValue(option);
     },
     [isOptionValue, onChange, setValue],

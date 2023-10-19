@@ -8,7 +8,7 @@ import Dragger from 'antd/lib/upload/Dragger';
 import { RollbackOutlined } from 'icons';
 import { useToggle } from 'utils';
 import { useField } from 'formik';
-import { ExtraSurveyFlowElement, questionValueType } from '../SurveyForm';
+import { questionValueType } from '../SurveyForm';
 import {
   IQuestion,
   IQuestionVersion,

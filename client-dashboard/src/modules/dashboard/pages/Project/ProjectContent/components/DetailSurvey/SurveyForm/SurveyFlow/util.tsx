@@ -1,14 +1,15 @@
 import {
-  ExtraSurveyFlowElement,
   IAddSurveyFormValues,
+  SurveyFlowElements,
 } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
 import { ISurveyVersionBaseDto, SubSurveyFlowElementDto } from '@/type';
 
 const transSurveyFLowElement = (
-  input: ExtraSurveyFlowElement[] | SubSurveyFlowElementDto[],
+  input: SurveyFlowElements[],
 ): SubSurveyFlowElementDto[] => {
   return input.map((i, idx) => {
     return {
+      blockId: i.blockId,
       type: i.type,
       sort: idx,
       blockDescription: i.blockDescription,

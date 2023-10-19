@@ -83,11 +83,27 @@ export type questionValueType = ISurveyQuestionDto & {
   createdAt?: string | Date | null;
 };
 
-export type ExtraSurveyFlowElement = Replace<
+type ExtraSurveyFlowElement = Replace<
   SubSurveyFlowElementDto,
   'surveyQuestions',
   {
     surveyQuestions: questionValueType[];
+  }
+>;
+
+type Version = Replace<
+  ISurveyVersionBaseDto,
+  'surveyFlowElements',
+  {
+    surveyFlowElements: SurveyFlowElements[];
+  }
+>;
+
+export type SurveyFlowElements = Replace<
+  ExtraSurveyFlowElement,
+  'children',
+  {
+    children: SurveyFlowElements[];
   }
 >;
 
@@ -96,13 +112,7 @@ export interface IAddSurveyFormValues
     CreateSurveyBodyDto,
     'version',
     {
-      version: Replace<
-        ISurveyVersionBaseDto,
-        'surveyFlowElements',
-        {
-          surveyFlowElements: Array<ExtraSurveyFlowElement>;
-        }
-      >;
+      version: Version;
     }
   > {
   createdAt?: string | Date | null;

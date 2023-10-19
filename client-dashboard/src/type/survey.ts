@@ -43,10 +43,10 @@ export interface SubEmbeddedDataDto {
 }
 
 export interface SubBranchLogicDto {
-  blockId: string;
   sort: number;
   conjunction: Conjunction;
   logicType: BranchLogicType;
+  blockId?: string;
 
   qId?: string;
   choiceType?: BranchChoiceType;
@@ -59,6 +59,7 @@ export interface SubBranchLogicDto {
 export interface SubSurveyFlowElementDto {
   type: SubSurveyFlowElement;
   sort: number;
+  blockId: string;
   blockDescription?: string;
   surveyQuestions?: ISurveyQuestionDto[];
   branchLogics?: SubBranchLogicDto[];

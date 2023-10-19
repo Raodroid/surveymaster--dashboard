@@ -5,10 +5,12 @@ import { EmptyString, SubSurveyFlowElement } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { objectKeys, useToggle } from '@/utils';
 import { SurveyDataTreeNode } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyTree/util';
+import { genQualtricsBlockId } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/utils';
 
 const rootPath = 'version.surveyFlowElements';
 
 const defaultNode: SurveyDataTreeNode = {
+  blockId: genQualtricsBlockId(),
   sort: Math.random(),
   type: SubSurveyFlowElement.BRANCH,
   blockDescription: '',
@@ -20,6 +22,7 @@ const defaultNode: SurveyDataTreeNode = {
   title: '',
   fieldName: '',
 };
+
 const AddNewBlockElement: FC<{
   fieldName: string;
 }> = props => {
@@ -75,7 +78,7 @@ const AddNewBlockElement: FC<{
         </div>
       </div>
 
-      <Button className={'py-3 w-full'} onClick={toggleShow}>
+      <Button type={'primary'} className={'py-3 w-full'} onClick={toggleShow}>
         {t('common.addElement')}
       </Button>
     </div>
