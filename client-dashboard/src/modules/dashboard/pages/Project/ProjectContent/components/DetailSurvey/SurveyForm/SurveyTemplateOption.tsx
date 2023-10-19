@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext } from 'formik';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { ISurvey } from '../../../../../../../../type';
+import { ISurvey } from '@/type';
 import { Input, Radio, Space, Table } from 'antd';
 import { useInfiniteQuery } from 'react-query';
 import _get from 'lodash/get';
@@ -11,7 +11,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { TemplateOptionWrapper } from '../../../../ProjectSider/style';
 import { SurveyService } from '../../../../../../../../services';
 import { useParams } from 'react-router';
-import { IAddSurveyFormValues, SurveyTemplateEnum } from './SurveyForm';
+import { IAddSurveyFormValues, SurveyTemplateEnum } from './type';
 
 const columns: ColumnsType<ISurvey> = [
   {

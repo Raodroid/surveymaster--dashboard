@@ -8,13 +8,9 @@ import {
   CreateSurveyBodyDto,
   IPostSurveyVersionBodyDto,
   IPutSurveyVersionBodyDtoExtendId,
-  IQuestionVersion,
   ISurveyQuestionDto,
   ISurveyVersion,
-  ISurveyVersionBaseDto,
   ProjectTypes,
-  QuestionType,
-  Replace,
   SubSurveyFlowElementDto,
   SurveyVersionStatus,
 } from 'type';
@@ -36,15 +32,15 @@ import {
 import ViewSurveyQuestionList from './ViewSurveyQuestionList';
 import SimpleBar from 'simplebar-react';
 import { useToggle } from '../../../../../../../../utils';
-import SurveyPlayGround from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/SurveyPlayGround/SurveyPlayGround';
-import { transformSurveyVersion } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyFlow/util';
-
+import SurveyPlayGround from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/SurveyPlayGround/SurveyPlayGround';
+import { transformSurveyVersion } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/util';
+import { transformInitSurveyFormData } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/util';
+import {
+  questionValueType,
+  SurveyTemplateEnum,
+  IAddSurveyFormValues,
+} from './type';
 const { confirm } = Modal;
-
-export enum SurveyTemplateEnum {
-  NEW = 'NEW',
-  DUPLICATE = 'DUPLICATE',
-}
 
 const isChangeSurveyQuestionField = (
   newQuestionValue: questionValueType[],
@@ -74,63 +70,6 @@ const isChangeSurveyQuestionField = (
   });
 };
 
-export type questionValueType = ISurveyQuestionDto & {
-  type: QuestionType | string;
-  category: string;
-  id?: string;
-  questionTitle: string;
-  versions?: IQuestionVersion[];
-  createdAt?: string | Date | null;
-};
-
-type ExtraSurveyFlowElement = Replace<
-  SubSurveyFlowElementDto,
-  'surveyQuestions',
-  {
-    surveyQuestions: questionValueType[];
-  }
->;
-
-type Version = Replace<
-  ISurveyVersionBaseDto,
-  'surveyFlowElements',
-  {
-    surveyFlowElements: SurveyFlowElements[];
-  }
->;
-
-export type SurveyFlowElements = Replace<
-  ExtraSurveyFlowElement,
-  'children',
-  {
-    children: SurveyFlowElements[];
-  }
->;
-
-export interface IAddSurveyFormValues
-  extends Replace<
-    CreateSurveyBodyDto,
-    'version',
-    {
-      version: Version;
-    }
-  > {
-  createdAt?: string | Date | null;
-  template: SurveyTemplateEnum | string;
-  duplicateSurveyId?: string;
-  surveyId: string;
-  surveyVersionId?: string;
-  questionIdMap?: Record<
-    string,
-    {
-      questionTitle: string;
-      versions: IQuestionVersion[];
-      createdAt: string | Date | null;
-    } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
-  >;
-  selectedRowKeys?: string[];
-}
-
 const transformQuestionData = (
   input?: ISurveyVersion,
 ): questionValueType[] | undefined => {
@@ -155,38 +94,6 @@ const transformQuestionData = (
   );
 };
 
-const createQuestionMap = (
-  input?: ISurveyVersion,
-):
-  | Record<
-      string,
-      {
-        questionTitle: string;
-        versions: IQuestionVersion[];
-        createdAt: string | Date | null;
-      } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
-    >
-  | undefined => {
-  if (!input || !input?.questions) return undefined;
-
-  const { questions } = input;
-
-  return questions?.reduce((res, q) => {
-    if (!q.questionVersion?.question?.versions) {
-      return res;
-    }
-
-    return {
-      ...res,
-      [q.questionVersionId]: {
-        createdAt: q.questionVersion.createdAt,
-        questionTitle: q.questionVersion.title,
-        versions: q.questionVersion.question.versions,
-      },
-    };
-  }, {});
-};
-
 const SurveyForm: FC<{ isLoading?: boolean }> = props => {
   const { isLoading: isLoadingProps = false } = props;
   const params = useParams<{ projectId?: string; surveyId?: string }>();
@@ -204,27 +111,13 @@ const SurveyForm: FC<{ isLoading?: boolean }> = props => {
     params?.projectId,
   );
 
-  const initialValues = useMemo<IAddSurveyFormValues>(
-    () => ({
-      surveyVersionId: currentSurveyVersion?.id,
-      createdAt: currentSurveyVersion?.survey?.createdAt,
-      version: {
-        name: currentSurveyVersion?.name || '',
-        // questions: transformQuestionData(currentSurveyVersion) || [],
-        remark: currentSurveyVersion?.remark || '',
-        status: currentSurveyVersion?.status,
-        surveyFlowElements: [],
-      },
-      surveyId: surveyData.displayId || '',
-      template: SurveyTemplateEnum.NEW,
-      questionIdMap: createQuestionMap(currentSurveyVersion),
+  const initialValues = useMemo(() => {
+    return {
+      ...transformInitSurveyFormData(currentSurveyVersion),
       projectId,
-      selectedRowKeys: currentSurveyVersion?.questions?.map(
-        q => q.questionVersion?.questionId as string,
-      ),
-    }),
-    [currentSurveyVersion, projectId, surveyData.displayId],
-  );
+      surveyId: surveyData.displayId || '',
+    };
+  }, [currentSurveyVersion, projectId, surveyData?.displayId]);
 
   const editSurveyRouteMath = useMatch({
     path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,

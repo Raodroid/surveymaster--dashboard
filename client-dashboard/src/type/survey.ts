@@ -76,9 +76,25 @@ export interface SurveyFlowElementResponseDto {
   type: SubSurveyFlowElement;
   sort: number;
   blockDescription?: string;
-  surveyQuestions?: ISurveyQuestionDto[];
+  surveyQuestions?: Array<
+    ISurveyQuestionDto & {
+      id: string;
+      createdAt: string;
+      updatedAt: string | Date;
+      deletedAt: string | Date;
+      surveyId: string;
+      questionVersionId: string;
+      remark: string;
+      parameter: string;
+      sort: number;
+      createdBy: string;
+      deletedBy: string;
+      questionVersion: IQuestionVersion;
+    }
+  >;
   branchLogics?: SubBranchLogicDto[];
   listEmbeddedData?: SubEmbeddedDataDto[];
+  children?: SurveyFlowElementResponseDto[];
 }
 
 export interface ISurveyVersion {
