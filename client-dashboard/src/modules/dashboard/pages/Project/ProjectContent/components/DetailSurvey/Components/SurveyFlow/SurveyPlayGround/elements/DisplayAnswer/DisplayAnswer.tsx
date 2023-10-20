@@ -498,6 +498,7 @@ interface IDynamicSelectQuestion {
   fetchNextPage: () => void;
   isLoading: boolean;
   fieldName: string;
+  className?: string;
 }
 
 export const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
@@ -509,6 +510,7 @@ export const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
     fetchNextPage,
     isLoading,
     fieldName,
+    className,
   } = props;
   const { t } = useTranslation();
   const { initialValues } = useFormikContext<IAddSurveyFormValues>();
@@ -606,6 +608,7 @@ export const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
           placeholder={t('common.selectQuestion')}
           disabled
           name={`${fieldName}.questionTitle`}
+          className={className}
         />
       ) : (
         <ControlledInput
@@ -621,6 +624,7 @@ export const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
           placeholder={t('common.selectQuestion')}
           onChange={handleOnChange}
           name={`${fieldName}.questionVersionId`}
+          className={className}
         />
       )}
     </div>

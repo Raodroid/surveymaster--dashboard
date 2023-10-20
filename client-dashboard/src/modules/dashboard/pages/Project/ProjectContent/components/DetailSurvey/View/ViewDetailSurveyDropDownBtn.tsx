@@ -31,6 +31,10 @@ import _get from 'lodash/get';
 import moment from 'moment';
 import { MenuDropDownWrapper } from '../../../../../../../../customize-components/styles';
 import { onError, saveBlob } from '../../../../../../../../utils';
+import {
+  transformSurveyVersion,
+  transSurveyFLowElement,
+} from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/util';
 
 const { confirm } = Modal;
 
@@ -199,7 +203,11 @@ export const ViewDetailSurveyDropDownMenuButton: FC<
               completeMutation.mutateAsync({
                 surveyVersionId: record.id as string,
                 name: record.name,
-                questions: record.questions as ISurveyQuestion[],
+                surveyFlowElements: transSurveyFLowElement(
+                  record?.surveyFlowElements || [],
+                  {},
+                  0,
+                ),
                 status: SurveyVersionStatus.COMPLETED,
                 remark: record.remark || '',
               });

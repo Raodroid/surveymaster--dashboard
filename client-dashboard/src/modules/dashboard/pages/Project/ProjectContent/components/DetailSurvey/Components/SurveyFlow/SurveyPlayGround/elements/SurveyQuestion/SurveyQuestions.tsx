@@ -20,6 +20,7 @@ import { questionValueType } from '@/modules/dashboard/pages/Project/ProjectCont
 import GroupSurveyButton, {
   initNewRowValue,
 } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/SurveyPlayGround/elements/GroupSurveyButton/GroupSurveyButton';
+import { useCheckSurveyFormMode } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/util';
 
 const initParams: GetListQuestionDto = {
   q: '',
@@ -59,6 +60,8 @@ const SurveyQuestions: FC<{
     }),
     [debounceSearchText],
   );
+
+  const { isViewMode } = useCheckSurveyFormMode();
 
   const {
     data: questionListData,
@@ -129,7 +132,7 @@ const SurveyQuestions: FC<{
                 alignItems: 'center',
               }}
             >
-              <DragHandle />
+              {!isViewMode && <DragHandle />}
               <span>{index}</span>
             </span>
           );
@@ -178,6 +181,7 @@ const SurveyQuestions: FC<{
               fetchNextPage={fetchNextPage}
               isLoading={isLoading}
               fieldName={`${fieldName}.surveyQuestions[${questionIndex}]`}
+              className={isViewMode ? 'view-mode' : ''}
             />
           );
         },
@@ -187,6 +191,7 @@ const SurveyQuestions: FC<{
         dataIndex: 'remark',
         render: () => (
           <ControlledInput
+            className={isViewMode ? 'view-mode' : ''}
             style={{ width: '100%' }}
             inputType={INPUT_TYPES.INPUT}
             name={`${fieldName}.remark`}
@@ -197,20 +202,22 @@ const SurveyQuestions: FC<{
         title: '',
         dataIndex: 'action',
         width: 60,
-        render: (value, record, index) => (
-          <Button
-            size={'small'}
-            className={'px-2'}
-            danger
-            shape="circle"
-            onClick={() => removeQuestion(index)}
-          >
-            -
-          </Button>
-        ),
+        render: (value, record, index) =>
+          isViewMode ? null : (
+            <Button
+              size={'small'}
+              className={'px-2'}
+              danger
+              shape="circle"
+              onClick={() => removeQuestion(index)}
+            >
+              -
+            </Button>
+          ),
       },
     ],
     [
+      isViewMode,
       fetchNextPage,
       fieldName,
       hasNextPage,
@@ -232,7 +239,7 @@ const SurveyQuestions: FC<{
         pagination={false}
         setDataTable={setValue}
       />
-      <GroupSurveyButton fieldNameRoot={fieldName} />
+      {!isViewMode && <GroupSurveyButton fieldNameRoot={fieldName} />}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import {
   CreateSurveyBodyDto,
   IPostSurveyVersionBodyDto,
   IPutSurveyVersionBodyDtoExtendId,
+  ISurvey,
 } from 'type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
@@ -23,7 +24,9 @@ export default class SurveyService {
     );
   }
 
-  static getSurveyById(id: string | undefined): Promise<AxiosResponse> {
+  static getSurveyById(
+    id: string | undefined,
+  ): Promise<AxiosResponse<ISurvey>> {
     return APIService.get(`/${EntityEnum.SURVEY}/${id}`);
   }
 

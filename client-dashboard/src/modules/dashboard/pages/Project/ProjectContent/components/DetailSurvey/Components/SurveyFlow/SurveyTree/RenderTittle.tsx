@@ -19,6 +19,8 @@ import AddNewBlockElement from '@/modules/dashboard/pages/Project/ProjectContent
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@/modules/common/input/type';
 import { transformEnumToOption } from '@/utils';
+import { DEFAULT_THEME_COLOR } from '@/enums';
+import { useCheckSurveyFormMode } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/util';
 
 const { Panel } = Collapse;
 
@@ -28,21 +30,29 @@ const typeMap: Record<SubSurveyFlowElement, FC<QuestionBlockProps>> = {
   [SubSurveyFlowElement.BRANCH]: Branch,
   [SubSurveyFlowElement.EMBEDDED_DATA]: Embedded,
 };
+const errorMap: Record<SubSurveyFlowElement, string> = {
+  [SubSurveyFlowElement.END_SURVEY]: '',
+  [SubSurveyFlowElement.BLOCK]: 'Survey Question can not be empty',
+  [SubSurveyFlowElement.BRANCH]: 'Branch logics can not be empty',
+  [SubSurveyFlowElement.EMBEDDED_DATA]: 'Embedded Data can not be empty',
+};
 
 const QuestionTestBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   const { t } = useTranslation();
   const { record } = props;
   const fieldName = record.fieldName;
   const TypeComponent = typeMap[record.type];
+  const { isViewMode } = useCheckSurveyFormMode();
 
   const parentLayerFieldName = getParentNodeFieldName(fieldName);
 
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
 
-  const [{ value }] = useField<SurveyDataTreeNode>(fieldName);
+  const [{ value }, { error, touched }] =
+    useField<SurveyDataTreeNode>(fieldName);
 
-  const chilrenLength = useMemo<number>(() => {
+  const childrenLength = useMemo<number>(() => {
     switch (record.type) {
       case SubSurveyFlowElement.BLOCK:
         return record?.surveyQuestions?.length || 0;
@@ -54,6 +64,11 @@ const QuestionTestBlock: FC<{ record: SurveyDataTreeNode }> = props => {
         return 0;
     }
   }, [record]);
+
+  const blockError = useMemo<string>(() => {
+    if (childrenLength) return '';
+    return errorMap[record.type];
+  }, [childrenLength, record.type]);
 
   const handleRemoveBlock = () => {
     const currentBlockLevel = calcLevelNodeByFieldName(fieldName);
@@ -77,7 +92,13 @@ const QuestionTestBlock: FC<{ record: SurveyDataTreeNode }> = props => {
 
   return (
     <>
-      <div className={'p-6 border'}>
+      <div
+        className={'p-6 border'}
+        style={{
+          borderColor:
+            !!error && touched ? DEFAULT_THEME_COLOR.ERROR : '#F3EEF3',
+        }}
+      >
         <Collapse ghost className={'w-full'} activeKey={activeKey}>
           <Panel
             key={fieldName}
@@ -100,52 +121,59 @@ const QuestionTestBlock: FC<{ record: SurveyDataTreeNode }> = props => {
                 />
                 {record.type === SubSurveyFlowElement.BLOCK && (
                   <ControlledInput
-                    className={'w-[200px] hide-helper-text'}
+                    className={`w-[200px] hide-helper-text ${
+                      isViewMode ? 'view-mode' : ''
+                    }`}
                     inputType={INPUT_TYPES.INPUT}
                     name={`${fieldName}.blockDescription`}
                     label={t('common.blockDescription')}
                   />
                 )}
 
-                <Button
-                  className={'px-2'}
-                  size={'small'}
-                  type={'text'}
-                  onClick={toggleActiveKey}
-                >
-                  ({chilrenLength} item{chilrenLength ? 's' : ''})
-                </Button>
+                <Tooltip title={touched ? blockError || '' : ''}>
+                  <Button
+                    danger={!!error && touched}
+                    className={'px-2'}
+                    size={'small'}
+                    type={'text'}
+                    onClick={toggleActiveKey}
+                  >
+                    ({childrenLength} item{childrenLength > 1 ? 's' : ''})
+                  </Button>
+                </Tooltip>
               </div>
             }
           >
             <TypeComponent fieldName={fieldName} />
           </Panel>
 
-          <div className={'absolute right-3 top-6'}>
-            <div className={'flex gap-3'}>
-              <Tooltip title={t('common.duplicate')}>
-                <Button
-                  size={'small'}
-                  type={'text'}
-                  className={'px-2'}
-                  onClick={handleDuplicateBlock}
-                >
-                  <FileIconOutlined />
-                </Button>
-              </Tooltip>
-              <Tooltip title={t('common.remove')}>
-                <Button
-                  size={'small'}
-                  type={'text'}
-                  className={'px-2'}
-                  danger
-                  onClick={handleRemoveBlock}
-                >
-                  <TrashOutlined />
-                </Button>
-              </Tooltip>
+          {!isViewMode && (
+            <div className={'absolute right-3 top-6'}>
+              <div className={'flex gap-3'}>
+                <Tooltip title={t('common.duplicate')}>
+                  <Button
+                    size={'small'}
+                    type={'text'}
+                    className={'px-2'}
+                    onClick={handleDuplicateBlock}
+                  >
+                    <FileIconOutlined />
+                  </Button>
+                </Tooltip>
+                <Tooltip title={t('common.remove')}>
+                  <Button
+                    size={'small'}
+                    type={'text'}
+                    className={'px-2'}
+                    danger
+                    onClick={handleRemoveBlock}
+                  >
+                    <TrashOutlined />
+                  </Button>
+                </Tooltip>
+              </div>
             </div>
-          </div>
+          )}
           <div className={'w-full'}>
             {record.type === SubSurveyFlowElement.BRANCH && (
               <AddNewBlockElement fieldName={fieldName} />

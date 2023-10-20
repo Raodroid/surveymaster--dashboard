@@ -61,6 +61,7 @@ export interface SubSurveyFlowElementDto {
   sort: number;
   blockId: string;
   blockDescription?: string;
+  blockSort?: number;
   surveyQuestions?: ISurveyQuestionDto[];
   branchLogics?: SubBranchLogicDto[];
   listEmbeddedData?: SubEmbeddedDataDto[];
@@ -72,6 +73,7 @@ export interface SurveyFlowElementResponseDto {
   deletedAt?: Date | string | null;
   id: string;
   blockId: string;
+  blockSort?: number;
   surveyVersionId: string;
   type: SubSurveyFlowElement;
   sort: number;
@@ -100,16 +102,20 @@ export interface SurveyFlowElementResponseDto {
 export interface ISurveyVersion {
   id?: string;
   displayId: string;
+
   name: string;
   remark?: string;
-  questions?: ISurveyQuestion[];
-  numberOfQuestions: number;
-  survey?: ISurvey;
   status?: SurveyVersionStatus;
+  surveyFlowElements?: SurveyFlowElementResponseDto[];
+
+  survey?: ISurvey;
+
+  createdBy?: UserPayload;
+  updatedBy?: UserPayload;
+  deletedBy?: UserPayload;
   createdAt?: Date | string;
   updatedAt?: Date | string | null;
   deletedAt?: Date | string | null;
-  surveyFlowElements: SurveyFlowElementResponseDto[];
 }
 
 export interface ISurveyQuestion {
@@ -167,12 +173,7 @@ export interface IPostSurveyVersionBodyDto extends ISurveyVersionBaseDto {
   surveyId: string;
 }
 
-export interface IPutSurveyVersionBodyDto extends ISurveyVersionBaseDto {
-  name: string;
-  remark: string | null;
-  status: SurveyVersionStatus;
-  questions: ISurveyQuestionDto[];
-}
+export interface IPutSurveyVersionBodyDto extends ISurveyVersionBaseDto {}
 
 export interface IPutSurveyVersionBodyDtoExtendId
   extends IPutSurveyVersionBodyDto {

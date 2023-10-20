@@ -19,29 +19,38 @@ const columns: ColumnsType<ISurveyQuestion> = [
   },
 ];
 
+// const sortSurveyQuestion = (
+//   input: ISurveyVersion['surveyFlowElements'],
+// ): ISurveyVersion['surveyFlowElements'] => {
+//
+//
+//
+// };
+
 function QuestionRemarks() {
   const { values } = useFormikContext<ISurveyVersion>();
   const { t } = useTranslation();
+  return 'QuestionRemarks';
 
-  const dataSource = useMemo(
-    () =>
-      (values?.questions || [])?.sort(
-        (a, b) => Number(a.sort) - Number(b.sort),
-      ),
-    [values?.questions],
-  );
-  return (
-    <QuestionRemarksWrapper>
-      <div className="title">{t('common.questionRemarks')}:</div>
-      <Table
-        dataSource={dataSource}
-        columns={columns}
-        pagination={false}
-        showHeader={false}
-        rowKey="id"
-      />
-    </QuestionRemarksWrapper>
-  );
+  // const dataSource = useMemo(
+  //   () =>
+  //     (values?.questions || [])?.sort(
+  //       (a, b) => Number(a.sort) - Number(b.sort),
+  //     ),
+  //   [values?.questions],
+  // );
+  // return (
+  //   <QuestionRemarksWrapper>
+  //     <div className="title">{t('common.questionRemarks')}:</div>
+  //     <Table
+  //       dataSource={dataSource}
+  //       columns={columns}
+  //       pagination={false}
+  //       showHeader={false}
+  //       rowKey="id"
+  //     />
+  //   </QuestionRemarksWrapper>
+  // );
 }
 
 export default QuestionRemarks;

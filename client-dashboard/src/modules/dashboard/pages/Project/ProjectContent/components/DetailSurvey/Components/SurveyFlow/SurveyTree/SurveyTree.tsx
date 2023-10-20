@@ -10,6 +10,7 @@ import {
 } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/SurveyTree/util';
 import QuestionTestBlock from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/SurveyTree/RenderTittle';
 import * as React from 'react';
+import { useCheckSurveyFormMode } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/util';
 
 const loop = (
   data: SurveyDataTreeNode[],
@@ -34,6 +35,8 @@ const SurveyTree = () => {
   const [{ value }, , { setValue: setGData }] = useField<
     Array<SurveyDataTreeNode>
   >('version.surveyFlowElements');
+
+  const { isViewMode } = useCheckSurveyFormMode();
 
   const gData = useMemo(() => {
     return transformToSurveyDataTreeNode(value);
@@ -100,16 +103,20 @@ const SurveyTree = () => {
   return (
     <div className={''}>
       <Tree
-        draggable={{
-          icon: (
-            <DragIcon
-              style={{
-                cursor: 'grab',
-                color: templateVariable.text_primary_color,
-              }}
-            />
-          ),
-        }}
+        draggable={
+          isViewMode
+            ? false
+            : {
+                icon: (
+                  <DragIcon
+                    style={{
+                      cursor: 'grab',
+                      color: templateVariable.text_primary_color,
+                    }}
+                  />
+                ),
+              }
+        }
         titleRender={d => (
           <QuestionTestBlock record={d as SurveyDataTreeNode} />
         )}

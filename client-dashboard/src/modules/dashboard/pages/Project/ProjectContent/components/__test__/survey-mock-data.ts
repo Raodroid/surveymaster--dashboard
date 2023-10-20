@@ -8,7 +8,6 @@ export const surveyVersionMock: ISurveyVersion = {
   id: '147',
   displayId: 'X57N-M726-JKUX',
   name: 'test survey',
-  numberOfQuestions: 1,
   remark: '',
   status: SurveyVersionStatus.DRAFT,
 };
