@@ -2,12 +2,12 @@ import React, { lazy, useEffect, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { CustomSpinSuspense } from 'modules/common/styles';
-import { useScrollbarContext } from '../scrollbarContext/useScrollBar';
+import { useScrollbarContext } from '@/scrollbarContext/useScrollBar';
 import { ProtectedRoutes } from './protected.route';
 import { NoAuthenticationRoutes } from './public.route';
 import { UnProtectedRoutes } from './unProtected.route';
-import { useCheckScopeEntityDefault } from '../modules/common/hoc';
-import { SCOPE_CONFIG, ROUTE_PATH } from '../enums';
+import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
+import { SCOPE_CONFIG, ROUTE_PATH } from '@/enums';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
 
@@ -40,7 +40,7 @@ export const ScrollToTop = props => {
 
 const AppRoutes = () => {
   const { canRead: canReadQuestion } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.QUESTIONS,
+    SCOPE_CONFIG.ENTITY.QUESTION,
   );
   const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);
 

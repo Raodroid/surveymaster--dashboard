@@ -1,6 +1,8 @@
 import { createPayloadAction } from '../helpers';
 import { StandardAction } from '../types';
 import { ChangePasswordPayload } from './index';
+import { ReduxCollectionType } from '../../enums';
+import { AuthAction } from '../auth';
 
 export default class UserAction {
   static TYPES = {
@@ -71,4 +73,7 @@ export default class UserAction {
 
   static changeTwoFactorFailure = (error: string): StandardAction =>
     createPayloadAction(UserAction.TYPES.USER.CHANGE_TWO_FACTOR_FAILURE);
+
+  static updateRoles = (payload: ReduxCollectionType) =>
+    createPayloadAction(AuthAction.TYPES.GET_PROFILE.SUCCESS, payload);
 }

@@ -29,34 +29,18 @@ import QuestionRemarks from './QuestionRemarks';
 import { RemarksWrapper } from './styles';
 import { useToggle } from '../../../../../../../../utils';
 import { ViewDetailSurveyDropDownMenuButton } from '../View/ViewDetailSurveyDropDownBtn';
+import { isEqual } from 'lodash';
 
 const { confirm } = Modal;
-
-const isChangeSurveyQuestionField = (
-  newQuestionValue?: ISurveyQuestion[],
-  initQuestionValue?: ISurveyQuestion[],
-): boolean => {
-  if (!newQuestionValue || !initQuestionValue) return false;
-  if (newQuestionValue.length !== initQuestionValue.length) {
-    return true;
-  }
-
-  return newQuestionValue.some((q, index) => {
-    const { remark: newRemark } = q;
-    const { remark: oldRemark } = initQuestionValue[index];
-
-    return newRemark !== oldRemark;
-  });
-};
 
 interface IRemarkForm extends ISurveyVersion {
   displaySurveyId: string; // init value for Inputs component
 }
 const initISurveyVersion: IRemarkForm = {
+  surveyFlowElements: [],
   displayId: '',
   displaySurveyId: '',
   name: '',
-  numberOfQuestions: 0,
 };
 
 function Remarks() {
@@ -160,53 +144,52 @@ function Remarks() {
     },
   );
 
-  const handleSubmit = useCallback(
-    (payload: IRemarkForm) => {
-      const { questions, id, name, remark, displaySurveyId, status, ...rest } =
-        payload;
-      const updateSurveyPayload: IPutSurveyVersionBodyDtoExtendId = {
-        surveyVersionId: id as string,
-        questions: (questions || [])?.map(elm => {
-          return {
-            questionVersionId: elm.questionVersionId,
-            remark: elm.remark,
-            sort: elm.sort,
-            surveyId: params.surveyId,
-            parameter: elm.parameter,
-          };
-        }),
-        name,
-        remark: remark || null,
-        status: status as SurveyVersionStatus,
-      };
-
-      if (
-        currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
-        isChangeSurveyQuestionField(questions, initialValues.questions)
-      ) {
-        confirm({
-          icon: null,
-          content: t('common.confirmCreateNewSurveyVersion'),
-          onOk() {
-            addSurveyVersionMutation.mutateAsync({
-              surveyId: params.surveyId as string,
-              ...updateSurveyPayload,
-            });
-          },
-        });
-        return;
-      }
-
-      mutationUpdateRemarks.mutateAsync(updateSurveyPayload);
-    },
-    [
-      addSurveyVersionMutation,
-      currentSurveyVersion?.status,
-      initialValues.questions,
-      mutationUpdateRemarks,
-      params.surveyId,
-    ],
-  );
+  const handleSubmit = useCallback((payload: IRemarkForm) => {
+    const {
+      id,
+      name,
+      remark,
+      displaySurveyId,
+      status,
+      surveyFlowElements,
+      ...rest
+    } = payload;
+    console.log(payload);
+    // const updateSurveyPayload: IPutSurveyVersionBodyDtoExtendId = {
+    //   surveyVersionId: id as string,
+    //   name,
+    //   remark: remark || null,
+    //   status: status as SurveyVersionStatus,
+    //   surveyFlowElements: (surveyFlowElements || [])?.map(elm => {
+    //     return {
+    //       questionVersionId: elm.questionVersionId,
+    //       remark: elm.remark,
+    //       sort: elm.sort,
+    //       surveyId: params.surveyId,
+    //       parameter: elm.parameter,
+    //     };
+    //   }),
+    // };
+    //
+    // if (
+    //   currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
+    //   !isEqual(surveyFlowElements, initialValues.surveyFlowElements)
+    // ) {
+    //   confirm({
+    //     icon: null,
+    //     content: t('common.confirmCreateNewSurveyVersion'),
+    //     onOk() {
+    //       addSurveyVersionMutation.mutateAsync({
+    //         surveyId: params.surveyId as string,
+    //         ...updateSurveyPayload,
+    //       });
+    //     },
+    //   });
+    //   return;
+    // }
+    //
+    // mutationUpdateRemarks.mutateAsync(updateSurveyPayload);
+  }, []);
 
   const isLoading =
     isSurveyLoading || mutationUpdateRemarks.isLoading || isCallingAPI;
@@ -238,7 +221,7 @@ function Remarks() {
                     ))}
                   </div>
                   <Inputs hideDate />
-                  <QuestionRemarks />
+                  {/*<QuestionRemarks />*/}
                 </SimpleBar>
                 <div className="footer flex-center">
                   <Button type="primary" className="info-btn" htmlType="submit">

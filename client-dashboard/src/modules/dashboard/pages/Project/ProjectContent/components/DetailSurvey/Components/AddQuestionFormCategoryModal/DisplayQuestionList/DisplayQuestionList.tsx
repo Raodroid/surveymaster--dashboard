@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import { IOptionItem, IQuestion } from 'type';
+import { IOptionItem, IQuestion } from '@/type';
 import { Input } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
 import { DisplayQuestionListWrapper } from './style';

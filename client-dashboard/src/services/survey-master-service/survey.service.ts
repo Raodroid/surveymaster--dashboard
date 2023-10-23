@@ -1,11 +1,13 @@
 import { AxiosResponse } from 'axios';
 import {
   IGetParams,
-  IPostSurveyBodyDto,
+  CreateSurveyBodyDto,
   IPostSurveyVersionBodyDto,
   IPutSurveyVersionBodyDtoExtendId,
+  ISurvey,
 } from 'type';
 import APIService from './base.service';
+import { EntityEnum } from '@/enums';
 
 interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
   projectId?: string;
@@ -14,54 +16,68 @@ interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
 
 export default class SurveyService {
   static getSurveys(params: GetSurveyParams): Promise<AxiosResponse> {
-    return APIService.get('/surveys', { params });
+    return APIService.get(`/${EntityEnum.SURVEY}`, { params });
   }
   static getSurveyFile(surveyVersionId: string): Promise<AxiosResponse> {
-    return APIService.get(`/surveys/version/${surveyVersionId}/file`);
+    return APIService.get(
+      `/${EntityEnum.SURVEY}/version/${surveyVersionId}/file`,
+    );
   }
 
-  static getSurveyById(id: string | undefined): Promise<AxiosResponse> {
-    return APIService.get(`/surveys/${id}`);
+  static getSurveyById(
+    id: string | undefined,
+  ): Promise<AxiosResponse<ISurvey>> {
+    return APIService.get(`/${EntityEnum.SURVEY}/${id}`);
   }
 
   static getSurveyHistories(
     params: IGetParams & { surveyId?: string },
   ): Promise<AxiosResponse> {
     const { surveyId } = params;
-    return APIService.get(`/surveys/${surveyId}/histories`, { params });
+    return APIService.get(`/${EntityEnum.SURVEY}/${surveyId}/histories`, {
+      params,
+    });
   }
 
   static getAllSurveyHistories(
     params: IGetParams & { surveyId?: string },
   ): Promise<AxiosResponse> {
     const { surveyId } = params;
-    return APIService.get(`/surveys/${surveyId}/histories`, { params });
+    return APIService.get(`/${EntityEnum.SURVEY}/${surveyId}/histories`, {
+      params,
+    });
   }
 
-  static createSurvey(props: IPostSurveyBodyDto): Promise<AxiosResponse> {
-    return APIService.post('/surveys', props);
+  static createSurvey(props: CreateSurveyBodyDto): Promise<AxiosResponse> {
+    return APIService.post(EntityEnum.SURVEY, props);
   }
   static createSurveyVersion(
     props: IPostSurveyVersionBodyDto,
   ): Promise<AxiosResponse> {
-    return APIService.post('/surveys/version', props);
+    return APIService.post(`/${EntityEnum.SURVEY}/version`, props);
   }
   static duplicateSurvey(
-    props: IPostSurveyBodyDto & { surveyId: string },
+    props: CreateSurveyBodyDto & { surveyId: string },
   ): Promise<AxiosResponse> {
     const { surveyId } = props;
-    return APIService.post(`/surveys/${surveyId}/duplicate`, props);
+    return APIService.post(
+      `/${EntityEnum.SURVEY}/${surveyId}/duplicate`,
+      props,
+    );
   }
   static updateSurvey(
     props: IPutSurveyVersionBodyDtoExtendId,
   ): Promise<AxiosResponse> {
     const { surveyVersionId, ...rest } = props;
-    return APIService.put(`/surveys/version/${surveyVersionId}`, rest);
+    return APIService.put(
+      `/${EntityEnum.SURVEY}/version/${surveyVersionId}`,
+      rest,
+    );
   }
 
   static deleteSurveyVersion(payload: { id: string }): Promise<AxiosResponse> {
     const { id } = payload;
-    return APIService.delete(`/surveys/version/${id}`);
+    return APIService.delete(`/${EntityEnum.SURVEY}/version/${id}`);
   }
 
   static restoreSurveyVersion(payload: { id: string }): Promise<AxiosResponse> {
@@ -73,11 +89,11 @@ export default class SurveyService {
 
   static deleteSurveyById(payload: { id: string }): Promise<AxiosResponse> {
     const { id } = payload;
-    return APIService.delete(`/surveys/${id}`);
+    return APIService.delete(`/${EntityEnum.SURVEY}/${id}`);
   }
   static restoreSurveyById(payload: { id: string }): Promise<AxiosResponse> {
     const { id } = payload;
-    return APIService.post(`/surveys/${id}/restore`);
+    return APIService.post(`/${EntityEnum.SURVEY}/${id}/restore`);
   }
 
   static getSignedUrl(params: {
@@ -85,7 +101,10 @@ export default class SurveyService {
     surveyVersionId: string;
     fileType: string;
   }) {
-    return APIService.post(`/surveys/files/get-signed-url`, params);
+    return APIService.post(
+      `/${EntityEnum.SURVEY}/files/get-signed-url`,
+      params,
+    );
   }
   static uploadExcelFile(payload: {
     id: string;
@@ -95,7 +114,7 @@ export default class SurveyService {
     const formData = new FormData();
     formData.append('file', file);
     return APIService.post(
-      `/surveys/version/${id}/survey-results/excel`,
+      `/${EntityEnum.SURVEY}/version/${id}/survey-results/excel`,
       formData,
       {
         headers: { 'Content-Type': 'multipart/form-data' },

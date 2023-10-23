@@ -4,9 +4,9 @@ import { SelectProps } from 'antd/lib/select';
 import styled from 'styled-components';
 import { FetchParamsSelect } from 'type';
 import useFetchFilterOption from '../../../hoc/useFetchFilterOptions';
-import { Entities } from '../../../../../enums';
+import { Entities } from '@/enums';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { ArrowDown } from '../../../../../icons';
+import { ArrowDown } from '@/icons';
 import templateVariable from '../../../../../app/template-variables.module.scss';
 
 export type CustomSelectProps = SelectProps<string | number> & {
@@ -98,7 +98,7 @@ const CustomSelect = (props: CustomSelectProps) => {
     };
     if (res.loading) delete baseProps.suffixIcon;
     return baseProps;
-  }, [res, value, showSearch, options, fetchedOptions]);
+  }, [res, value, showSearch, handleSearch, options, fetchedOptions]);
 
   return <SelectStyled {...selectProps} />;
 };

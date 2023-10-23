@@ -20,7 +20,7 @@ const Profile = () => {
 
   const isMatch = useMatch(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.TEAM);
 
-  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USER);
 
   const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
   const isAdminRole = useMemo(() => {

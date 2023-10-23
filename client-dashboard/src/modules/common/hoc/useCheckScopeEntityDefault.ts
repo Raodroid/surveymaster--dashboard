@@ -13,14 +13,17 @@ export const useCheckScopeEntity = (
   actions: ScopeActionArray[],
 ): boolean[] => {
   const allScopesValues = useSelector(AuthSelectors.getCurrentScopes);
+
   return useMemo<boolean[]>(() => {
     return actions.map(action => {
       return allScopesValues.some(scope => {
         let checkPermission =
-          scope.action === action.action && scope.entity === entity;
+          scope?.action === action.action && scope?.entity === entity;
         if (action.metadata) {
           return (
-            checkPermission && scope.metadata && action.metadata(scope.metadata)
+            checkPermission &&
+            scope?.metadata &&
+            action.metadata(scope.metadata)
           );
         }
         return checkPermission;

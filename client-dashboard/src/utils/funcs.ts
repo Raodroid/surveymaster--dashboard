@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import useWindowSize from 'modules/common/hoc/useWindowSize';
-import { mobileSize } from '../enums';
+import { mobileSize } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 
 declare global {
@@ -48,12 +48,13 @@ export const errorNotification = (input: IErr) => {
 
 export const getAllScopes = (roleData: Role[]) => {
   const scopes: Record<string, boolean> = {};
-  const scopesArr: Scope[] = [];
+  let scopesArr: Scope[] = [];
+
   roleData.forEach(role => {
-    const scope = role.scope;
-    if (!scopes[scope.id]) {
-      scopesArr.push(scope);
-      scopes[scope.id] = true;
+    const scope = role.scopes;
+    if (!scopes[role?.id] && scope) {
+      scopesArr = [...scopesArr, ...scope];
+      scopes[role?.id] = true;
     }
   });
   return scopesArr;
@@ -166,7 +167,6 @@ export const useDebounce = (value: string, time: number = 500) => {
 };
 
 export const onError = (error: any) => {
-  console.error(error);
   notification.error({ message: error.response?.data?.message });
 };
 
@@ -183,8 +183,8 @@ export const transformEnumToOption = (
   translatePathKey?: (key) => string,
 ): Array<{ label: string; value: string }> => {
   return Object.keys(T).map(key => ({
-    value: key,
-    label: translatePathKey ? translatePathKey(key) : key,
+    value: T[key],
+    label: translatePathKey ? translatePathKey([T[key]]) : key,
   }));
 };
 
@@ -230,3 +230,7 @@ export function formatBytes(bytes, decimals = 2) {
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+export const objectKeys = <T extends object>(object: T): Array<keyof T> => {
+  return Object.keys(object) as Array<keyof T>;
+};

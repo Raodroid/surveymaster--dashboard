@@ -28,7 +28,7 @@ function Sider(props: SiderProps) {
   const isAdminRole = useMemo(() => {
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
-  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USER);
 
   return (
     <SiderWrapper className="sider flex">

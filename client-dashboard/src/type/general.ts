@@ -63,3 +63,15 @@ export interface IOptionItem {
   label: string;
   value: string;
 }
+
+export type ObjectKey = Record<string | number, unknown>;
+
+export type EmptyString<T> = { [K in keyof T]: T[K] | '' };
+
+export type Replace<
+  T,
+  ReplacedKey extends keyof T,
+  NewValue extends Record<ReplacedKey, unknown>,
+> = {
+  [K in keyof T]: K extends ReplacedKey ? NewValue[ReplacedKey] : T[K];
+};

@@ -1,9 +1,19 @@
 const CracoLessPlugin = require('craco-less');
 const CracoAntDesignPlugin = require('craco-antd');
+const CracoAlias = require('craco-alias');
+
 const { loaderByName } = require('@craco/craco');
 
 module.exports = {
   plugins: [
+    {
+      plugin: CracoAlias,
+      options: {
+        source: 'tsconfig',
+        baseUrl: './src',
+        tsConfigPath: './tsconfig.json',
+      },
+    },
     {
       plugin: [CracoLessPlugin, CracoAntDesignPlugin],
       options: {

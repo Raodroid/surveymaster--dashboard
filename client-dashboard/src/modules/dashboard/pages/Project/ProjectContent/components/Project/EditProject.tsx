@@ -23,9 +23,7 @@ function EditProject() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const { canUpdate } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.PROJECTS,
-  );
+  const { canUpdate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
 
   const { project, isLoading } = useGetProjectByIdQuery(params?.projectId);
 

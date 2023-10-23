@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReduxCollectionType } from 'enums';
-import { createPayloadAction, createAction } from '../helpers';
+import { createPayloadAction } from '../helpers';
 import { StandardAction } from '../types';
 import {
   SignInPayload,
@@ -64,12 +64,6 @@ export default class AuthAction {
       FAILURE: 'auth/CONFIRM_TEXT_SMS_FAILURE',
     },
 
-    GET_ALL_ROLES: {
-      START: 'auth/GET_ALL_ROLES_START',
-      SUCCESS: 'auth/GET_ALL_ROLES_SUCCESS',
-      FAILURE: 'auth/GET_ALL_ROLES_FAILURE',
-    },
-
     // challenge required password
     CHALLENGE_REQUIRED_PASSWORD: {
       START: 'auth/CHALLENGE_REQUIRED_PASSWORD_START',
@@ -95,21 +89,6 @@ export default class AuthAction {
     idToken: string;
   }): StandardAction =>
     createPayloadAction(AuthAction.TYPES.UPDATE_TOKENS, tokens);
-
-  // ACTIONS: GET_ALL_ROLES
-  static getAllRole = (): StandardAction =>
-    createPayloadAction(AuthAction.TYPES.GET_ALL_ROLES.START);
-
-  static getAllRoleSuccess = (allRoles): StandardAction<string> =>
-    createPayloadAction(AuthAction.TYPES.GET_ALL_ROLES.SUCCESS, allRoles);
-
-  static getAllRoleFail = (error?: string): StandardAction =>
-    createPayloadAction(
-      AuthAction.TYPES.GET_ALL_ROLES.FAILURE,
-      undefined,
-      undefined,
-      error,
-    );
 
   // ACTIONS: SIGNIN
   static userSignIn = (

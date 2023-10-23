@@ -23,7 +23,7 @@ function Title(props: TitleProps) {
   const params = useParams<{ projectId?: string }>();
 
   const { canCreate, canRead } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.QUESTIONS,
+    SCOPE_CONFIG.ENTITY.QUESTION,
   );
 
   const isActive = useMemo(() => {

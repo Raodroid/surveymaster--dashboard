@@ -17,7 +17,7 @@ function TeamForm() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const { canCreate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+  const { canCreate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USER);
 
   const mutationInviteMember = useMutation(
     (payload: PostPutMember) => AdminService.inviteMember(payload),

@@ -17,7 +17,7 @@ const ProjectSider = () => {
   const { projects, isLoading } = useGetAllProjects();
 
   const { canCreate, canRead } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.PROJECTS,
+    SCOPE_CONFIG.ENTITY.PROJECT,
   );
 
   return (

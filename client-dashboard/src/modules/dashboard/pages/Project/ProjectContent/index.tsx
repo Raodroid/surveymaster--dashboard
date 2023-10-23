@@ -5,7 +5,7 @@ import ProjectTable from './components/ProjectTable';
 import { ProjectHomeWrapper } from './styles';
 
 const ProjectContent = () => {
-  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECTS);
+  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
   return (
     <ProjectHomeWrapper className="flex-column">
       {canRead && (

@@ -14,13 +14,13 @@ import {
 import { Button } from 'antd';
 import SimpleBar from 'simplebar-react';
 import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../../enums';
+import { ROUTE_PATH } from '@/enums';
 import {
   filterColumn,
   IRenderColumnCondition,
 } from '../../../../../../../utils';
 import { AnswerListWrapper } from './style';
-import { INPUT_TYPES } from '../../../../../../common/input/type';
+import { INPUT_TYPES } from '@/modules/common/input/type';
 import { ControlledInput } from '../../../../../../common';
 import { generateRandom } from 'modules/common/funcs';
 
@@ -129,10 +129,7 @@ const MultipleChoice = () => {
     columns,
   );
 
-  const dataSource = useMemo(
-    () => (values.options || []).map((q, index) => ({ ...q, index })),
-    [values.options],
-  );
+  const dataSource = useMemo(() => values.options || [], [values.options]);
 
   const setDataTable = (options: IQuestionVersionOption[]) => {
     setValues(s => ({

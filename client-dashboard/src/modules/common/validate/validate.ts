@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import moment from 'moment';
-import { QuestionType } from '../../../type';
-import { SurveyTemplateEnum } from '../../dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/SurveyForm';
+import { QuestionType, SubSurveyFlowElement } from '@/type';
+import { SurveyTemplateEnum } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/type';
 
 export const INVALID_FIELDS = {
   MIN_USERNAME: 'validation.messages.minUserName',
@@ -273,6 +273,120 @@ const SURVEY_FORM_SCHEMA = {
   remark: Yup.string(),
 };
 
+const QUESTION_BLOCK_VALIDATION = {
+  type: Yup.string().required(INVALID_FIELDS.REQUIRED),
+  blockDescription: Yup.string()
+    .nullable()
+    .test(
+      '',
+      INVALID_FIELDS.REQUIRED,
+      (
+        value,
+        values: {
+          parent: {
+            type?: SubSurveyFlowElement;
+          };
+        },
+      ) => {
+        if (values.parent?.type !== SubSurveyFlowElement.BLOCK) return true;
+        return !!value;
+      },
+    ),
+  surveyQuestions: Yup.array()
+    .of(
+      Yup.object().shape({
+        questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        remark: Yup.string(),
+        type: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        category: Yup.string().required(INVALID_FIELDS.REQUIRED),
+      }),
+    )
+    .test(
+      '',
+      'Survey questions can not be empty',
+      (
+        value,
+        values: {
+          parent: {
+            type?: SubSurveyFlowElement;
+          };
+        },
+      ) => {
+        if (values.parent?.type !== SubSurveyFlowElement.BLOCK) return true;
+        return !!value?.length;
+      },
+    ),
+  listEmbeddedData: Yup.array()
+    .of(
+      Yup.object({
+        field: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        value: Yup.string().required(INVALID_FIELDS.REQUIRED),
+      }),
+    )
+    .test(
+      '',
+      'Embedded Data list can not be empty',
+      (
+        value,
+        values: {
+          parent: {
+            type?: SubSurveyFlowElement;
+          };
+        },
+      ) => {
+        if (values.parent?.type !== SubSurveyFlowElement.EMBEDDED_DATA)
+          return true;
+        return !!value?.length;
+      },
+    ),
+  branchLogics: Yup.array()
+    .of(
+      Yup.object({
+        conjunction: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        logicType: Yup.string().required(INVALID_FIELDS.REQUIRED),
+      }),
+    )
+    .test(
+      '',
+      'Branch Logics can not be empty',
+      (
+        value,
+        values: {
+          parent: {
+            type?: SubSurveyFlowElement;
+          };
+        },
+      ) => {
+        if (values.parent?.type !== SubSurveyFlowElement.BRANCH) return true;
+        return !!value?.length;
+      },
+    ),
+
+  children: Yup.array()
+    .transform(value => Object.values(value))
+    .of(
+      Yup.lazy(() =>
+        Yup.object().shape(QUESTION_BLOCK_VALIDATION).default(undefined),
+      ) as any,
+    )
+    .test(
+      '',
+      'Question block can not be empty',
+      (
+        value,
+        values: {
+          parent: {
+            type?: SubSurveyFlowElement;
+          };
+        },
+      ) => {
+        if (values.parent?.type !== SubSurveyFlowElement.BRANCH) return true;
+        console.log(value);
+        return !!value?.length;
+      },
+    ),
+};
+
 export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
   duplicateSurveyId: Yup.string().when('template', {
     is: SurveyTemplateEnum.DUPLICATE,
@@ -284,14 +398,11 @@ export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
       is: SurveyTemplateEnum.NEW,
       then: Yup.object().shape({
         ...SURVEY_FORM_SCHEMA,
-        questions: Yup.array()
+        surveyFlowElements: Yup.array()
           .min(1)
           .of(
             Yup.object().shape({
-              questionVersionId: Yup.string().required(INVALID_FIELDS.REQUIRED),
-              remark: Yup.string(),
-              type: Yup.string().required(INVALID_FIELDS.REQUIRED),
-              category: Yup.string().required(INVALID_FIELDS.REQUIRED),
+              ...QUESTION_BLOCK_VALIDATION,
             }),
           ),
       }),
@@ -301,6 +412,7 @@ export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
       then: Yup.object().shape(SURVEY_FORM_SCHEMA),
     }),
 });
+
 export const SURVEY_EXTERNAL_FORM_SCHEMA = Yup.object().shape({
   selectedRowKeys: Yup.array().of(Yup.string()).min(1).required(INVALID_FIELDS),
   version: Yup.object().shape({

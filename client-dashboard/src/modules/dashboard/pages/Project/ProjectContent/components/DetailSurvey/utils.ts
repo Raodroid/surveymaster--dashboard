@@ -51,3 +51,18 @@ export const useHandleActionType = (action: IAction) => {
       return t('actionType.noActionsYet');
   }
 };
+
+export const randomCharacter = () => {
+  const characters =
+    '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const randomIndex = Math.floor(Math.random() * characters.length);
+  return characters[randomIndex];
+};
+
+export const genQualtricsBlockId = () => {
+  const idArray = ['BL_'];
+  for (let i = 0; i < 15; i++) {
+    idArray.push(randomCharacter());
+  }
+  return idArray.join('');
+};

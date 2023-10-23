@@ -12,7 +12,7 @@ import { QuestionBankService } from 'services';
 import { onError } from 'utils';
 import { IQuestionCreatePostDto, MatrixType, QuestionType } from 'type';
 import { ROUTE_PATH } from 'enums';
-import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
+import { ADD_QUESTION_FIELDS } from '@/modules/common/validate/validate';
 import DisplayAnswerList from './DisplayAnswerList';
 import { generatePath } from 'react-router';
 import DisplayTitle from './DisplayTitle';
