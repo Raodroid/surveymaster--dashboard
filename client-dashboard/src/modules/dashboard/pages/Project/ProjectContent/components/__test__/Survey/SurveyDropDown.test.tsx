@@ -4,17 +4,17 @@ import {
   baseAxiosResponse,
   JestGeneralProviderHoc,
 } from '../../../../../../../../get-mock-data-jest-test';
-import { SurveyDropDownMenu } from '../../Survey/SurveyDropDown';
 import { surveyMock } from '../survey-mock-data';
 import * as hoc from '../../../../../../../common/hoc/useCheckScopeEntityDefault';
 import {
   ProjectService,
   SurveyService,
 } from '../../../../../../../../services';
-import { ProjectTypes } from '../../../../../../../../type';
+import { ProjectTypes } from '@/type';
 import { notification } from 'antd';
 import clearAllMocks = jest.clearAllMocks;
 import * as funcs from '../../../../../../../../utils/funcs';
+import { SurveyDropDownMenu } from '@pages/Survey/SurveyManagement/SurveyDropDown';
 
 const mockedUseNavigate = jest.fn();
 
@@ -63,6 +63,7 @@ test('SurveyDropDownMenu: duplicate survey', async () => {
 
   render(
     <JestGeneralProviderHoc>
+      {/* eslint-disable-next-line react/jsx-no-undef */}
       <SurveyDropDownMenu record={surveyMock} />
     </JestGeneralProviderHoc>,
   );

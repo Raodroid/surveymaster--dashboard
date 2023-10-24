@@ -7,10 +7,9 @@ import { UserContentStyled } from '../styles';
 import { ChangePasswordModal, SetUpPreferencesModal } from './modals';
 import { AuthSelectors } from '../../../../../redux/auth';
 import { useMutation } from 'react-query';
-import { UserService } from '../../../../../services';
-import { onError } from '../../../../../utils';
-import HannahCustomSpin from '../../../components/HannahCustomSpin';
-
+import { UserService } from '.@/services';
+import { onError } from '@/utils';
+import HannahCustomSpin from '@components/HannahCustomSpin';
 const { confirm } = Modal;
 
 function UserContent() {

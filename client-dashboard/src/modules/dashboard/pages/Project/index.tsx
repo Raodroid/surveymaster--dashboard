@@ -4,10 +4,10 @@ import { Navigate, Outlet, Route, Routes } from 'react-router';
 import { AuthSelectors } from '../../../../redux/auth';
 import { useCheckScopeEntityDefault } from '../../../common/hoc';
 import ProjectContent from './ProjectContent';
-import DetailSurvey from './ProjectContent/components/DetailSurvey';
-import AddSurvey from './ProjectContent/components/DetailSurvey/Add';
+import DetailSurvey from '../Survey/DetailSurvey';
+import AddSurvey from '../Survey/DetailSurvey/Add';
 import { AddProject, EditProject } from './ProjectContent/components/Project';
-import Survey from './ProjectContent/components/Survey';
+import SurveyManagement from '../Survey/SurveyManagement';
 import { ProjectContentWrapper } from './ProjectContent/styles';
 import ProjectSider from './ProjectSider';
 import { ProjectWrapper } from './styles';
@@ -41,7 +41,7 @@ const Project = () => {
           {canReadSurveyinal && (
             <Route
               path={subRoute(projectRoutePath.SURVEY)}
-              element={<Survey />}
+              element={<SurveyManagement />}
             />
           )}
           {canReadSurveyinal && (
