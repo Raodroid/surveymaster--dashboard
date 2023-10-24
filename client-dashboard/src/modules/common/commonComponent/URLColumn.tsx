@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { LinkOutlined, CopyOutlined } from '@ant-design/icons';
+import { LinkOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
+import CopyButton from '@/modules/common/commonComponent/CopyButton/CopyButton';
 
 const Container = styled.div`
   display: flex;
@@ -29,11 +29,7 @@ const Container = styled.div`
 
 const URLColumn = (props: { path: string }) => {
   const { path } = props;
-  const { t } = useTranslation();
 
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(path as string);
-  }, [path]);
   const handleLinkPage = useCallback(() => {
     window.open(path);
   }, [path]);
@@ -49,17 +45,7 @@ const URLColumn = (props: { path: string }) => {
           aria-label="Link Icon"
         />
       </Tooltip>
-      <Tooltip title={'Copied'} trigger="focus">
-        <Tooltip title={path} placement={'bottom'}>
-          <Button
-            className={'url-col-item'}
-            size="small"
-            icon={<CopyOutlined />}
-            onClick={handleCopy}
-            aria-label="Copy Icon"
-          />
-        </Tooltip>
-      </Tooltip>
+      <CopyButton content={path} />
     </Container>
   );
 };

@@ -23,7 +23,8 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@pages/*": ["./modules/dashboard/pages/*"]
     }
   },
   "include": [

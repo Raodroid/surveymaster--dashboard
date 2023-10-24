@@ -2,7 +2,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { size } from '@/enums';
 import { DragTable } from '@/modules/dashboard/components/DragTable/DragTable';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { useField } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { Button } from 'antd';
 import DragHandle from '../../../../../../../../../../../../customize-components/DragHandle';
 import { GetListQuestionDto, IOptionItem, IQuestion } from '@/type';
@@ -21,6 +21,8 @@ import GroupSurveyButton, {
   initNewRowValue,
 } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/SurveyPlayGround/elements/GroupSurveyButton/GroupSurveyButton';
 import { useCheckSurveyFormMode } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/util';
+import CopyButton from '@/modules/common/commonComponent/CopyButton/CopyButton';
+import _get from 'lodash/get';
 
 const initParams: GetListQuestionDto = {
   q: '',
@@ -35,6 +37,11 @@ const SurveyQuestions: FC<{
 }> = props => {
   const { fieldName } = props;
   const { t } = useTranslation();
+
+  // const { values } = useFormikContext();
+  //
+  // const x = _get(values, fieldName);
+  // console.log({ x });
 
   const [{ value }, , { setValue }] = useField<questionValueType[]>(
     `${fieldName}.surveyQuestions`,
@@ -124,6 +131,7 @@ const SurveyQuestions: FC<{
       {
         dataIndex: 'order',
         render: (value, record, index) => {
+          // const qId=record.
           return (
             <span
               style={{
@@ -134,6 +142,7 @@ const SurveyQuestions: FC<{
             >
               {!isViewMode && <DragHandle />}
               <span>{index}</span>
+              <CopyButton content={index} />
             </span>
           );
         },

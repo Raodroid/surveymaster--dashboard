@@ -38,9 +38,9 @@ const SurveyTree = () => {
 
   const { isViewMode } = useCheckSurveyFormMode();
 
-  const gData = useMemo(() => {
-    return transformToSurveyDataTreeNode(value);
-  }, [value]);
+  // const gData = useMemo(() => {
+  //   return transformToSurveyDataTreeNode(value);
+  // }, [value]);
 
   const onDrop: TreeProps['onDrop'] = useCallback(
     info => {
@@ -50,12 +50,7 @@ const SurveyTree = () => {
       const dropPosition =
         info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
-      console.log({ dropKey, dragKey, info });
-
-      //prevent drag
-      //case 1
-
-      const data = [...gData];
+      const data = [...value];
       // Find dragObject
       let dragObj: SurveyDataTreeNode;
       loop(data, dragKey, (item, index, arr) => {
@@ -95,9 +90,9 @@ const SurveyTree = () => {
           ar.splice(i! + 1, 0, dragObj!);
         }
       }
-      setGData(data);
+      setGData(transformToSurveyDataTreeNode(data));
     },
-    [gData, setGData],
+    [value, setGData],
   );
 
   return (
@@ -122,7 +117,7 @@ const SurveyTree = () => {
         )}
         blockNode
         onDrop={onDrop}
-        treeData={gData as DataNode[]}
+        treeData={value as DataNode[]}
       />
     </div>
   );

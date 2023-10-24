@@ -32,13 +32,13 @@ import {
 import ViewSurveyQuestionList from './ViewSurveyQuestionList';
 import SimpleBar from 'simplebar-react';
 import { useToggle } from '../../../../../../../../utils';
-import SurveyPlayGround from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/SurveyPlayGround/SurveyPlayGround';
-import { transformSurveyVersion } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/util';
+import SurveyPlayGround from '@pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/SurveyPlayGround/SurveyPlayGround';
+import { transformSurveyVersion } from '@pages/Project/ProjectContent/components/DetailSurvey/Components/SurveyFlow/util';
 import {
   isSurveyFlowChange,
   transformInitSurveyFormData,
   useCheckSurveyFormMode,
-} from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/util';
+} from '@pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/util';
 import {
   questionValueType,
   SurveyTemplateEnum,
@@ -517,22 +517,7 @@ const QuestionSurveyList: FC<{
   const params = useParams<{ surveyId?: string }>();
   const { currentSurveyVersion } = useGetSurveyById(params?.surveyId);
 
-  const editSurveyRouteMath = useMatch({
-    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
-    end: true,
-    caseSensitive: true,
-  });
-
-  const createSurveyRouteMath = useMatch({
-    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY,
-    end: true,
-    caseSensitive: true,
-  });
-
-  const isEditMode = !!editSurveyRouteMath;
-  const isCreateMode = !!createSurveyRouteMath;
-
-  const isViewMode = !(isEditMode || isCreateMode);
+  const { isViewMode, isEditMode } = useCheckSurveyFormMode();
 
   return (
     <SimpleBar style={{ height: '100%' }}>
