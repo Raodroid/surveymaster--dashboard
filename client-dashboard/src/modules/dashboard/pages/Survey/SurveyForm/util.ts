@@ -1,5 +1,4 @@
 import {
-  IQuestionVersion,
   ISurveyVersion,
   SubSurveyFlowElementDto,
   SurveyFlowElementResponseDto,
@@ -7,38 +6,13 @@ import {
 
 import {
   IAddSurveyFormValues,
+  rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
   SurveyTemplateEnum,
 } from './type';
 import { isEqual } from 'lodash';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
-
-const createQuestionMap = (
-  input: ISurveyVersion['surveyFlowElements'] = [],
-  result: Record<
-    string,
-    {
-      questionTitle: string;
-      versions: IQuestionVersion[];
-      createdAt: string | Date | null;
-    } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
-  >,
-) => {
-  input?.forEach(item => {
-    item.surveyQuestions?.forEach(q => {
-      result[q.questionVersionId] = {
-        createdAt: q.questionVersion.createdAt,
-        questionTitle: q.questionVersion.title,
-        versions: q.questionVersion.question?.versions || [],
-      };
-    });
-
-    if (item.children) {
-      createQuestionMap(item.children, result);
-    }
-  });
-};
 
 const transSurveyFlowElements = (
   input: SurveyFlowElementResponseDto[] = [],
@@ -47,11 +21,13 @@ const transSurveyFlowElements = (
 ): SurveyDataTreeNode[] => {
   return input.map((item, index) => {
     const fieldName = !parentFieldName
-      ? `version.surveyFlowElements[${index}]`
+      ? `${rootSurveyFlowElementFieldName}[${index}]`
       : `${parentFieldName}.children[${index}]`;
 
     const blockSort = Number(
-      parentBlockSort === undefined ? 1 : `${parentBlockSort}` + (index + 1),
+      parentBlockSort === undefined
+        ? index + 1
+        : `${parentBlockSort}` + (index + 1),
     );
 
     const { children, ...rest } = item;
@@ -74,30 +50,9 @@ const transSurveyFlowElements = (
   });
 };
 
-const getSelectedRowKey = (
-  input: ISurveyVersion['surveyFlowElements'] = [],
-  result: string[],
-) => {
-  input?.forEach(item => {
-    item.surveyQuestions?.forEach(q => {
-      result.push(q.questionVersionId);
-    });
-
-    if (item.children) {
-      getSelectedRowKey(item.children, result);
-    }
-  });
-};
-
 export const transformInitSurveyFormData = (
   input?: ISurveyVersion,
 ): IAddSurveyFormValues => {
-  const selectedRowKeys: string[] = [];
-  getSelectedRowKey(input?.surveyFlowElements, selectedRowKeys);
-
-  const questionIdMap = {};
-  createQuestionMap(input?.surveyFlowElements, questionIdMap);
-
   return {
     surveyVersionId: input?.id,
     createdAt: input?.survey?.createdAt,
@@ -109,9 +64,7 @@ export const transformInitSurveyFormData = (
     },
     surveyId: '',
     template: SurveyTemplateEnum.NEW,
-    questionIdMap,
     projectId: '',
-    selectedRowKeys,
   };
 };
 

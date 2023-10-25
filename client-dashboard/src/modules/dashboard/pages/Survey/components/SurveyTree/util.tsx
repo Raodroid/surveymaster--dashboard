@@ -10,32 +10,24 @@ export const transformToSurveyDataTreeNode = (
 ): SurveyDataTreeNode[] => {
   return data.map((i, index) => {
     const fieldName = !parentFieldName
-      ? `version.surveyFlowElements[${index}]`
+      ? `${rootSurveyFlowElementFieldName}[${index}]`
       : `${parentFieldName}.children[${index}]`;
-
     const blockSort = Number(
-      parentBlockSort === undefined ? 1 : `${parentBlockSort}` + (index + 1),
+      parentBlockSort === undefined
+        ? index + 1
+        : `${parentBlockSort}` + (index + 1),
     );
-
     const { children, ...rest } = i;
-    const node: SurveyDataTreeNode = {
+
+    return {
       ...rest,
       key: fieldName,
       fieldName,
-      blockSort: blockSort,
+      blockSort,
+      children: !children
+        ? []
+        : transformToSurveyDataTreeNode(children, blockSort, fieldName),
     };
-
-    if (i?.children) {
-      return {
-        ...node,
-        children: transformToSurveyDataTreeNode(
-          i.children,
-          blockSort,
-          fieldName,
-        ),
-      };
-    }
-    return node;
   });
 };
 

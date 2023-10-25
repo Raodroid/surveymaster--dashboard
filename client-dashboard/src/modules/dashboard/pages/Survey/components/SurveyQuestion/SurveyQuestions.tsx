@@ -1,16 +1,12 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { size } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useField } from 'formik';
 import { Button } from 'antd';
 import DragHandle from '@/customize-components/DragHandle';
-import { GetListQuestionDto, IOptionItem, IQuestion } from '@/type';
 import { INPUT_TYPES } from '@/modules/common/input/type';
-import { onError, useDebounce } from '@/utils';
+import { useDebounce } from '@/utils';
 import { useTranslation } from 'react-i18next';
-import { DynamicSelect } from '../DisplayAnswer/DisplayAnswer';
-import { useInfiniteQuery } from 'react-query';
-import { QuestionBankService } from '@/services';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
 
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
@@ -20,14 +16,9 @@ import GroupSurveyButton, {
   initNewRowValue,
 } from '../GroupSurveyButton/GroupSurveyButton';
 import { ControlledInput } from '@/modules/common';
-
-const initParams: GetListQuestionDto = {
-  q: '',
-  take: 10,
-  page: 1,
-  hasLatestCompletedVersion: true,
-  isDeleted: false,
-};
+import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
+import DynamicSelect from '../DynamicSelect/DynamicSelec';
+import { IOptionItem } from '@/type';
 
 const SurveyQuestions: FC<{
   fieldName: string;
@@ -53,75 +44,25 @@ const SurveyQuestions: FC<{
     setValue([...value, initNewRowValue]);
   }, [setValue, value]);
 
+  const { question } = useSurveyFormContext();
+  const { setSearchParams, questionOptions } = question;
+
   const [searchTxt, setSearchTxt] = useState<string>('');
 
   const debounceSearchText = useDebounce(searchTxt);
 
-  const currentParam = useMemo<GetListQuestionDto>(
-    () => ({
-      ...initParams,
-      q: debounceSearchText,
-    }),
-    [debounceSearchText],
-  );
+  const availableQuestionOptions = useMemo<IOptionItem[]>(() => {
+    return questionOptions.reduce((res: IOptionItem[], item) => {
+      if (value.some(i => i.questionVersionId === item.value)) return res;
+      return [...res, item];
+    }, []);
+  }, [questionOptions, value]);
+
+  useEffect(() => {
+    setSearchParams({ q: debounceSearchText });
+  }, [debounceSearchText, setSearchParams]);
 
   const { isViewMode } = useCheckSurveyFormMode();
-
-  const {
-    data: questionListData,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteQuery(
-    ['getQuestionList', currentParam],
-    ({ pageParam = currentParam }) => {
-      return QuestionBankService.getQuestions({
-        ...pageParam,
-      });
-    },
-    {
-      getNextPageParam: (lastPage, pages) => {
-        return lastPage.data.hasNextPage
-          ? { ...currentParam, page: lastPage.data.page + 1 }
-          : false;
-      },
-      onError,
-    },
-  );
-  const [questionOption, normalizeByQuestionId] = useMemo<
-    [IOptionItem[], Record<string, IQuestion>]
-  >(() => {
-    if (!questionListData) return [[], {}];
-
-    const normalizeByQuestionId: Record<string, IQuestion> = {};
-    return [
-      questionListData.pages.reduce((current: IOptionItem[], page) => {
-        const nextPageData = page.data.data || [];
-        nextPageData.forEach((q: IQuestion) => {
-          const latestQuestionVersionId = q.latestCompletedVersion?.id;
-          const latestQuestionId = q?.id;
-          if (
-            (value || [])?.some(
-              z =>
-                z.id === latestQuestionId || // check if chosen version is in the same question but different version
-                z.questionVersionId === latestQuestionVersionId, //check and filter out questions were automatically filled after uploading file
-            )
-          ) {
-            return current;
-          }
-
-          normalizeByQuestionId[latestQuestionVersionId as string] = q;
-
-          current.push({
-            label: q?.latestCompletedVersion?.title,
-            value: latestQuestionVersionId as string,
-          });
-        });
-        return current;
-      }, []),
-      normalizeByQuestionId,
-    ];
-  }, [questionListData, value]);
 
   const columns: ColumnsType<questionValueType> = useMemo(
     () => [
@@ -180,12 +121,9 @@ const SurveyQuestions: FC<{
         render: (value, record, questionIndex) => {
           return (
             <DynamicSelect
+              parentFieldName={`${fieldName}.surveyQuestions`}
+              availableQuestionOptions={availableQuestionOptions}
               setSearchTxt={setSearchTxt}
-              normalizeByQuestionId={normalizeByQuestionId}
-              questionOption={questionOption}
-              hasNextPage={hasNextPage}
-              fetchNextPage={fetchNextPage}
-              isLoading={isLoading}
               fieldName={`${fieldName}.surveyQuestions[${questionIndex}]`}
               className={isViewMode ? 'view-mode' : ''}
             />
@@ -222,17 +160,7 @@ const SurveyQuestions: FC<{
           ),
       },
     ],
-    [
-      isViewMode,
-      fetchNextPage,
-      fieldName,
-      hasNextPage,
-      isLoading,
-      normalizeByQuestionId,
-      questionOption,
-      removeQuestion,
-      t,
-    ],
+    [t, isViewMode, availableQuestionOptions, fieldName, removeQuestion],
   );
 
   return (

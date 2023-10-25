@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, memo, useCallback } from 'react';
 import { Button } from 'antd';
 import { useField, useFormikContext } from 'formik';
 import { EmptyString, SubSurveyFlowElement } from '@/type';
@@ -146,4 +146,4 @@ const AddNewBlockElement: FC<{
   );
 };
 
-export default AddNewBlockElement;
+export default memo(AddNewBlockElement);

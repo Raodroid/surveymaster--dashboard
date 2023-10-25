@@ -381,7 +381,6 @@ const QUESTION_BLOCK_VALIDATION = {
         },
       ) => {
         if (values.parent?.type !== SubSurveyFlowElement.BRANCH) return true;
-        console.log(value);
         return !!value?.length;
       },
     ),

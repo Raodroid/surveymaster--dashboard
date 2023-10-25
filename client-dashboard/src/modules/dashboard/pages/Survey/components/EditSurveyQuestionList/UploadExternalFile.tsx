@@ -21,7 +21,7 @@ import { useParams } from 'react-router';
 import GroupSurveyButton, {
   initNewRowValue,
 } from '@pages/Survey/components/GroupSurveyButton/GroupSurveyButton';
-import DisplayAnswer from '@pages/Survey/components/DisplayAnswer/DisplayAnswer';
+// import DisplayAnswer from '@pages/Survey/components/DisplayAnswer/DisplayAnswer';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
 
 const storeResultX = {};

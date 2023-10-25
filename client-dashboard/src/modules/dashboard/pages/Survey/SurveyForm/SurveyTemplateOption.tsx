@@ -11,7 +11,7 @@ import { TemplateOptionWrapper } from '../../Project/ProjectSider/style';
 import { SurveyService } from '@/services';
 import { useParams } from 'react-router';
 import { IAddSurveyFormValues, SurveyTemplateEnum } from './type';
-import { useDebounce, onError } from '@/utils';
+import { onError, useDebounce } from '@/utils';
 
 const columns: ColumnsType<ISurvey> = [
   {

@@ -74,15 +74,6 @@ export interface IAddSurveyFormValues
   duplicateSurveyId?: string;
   surveyId: string;
   surveyVersionId?: string;
-  questionIdMap?: Record<
-    string,
-    {
-      questionTitle: string;
-      versions: IQuestionVersion[];
-      createdAt: string | Date | null;
-    } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
-  >;
-  selectedRowKeys?: string[];
 }
 
 export const rootSurveyFlowElementFieldName = 'version.surveyFlowElements';
