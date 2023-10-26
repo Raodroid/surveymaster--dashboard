@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { IQuestionChoiceComponent } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/type';
+import { MultipleChoice } from '.';
 
-const RadioButton = () => {
-  return <div>RadioButton</div>;
+const RadioButton: FC<IQuestionChoiceComponent> = props => {
+  return <MultipleChoice {...props} />;
 };
 
 export default RadioButton;

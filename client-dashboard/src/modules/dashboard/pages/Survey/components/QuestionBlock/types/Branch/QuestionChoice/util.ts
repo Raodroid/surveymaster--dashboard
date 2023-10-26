@@ -1,4 +1,4 @@
-import { QuestionType, SubSurveyFlowElement } from '@/type';
+import { IOptionGroupItem, QuestionType, SubSurveyFlowElement } from '@/type';
 import { FC } from 'react';
 import {
   RadioButton,
@@ -14,10 +14,11 @@ import {
   TextGraphic,
 } from './Content';
 import { SurveyDataTreeNode } from '@pages/Survey/SurveyForm/type';
+import { IQuestionChoiceComponent } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/type';
 
 export const getQuestionFromAllBlocks = (
   input: SurveyDataTreeNode[] = [],
-  resultArr,
+  resultArr: IOptionGroupItem[],
 ) => {
   input.forEach(flow => {
     const { surveyQuestions, blockSort, blockDescription, type, children } =
@@ -37,7 +38,10 @@ export const getQuestionFromAllBlocks = (
     }
   });
 };
-export const questionChoiceMap: Record<QuestionType, FC> = {
+export const questionChoiceMap: Record<
+  QuestionType,
+  FC<IQuestionChoiceComponent>
+> = {
   [QuestionType.RADIO_BUTTONS]: RadioButton,
   [QuestionType.MULTIPLE_CHOICE]: MultipleChoice,
   [QuestionType.PHOTO]: Photo,

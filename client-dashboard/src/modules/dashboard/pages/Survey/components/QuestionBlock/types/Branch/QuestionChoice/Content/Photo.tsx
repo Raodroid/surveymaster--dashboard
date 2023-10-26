@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { IQuestionChoiceComponent } from '../type';
 
-const Photo = () => {
+const Photo: FC<IQuestionChoiceComponent> = () => {
   return <div>Photo</div>;
 };
 

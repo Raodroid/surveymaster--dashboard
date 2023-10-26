@@ -1,19 +1,24 @@
-import React, { FC, memo } from 'react';
+import React, { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@/modules/common/input/type';
-import { FieldArray, useField } from 'formik';
+import { FieldArray, useField, useFormikContext } from 'formik';
 import {
   BranchLogicType,
   Conjunction,
   EmptyString,
+  IOptionGroupItem,
   SubBranchLogicDto,
 } from '@/type';
 import { Button } from 'antd';
 import { objectKeys, transformEnumToOption } from '@/utils';
 import EmbeddedBlockChoice from './EmbeddedBlockChoice/EmbeddedBlockChoice';
-import QuestionChoice from './QuestionChoice/QuestionChoice';
+import QuestionChoice, {
+  IQuestionChoice,
+} from './QuestionChoice/QuestionChoice';
 import { QuestionBlockProps } from '../type';
+import { getQuestionFromAllBlocks } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
+import { IAddSurveyFormValues } from '@pages/Survey/SurveyForm/type';
 
 const defaultLogicBranch: EmptyString<SubBranchLogicDto> = {
   sort: Math.random(),
@@ -28,7 +33,7 @@ const defaultLogicBranch: EmptyString<SubBranchLogicDto> = {
   rightOperand: '',
 };
 
-const componentMap: Record<BranchLogicType, FC<any>> = {
+const componentMap: Record<BranchLogicType, FC<IQuestionChoice>> = {
   [BranchLogicType.EMBEDDED_FIELD]: EmbeddedBlockChoice,
   [BranchLogicType.QUESTION]: QuestionChoice,
 };
@@ -36,9 +41,17 @@ const componentMap: Record<BranchLogicType, FC<any>> = {
 const Branch: FC<QuestionBlockProps> = props => {
   const { t } = useTranslation();
   const { fieldName: parentFieldName } = props;
+  const { values } = useFormikContext<IAddSurveyFormValues>();
 
   const fieldName = `${parentFieldName}.branchLogics`;
   const [{ value: branchLogics }] = useField<SubBranchLogicDto[]>(fieldName);
+
+  const options = useMemo<IOptionGroupItem[]>(() => {
+    const result = [];
+    getQuestionFromAllBlocks(values.version?.surveyFlowElements, result);
+
+    return result;
+  }, [values.version?.surveyFlowElements]);
 
   return (
     <div>
@@ -72,7 +85,11 @@ const Branch: FC<QuestionBlockProps> = props => {
                     )}
                   />
 
-                  <LogicComponent fieldName={fieldName} index={index} />
+                  <LogicComponent
+                    fieldName={fieldName}
+                    index={index}
+                    options={options}
+                  />
 
                   <Button
                     size={'small'}

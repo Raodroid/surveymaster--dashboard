@@ -64,6 +64,11 @@ export interface IOptionItem {
   value: string;
 }
 
+export interface IOptionGroupItem {
+  label: string | undefined;
+  options: { label: string; value: string }[];
+}
+
 export type ObjectKey = Record<string | number, unknown>;
 
 export type EmptyString<T> = { [K in keyof T]: T[K] | '' };

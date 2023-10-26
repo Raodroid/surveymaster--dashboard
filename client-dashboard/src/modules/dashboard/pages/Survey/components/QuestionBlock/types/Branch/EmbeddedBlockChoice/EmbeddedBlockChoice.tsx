@@ -5,7 +5,7 @@ import { transformEnumToOption } from '@/utils';
 import { LogicOperator } from '@/type';
 import { useTranslation } from 'react-i18next';
 
-interface IEmbeddedBlockChoice {
+export interface IEmbeddedBlockChoice {
   fieldName: string;
   index: number;
 }

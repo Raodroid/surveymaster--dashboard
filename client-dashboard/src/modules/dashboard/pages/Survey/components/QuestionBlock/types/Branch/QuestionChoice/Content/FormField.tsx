@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { IQuestionChoiceComponent } from '../type';
 
-const FormField = () => {
+const FormField: FC<IQuestionChoiceComponent> = () => {
   return <div>FormField</div>;
 };
 

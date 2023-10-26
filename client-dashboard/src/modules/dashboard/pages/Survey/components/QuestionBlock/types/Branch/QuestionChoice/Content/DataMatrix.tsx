@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { IQuestionChoiceComponent } from '../type';
 
-const DataMatrix = () => {
+const DataMatrix: FC<IQuestionChoiceComponent> = () => {
   return <div>DataMatrix</div>;
 };
 

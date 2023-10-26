@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { IQuestionChoiceComponent } from '../type';
+import { TextEntry } from '.';
 
-const TextGraphic = () => {
-  return <div>TextGraphic</div>;
+const TextGraphic: FC<IQuestionChoiceComponent> = props => {
+  return <TextEntry {...props} />;
 };
 
 export default TextGraphic;

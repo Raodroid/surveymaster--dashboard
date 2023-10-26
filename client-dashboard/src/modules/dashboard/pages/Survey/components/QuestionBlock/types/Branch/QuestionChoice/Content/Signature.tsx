@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { IQuestionChoiceComponent } from '../type';
 
-const Signature = () => {
+const Signature: FC<IQuestionChoiceComponent> = () => {
   return <div>Signature</div>;
 };
 

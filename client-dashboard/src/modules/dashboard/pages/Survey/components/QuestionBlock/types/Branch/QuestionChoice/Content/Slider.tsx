@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { IQuestionChoiceComponent } from '../type';
+import { TextEntry } from '.';
 
-const Slider = () => {
-  return <div>Slider</div>;
+const Slider: FC<IQuestionChoiceComponent> = props => {
+  return <TextEntry {...props} />;
 };
 
 export default Slider;
