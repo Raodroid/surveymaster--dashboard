@@ -212,7 +212,7 @@ export const filterColumn = <T>(
         if (typeof dataIndex === 'string') {
           return dataIndex !== key;
         }
-        return !dataIndex.some(i => i === key);
+        return !dataIndex?.some(i => i === key);
       });
     },
     mainColumn,

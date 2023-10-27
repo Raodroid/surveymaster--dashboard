@@ -23,6 +23,7 @@ import {
   ISurveyQuestionDto,
   ISurveyVersion,
   ProjectTypes,
+  SubSurveyFlowElement,
   SubSurveyFlowElementDto,
   SurveyVersionStatus,
 } from '@/type';
@@ -55,7 +56,7 @@ interface ISurveyFormContext {
   actionLoading: boolean;
 
   question: {
-    questionIdMap: Record<string, IQuestion>;
+    questionIdMap: Record<string, IQuestionVersion>;
     fetchNextQuestionPage: () => void;
     hasNextQuestionPage: boolean;
     questionOptions: IOptionItem[];
@@ -108,29 +109,18 @@ const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
 
 const createQuestionMap = (
   input: ISurveyVersion['surveyFlowElements'] = [],
-  mapId: Record<
-    string,
-    {
-      questionTitle: string;
-      versions: IQuestionVersion[];
-      createdAt: string | Date | null;
-    } // object of { [questionVersionId] : {questionTitle: string, versions: version.id[]}}
-  >,
-  selectedRowKeys: string[],
+  mapId: Record<string, IQuestionVersion>,
 ) => {
   input?.forEach(item => {
     item.surveyQuestions?.forEach(q => {
-      mapId[q.questionVersionId] = {
-        createdAt: q.questionVersion.createdAt,
-        questionTitle: q.questionVersion.title,
-        versions: q.questionVersion.question?.versions || [],
-      };
-
-      selectedRowKeys.push(q.questionVersionId);
+      const question = q.questionVersion;
+      if (question) {
+        mapId[q.questionVersionId] = question;
+      }
     });
 
     if (item.children) {
-      createQuestionMap(item.children, mapId, selectedRowKeys);
+      createQuestionMap(item.children, mapId);
     }
   });
 };
@@ -160,7 +150,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         setContext(s => {
           if (!questionListData) return s;
 
-          const normalizeByQuestionId: Record<string, IQuestion> = {};
+          const normalizeByQuestionId: Record<string, IQuestionVersion> = {};
           const questionOptions = questionListData.pages.reduce(
             (current: IOptionItem[], page) => {
               (page.data?.data || []).forEach((q: IQuestion) => {
@@ -176,7 +166,8 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
                 //   return current;
                 // }
 
-                normalizeByQuestionId[latestQuestionVersionId as string] = q;
+                normalizeByQuestionId[latestQuestionVersionId as string] =
+                  q.latestCompletedVersion;
 
                 current.push({
                   label: q?.latestCompletedVersion?.title,
@@ -442,7 +433,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           });
           return;
         }
-
+        const transformValue: CreateSurveyBodyDto = {
+          version: transformSurveyVersion(values),
+          projectId: values.projectId,
+        };
         if (isEditMode) {
           if (
             currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
@@ -451,10 +445,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
               initialValues.version?.surveyFlowElements,
             )
           ) {
-            const transformValue: CreateSurveyBodyDto = {
-              version: transformSurveyVersion(values),
-              projectId: values.projectId,
-            };
             confirm({
               icon: null,
               content: t('common.confirmCreateNewSurveyVersion'),
@@ -468,11 +458,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
             return;
           }
         }
-
-        const transformValue: CreateSurveyBodyDto = {
-          version: transformSurveyVersion(values),
-          projectId: values.projectId,
-        };
 
         if (isEditMode) {
           await updateSurveyMutation.mutateAsync({
@@ -542,20 +527,21 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   }, []);
 
   useEffect(() => {
-    const selectedRowKeys: string[] = [];
     const questionIdMap = {};
-    createQuestionMap(
-      currentSurveyVersion?.surveyFlowElements,
-      questionIdMap,
-      selectedRowKeys,
-    );
+
+    createQuestionMap(currentSurveyVersion?.surveyFlowElements, questionIdMap);
 
     setContext(s => ({
       ...s,
+      question: {
+        ...s.question,
+        questionIdMap: {
+          ...s.question.questionIdMap,
+          ...questionIdMap,
+        },
+      },
       form: {
         ...s.form,
-        selectedRowKeys,
-        questionIdMap,
       },
     }));
   }, [currentSurveyVersion?.surveyFlowElements]);

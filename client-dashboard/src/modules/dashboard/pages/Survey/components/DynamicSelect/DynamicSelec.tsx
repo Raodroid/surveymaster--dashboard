@@ -89,12 +89,15 @@ const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
       if (chooseQuestion) {
         setValue({
           ...value,
-          category: chooseQuestion.masterCategory?.name as string,
-          type: chooseQuestion.latestCompletedVersion.type as string,
-          questionTitle: chooseQuestion.latestCompletedVersion.title as string,
-          id: chooseQuestion.latestCompletedVersion.questionId,
-          questionVersionId: chooseQuestion.latestCompletedVersion.id as string,
-          versions: chooseQuestion.versions,
+          // category: chooseQuestion.?.name as string,
+          category: chooseQuestion?.question?.masterCategory?.name as string,
+          type: chooseQuestion?.question?.latestCompletedVersion.type as string,
+          questionTitle: chooseQuestion?.question?.latestCompletedVersion
+            .title as string,
+          id: chooseQuestion?.question?.latestCompletedVersion.questionId,
+          questionVersionId: chooseQuestion?.question?.latestCompletedVersion
+            .id as string,
+          versions: chooseQuestion?.question?.versions,
           createdAt: chooseQuestion.createdAt,
         });
 
@@ -112,7 +115,7 @@ const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
       parentFieldName,
     );
 
-    return !currBlockQuestions.some(
+    return !currBlockQuestions?.some(
       opt =>
         opt.questionVersionId === currQuestionVersionId ||
         opt.versions?.some(ver => ver?.id === currQuestionVersionId),

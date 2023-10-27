@@ -1,4 +1,5 @@
 import {
+  BranchLogicType,
   ISurveyVersionBaseDto,
   SubSurveyFlowElement,
   SubSurveyFlowElementDto,
@@ -8,6 +9,7 @@ import {
   IAddSurveyFormValues,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
+import _pick from 'lodash/pick';
 
 export const transSurveyFLowElement = (
   input: SurveyDataTreeNode[] | SurveyFlowElementResponseDto[],
@@ -39,7 +41,28 @@ export const transSurveyFLowElement = (
             sort: qIndex,
           })),
       branchLogics:
-        i.type === SubSurveyFlowElement.BRANCH ? i.branchLogics : undefined,
+        i.type === SubSurveyFlowElement.BRANCH
+          ? i.branchLogics?.map((logic, logicIndex) => {
+              const { blockSort_qId, sort, row, column, ...rest } = logic;
+
+              if (logic.logicType === BranchLogicType.EMBEDDED_FIELD) {
+                const x = _pick(logic, [
+                  'conjunction',
+                  'logicType',
+                  'sort',
+                  'operator',
+                  'rightOperand',
+                  'leftOperand',
+                ]);
+                return { ...x, sort: logicIndex + 1 };
+              }
+
+              return {
+                ...rest,
+                sort: logicIndex + 1,
+              };
+            })
+          : undefined,
       listEmbeddedData:
         i.type === SubSurveyFlowElement.EMBEDDED_DATA
           ? i.listEmbeddedData

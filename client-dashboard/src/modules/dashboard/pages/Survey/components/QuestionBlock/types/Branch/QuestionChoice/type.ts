@@ -1,6 +1,6 @@
-import { IQuestion } from '@/type';
+import { IQuestionVersion } from '@/type';
 
 export interface IQuestionChoiceComponent {
   fieldName: string;
-  questionData: IQuestion | undefined;
+  questionData: IQuestionVersion | undefined;
 }

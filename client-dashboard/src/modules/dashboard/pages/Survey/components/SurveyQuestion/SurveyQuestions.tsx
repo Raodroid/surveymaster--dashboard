@@ -53,7 +53,7 @@ const SurveyQuestions: FC<{
 
   const availableQuestionOptions = useMemo<IOptionItem[]>(() => {
     return questionOptions.reduce((res: IOptionItem[], item) => {
-      if (value.some(i => i.questionVersionId === item.value)) return res;
+      if (value?.some(i => i.questionVersionId === item.value)) return res;
       return [...res, item];
     }, []);
   }, [questionOptions, value]);

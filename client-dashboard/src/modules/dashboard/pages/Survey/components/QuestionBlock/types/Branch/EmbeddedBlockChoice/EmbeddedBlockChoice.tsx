@@ -16,12 +16,10 @@ const EmbeddedBlockChoice: FC<IEmbeddedBlockChoice> = props => {
     <>
       <ControlledInput
         className={'w-150px]'}
-        label={t('common.field')}
         inputType={INPUT_TYPES.INPUT}
-        name={`${fieldName}[${index}].rightOperand`}
+        name={`${fieldName}[${index}].leftOperand`}
       />
       <ControlledInput
-        placeholder={'LogicOperator'}
         className={'w-[150px]'}
         inputType={INPUT_TYPES.SELECT}
         name={`${fieldName}[${index}].operator`}
@@ -29,7 +27,6 @@ const EmbeddedBlockChoice: FC<IEmbeddedBlockChoice> = props => {
       />
       <ControlledInput
         className={'w-[200px]'}
-        label={t('common.value')}
         inputType={INPUT_TYPES.INPUT}
         name={`${fieldName}[${index}].rightOperand`}
       />

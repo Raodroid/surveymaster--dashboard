@@ -1,5 +1,6 @@
 import {
   ISurveyVersion,
+  SubSurveyFlowElement,
   SubSurveyFlowElementDto,
   SurveyFlowElementResponseDto,
 } from '@/type';
@@ -13,6 +14,7 @@ import {
 import { isEqual } from 'lodash';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
+import { block_qId_template } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
 
 const transSurveyFlowElements = (
   input: SurveyFlowElementResponseDto[] = [],
@@ -30,14 +32,25 @@ const transSurveyFlowElements = (
         : `${parentBlockSort}` + (index + 1),
     );
 
-    const { children, ...rest } = item;
+    const { children, branchLogics, surveyQuestions, ...rest } = item;
 
-    return {
+    const resultAAA = {
       ...rest,
+      branchLogics: (branchLogics || []).map((logic, logicIndex) => {
+        return {
+          ...logic,
+          sort: logicIndex + 1,
+          blockSort_qId: block_qId_template({
+            blockSort: logic.blockSort,
+            questionVersionId: logic.questionVersionId,
+            optionSort: logic.optionSort as number,
+          }),
+        };
+      }),
       fieldName,
       blockSort,
       key: fieldName,
-      surveyQuestions: item.surveyQuestions?.map(question => ({
+      surveyQuestions: (surveyQuestions || []).map(question => ({
         ...question,
         type: question.questionVersion.type,
         category:
@@ -45,8 +58,14 @@ const transSurveyFlowElements = (
         questionTitle: question.questionVersion.title,
         versions: question.questionVersion.question?.versions,
       })),
-      children: children ? transSurveyFlowElements(children) : [],
+      children: children
+        ? transSurveyFlowElements(children, blockSort, fieldName)
+        : [],
     };
+    if (rest.type === SubSurveyFlowElement.BRANCH) {
+      console.log({ fieldName, resultAAA });
+    }
+    return resultAAA;
   });
 };
 

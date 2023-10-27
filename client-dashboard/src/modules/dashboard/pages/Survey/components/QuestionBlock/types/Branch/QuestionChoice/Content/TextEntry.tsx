@@ -11,19 +11,18 @@ const TextEntry: FC<IQuestionChoiceComponent> = props => {
   const { t } = useTranslation();
   const { fieldName } = props;
   return (
-    <div>
-      <ControlledInput
-        placeholder={'LogicOperator'}
-        className={'w-[150px]'}
-        inputType={INPUT_TYPES.SELECT}
-        name={`${fieldName}.operator`}
-        options={transformEnumToOption(LogicOperator, i => t(`common.${i}`))}
-      />
+    <>
       <LogicOperatorInput
         fieldName={fieldName}
         type={QuestionType.TEXT_ENTRY}
       />
-    </div>
+      <ControlledInput
+        className={'w-[150px]'}
+        inputType={INPUT_TYPES.INPUT}
+        name={`${fieldName}.rightOperand`}
+        options={transformEnumToOption(LogicOperator, i => t(`common.${i}`))}
+      />
+    </>
   );
 };
 

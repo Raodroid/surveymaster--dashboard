@@ -1,11 +1,16 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
-import { IOptionGroupItem, IQuestion, SubBranchLogicDto } from '@/type';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import { BranchChoiceType, IOptionGroupItem, LogicOperator } from '@/type';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@/modules/common/input/type';
-import { questionChoiceMap } from './util';
+import {
+  defaultChoiceType,
+  defaultOperatorQuestion,
+  questionChoiceMap,
+} from './util';
 import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
+import { ExtraSubBranchLogicDto } from '@pages/Survey/SurveyForm/type';
 
 export interface IQuestionChoice {
   fieldName: string;
@@ -19,42 +24,53 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
   const { question } = useSurveyFormContext();
   const { questionIdMap } = question;
 
-  const [{ value }, , { setValue }] = useField<SubBranchLogicDto>(
+  const [{ value }, , { setValue }] = useField<ExtraSubBranchLogicDto>(
     `${fieldName}[${index}]`,
   );
-
-  const [currQuestion, setCurrQuestion] = useState<IQuestion | undefined>();
-
   const handleOnChange = useCallback(
-    optionValue => {
-      const spitedValue = optionValue.split('*');
+    blockSort_qId_value => {
+      const spitedValue = blockSort_qId_value.split('*');
 
-      const blockSort = spitedValue[0];
+      const blockSort = Number(spitedValue[0]);
       const qId = spitedValue[1];
+      const optionSort = Number(spitedValue[2]);
 
       const selectedQuestion = questionIdMap[qId];
 
       if (!selectedQuestion) return;
-      setCurrQuestion(selectedQuestion);
       setValue({
         ...value,
+        optionSort,
+        choiceType: selectedQuestion.type
+          ? defaultChoiceType[selectedQuestion.type]
+          : BranchChoiceType.CHOICE_TEXT_ENTRY_VALUE,
         blockSort,
-        qId,
+        blockSort_qId: blockSort_qId_value,
+        questionVersionId: qId,
+        leftOperand: '',
+        rightOperand: '',
+        operator: selectedQuestion.type
+          ? defaultOperatorQuestion[selectedQuestion.type]
+          : LogicOperator.EQUAL_TO,
       });
     },
     [questionIdMap, setValue, value],
   );
 
   const QuestionComponent = useMemo(() => {
-    const questionType = currQuestion?.latestVersion?.type;
+    if (!value.questionVersionId) {
+      return () => null;
+    }
+
+    const questionType = questionIdMap[value.questionVersionId]?.type;
     return questionType ? questionChoiceMap[questionType] : () => null;
-  }, [currQuestion?.latestVersion?.type]);
+  }, [questionIdMap, value.questionVersionId]);
 
   return (
     <>
       <ControlledInput
-        className={'w-[150px]'}
-        value={value.qId}
+        className={'min-w-[150px]'}
+        value={value.questionVersionId}
         // onSearch={value => {
         //   setSearchTxt(value);
         // }}
@@ -62,12 +78,16 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
         options={options as any[]}
         placeholder={t('common.selectQuestion')}
         onChange={handleOnChange}
-        name={`${fieldName}[${index}].qId`}
+        name={`${fieldName}[${index}].blockSort_qId`}
         inputType={INPUT_TYPES.SELECT}
       />
       <QuestionComponent
         fieldName={`${fieldName}[${index}]`}
-        questionData={currQuestion}
+        questionData={
+          value?.questionVersionId
+            ? questionIdMap[value?.questionVersionId]
+            : undefined
+        }
       />
     </>
   );

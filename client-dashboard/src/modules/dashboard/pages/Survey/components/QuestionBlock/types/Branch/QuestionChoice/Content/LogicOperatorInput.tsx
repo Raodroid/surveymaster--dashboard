@@ -32,7 +32,6 @@ const LogicOperatorInput: FC<{
       case QuestionType.DATE_PICKER:
       case QuestionType.FORM_FIELD:
       case QuestionType.SIGNATURE:
-
       case QuestionType.PHOTO:
       case QuestionType.SLIDER:
       case QuestionType.TEXT_ENTRY:
@@ -46,7 +45,6 @@ const LogicOperatorInput: FC<{
 
   return (
     <ControlledInput
-      placeholder={'LogicOperator'}
       className={'w-[150px]'}
       inputType={INPUT_TYPES.SELECT}
       name={`${fieldName}.operator`}

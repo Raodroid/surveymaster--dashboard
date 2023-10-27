@@ -1,4 +1,4 @@
-import React, { FC, memo, useMemo } from 'react';
+import React, { FC, memo, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@/modules/common/input/type';
@@ -24,13 +24,15 @@ const defaultLogicBranch: EmptyString<SubBranchLogicDto> = {
   sort: Math.random(),
   conjunction: Conjunction.AND,
   logicType: BranchLogicType.QUESTION,
-  qId: '',
+  questionVersionId: '',
   blockSort: 0,
   choiceType: '',
   optionSort: '',
   leftOperand: '',
   operator: '',
   rightOperand: '',
+  row: '',
+  column: '',
 };
 
 const componentMap: Record<BranchLogicType, FC<IQuestionChoice>> = {
@@ -67,7 +69,7 @@ const Branch: FC<QuestionBlockProps> = props => {
                 <div className={'flex gap-3'} key={index}>
                   {index !== 0 && (
                     <ControlledInput
-                      className={'w-[100px]'}
+                      className={'w-[70px]'}
                       inputType={INPUT_TYPES.SELECT}
                       name={`${fieldName}[${index}].conjunction`}
                       options={objectKeys(Conjunction).map(key => ({
@@ -77,7 +79,7 @@ const Branch: FC<QuestionBlockProps> = props => {
                     />
                   )}
                   <ControlledInput
-                    className={'w-[150px]'}
+                    className={'w-[120px]'}
                     inputType={INPUT_TYPES.SELECT}
                     name={`${fieldName}[${index}].logicType`}
                     options={transformEnumToOption(BranchLogicType, i =>

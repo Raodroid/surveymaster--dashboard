@@ -2,14 +2,9 @@ import React, { FC, useMemo } from 'react';
 import { IQuestionChoiceComponent } from '../type';
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
-import {
-  IOptionItem,
-  LogicOperator,
-  QuestionType,
-  SubBranchLogicDto,
-} from '@/type';
-import LogicOperatorInput from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/Content/LogicOperatorInput';
+import { IOptionItem, QuestionType, SubBranchLogicDto } from '@/type';
 import { useField } from 'formik';
+import LogicOperatorInput from './LogicOperatorInput';
 
 const MultipleChoice: FC<IQuestionChoiceComponent> = props => {
   const { fieldName, questionData } = props;
@@ -17,16 +12,16 @@ const MultipleChoice: FC<IQuestionChoiceComponent> = props => {
   const [{ value }] = useField<SubBranchLogicDto>(fieldName);
 
   const options = useMemo<IOptionItem[]>(() => {
-    return (questionData?.latestVersion.options || []).map(i => ({
+    return (questionData?.options || []).map(i => ({
       value: i.id || '',
       label: i.text || '',
     }));
-  }, [questionData?.latestVersion.options]);
+  }, [questionData?.options]);
 
   const shouldRenderLogic = value.leftOperand;
 
   return (
-    <div>
+    <>
       <ControlledInput
         placeholder={'LogicOperator'}
         className={'w-[150px]'}
@@ -40,7 +35,7 @@ const MultipleChoice: FC<IQuestionChoiceComponent> = props => {
           type={QuestionType.MULTIPLE_CHOICE}
         />
       </div>
-    </div>
+    </>
   );
 };
 

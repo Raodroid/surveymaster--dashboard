@@ -5,24 +5,25 @@ import {
   ISurveyVersionBaseDto,
   QuestionType,
   Replace,
+  SubBranchLogicDto,
   SubSurveyFlowElementDto,
 } from '@/type';
 import { DataNode } from 'antd/es/tree';
 import { ReactNode } from 'react';
 
-type GeneralDataNode = Pick<
-  DataNode,
-  Exclude<keyof DataNode, 'title' | 'children'>
->;
+export type ExtraSubBranchLogicDto = SubBranchLogicDto & {
+  blockSort_qId: string;
+};
+
+type GeneralDataNode = Omit<DataNode, 'title' | 'children'>;
 
 type GeneralSurveyFlowElement = Omit<
-  Replace<
-    SubSurveyFlowElementDto,
-    'surveyQuestions',
-    { surveyQuestions: questionValueType[] }
-  >,
-  'children'
->;
+  SubSurveyFlowElementDto,
+  'branchLogics' | 'surveyQuestions' | 'children'
+> & {
+  surveyQuestions: questionValueType[];
+  branchLogics: ExtraSubBranchLogicDto[];
+};
 
 type BasicSurveyNode = GeneralSurveyFlowElement &
   GeneralDataNode & {
