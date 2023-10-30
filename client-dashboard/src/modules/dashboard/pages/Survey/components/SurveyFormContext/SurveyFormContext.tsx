@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   ReactElement,
   useCallback,
@@ -23,7 +23,6 @@ import {
   ISurveyQuestionDto,
   ISurveyVersion,
   ProjectTypes,
-  SubSurveyFlowElement,
   SubSurveyFlowElementDto,
   SurveyVersionStatus,
 } from '@/type';

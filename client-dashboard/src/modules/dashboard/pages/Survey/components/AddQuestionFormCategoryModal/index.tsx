@@ -82,7 +82,6 @@ const AddQuestionFormCategoryModal: FC<
       [],
     );
   }, [data]);
-  // console.log('\n ==> categoryTreeData', categoryTreeData);
 
   const debounceSearchTextQuestion = useDebounce(searchQuestionTxt);
 

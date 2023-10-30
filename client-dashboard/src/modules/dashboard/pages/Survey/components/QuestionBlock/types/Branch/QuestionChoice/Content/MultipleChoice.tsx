@@ -23,18 +23,17 @@ const MultipleChoice: FC<IQuestionChoiceComponent> = props => {
   return (
     <>
       <ControlledInput
-        placeholder={'LogicOperator'}
         className={'w-[150px]'}
         inputType={INPUT_TYPES.SELECT}
         name={`${fieldName}.leftOperand`}
         options={options}
       />
-      <div className={shouldRenderLogic ? 'show-ui' : 'hide-ui'}>
+      {shouldRenderLogic && (
         <LogicOperatorInput
           fieldName={fieldName}
           type={QuestionType.MULTIPLE_CHOICE}
         />
-      </div>
+      )}
     </>
   );
 };

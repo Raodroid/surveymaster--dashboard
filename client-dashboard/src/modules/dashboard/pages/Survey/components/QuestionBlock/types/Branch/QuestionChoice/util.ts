@@ -7,17 +7,17 @@ import {
 } from '@/type';
 import { FC } from 'react';
 import {
-  RadioButton,
-  MultipleChoice,
-  Photo,
   DataMatrix,
-  TextEntry,
-  Signature,
-  Slider,
-  TimePicker,
   DatePicker,
   FormField,
+  MultipleChoice,
+  Photo,
+  RadioButton,
+  Signature,
+  Slider,
+  TextEntry,
   TextGraphic,
+  TimePicker,
 } from './Content';
 import { SurveyDataTreeNode } from '@pages/Survey/SurveyForm/type';
 import { IQuestionChoiceComponent } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/type';
@@ -25,10 +25,20 @@ import { IQuestionChoiceComponent } from '@pages/Survey/components/QuestionBlock
 export const block_qId_template = (input: {
   blockSort: number | undefined;
   questionVersionId: string | undefined;
-  optionSort: number;
+  optionSort: number | undefined;
 }): string => {
   const { blockSort, questionVersionId, optionSort } = input;
   return `${blockSort}*${questionVersionId}*${optionSort}`;
+};
+
+export const gen_row_column_BranchChoiceType = (input: {
+  rowIndex?: number;
+  colIndex?: number;
+  BranchChoiceType: BranchChoiceType;
+}): string => {
+  const { rowIndex, colIndex, BranchChoiceType } = input;
+
+  return `${rowIndex}*${colIndex}*${BranchChoiceType}`;
 };
 
 export const getQuestionFromAllBlocks = (
@@ -38,6 +48,7 @@ export const getQuestionFromAllBlocks = (
   input.forEach(flow => {
     const { surveyQuestions, blockSort, blockDescription, type, children } =
       flow;
+
     if (type === SubSurveyFlowElement.BLOCK) {
       resultArr.push({
         label: blockDescription,
@@ -46,7 +57,12 @@ export const getQuestionFromAllBlocks = (
           value: block_qId_template({
             blockSort,
             questionVersionId: i.questionVersionId,
-            optionSort: i.sort as number,
+            optionSort: [
+              QuestionType.MULTIPLE_CHOICE,
+              QuestionType.RADIO_BUTTONS,
+            ].includes(i.type as QuestionType)
+              ? i.sort
+              : undefined,
           }),
         })),
       });

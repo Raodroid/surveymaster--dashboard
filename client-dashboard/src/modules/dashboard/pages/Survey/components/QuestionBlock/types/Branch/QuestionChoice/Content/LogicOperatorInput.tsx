@@ -1,17 +1,19 @@
 import React, { FC, memo, useMemo } from 'react';
-import { LogicOperator, QuestionType } from '@/type';
+import { BranchChoiceType, LogicOperator, QuestionType } from '@/type';
 import { INPUT_TYPES } from '@input/type';
 import { transformEnumToOption } from '@/utils';
 import { ControlledInput } from '@/modules/common';
 import { useTranslation } from 'react-i18next';
+import { ExtraSubBranchLogicDto } from '@pages/Survey/SurveyForm/type';
 
 const LogicOperatorInput: FC<{
   type: QuestionType;
   fieldName: string;
+  fieldValue?: ExtraSubBranchLogicDto;
 }> = props => {
   const { t } = useTranslation();
 
-  const { type, fieldName } = props;
+  const { type, fieldName, fieldValue } = props;
 
   const options = useMemo(() => {
     switch (type) {
@@ -28,7 +30,27 @@ const LogicOperatorInput: FC<{
           },
         ];
       }
-      case QuestionType.DATA_MATRIX:
+      case QuestionType.DATA_MATRIX: {
+        if (
+          fieldValue?.choiceType &&
+          [
+            BranchChoiceType.SELECTABLE_CHOICE,
+            BranchChoiceType.SELECTABLE_ANSWER,
+          ].includes(fieldValue.choiceType)
+        ) {
+          return [
+            {
+              value: LogicOperator.SELECTED,
+              label: t(`common.${LogicOperator.SELECTED}`),
+            },
+            {
+              value: LogicOperator.NOT_SELECTED,
+              label: t(`common.${LogicOperator.NOT_SELECTED}`),
+            },
+          ];
+        }
+        return transformEnumToOption(LogicOperator, i => t(`common.${i}`));
+      }
       case QuestionType.DATE_PICKER:
       case QuestionType.FORM_FIELD:
       case QuestionType.SIGNATURE:
@@ -41,7 +63,7 @@ const LogicOperatorInput: FC<{
         return transformEnumToOption(LogicOperator, i => t(`common.${i}`));
       }
     }
-  }, [type, t]);
+  }, [type, t, fieldValue?.choiceType]);
 
   return (
     <ControlledInput

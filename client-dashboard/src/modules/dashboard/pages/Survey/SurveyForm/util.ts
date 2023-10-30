@@ -1,11 +1,11 @@
 import {
   ISurveyVersion,
-  SubSurveyFlowElement,
   SubSurveyFlowElementDto,
   SurveyFlowElementResponseDto,
 } from '@/type';
 
 import {
+  ExtraSubBranchLogicDto,
   IAddSurveyFormValues,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
@@ -14,7 +14,10 @@ import {
 import { isEqual } from 'lodash';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
-import { block_qId_template } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
+import {
+  block_qId_template,
+  gen_row_column_BranchChoiceType,
+} from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
 
 const transSurveyFlowElements = (
   input: SurveyFlowElementResponseDto[] = [],
@@ -34,18 +37,32 @@ const transSurveyFlowElements = (
 
     const { children, branchLogics, surveyQuestions, ...rest } = item;
 
-    const resultAAA = {
+    return {
       ...rest,
       branchLogics: (branchLogics || []).map((logic, logicIndex) => {
-        return {
+        const { choiceType, column, row, optionSort } = logic;
+
+        const resultBranchLogicItem: ExtraSubBranchLogicDto = {
           ...logic,
           sort: logicIndex + 1,
           blockSort_qId: block_qId_template({
             blockSort: logic.blockSort,
             questionVersionId: logic.questionVersionId,
-            optionSort: logic.optionSort as number,
+            optionSort: Number.isInteger(optionSort) ? optionSort : undefined,
           }),
         };
+        if (
+          choiceType &&
+          (typeof column === 'number' || typeof row === 'number')
+        ) {
+          resultBranchLogicItem.row_column_BranchChoiceType =
+            gen_row_column_BranchChoiceType({
+              rowIndex: typeof row === 'number' ? row : undefined,
+              colIndex: typeof column === 'number' ? column : undefined,
+              BranchChoiceType: choiceType,
+            });
+        }
+        return resultBranchLogicItem;
       }),
       fieldName,
       blockSort,
@@ -62,10 +79,6 @@ const transSurveyFlowElements = (
         ? transSurveyFlowElements(children, blockSort, fieldName)
         : [],
     };
-    if (rest.type === SubSurveyFlowElement.BRANCH) {
-      console.log({ fieldName, resultAAA });
-    }
-    return resultAAA;
   });
 };
 

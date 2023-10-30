@@ -6,6 +6,7 @@ import {
   SurveyFlowElementResponseDto,
 } from '@/type';
 import {
+  ExtraSubBranchLogicDto,
   IAddSurveyFormValues,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
@@ -36,14 +37,19 @@ export const transSurveyFLowElement = (
       blockDescription: i.blockDescription,
       surveyQuestions: !i.surveyQuestions?.length
         ? undefined
-        : i.surveyQuestions?.map((q, qIndex) => ({
-            ...q,
-            sort: qIndex,
-          })),
+        : i.surveyQuestions,
       branchLogics:
         i.type === SubSurveyFlowElement.BRANCH
-          ? i.branchLogics?.map((logic, logicIndex) => {
-              const { blockSort_qId, sort, row, column, ...rest } = logic;
+          ? i.branchLogics?.map((logic: ExtraSubBranchLogicDto, logicIndex) => {
+              const {
+                blockSort_qId,
+                sort,
+                row_column_BranchChoiceType,
+                column,
+                row,
+                optionSort,
+                ...rest
+              } = logic;
 
               if (logic.logicType === BranchLogicType.EMBEDDED_FIELD) {
                 const x = _pick(logic, [
@@ -59,7 +65,12 @@ export const transSurveyFLowElement = (
 
               return {
                 ...rest,
+                column: typeof column !== 'number' ? undefined : column,
+                row: typeof row !== 'number' ? undefined : row,
                 sort: logicIndex + 1,
+                optionSort: Number.isInteger(optionSort)
+                  ? optionSort
+                  : undefined,
               };
             })
           : undefined,

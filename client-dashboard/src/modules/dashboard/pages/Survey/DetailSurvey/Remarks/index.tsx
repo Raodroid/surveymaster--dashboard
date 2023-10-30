@@ -147,7 +147,6 @@ function Remarks() {
       surveyFlowElements,
       ...rest
     } = payload;
-    console.log(payload);
     // const updateSurveyPayload: IPutSurveyVersionBodyDtoExtendId = {
     //   surveyVersionId: id as string,
     //   name,

@@ -40,7 +40,7 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
       if (!selectedQuestion) return;
       setValue({
         ...value,
-        optionSort,
+        optionSort: optionSort === NaN ? undefined : optionSort,
         choiceType: selectedQuestion.type
           ? defaultChoiceType[selectedQuestion.type]
           : BranchChoiceType.CHOICE_TEXT_ENTRY_VALUE,
