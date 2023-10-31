@@ -5,6 +5,7 @@ import { transformEnumToOption } from '@/utils';
 import { ControlledInput } from '@/modules/common';
 import { useTranslation } from 'react-i18next';
 import { ExtraSubBranchLogicDto } from '@pages/Survey/SurveyForm/type';
+import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 
 const LogicOperatorInput: FC<{
   type: QuestionType;
@@ -14,6 +15,7 @@ const LogicOperatorInput: FC<{
   const { t } = useTranslation();
 
   const { type, fieldName, fieldValue } = props;
+  const { isViewMode } = useCheckSurveyFormMode();
 
   const options = useMemo(() => {
     switch (type) {
@@ -67,7 +69,7 @@ const LogicOperatorInput: FC<{
 
   return (
     <ControlledInput
-      className={'w-[150px]'}
+      className={`w-[150px] ${isViewMode ? 'view-mode' : ''}`}
       inputType={INPUT_TYPES.SELECT}
       name={`${fieldName}.operator`}
       options={options}

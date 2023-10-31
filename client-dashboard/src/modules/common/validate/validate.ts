@@ -1,6 +1,13 @@
 import * as Yup from 'yup';
 import moment from 'moment';
-import { QuestionType, SubSurveyFlowElement } from '@/type';
+import {
+  BranchChoiceType,
+  BranchLogicType,
+  Conjunction,
+  LogicOperator,
+  QuestionType,
+  SubSurveyFlowElement,
+} from '@/type';
 import { SurveyTemplateEnum } from '@/modules/dashboard/pages/Survey/SurveyForm/type';
 
 export const INVALID_FIELDS = {
@@ -342,8 +349,38 @@ const QUESTION_BLOCK_VALIDATION = {
   branchLogics: Yup.array()
     .of(
       Yup.object({
+        // sort: number;
+        // conjunction: Conjunction;
+        // logicType: BranchLogicType;
+        // blockSort?: number;
+        //
+        // questionVersionId?: string;
+        // choiceType?: BranchChoiceType;
+        // optionSort?: number;
+        // leftOperand?: string;
+        // operator?: LogicOperator;
+        // rightOperand?: string;
+        // column?: number; //index +1
+        // row?: number; //index+1
         conjunction: Yup.string().required(INVALID_FIELDS.REQUIRED),
         logicType: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        blockSort_qId: Yup.string().test(
+          '',
+          INVALID_FIELDS.REQUIRED,
+          (
+            value,
+            values: {
+              parent: {
+                logicType?: BranchLogicType;
+              };
+            },
+          ) => {
+            if (values.parent?.logicType !== BranchLogicType.QUESTION)
+              return true;
+            return !!value;
+          },
+        ),
+        operator: Yup.string().required(INVALID_FIELDS.REQUIRED),
       }),
     )
     .test(

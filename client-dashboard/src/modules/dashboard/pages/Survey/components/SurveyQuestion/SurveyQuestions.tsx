@@ -18,7 +18,8 @@ import GroupSurveyButton, {
 import { ControlledInput } from '@/modules/common';
 import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
 import DynamicSelect from '../DynamicSelect/DynamicSelec';
-import { IOptionItem } from '@/type';
+import { IOptionItem, SubSurveyFlowElementDto } from '@/type';
+import { gen_QID_template } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
 
 const SurveyQuestions: FC<{
   fieldName: string;
@@ -26,14 +27,10 @@ const SurveyQuestions: FC<{
   const { fieldName } = props;
   const { t } = useTranslation();
 
-  // const { values } = useFormikContext();
-  //
-  // const x = _get(values, fieldName);
-  // console.log({ x });
-
   const [{ value }, , { setValue }] = useField<questionValueType[]>(
     `${fieldName}.surveyQuestions`,
   );
+  const [{ value: blockData }] = useField<SubSurveyFlowElementDto>(fieldName);
   const removeQuestion = useCallback(
     (questionIndex: number) => {
       setValue(value.filter((i, idx) => idx !== questionIndex));
@@ -69,7 +66,10 @@ const SurveyQuestions: FC<{
       {
         dataIndex: 'order',
         render: (value, record, index) => {
-          // const qId=record.
+          const content = gen_QID_template({
+            blockSort: blockData.blockSort as number,
+            sort: record.sort as number,
+          });
           return (
             <span
               style={{
@@ -79,8 +79,8 @@ const SurveyQuestions: FC<{
               }}
             >
               {!isViewMode && <DragHandle />}
-              <span>{index}</span>
-              <CopyButton content={index} />
+              <span>{content}</span>
+              <CopyButton content={content} />
             </span>
           );
         },
@@ -133,13 +133,15 @@ const SurveyQuestions: FC<{
       {
         title: t('common.remark'),
         dataIndex: 'remark',
-        render: () => (
-          <ControlledInput
-            className={isViewMode ? 'view-mode' : ''}
-            style={{ width: '100%' }}
-            inputType={INPUT_TYPES.INPUT}
-            name={`${fieldName}.remark`}
-          />
+        render: (value, record, questionIndex) => (
+          <div className={'mt-[26px]'}>
+            <ControlledInput
+              className={isViewMode ? 'view-mode' : ''}
+              style={{ width: '100%' }}
+              inputType={INPUT_TYPES.INPUT}
+              name={`${fieldName}.surveyQuestions[${questionIndex}].remark`}
+            />
+          </div>
         ),
       },
       {
@@ -160,7 +162,14 @@ const SurveyQuestions: FC<{
           ),
       },
     ],
-    [t, isViewMode, availableQuestionOptions, fieldName, removeQuestion],
+    [
+      t,
+      blockData?.blockSort,
+      isViewMode,
+      fieldName,
+      availableQuestionOptions,
+      removeQuestion,
+    ],
   );
 
   return (

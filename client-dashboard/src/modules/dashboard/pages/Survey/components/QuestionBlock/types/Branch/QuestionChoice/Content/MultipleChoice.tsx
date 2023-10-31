@@ -5,9 +5,11 @@ import { INPUT_TYPES } from '@input/type';
 import { IOptionItem, QuestionType, SubBranchLogicDto } from '@/type';
 import { useField } from 'formik';
 import LogicOperatorInput from './LogicOperatorInput';
+import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 
 const MultipleChoice: FC<IQuestionChoiceComponent> = props => {
   const { fieldName, questionData } = props;
+  const { isViewMode } = useCheckSurveyFormMode();
 
   const [{ value }] = useField<SubBranchLogicDto>(fieldName);
 
@@ -23,7 +25,7 @@ const MultipleChoice: FC<IQuestionChoiceComponent> = props => {
   return (
     <>
       <ControlledInput
-        className={'w-[150px]'}
+        className={`w-[150px] ${isViewMode ? 'view-mode' : ''}`}
         inputType={INPUT_TYPES.SELECT}
         name={`${fieldName}.leftOperand`}
         options={options}

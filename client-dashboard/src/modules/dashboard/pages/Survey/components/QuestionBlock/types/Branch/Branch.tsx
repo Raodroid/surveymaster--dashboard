@@ -21,6 +21,7 @@ import {
   ExtraSubBranchLogicDto,
   IAddSurveyFormValues,
 } from '@pages/Survey/SurveyForm/type';
+import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 
 const defaultLogicBranch: EmptyString<ExtraSubBranchLogicDto> = {
   blockSort_qId: '',
@@ -47,7 +48,7 @@ const Branch: FC<QuestionBlockProps> = props => {
   const { t } = useTranslation();
   const { fieldName: parentFieldName } = props;
   const { values } = useFormikContext<IAddSurveyFormValues>();
-
+  const { isViewMode } = useCheckSurveyFormMode();
   const fieldName = `${parentFieldName}.branchLogics`;
   const [{ value: branchLogics }] =
     useField<ExtraSubBranchLogicDto[]>(fieldName);
@@ -72,7 +73,7 @@ const Branch: FC<QuestionBlockProps> = props => {
                 <div className={'flex gap-3'} key={index}>
                   {index !== 0 && (
                     <ControlledInput
-                      className={'w-[70px]'}
+                      className={`w-[70px] ${isViewMode ? 'view-mode' : ''}`}
                       inputType={INPUT_TYPES.SELECT}
                       name={`${fieldName}[${index}].conjunction`}
                       options={objectKeys(Conjunction).map(key => ({
@@ -82,7 +83,7 @@ const Branch: FC<QuestionBlockProps> = props => {
                     />
                   )}
                   <ControlledInput
-                    className={'w-[120px]'}
+                    className={`w-[120px] ${isViewMode ? 'view-mode' : ''}`}
                     inputType={INPUT_TYPES.SELECT}
                     name={`${fieldName}[${index}].logicType`}
                     options={transformEnumToOption(BranchLogicType, i =>
@@ -96,27 +97,31 @@ const Branch: FC<QuestionBlockProps> = props => {
                     options={options}
                   />
 
-                  <Button
-                    size={'small'}
-                    className={'px-2'}
-                    danger
-                    shape="circle"
-                    onClick={() => remove(index)}
-                  >
-                    -
-                  </Button>
+                  {!isViewMode && (
+                    <Button
+                      size={'small'}
+                      className={'px-2'}
+                      danger
+                      shape="circle"
+                      onClick={() => remove(index)}
+                    >
+                      -
+                    </Button>
+                  )}
                 </div>
               );
             })}
             <div>
-              <Button
-                className={'w-full'}
-                onClick={() => {
-                  push(defaultLogicBranch);
-                }}
-              >
-                {t('common.addCondition')}
-              </Button>
+              {!isViewMode && (
+                <Button
+                  className={'w-full'}
+                  onClick={() => {
+                    push(defaultLogicBranch);
+                  }}
+                >
+                  {t('common.addCondition')}
+                </Button>
+              )}
             </div>
           </div>
         )}

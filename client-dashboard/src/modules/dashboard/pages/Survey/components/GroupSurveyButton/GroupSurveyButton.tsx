@@ -2,7 +2,7 @@ import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import React, { useCallback } from 'react';
 import { Button } from 'antd';
-import { QuestionType } from '@/type';
+import { QuestionType, SubSurveyFlowElementDto } from '@/type';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
 import { useToggle } from '@/utils';
 import { generateRandom } from '@/modules/common/funcs';
@@ -33,7 +33,11 @@ const GroupSurveyButton = (props: { fieldNameRoot: string }) => {
   const handleAddRow = useCallback(() => {
     setValue([
       ...value,
-      { ...initNewRowValue, id: generateRandom().toString() },
+      {
+        ...initNewRowValue,
+        id: generateRandom().toString(),
+        sort: (value.at(-1)?.sort || 0) + 1,
+      },
     ]);
   }, [setValue, value]);
 

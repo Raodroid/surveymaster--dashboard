@@ -41,6 +41,16 @@ export const gen_row_column_BranchChoiceType = (input: {
   return `${rowIndex}*${colIndex}*${BranchChoiceType}`;
 };
 
+// export const
+
+export const gen_QID_template = (input: {
+  blockSort: number;
+  sort: number;
+}) => {
+  const { blockSort, sort } = input;
+  return `QID${blockSort}${sort}`;
+};
+
 export const getQuestionFromAllBlocks = (
   input: SurveyDataTreeNode[] = [],
   resultArr: IOptionGroupItem[],

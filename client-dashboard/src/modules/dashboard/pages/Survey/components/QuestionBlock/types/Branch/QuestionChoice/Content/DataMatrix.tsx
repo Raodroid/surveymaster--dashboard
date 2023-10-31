@@ -12,12 +12,15 @@ import { INPUT_TYPES } from '@input/type';
 import { useField } from 'formik';
 import { ExtraSubBranchLogicDto } from '@pages/Survey/SurveyForm/type';
 import { gen_row_column_BranchChoiceType } from '../util';
+import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 
 const DataMatrix: FC<IQuestionChoiceComponent> = props => {
   const { fieldName, questionData } = props;
 
   const [{ value }, , { setValue }] =
     useField<ExtraSubBranchLogicDto>(fieldName);
+
+  const { isViewMode } = useCheckSurveyFormMode();
 
   const options = useMemo<IOptionItem[]>(() => {
     if (!questionData?.dataMatrix) return [];
@@ -74,8 +77,6 @@ const DataMatrix: FC<IQuestionChoiceComponent> = props => {
     return result;
   }, [questionData?.dataMatrix]);
 
-  console.log(options, value.row_column_BranchChoiceType);
-
   const handleOnchange = useCallback(
     row_column_BranchChoiceType => {
       const spitedValue = row_column_BranchChoiceType.split('*');
@@ -115,7 +116,7 @@ const DataMatrix: FC<IQuestionChoiceComponent> = props => {
     <>
       <ControlledInput
         placeholder={'LogicOperator'}
-        className={'w-[150px]'}
+        className={`w-[150px] ${isViewMode ? 'view-mode' : ''}`}
         inputType={INPUT_TYPES.SELECT}
         name={`${fieldName}.row_column_BranchChoiceType`}
         options={options}
@@ -130,7 +131,7 @@ const DataMatrix: FC<IQuestionChoiceComponent> = props => {
       )}
       {shouldRenderRightOperand && (
         <ControlledInput
-          className={'w-[150px]'}
+          className={`w-[150px] ${isViewMode ? 'view-mode' : ''}`}
           inputType={INPUT_TYPES.INPUT}
           name={`${fieldName}.rightOperand`}
         />

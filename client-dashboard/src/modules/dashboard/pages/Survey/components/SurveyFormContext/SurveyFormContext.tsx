@@ -55,7 +55,10 @@ interface ISurveyFormContext {
   actionLoading: boolean;
 
   question: {
-    questionIdMap: Record<string, IQuestionVersion>;
+    questionIdMap: Record<
+      string,
+      IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
+    >;
     fetchNextQuestionPage: () => void;
     hasNextQuestionPage: boolean;
     questionOptions: IOptionItem[];
@@ -149,7 +152,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         setContext(s => {
           if (!questionListData) return s;
 
-          const normalizeByQuestionId: Record<string, IQuestionVersion> = {};
+          const normalizeByQuestionId: Record<
+            string,
+            IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
+          > = {};
           const questionOptions = questionListData.pages.reduce(
             (current: IOptionItem[], page) => {
               (page.data?.data || []).forEach((q: IQuestion) => {
@@ -165,8 +171,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
                 //   return current;
                 // }
 
-                normalizeByQuestionId[latestQuestionVersionId as string] =
-                  q.latestCompletedVersion;
+                normalizeByQuestionId[latestQuestionVersionId as string] = {
+                  ...q.latestCompletedVersion,
+                  masterCategory: q.masterCategory,
+                };
 
                 current.push({
                   label: q?.latestCompletedVersion?.title,

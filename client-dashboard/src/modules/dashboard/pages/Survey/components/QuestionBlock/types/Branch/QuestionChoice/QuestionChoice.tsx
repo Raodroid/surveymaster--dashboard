@@ -11,6 +11,7 @@ import {
 } from './util';
 import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
 import { ExtraSubBranchLogicDto } from '@pages/Survey/SurveyForm/type';
+import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 
 export interface IQuestionChoice {
   fieldName: string;
@@ -23,6 +24,7 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
   const { t } = useTranslation();
   const { question } = useSurveyFormContext();
   const { questionIdMap } = question;
+  const { isViewMode } = useCheckSurveyFormMode();
 
   const [{ value }, , { setValue }] = useField<ExtraSubBranchLogicDto>(
     `${fieldName}[${index}]`,
@@ -69,7 +71,7 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
   return (
     <>
       <ControlledInput
-        className={'min-w-[150px]'}
+        className={`min-w-[150px] ${isViewMode ? 'view-mode' : ''}`}
         value={value.questionVersionId}
         // onSearch={value => {
         //   setSearchTxt(value);

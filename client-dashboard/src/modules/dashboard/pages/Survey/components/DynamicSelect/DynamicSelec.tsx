@@ -90,13 +90,11 @@ const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
         setValue({
           ...value,
           // category: chooseQuestion.?.name as string,
-          category: chooseQuestion?.question?.masterCategory?.name as string,
-          type: chooseQuestion?.question?.latestCompletedVersion.type as string,
-          questionTitle: chooseQuestion?.question?.latestCompletedVersion
-            .title as string,
-          id: chooseQuestion?.question?.latestCompletedVersion.questionId,
-          questionVersionId: chooseQuestion?.question?.latestCompletedVersion
-            .id as string,
+          category: chooseQuestion?.masterCategory?.name as string,
+          type: chooseQuestion?.type as string,
+          questionTitle: chooseQuestion?.title as string,
+          id: chooseQuestion?.questionId,
+          questionVersionId: chooseQuestion?.id as string,
           versions: chooseQuestion?.question?.versions,
           createdAt: chooseQuestion.createdAt,
         });

@@ -8,10 +8,7 @@ import EndSurvey from './types/EndSurvey/EndSurvey';
 import Block from './types/Block/Block';
 import Branch from './types/Branch/Branch';
 import { useTranslation } from 'react-i18next';
-import {
-  calcLevelNodeByFieldName,
-  getParentNodeFieldName,
-} from '@pages/Survey/components/SurveyTree/util';
+import { getParentNodeFieldName } from '@pages/Survey/components/SurveyTree/util';
 import { useField } from 'formik';
 import AddNewBlockElement from '@pages/Survey/components/AddNewBlockElement/AddNewBlockElement';
 import { ControlledInput } from '@/modules/common';
@@ -70,15 +67,11 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
     return errorMap[record.type];
   }, [childrenLength, record.type]);
 
-  const handleRemoveBlock = () => {
-    const currentBlockLevel = calcLevelNodeByFieldName(fieldName);
-
+  const handleRemoveBlock = useCallback(() => {
     setParentNodeValue(
-      parentNodeValue.filter(
-        (node, idx) => `[${idx}]` !== currentBlockLevel?.at(-1),
-      ),
+      parentNodeValue.filter(node => node.fieldName !== fieldName),
     );
-  };
+  }, [fieldName, parentNodeValue, setParentNodeValue]);
 
   const handleDuplicateBlock = () => {
     setParentNodeValue([...parentNodeValue, value]);
@@ -89,6 +82,29 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   const toggleActiveKey = useCallback(() => {
     setActiveKey(s => (s ? undefined : fieldName));
   }, [fieldName]);
+
+  if (record.type === SubSurveyFlowElement.END_SURVEY) {
+    return (
+      <div className={'p-6 bg-[lightgray] relative'}>
+        <TypeComponent fieldName={fieldName} />{' '}
+        {!isViewMode && (
+          <div className={'absolute right-3 top-6'}>
+            <Tooltip title={t('common.remove')}>
+              <Button
+                size={'small'}
+                type={'text'}
+                className={'px-2'}
+                danger
+                onClick={handleRemoveBlock}
+              >
+                <TrashOutlined />
+              </Button>
+            </Tooltip>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <>

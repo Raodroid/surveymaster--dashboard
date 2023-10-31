@@ -6,10 +6,12 @@ import { transformEnumToOption } from '@/utils';
 import { LogicOperator, QuestionType } from '@/type';
 import { useTranslation } from 'react-i18next';
 import LogicOperatorInput from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/Content/LogicOperatorInput';
+import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 
 const TextEntry: FC<IQuestionChoiceComponent> = props => {
   const { t } = useTranslation();
   const { fieldName } = props;
+  const { isViewMode } = useCheckSurveyFormMode();
   return (
     <>
       <LogicOperatorInput
@@ -17,7 +19,7 @@ const TextEntry: FC<IQuestionChoiceComponent> = props => {
         type={QuestionType.TEXT_ENTRY}
       />
       <ControlledInput
-        className={'w-[150px]'}
+        className={`w-[150px] ${isViewMode ? 'view-mode' : ''}`}
         inputType={INPUT_TYPES.INPUT}
         name={`${fieldName}.rightOperand`}
         options={transformEnumToOption(LogicOperator, i => t(`common.${i}`))}
