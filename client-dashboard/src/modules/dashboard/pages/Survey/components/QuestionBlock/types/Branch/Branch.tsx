@@ -58,6 +58,7 @@ const Branch: FC<QuestionBlockProps> = props => {
   const options = useMemo<IOptionGroupItem[]>(() => {
     const result = [];
     getQuestionFromAllBlocks(values.version?.surveyFlowElements, result);
+    console.log(result);
     return result;
   }, [values.version?.surveyFlowElements]);
 

@@ -130,7 +130,7 @@ const AddQuestionFormCategoryModal: FC<
           (q: IQuestion) =>
             q.latestCompletedVersion.id === chosenQuestionVersionId,
         ) as IQuestion;
-
+        debugger;
         if (
           value.some(
             q => q.id === question?.id, // check if chosen version is in the same question but different version
