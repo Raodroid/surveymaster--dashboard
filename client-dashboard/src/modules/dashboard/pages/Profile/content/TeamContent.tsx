@@ -46,7 +46,7 @@ import {
   UpdateMemberModal,
 } from './modals';
 import SimpleBar from 'simplebar-react';
-import HannahCustomSpin from '../../../components/HannahCustomSpin';
+import HannahCustomSpin from '@components/HannahCustomSpin';
 interface TeamMember extends UserPayload {
   key: string;
   name: string;

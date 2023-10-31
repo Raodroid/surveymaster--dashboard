@@ -1,7 +1,11 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
-    extend: {},
+    colors: {
+      error: '#FA668A',
+      warning: '#F99444',
+      success: '#36BB9D',
+    },
   },
   plugins: [],
   corePlugins: {

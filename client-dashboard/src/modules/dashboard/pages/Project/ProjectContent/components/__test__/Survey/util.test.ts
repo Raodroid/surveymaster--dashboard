@@ -1,5 +1,4 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { useGetSurveyById } from '../../Survey/util';
 import {
   baseAxiosResponse,
   wrapperQuery,
@@ -8,6 +7,7 @@ import { SurveyService } from '../../../../../../../../services';
 import * as router from 'react-router';
 import restoreAllMocks = jest.restoreAllMocks;
 import { surveyMock, surveyVersionMock } from '../survey-mock-data';
+import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 
 beforeEach(() => {
   jest.spyOn(router, 'useLocation').mockReturnValue({

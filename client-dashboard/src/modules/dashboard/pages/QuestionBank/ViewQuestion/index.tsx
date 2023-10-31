@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 import { ViewQuestionWrapper } from './style';
-import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
+import GeneralSectionHeader from '@components/GeneralSectionHeader';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
@@ -25,9 +25,9 @@ import {
 } from 'type';
 import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from 'services';
-import { onError } from '../../../../../utils';
+import { onError } from '@/utils';
 import moment, { Moment } from 'moment';
-import HannahCustomSpin from '../../../components/HannahCustomSpin';
+import HannahCustomSpin from '@components/HannahCustomSpin';
 import { SCOPE_CONFIG } from 'enums';
 import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';

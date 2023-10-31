@@ -23,7 +23,12 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@pages/*": ["./modules/dashboard/pages/*"],
+      "@components/*": ["./modules/dashboard/components/*"],
+      "@hoc/*": ["./modules/common/hoc/*"],
+      "@commonCom/*": ["./modules/common/commonComponent/*"],
+      "@input/*": ["./modules/common/input/*"]
     }
   },
   "include": [

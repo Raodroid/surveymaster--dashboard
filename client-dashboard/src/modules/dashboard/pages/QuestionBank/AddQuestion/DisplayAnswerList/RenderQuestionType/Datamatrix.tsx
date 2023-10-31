@@ -1,17 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useFormikContext } from 'formik';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { ControlledInput } from '../../../../../../common';
-import { INPUT_TYPES } from '../../../../../../common/input/type';
-import { TrashOutlined } from '../../../../../../../icons';
-import templateVariable from '../../../../../../../app/template-variables.module.scss';
+import { INPUT_TYPES } from '@input/type';
+import { TrashOutlined } from '@/icons';
 import { IAddQuestionFormValue } from '../../util';
 import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../../enums';
-import { MatrixType } from '../../../../../../../type';
-import { transformEnumToOption } from '../../../../../../../utils';
+import { ROUTE_PATH } from 'enums';
+import { MatrixType } from 'type';
+import { transformEnumToOption } from 'utils';
+import { ControlledInput } from '@/modules/common';
+import templateVariable from '@/app/template-variables.module.scss';
 
 const Datamatrix = () => {
   const { t } = useTranslation();

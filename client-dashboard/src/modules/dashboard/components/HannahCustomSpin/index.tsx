@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Spin } from 'antd';
-import useWindowSize from '../../../common/hoc/useWindowSize';
+import useWindowSize from '@hoc/useWindowSize';
 
 const useSizeElement = (ref: any, spinning) => {
   const [height, setHeight] = useState<number | string>(0);

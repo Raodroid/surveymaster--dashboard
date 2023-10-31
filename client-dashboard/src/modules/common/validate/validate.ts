@@ -1,7 +1,15 @@
 import * as Yup from 'yup';
 import moment from 'moment';
-import { QuestionType, SubSurveyFlowElement } from '@/type';
-import { SurveyTemplateEnum } from '@/modules/dashboard/pages/Project/ProjectContent/components/DetailSurvey/SurveyForm/type';
+import {
+  BranchChoiceType,
+  BranchLogicType,
+  QuestionType,
+  SubSurveyFlowElement,
+} from '@/type';
+import {
+  ExtraSubBranchLogicDto,
+  SurveyTemplateEnum,
+} from '@/modules/dashboard/pages/Survey/SurveyForm/type';
 
 export const INVALID_FIELDS = {
   MIN_USERNAME: 'validation.messages.minUserName',
@@ -342,8 +350,106 @@ const QUESTION_BLOCK_VALIDATION = {
   branchLogics: Yup.array()
     .of(
       Yup.object({
+        operator: Yup.string().required(INVALID_FIELDS.REQUIRED),
         conjunction: Yup.string().required(INVALID_FIELDS.REQUIRED),
         logicType: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        row_column_BranchChoiceType: Yup.string().test(
+          '',
+          INVALID_FIELDS.REQUIRED,
+          (
+            value,
+            values: {
+              parent: ExtraSubBranchLogicDto;
+            },
+          ) => {
+            const { questionType } = values.parent;
+            if (!questionType) return true;
+            if (![QuestionType.DATA_MATRIX, QuestionType.FORM_FIELD]) {
+              return true;
+            }
+            return !!value;
+          },
+        ),
+        blockSort_qId: Yup.string().test(
+          '',
+          INVALID_FIELDS.REQUIRED,
+          (
+            value,
+            values: {
+              parent: ExtraSubBranchLogicDto;
+            },
+          ) => {
+            if (values.parent?.logicType !== BranchLogicType.QUESTION)
+              return true;
+            return !!value;
+          },
+        ),
+        leftOperand: Yup.string().test(
+          '',
+          INVALID_FIELDS.REQUIRED,
+          (
+            value,
+            values: {
+              parent: ExtraSubBranchLogicDto;
+            },
+          ) => {
+            const { logicType, questionType } = values.parent;
+            if (logicType === BranchLogicType.EMBEDDED_FIELD) {
+              return !!value;
+            }
+            if (!questionType) return true;
+
+            if (
+              ![
+                QuestionType.FORM_FIELD,
+                QuestionType.MULTIPLE_CHOICE,
+                QuestionType.RADIO_BUTTONS,
+              ].includes(questionType)
+            )
+              return true;
+            return !!value;
+          },
+        ),
+        rightOperand: Yup.string().test(
+          '',
+          INVALID_FIELDS.REQUIRED,
+          (
+            value,
+            values: {
+              parent: ExtraSubBranchLogicDto;
+            },
+          ) => {
+            const { logicType, questionType, choiceType } = values.parent;
+            if (logicType === BranchLogicType.EMBEDDED_FIELD) {
+              return !!value;
+            }
+            if (!questionType) return true;
+
+            if (questionType === QuestionType.DATA_MATRIX) {
+              if (!choiceType) return true;
+              if (
+                [
+                  BranchChoiceType.SELECTABLE_CHOICE,
+                  BranchChoiceType.SELECTABLE_ANSWER,
+                ].includes(choiceType)
+              ) {
+                return true;
+              }
+              return !!value;
+            }
+
+            if (
+              ![
+                QuestionType.FORM_FIELD,
+                QuestionType.DATE_PICKER,
+                QuestionType.TIME_PICKER,
+                QuestionType.TEXT_ENTRY,
+              ].includes(questionType)
+            )
+              return true;
+            return !!value;
+          },
+        ),
       }),
     )
     .test(
@@ -381,7 +487,6 @@ const QUESTION_BLOCK_VALIDATION = {
         },
       ) => {
         if (values.parent?.type !== SubSurveyFlowElement.BRANCH) return true;
-        console.log(value);
         return !!value?.length;
       },
     ),

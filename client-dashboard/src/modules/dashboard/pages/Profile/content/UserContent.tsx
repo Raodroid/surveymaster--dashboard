@@ -2,14 +2,13 @@ import { Button, Divider, Modal, Switch } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { AuthAction } from 'redux/auth';
+import { AuthAction, AuthSelectors } from 'redux/auth';
 import { UserContentStyled } from '../styles';
 import { ChangePasswordModal, SetUpPreferencesModal } from './modals';
-import { AuthSelectors } from '../../../../../redux/auth';
 import { useMutation } from 'react-query';
-import { UserService } from '../../../../../services';
-import { onError } from '../../../../../utils';
-import HannahCustomSpin from '../../../components/HannahCustomSpin';
+import { UserService } from 'services';
+import { onError } from 'utils';
+import HannahCustomSpin from '@components/HannahCustomSpin';
 
 const { confirm } = Modal;
 

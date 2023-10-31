@@ -9,7 +9,7 @@ import { Formik } from 'formik';
 import qs from 'qs';
 import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from '../../../../../services';
-import { onError } from '../../../../../utils';
+import { onError } from 'utils';
 import {
   BaseQuestionVersionDto,
   IBaseQuestionOptionsVersionDto,
@@ -19,8 +19,7 @@ import {
   QuestionType,
   QuestionVersionStatus,
 } from 'type';
-import { ROUTE_PATH } from '../../../../../enums';
-import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
+import { ROUTE_PATH } from 'enums';
 import { generatePath, useParams } from 'react-router';
 import { useGetQuestionByQuestionId } from '../util';
 import { useParseQueryString } from '../../../../../hooks';
@@ -29,6 +28,7 @@ import DisplayTitle from '../AddQuestion/DisplayTitle';
 import { generateRandom } from 'modules/common/funcs';
 import { transformQuestionData } from '../AddQuestion/util';
 import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
+import { ADD_QUESTION_FIELDS } from '@/modules/common/validate/validate';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;

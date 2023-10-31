@@ -1,15 +1,15 @@
 import React from 'react';
 import { ControlledInput } from '../../../../../common';
-import { INPUT_TYPES } from '../../../../../common/input/type';
-import { QuestionType } from '../../../../../../type';
+import { INPUT_TYPES } from '@input/type';
+import { QuestionType } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { QuestionDetailFormWrapper } from './style';
-import { transformEnumToOption } from '../../../../../../utils';
+import { transformEnumToOption } from '@/utils';
 import { useFormikContext } from 'formik';
-import { generateRandom } from '../../../../../common/funcs';
 import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../enums';
+import { ROUTE_PATH } from '@/enums';
 import TextGraphic from '../DisplayAnswerList/RenderQuestionType/TextGraphic';
+import { IAddQuestionFormValue } from '@pages/QuestionBank/AddQuestion/util';
 
 const AddQuestionDetailForm = () => {
   const isViewMode = useMatch({
@@ -21,58 +21,7 @@ const AddQuestionDetailForm = () => {
 
   const { t } = useTranslation();
 
-  const { setFieldValue, setValues, values } = useFormikContext<any>();
-
-  const handleTextFieldChange = value => {
-    switch (value) {
-      case QuestionType.SLIDER: {
-        setValues(oldValues => ({
-          ...oldValues,
-          numberMax: oldValues.numberMax || '10',
-          numberMin: oldValues.numberMin || '1',
-          numberStep: oldValues.numberStep || '1',
-        }));
-
-        break;
-      }
-      case QuestionType.MULTIPLE_CHOICE:
-      case QuestionType.FORM_FIELD:
-      case QuestionType.RADIO_BUTTONS: {
-        setFieldValue('options', [
-          {
-            id: generateRandom(),
-            text: '',
-          },
-        ]);
-        break;
-      }
-      case QuestionType.PHOTO: {
-        setFieldValue('options', [
-          {
-            id: generateRandom(),
-            text: '',
-            imageUrl: '',
-          },
-        ]);
-        break;
-      }
-      case QuestionType.TEXT_GRAPHIC: {
-        setFieldValue('image', '');
-        break;
-      }
-
-      case QuestionType.DATA_MATRIX: {
-        setValues(s => ({
-          ...s,
-          dataMatrix: {
-            rows: s?.dataMatrix?.rows || [''],
-            columns: s?.dataMatrix?.columns || [''],
-          },
-        }));
-        break;
-      }
-    }
-  };
+  const { values } = useFormikContext<IAddQuestionFormValue>();
 
   return (
     <QuestionDetailFormWrapper className={'QuestionDetailForm'}>
@@ -86,7 +35,6 @@ const AddQuestionDetailForm = () => {
           )}
           aria-label={'type'}
           label={t('common.questionFieldType')}
-          onChange={handleTextFieldChange}
         />
         {isViewMode && (
           <ControlledInput

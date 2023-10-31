@@ -32,7 +32,7 @@
     "Contains": "Contains",
     "DoesNotContain":"Does Not Contain",
     "Selected": "Selected",
-    "NotSelected":"NotSelected",
+    "NotSelected":"Not Selected",
     "Question": "Question",
     "EmbeddedField": "Embedded Field",
     "addCondition": "Add condition",

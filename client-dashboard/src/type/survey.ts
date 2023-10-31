@@ -12,6 +12,9 @@ export enum SubSurveyFlowElement {
 export enum BranchChoiceType {
   CHOICE_TEXT_ENTRY_VALUE = 'ChoiceTextEntryValue',
   SELECTABLE_CHOICE = 'SelectableChoice',
+  SELECTABLE_ANSWER = 'SelectableAnswer',
+  SELECTED_ANSWER_COUNT = 'SelectedAnswerCount',
+  SELECTED_ANSWER_RECODE = 'SelectedAnswerRecode',
 }
 
 export enum Conjunction {
@@ -46,20 +49,21 @@ export interface SubBranchLogicDto {
   sort: number;
   conjunction: Conjunction;
   logicType: BranchLogicType;
-  blockId?: string;
+  blockSort?: number;
 
-  qId?: string;
+  questionVersionId?: string;
   choiceType?: BranchChoiceType;
   optionSort?: number;
   leftOperand?: string;
   operator?: LogicOperator;
   rightOperand?: string;
+  column?: number; //index +1
+  row?: number; //index+1
 }
 
 export interface SubSurveyFlowElementDto {
   type: SubSurveyFlowElement;
   sort: number;
-  blockId: string;
   blockDescription?: string;
   blockSort?: number;
   surveyQuestions?: ISurveyQuestionDto[];

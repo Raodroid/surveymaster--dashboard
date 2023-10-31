@@ -11,11 +11,11 @@ import {
   JestGeneralProviderHoc,
 } from '../../../../../../get-mock-data-jest-test';
 import AddQuestion from '../index';
-import clearAllMocks = jest.clearAllMocks;
 import { QuestionBankService } from '../../../../../../services';
-import { ROUTE_PATH } from '../../../../../../enums';
+import { ROUTE_PATH } from '@/enums';
 import { generatePath } from 'react-router';
 import { notification } from 'antd';
+import clearAllMocks = jest.clearAllMocks;
 
 const mockedUsedNavigate = jest.fn();
 
