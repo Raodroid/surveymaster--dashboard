@@ -49,9 +49,9 @@ const SurveyFormContent = () => {
           : SURVEY_INTERNAL_FORM_SCHEMA
       }
       enableReinitialize={true}
-      validateOnChange={false}
+      // validateOnChange={false}
     >
-      {({ values, isValid, dirty, handleSubmit }) => (
+      {({ handleSubmit }) => (
         <SurveyFormWrapper layout="vertical" onFinish={handleSubmit as any}>
           <>
             <div className={'SurveyFormWrapper__survey-info'}>

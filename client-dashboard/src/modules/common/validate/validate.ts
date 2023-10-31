@@ -401,7 +401,6 @@ const QUESTION_BLOCK_VALIDATION = {
 
             if (
               ![
-                QuestionType.FORM_FIELD,
                 QuestionType.MULTIPLE_CHOICE,
                 QuestionType.RADIO_BUTTONS,
               ].includes(questionType)
