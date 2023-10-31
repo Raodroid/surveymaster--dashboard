@@ -117,9 +117,9 @@ export const ViewDetailSurveyDropDownMenuButton: FC<
     },
   );
   const completeMutation = useMutation(
-    (data: IPutSurveyVersionBodyDtoExtendId) => {
+    (data: { surveyVersionId: string }) => {
       callbackLoading();
-      return SurveyService.updateSurvey(data);
+      return SurveyService.updateStatusSurvey(data);
     },
     {
       onSuccess: async () => {
@@ -194,13 +194,6 @@ export const ViewDetailSurveyDropDownMenuButton: FC<
             onOk() {
               completeMutation.mutateAsync({
                 surveyVersionId: record.id as string,
-                name: record.name,
-                surveyFlowElements: transSurveyFLowElement(
-                  record?.surveyFlowElements || [],
-                  0,
-                ),
-                status: SurveyVersionStatus.COMPLETED,
-                remark: record.remark || '',
               });
             },
           });

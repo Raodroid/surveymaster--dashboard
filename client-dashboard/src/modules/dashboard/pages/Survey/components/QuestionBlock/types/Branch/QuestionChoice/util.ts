@@ -107,11 +107,11 @@ export const defaultOperatorQuestion: Record<QuestionType, LogicOperator> = {
   [QuestionType.DATA_MATRIX]: LogicOperator.EQUAL_TO,
   [QuestionType.TEXT_ENTRY]: LogicOperator.EQUAL_TO,
   [QuestionType.SIGNATURE]: LogicOperator.EQUAL_TO,
-  [QuestionType.DATE_PICKER]: LogicOperator.EQUAL_TO,
   [QuestionType.FORM_FIELD]: LogicOperator.EQUAL_TO,
   [QuestionType.TEXT_GRAPHIC]: LogicOperator.EQUAL_TO,
   [QuestionType.SLIDER]: LogicOperator.EQUAL_TO,
   [QuestionType.TIME_PICKER]: LogicOperator.EQUAL_TO,
+  [QuestionType.DATE_PICKER]: LogicOperator.EQUAL_TO,
 };
 
 export const defaultChoiceType: Record<QuestionType, BranchChoiceType> = {

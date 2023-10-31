@@ -27,12 +27,6 @@ const typeMap: Record<SubSurveyFlowElement, FC<QuestionBlockProps>> = {
   [SubSurveyFlowElement.BRANCH]: Branch,
   [SubSurveyFlowElement.EMBEDDED_DATA]: Embedded,
 };
-const errorMap: Record<SubSurveyFlowElement, string> = {
-  [SubSurveyFlowElement.END_SURVEY]: '',
-  [SubSurveyFlowElement.BLOCK]: 'Survey Question can not be empty',
-  [SubSurveyFlowElement.BRANCH]: 'Branch logics can not be empty',
-  [SubSurveyFlowElement.EMBEDDED_DATA]: 'Embedded Data can not be empty',
-};
 
 const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   const { t } = useTranslation();
@@ -63,9 +57,8 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   }, [record]);
 
   const blockError = useMemo<string>(() => {
-    if (childrenLength) return '';
-    return errorMap[record.type];
-  }, [childrenLength, record.type]);
+    return (error as unknown as { children: string })?.children || '';
+  }, [error]);
 
   const handleRemoveBlock = useCallback(() => {
     setParentNodeValue(
@@ -188,6 +181,15 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
                   </Button>
                 </Tooltip>
               </div>
+            </div>
+          )}
+          {touched && blockError && (
+            <div
+              className={
+                'p-3 rounded border border-error ant-form-item-explain-error'
+              }
+            >
+              {blockError}
             </div>
           )}
           <div className={'w-full'}>

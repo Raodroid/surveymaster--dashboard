@@ -68,7 +68,7 @@ const SurveyQuestions: FC<{
         render: (value, record, index) => {
           const content = gen_QID_template({
             blockSort: blockData.blockSort as number,
-            sort: record.sort as number,
+            sort: (index + 1) as number,
           });
           return (
             <span

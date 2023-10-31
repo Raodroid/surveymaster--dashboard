@@ -1,26 +1,23 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { Button } from 'antd';
-import { ControlledInput } from '../../../../common';
 import { INPUT_TYPES } from '@/modules/common/input/type';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { transformEnumToOption } from '@/utils';
-import { QuestionListWrapper, SurveyFormWrapper } from './style';
-import { useParams } from 'react-router';
+import { SurveyFormWrapper } from './style';
 import { TemplateOption } from './SurveyTemplateOption';
 import {
   SURVEY_EXTERNAL_FORM_SCHEMA,
   SURVEY_INTERNAL_FORM_SCHEMA,
 } from '@/modules/common/validate/validate';
-import SimpleBar from 'simplebar-react';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { SurveyTemplateEnum } from './type';
-import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import SurveyPlayGround from '@pages/Survey/components/SurveyPlayGround/SurveyPlayGround';
 import {
   SurveyFormProvider,
   useSurveyFormContext,
 } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
+import { ControlledInput } from '@/modules/common';
 
 const SurveyForm = (props: { isLoading?: boolean }) => {
   return (
@@ -161,35 +158,35 @@ const SurveyFormContent = () => {
   );
 };
 
-const QuestionSurveyList: FC<{
-  isExternalProject: boolean;
-  setExcelUploadFile: (value: string | Blob) => void;
-}> = props => {
-  const { isExternalProject, setExcelUploadFile } = props;
-  const { t } = useTranslation();
-  const params = useParams<{ surveyId?: string }>();
-  const { currentSurveyVersion } = useGetSurveyById(params?.surveyId);
-
-  const { isViewMode, isEditMode } = useCheckSurveyFormMode();
-
-  return (
-    <SimpleBar style={{ height: '100%' }}>
-      <QuestionListWrapper className={'QuestionListWrapper'}>
-        <div className="QuestionListWrapper__header">
-          {isExternalProject &&
-          !currentSurveyVersion?.surveyFlowElements?.length
-            ? t('common.uploadFile')
-            : t('common.surveyQuestionList')}
-        </div>
-
-        {/*{!isViewMode && (*/}
-        {/*  <UploadExternalFile setExcelUploadFile={setExcelUploadFile} />*/}
-        {/*)}*/}
-
-        {/*{isViewMode && (*/}
-        {/*  <ViewSurveyQuestionList questions={currentSurveyVersion?.questions} />*/}
-        {/*)}*/}
-      </QuestionListWrapper>
-    </SimpleBar>
-  );
-};
+// const QuestionSurveyList: FC<{
+//   isExternalProject: boolean;
+//   setExcelUploadFile: (value: string | Blob) => void;
+// }> = props => {
+//   const { isExternalProject, setExcelUploadFile } = props;
+//   const { t } = useTranslation();
+//   const params = useParams<{ surveyId?: string }>();
+//   const { currentSurveyVersion } = useGetSurveyById(params?.surveyId);
+//
+//   const { isViewMode, isEditMode } = useCheckSurveyFormMode();
+//
+//   return (
+//     <SimpleBar style={{ height: '100%' }}>
+//       <QuestionListWrapper className={'QuestionListWrapper'}>
+//         <div className="QuestionListWrapper__header">
+//           {isExternalProject &&
+//           !currentSurveyVersion?.surveyFlowElements?.length
+//             ? t('common.uploadFile')
+//             : t('common.surveyQuestionList')}
+//         </div>
+//
+//         {/*{!isViewMode && (*/}
+//         {/*  <UploadExternalFile setExcelUploadFile={setExcelUploadFile} />*/}
+//         {/*)}*/}
+//
+//         {/*{isViewMode && (*/}
+//         {/*  <ViewSurveyQuestionList questions={currentSurveyVersion?.questions} />*/}
+//         {/*)}*/}
+//       </QuestionListWrapper>
+//     </SimpleBar>
+//   );
+// };

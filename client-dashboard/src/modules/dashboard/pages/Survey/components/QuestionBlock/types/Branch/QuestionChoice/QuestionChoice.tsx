@@ -51,6 +51,7 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
         questionVersionId: qId,
         leftOperand: '',
         rightOperand: '',
+        questionType: selectedQuestion.type,
         operator: selectedQuestion.type
           ? defaultOperatorQuestion[selectedQuestion.type]
           : LogicOperator.EQUAL_TO,

@@ -14,6 +14,7 @@ import { ReactNode } from 'react';
 export type ExtraSubBranchLogicDto = SubBranchLogicDto & {
   blockSort_qId: string;
   row_column_BranchChoiceType?: string;
+  questionType?: QuestionType;
 };
 
 type GeneralDataNode = Omit<DataNode, 'title' | 'children'>;

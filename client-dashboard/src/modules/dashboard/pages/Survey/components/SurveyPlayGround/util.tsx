@@ -37,7 +37,10 @@ export const transSurveyFLowElement = (
       blockDescription: i.blockDescription,
       surveyQuestions: !i.surveyQuestions?.length
         ? undefined
-        : i.surveyQuestions,
+        : i.surveyQuestions.map((i, surveyQuestionsIndex) => ({
+            ...i,
+            sort: surveyQuestionsIndex + 1,
+          })),
       branchLogics:
         i.type === SubSurveyFlowElement.BRANCH
           ? i.branchLogics?.map((logic: ExtraSubBranchLogicDto, logicIndex) => {
@@ -48,6 +51,7 @@ export const transSurveyFLowElement = (
                 column,
                 row,
                 optionSort,
+                questionType,
                 ...rest
               } = logic;
 

@@ -25,6 +25,7 @@ import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 
 const defaultLogicBranch: EmptyString<ExtraSubBranchLogicDto> = {
   blockSort_qId: '',
+  row_column_BranchChoiceType: '',
   sort: Math.random(),
   conjunction: Conjunction.AND,
   logicType: BranchLogicType.QUESTION,
@@ -37,6 +38,7 @@ const defaultLogicBranch: EmptyString<ExtraSubBranchLogicDto> = {
   rightOperand: '',
   row: '',
   column: '',
+  questionType: '',
 };
 
 const componentMap: Record<BranchLogicType, FC<IQuestionChoice>> = {

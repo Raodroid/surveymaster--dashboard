@@ -3,12 +3,13 @@ import moment from 'moment';
 import {
   BranchChoiceType,
   BranchLogicType,
-  Conjunction,
-  LogicOperator,
   QuestionType,
   SubSurveyFlowElement,
 } from '@/type';
-import { SurveyTemplateEnum } from '@/modules/dashboard/pages/Survey/SurveyForm/type';
+import {
+  ExtraSubBranchLogicDto,
+  SurveyTemplateEnum,
+} from '@/modules/dashboard/pages/Survey/SurveyForm/type';
 
 export const INVALID_FIELDS = {
   MIN_USERNAME: 'validation.messages.minUserName',
@@ -349,30 +350,33 @@ const QUESTION_BLOCK_VALIDATION = {
   branchLogics: Yup.array()
     .of(
       Yup.object({
-        // sort: number;
-        // conjunction: Conjunction;
-        // logicType: BranchLogicType;
-        // blockSort?: number;
-        //
-        // questionVersionId?: string;
-        // choiceType?: BranchChoiceType;
-        // optionSort?: number;
-        // leftOperand?: string;
-        // operator?: LogicOperator;
-        // rightOperand?: string;
-        // column?: number; //index +1
-        // row?: number; //index+1
+        operator: Yup.string().required(INVALID_FIELDS.REQUIRED),
         conjunction: Yup.string().required(INVALID_FIELDS.REQUIRED),
         logicType: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        row_column_BranchChoiceType: Yup.string().test(
+          '',
+          INVALID_FIELDS.REQUIRED,
+          (
+            value,
+            values: {
+              parent: ExtraSubBranchLogicDto;
+            },
+          ) => {
+            const { questionType } = values.parent;
+            if (!questionType) return true;
+            if (![QuestionType.DATA_MATRIX, QuestionType.FORM_FIELD]) {
+              return true;
+            }
+            return !!value;
+          },
+        ),
         blockSort_qId: Yup.string().test(
           '',
           INVALID_FIELDS.REQUIRED,
           (
             value,
             values: {
-              parent: {
-                logicType?: BranchLogicType;
-              };
+              parent: ExtraSubBranchLogicDto;
             },
           ) => {
             if (values.parent?.logicType !== BranchLogicType.QUESTION)
@@ -380,7 +384,72 @@ const QUESTION_BLOCK_VALIDATION = {
             return !!value;
           },
         ),
-        operator: Yup.string().required(INVALID_FIELDS.REQUIRED),
+        leftOperand: Yup.string().test(
+          '',
+          INVALID_FIELDS.REQUIRED,
+          (
+            value,
+            values: {
+              parent: ExtraSubBranchLogicDto;
+            },
+          ) => {
+            const { logicType, questionType } = values.parent;
+            if (logicType === BranchLogicType.EMBEDDED_FIELD) {
+              return !!value;
+            }
+            if (!questionType) return true;
+
+            if (
+              ![
+                QuestionType.FORM_FIELD,
+                QuestionType.MULTIPLE_CHOICE,
+                QuestionType.RADIO_BUTTONS,
+              ].includes(questionType)
+            )
+              return true;
+            return !!value;
+          },
+        ),
+        rightOperand: Yup.string().test(
+          '',
+          INVALID_FIELDS.REQUIRED,
+          (
+            value,
+            values: {
+              parent: ExtraSubBranchLogicDto;
+            },
+          ) => {
+            const { logicType, questionType, choiceType } = values.parent;
+            if (logicType === BranchLogicType.EMBEDDED_FIELD) {
+              return !!value;
+            }
+            if (!questionType) return true;
+
+            if (questionType === QuestionType.DATA_MATRIX) {
+              if (!choiceType) return true;
+              if (
+                [
+                  BranchChoiceType.SELECTABLE_CHOICE,
+                  BranchChoiceType.SELECTABLE_ANSWER,
+                ].includes(choiceType)
+              ) {
+                return true;
+              }
+              return !!value;
+            }
+
+            if (
+              ![
+                QuestionType.FORM_FIELD,
+                QuestionType.DATE_PICKER,
+                QuestionType.TIME_PICKER,
+                QuestionType.TEXT_ENTRY,
+              ].includes(questionType)
+            )
+              return true;
+            return !!value;
+          },
+        ),
       }),
     )
     .test(

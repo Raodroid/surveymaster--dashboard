@@ -73,7 +73,6 @@ const DataMatrix: FC<IQuestionChoiceComponent> = props => {
       };
       result = [columnOption, columnCountOption, ...result];
     }
-
     return result;
   }, [questionData?.dataMatrix]);
 
@@ -115,7 +114,6 @@ const DataMatrix: FC<IQuestionChoiceComponent> = props => {
   return (
     <>
       <ControlledInput
-        placeholder={'LogicOperator'}
         className={`w-[150px] ${isViewMode ? 'view-mode' : ''}`}
         inputType={INPUT_TYPES.SELECT}
         name={`${fieldName}.row_column_BranchChoiceType`}
