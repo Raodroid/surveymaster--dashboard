@@ -5,38 +5,46 @@ export const transformQuestionData = (
 ): BaseQuestionVersionDto => {
   const result = { ...input };
   if (
-    ![
+    [
       QuestionType.MULTIPLE_CHOICE,
       QuestionType.RADIO_BUTTONS,
       QuestionType.FORM_FIELD,
       QuestionType.PHOTO,
+      QuestionType.RANK_ORDER,
     ].includes(result.type)
   ) {
-    delete result?.options;
+    if (result.type === QuestionType.PHOTO) {
+      result.options = input?.options?.map((opt, index) => ({
+        sort: index + 1,
+        text: opt.text,
+        imageUrl: (opt as any)?.imageUrl.response?.url || opt.imageUrl,
+      }));
+    } else {
+      result.options = input?.options?.map((opt, index) => ({
+        sort: index + 1,
+        text: opt.text,
+        keyPath: opt.keyPath,
+      }));
+    }
   } else {
-    result.options = input?.options?.map((opt, index) => ({
-      sort: index + 1,
-      text: opt.text,
-      keyPath: opt.keyPath,
-    }));
-  }
-  if (result.type === QuestionType.PHOTO) {
-    result.options = input?.options?.map((opt, index) => ({
-      sort: index + 1,
-      text: opt.text,
-      imageUrl: (opt as any)?.imageUrl.response?.url || opt.imageUrl,
-    }));
+    delete result?.options;
   }
 
-  if (result.type !== QuestionType.SLIDER) {
-    delete result?.numberMax;
-    delete result?.numberMin;
-    delete result?.numberStep;
-  } else {
+  if (result.type === QuestionType.SLIDER) {
     result.numberMax = stringToInt(input.numberMax);
     result.numberMin = stringToInt(input.numberMin);
     result.numberStep = stringToInt(input.numberStep);
+  } else if (result.type === QuestionType.TEXT_NUMBER) {
+    result.numberMax = stringToNumber(input.numberMax);
+    result.numberMin = stringToNumber(input.numberMin);
+    result.maxDecimal = stringToInt(input.maxDecimal) || 0;
+  } else {
+    delete result?.numberMax;
+    delete result?.numberMin;
+    delete result?.numberStep;
+    delete result?.maxDecimal;
   }
+
   if (result.type !== QuestionType.TIME_PICKER) {
     delete result.timeFormat;
   }
@@ -55,6 +63,11 @@ export const transformQuestionData = (
 
 const stringToInt = input => {
   if (input && typeof input !== 'number') return parseInt(input);
+  if (typeof input === 'number') return input;
+};
+const stringToNumber = input => {
+  if (input && typeof input !== 'number')
+    return Number(parseFloat(input).toFixed(2));
   if (typeof input === 'number') return input;
 };
 

@@ -161,15 +161,37 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
   masterSubCategoryId: Yup.string().required(INVALID_FIELDS.REQUIRED),
   masterVariableName: Yup.string().required(INVALID_FIELDS.REQUIRED),
 
-  numberMin: Yup.string().when('type', {
-    is: QuestionType.SLIDER,
-    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
-  }),
+  numberMin: Yup.string()
+    .when('type', {
+      is: QuestionType.SLIDER,
+      then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+    })
+    .when('type', {
+      is: QuestionType.TEXT_NUMBER,
+      then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+    }),
   numberMinLabel: Yup.string(),
-  numberMax: Yup.string().when('type', {
-    is: QuestionType.SLIDER,
-    then: Yup.string().required(INVALID_FIELDS.REQUIRED),
-  }),
+  numberMax: Yup.string()
+    .when('type', {
+      is: QuestionType.SLIDER,
+      then: Yup.string().required(INVALID_FIELDS.REQUIRED),
+    })
+    .when('type', {
+      is: QuestionType.TEXT_NUMBER,
+      then: Yup.string()
+        .required(INVALID_FIELDS.REQUIRED)
+        .test(
+          'lessThanNumberMin',
+          'numberMax must be great than numberMin',
+          function (value) {
+            const numberMin = this.parent.numberMin;
+            if (value && numberMin) {
+              return parseFloat(value) > parseFloat(numberMin);
+            }
+            return true;
+          },
+        ),
+    }),
   numberMaxLabel: Yup.string(),
   numberStep: Yup.string().when('type', {
     is: QuestionType.SLIDER,
@@ -265,6 +287,16 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
           }),
         )
         .min(1),
+    })
+    .when('type', {
+      is: QuestionType.RANK_ORDER,
+      then: Yup.array()
+        .of(
+          Yup.object().shape({
+            text: Yup.string().required(INVALID_FIELDS.REQUIRED),
+          }),
+        )
+        .min(2),
     }),
 });
 
