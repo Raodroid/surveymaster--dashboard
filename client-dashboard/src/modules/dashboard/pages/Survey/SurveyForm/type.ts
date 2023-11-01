@@ -62,6 +62,7 @@ export type questionValueType = ISurveyQuestionDto & {
   questionTitle: string;
   versions?: IQuestionVersion[];
   createdAt?: string | Date | null;
+  questionVersion?: IQuestionVersion;
 };
 
 export interface IAddSurveyFormValues

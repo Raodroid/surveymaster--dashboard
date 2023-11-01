@@ -5,16 +5,14 @@ import { useField } from 'formik';
 import { Button } from 'antd';
 import DragHandle from '@/customize-components/DragHandle';
 import { INPUT_TYPES } from '@/modules/common/input/type';
-import { objectKeys, useDebounce } from '@/utils';
+import { useDebounce } from '@/utils';
 import { useTranslation } from 'react-i18next';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
 
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import CopyButton from '@commonCom/CopyButton/CopyButton';
 import { DragTable } from '@components/DragTable/DragTable';
-import GroupSurveyButton, {
-  initNewRowValue,
-} from '../GroupSurveyButton/GroupSurveyButton';
+import GroupSurveyButton from '../GroupSurveyButton/GroupSurveyButton';
 import { ControlledInput } from '@/modules/common';
 import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
 import DynamicSelect from '../DynamicSelect/DynamicSelec';
@@ -50,23 +48,15 @@ const SurveyQuestions: FC<{
 
   const availableQuestionOptions = useMemo<IOptionItem[]>(() => {
     return questionOptions.reduce((res: IOptionItem[], item) => {
-      if (value?.some(i => i.questionVersionId === item.value)) return res;
-      return [...res, item];
+      return [
+        ...res,
+        {
+          ...item,
+          disabled: value?.some(i => i.questionVersionId === item.value),
+        },
+      ];
     }, []);
   }, [questionOptions, value]);
-
-  // const availableQuestionOptions = useMemo<IOptionItem[]>(() => {
-  //     // console.log('hi');
-  //     return objectKeys(questionIdMap).map(key => {
-  //         const qValue = questionIdMap[key];
-  //         const isSelected = value?.some(i => i.questionVersionId === qValue.id);
-  //         return {
-  //             label: qValue.title,
-  //             value: qValue.id as string,
-  //             disabled: isSelected,
-  //         };
-  //     }, []);
-  // }, [questionIdMap, value]);
 
   useEffect(() => {
     setSearchParams({ q: debounceSearchText });

@@ -1,7 +1,7 @@
 import React, { FC, ReactNode, useCallback } from 'react';
 import { GeneralSectionHeaderWrapper } from './style';
 import { ReactI18NextChild } from 'react-i18next';
-import { ArrowLeft } from '../../../../icons';
+import { ArrowLeft } from '@/icons';
 import { useNavigate } from 'react-router-dom';
 
 interface IGeneralSectionHeader {

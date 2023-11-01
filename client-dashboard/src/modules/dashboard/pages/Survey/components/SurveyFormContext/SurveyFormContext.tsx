@@ -119,6 +119,7 @@ const createQuestionMap = (
       const question = q.questionVersion;
 
       const keyID = question.id as string;
+
       if (question) {
         if (!mapId[keyID]) {
           questionOptions.push({
@@ -166,7 +167,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
             IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
           > = { ...s.question.questionIdMap };
 
-          const questionOptions = s.question.questionOptions;
+          const questionOptions = [...s.question.questionOptions];
 
           questionListData.pages.at(-1)?.data?.data.forEach((q: IQuestion) => {
             const latestQuestionVersionId = q.latestCompletedVersion
@@ -183,8 +184,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
               };
             }
           });
-
-          console.log(s.question.questionIdMap, normalizeByQuestionId);
 
           return {
             ...s,
@@ -550,7 +549,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         ...s,
         question: {
           ...s.question,
-          questionOptions: [...s.question.questionOptions, ...questionOptions],
+          // questionOptions: [...s.question.questionOptions, ...questionOptions],
           questionIdMap: {
             ...s.question.questionIdMap,
             ...questionIdMap,
