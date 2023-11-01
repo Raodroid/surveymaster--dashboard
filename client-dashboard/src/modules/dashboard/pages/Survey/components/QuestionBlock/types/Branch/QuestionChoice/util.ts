@@ -64,6 +64,13 @@ export const getQuestionFromAllBlocks = (
         label: blockDescription,
         options: (surveyQuestions || []).map(i => ({
           label: i?.questionTitle || '',
+          disabled: !i.type
+            ? false
+            : [
+                QuestionType.PHOTO,
+                QuestionType.TEXT_GRAPHIC,
+                QuestionType.SIGNATURE,
+              ].includes(i.type as QuestionType),
           value: block_qId_template({
             blockSort,
             questionVersionId: i.questionVersionId,

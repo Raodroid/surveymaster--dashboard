@@ -73,6 +73,7 @@ const DataMatrix: FC<IQuestionChoiceComponent> = props => {
       };
       result = [columnOption, columnCountOption, ...result];
     }
+
     return result;
   }, [questionData?.dataMatrix]);
 

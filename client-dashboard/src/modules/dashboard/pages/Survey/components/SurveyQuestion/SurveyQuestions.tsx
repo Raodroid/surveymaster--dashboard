@@ -5,7 +5,7 @@ import { useField } from 'formik';
 import { Button } from 'antd';
 import DragHandle from '@/customize-components/DragHandle';
 import { INPUT_TYPES } from '@/modules/common/input/type';
-import { useDebounce } from '@/utils';
+import { objectKeys, useDebounce } from '@/utils';
 import { useTranslation } from 'react-i18next';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
 
@@ -37,12 +37,12 @@ const SurveyQuestions: FC<{
     },
     [setValue, value],
   );
-  const addQuestion = useCallback(() => {
-    setValue([...value, initNewRowValue]);
-  }, [setValue, value]);
+  // const addQuestion = useCallback(() => {
+  //   setValue([...value, initNewRowValue]);
+  // }, [setValue, value]);
 
   const { question } = useSurveyFormContext();
-  const { setSearchParams, questionOptions } = question;
+  const { setSearchParams, questionOptions, questionIdMap } = question;
 
   const [searchTxt, setSearchTxt] = useState<string>('');
 
@@ -54,6 +54,19 @@ const SurveyQuestions: FC<{
       return [...res, item];
     }, []);
   }, [questionOptions, value]);
+
+  // const availableQuestionOptions = useMemo<IOptionItem[]>(() => {
+  //     // console.log('hi');
+  //     return objectKeys(questionIdMap).map(key => {
+  //         const qValue = questionIdMap[key];
+  //         const isSelected = value?.some(i => i.questionVersionId === qValue.id);
+  //         return {
+  //             label: qValue.title,
+  //             value: qValue.id as string,
+  //             disabled: isSelected,
+  //         };
+  //     }, []);
+  // }, [questionIdMap, value]);
 
   useEffect(() => {
     setSearchParams({ q: debounceSearchText });

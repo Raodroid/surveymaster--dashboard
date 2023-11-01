@@ -364,7 +364,11 @@ const QUESTION_BLOCK_VALIDATION = {
           ) => {
             const { questionType } = values.parent;
             if (!questionType) return true;
-            if (![QuestionType.DATA_MATRIX, QuestionType.FORM_FIELD]) {
+            if (
+              ![QuestionType.DATA_MATRIX, QuestionType.FORM_FIELD].includes(
+                questionType,
+              )
+            ) {
               return true;
             }
             return !!value;
@@ -443,6 +447,7 @@ const QUESTION_BLOCK_VALIDATION = {
                 QuestionType.DATE_PICKER,
                 QuestionType.TIME_PICKER,
                 QuestionType.TEXT_ENTRY,
+                QuestionType.SLIDER,
               ].includes(questionType)
             )
               return true;
@@ -476,7 +481,7 @@ const QUESTION_BLOCK_VALIDATION = {
     )
     .test(
       '',
-      'Question block can not be empty',
+      'Block can not be empty',
       (
         value,
         values: {

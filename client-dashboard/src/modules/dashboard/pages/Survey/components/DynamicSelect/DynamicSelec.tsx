@@ -71,6 +71,7 @@ const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
   );
   const onScroll = useCallback(
     async event => {
+      console.log('scroll');
       let target = event.target;
       if (
         !isFetchingQuestion &&
