@@ -197,6 +197,19 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
     is: QuestionType.SLIDER,
     then: Yup.string().required(INVALID_FIELDS.REQUIRED),
   }),
+  maxDecimal: Yup.string().when('type', {
+    is: QuestionType.TEXT_NUMBER,
+    then: Yup.string().test(
+      'isPositiveInteger',
+      'MaxDecimal must be positive integer',
+      function (value) {
+        if (value) {
+          return Number.isInteger(parseFloat(value)) && +value >= 0;
+        }
+        return true;
+      },
+    ),
+  }),
 
   dateFormat: Yup.string()
     .nullable()

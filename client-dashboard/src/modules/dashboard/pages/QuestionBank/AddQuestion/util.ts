@@ -1,48 +1,55 @@
+import omit from 'lodash/number';
+import isNumber from 'lodash/isNumber';
 import { BaseQuestionVersionDto, QuestionType } from '../../../../../type';
 
 export const transformQuestionData = (
   input: BaseQuestionVersionDto,
 ): BaseQuestionVersionDto => {
-  const result = { ...input };
-  if (
-    [
-      QuestionType.MULTIPLE_CHOICE,
-      QuestionType.RADIO_BUTTONS,
-      QuestionType.FORM_FIELD,
-      QuestionType.PHOTO,
-      QuestionType.RANK_ORDER,
-    ].includes(result.type)
-  ) {
-    if (result.type === QuestionType.PHOTO) {
+  let result = { ...input };
+
+  switch (result.type) {
+    case QuestionType.MULTIPLE_CHOICE:
+    case QuestionType.RADIO_BUTTONS:
+    case QuestionType.FORM_FIELD:
+    case QuestionType.RANK_ORDER:
+      result.options = input?.options?.map((opt, index) => ({
+        sort: index + 1,
+        text: opt.text,
+        keyPath: opt?.keyPath,
+      }));
+      break;
+
+    case QuestionType.PHOTO:
       result.options = input?.options?.map((opt, index) => ({
         sort: index + 1,
         text: opt.text,
         imageUrl: (opt as any)?.imageUrl.response?.url || opt.imageUrl,
       }));
-    } else {
-      result.options = input?.options?.map((opt, index) => ({
-        sort: index + 1,
-        text: opt.text,
-        keyPath: opt.keyPath,
-      }));
-    }
-  } else {
-    delete result?.options;
-  }
+      break;
 
-  if (result.type === QuestionType.SLIDER) {
-    result.numberMax = stringToInt(input.numberMax);
-    result.numberMin = stringToInt(input.numberMin);
-    result.numberStep = stringToInt(input.numberStep);
-  } else if (result.type === QuestionType.TEXT_NUMBER) {
-    result.numberMax = stringToNumber(input.numberMax);
-    result.numberMin = stringToNumber(input.numberMin);
-    result.maxDecimal = stringToInt(input.maxDecimal) || 0;
-  } else {
-    delete result?.numberMax;
-    delete result?.numberMin;
-    delete result?.numberStep;
-    delete result?.maxDecimal;
+    case QuestionType.SLIDER:
+      result.numberMax = stringToInt(input.numberMax);
+      result.numberMin = stringToInt(input.numberMin);
+      result.numberStep = stringToInt(input.numberStep);
+      break;
+
+    case QuestionType.TEXT_NUMBER:
+      result.numberMax = stringToNumber(input.numberMax);
+      result.numberMin = stringToNumber(input.numberMin);
+      result.maxDecimal = isNumber(stringToInt(input.maxDecimal))
+        ? stringToInt(input.maxDecimal)
+        : null;
+      break;
+
+    default:
+      result = omit(result, [
+        'options',
+        'numberMax',
+        'numberMin',
+        'numberStep',
+        'maxDecimal',
+      ]);
+      break;
   }
 
   if (result.type !== QuestionType.TIME_PICKER) {
@@ -61,15 +68,10 @@ export const transformQuestionData = (
   return result;
 };
 
-const stringToInt = input => {
-  if (input && typeof input !== 'number') return parseInt(input);
-  if (typeof input === 'number') return input;
-};
-const stringToNumber = input => {
-  if (input && typeof input !== 'number')
-    return Number(parseFloat(input).toFixed(2));
-  if (typeof input === 'number') return input;
-};
+const stringToInt = input => (isNumber(input) ? input : parseInt(input));
+
+const stringToNumber = input =>
+  isNumber(input) ? input : Number(parseFloat(input).toFixed(2));
 
 export interface IAddQuestionFormValue extends BaseQuestionVersionDto {
   masterCategoryId: string;

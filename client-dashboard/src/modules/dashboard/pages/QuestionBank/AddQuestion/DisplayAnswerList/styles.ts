@@ -16,3 +16,20 @@ export const InputWrapper = styled.div`
     }
   }
 `;
+
+export const InputWrapperMultipleChoice = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  .form-item-container {
+    &:first-child {
+      flex: 3;
+    }
+    &:last-child {
+      flex: 3;
+    }
+  }
+`;

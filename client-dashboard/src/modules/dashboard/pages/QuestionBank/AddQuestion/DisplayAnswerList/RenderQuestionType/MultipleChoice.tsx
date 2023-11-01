@@ -23,6 +23,7 @@ import { AnswerListWrapper } from './style';
 import { INPUT_TYPES } from '../../../../../../common/input/type';
 import { ControlledInput } from '../../../../../../common';
 import { generateRandom } from 'modules/common/funcs';
+import { InputWrapperMultipleChoice } from '../styles';
 
 const DragHandle = SortableHandle(() => (
   <DragIcon
@@ -30,7 +31,7 @@ const DragHandle = SortableHandle(() => (
   />
 ));
 
-const MultipleChoice = () => {
+const MultipleChoice = ({ isKeyPath = true }: { isKeyPath?: boolean }) => {
   const { t } = useTranslation();
   const { values, setValues } = useFormikContext<BaseQuestionVersionDto>();
 
@@ -75,7 +76,7 @@ const MultipleChoice = () => {
         dataIndex: 'question',
         render: (value, record, index) => {
           return (
-            <div style={{ display: 'flex' }}>
+            <InputWrapperMultipleChoice>
               <ControlledInput
                 inputType={INPUT_TYPES.INPUT}
                 name={`options[${index}].text`}
@@ -83,15 +84,17 @@ const MultipleChoice = () => {
                 aria-label={`options[${index}].text`}
                 placeholder={'Title'}
               />
-              <ControlledInput
-                style={{ marginLeft: 10 }}
-                inputType={INPUT_TYPES.INPUT}
-                name={`options[${index}].keyPath`}
-                className={className}
-                aria-label={`options[${index}].keyPath`}
-                placeholder={'Key Path'}
-              />
-            </div>
+              {isKeyPath && (
+                <ControlledInput
+                  style={{ marginLeft: 10 }}
+                  inputType={INPUT_TYPES.INPUT}
+                  name={`options[${index}].keyPath`}
+                  className={className}
+                  aria-label={`options[${index}].keyPath`}
+                  placeholder={'Key Path'}
+                />
+              )}
+            </InputWrapperMultipleChoice>
           );
         },
       },
