@@ -98,9 +98,7 @@ const AddQuestion = () => {
           delete column.id;
         });
       }
-      const payload = transformData(newValue);
-      // console.log('payload =', payload);
-      return addQuestionMutation.mutateAsync(payload);
+      return addQuestionMutation.mutateAsync(transformData(newValue));
     },
     [addQuestionMutation],
   );

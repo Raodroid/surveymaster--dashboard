@@ -16,7 +16,7 @@ import SurveyPlayGround from '@pages/Survey/components/SurveyPlayGround/SurveyPl
 import {
   SurveyFormProvider,
   useSurveyFormContext,
-} from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
+} from '@pages/Survey/components/SurveyFormContext';
 import { ControlledInput } from '@/modules/common';
 
 const SurveyForm = (props: { isLoading?: boolean }) => {

@@ -139,7 +139,7 @@ const AddNewBlockElement: FC<{
       </div>
       {!isViewMode && (
         <Button type={'primary'} className={'py-3 w-full'} onClick={toggleShow}>
-          {t('common.addElement')}
+          {t('common.addBlock')}
         </Button>
       )}
     </div>

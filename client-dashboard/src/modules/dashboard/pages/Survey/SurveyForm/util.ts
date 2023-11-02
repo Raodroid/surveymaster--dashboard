@@ -67,13 +67,13 @@ const transSurveyFlowElements = (
       fieldName,
       blockSort,
       key: fieldName,
-      surveyQuestions: (surveyQuestions || []).map(question => ({
-        ...question,
-        type: question.questionVersion.type,
+      surveyQuestions: (surveyQuestions || []).map(surveyQuestion => ({
+        ...surveyQuestion,
+        type: surveyQuestion.questionVersion.type,
         category:
-          question?.questionVersion?.question?.masterCategory?.name || '',
-        questionTitle: question.questionVersion.title,
-        versions: question.questionVersion.question?.versions,
+          surveyQuestion?.questionVersion?.question?.masterCategory?.name || '',
+        questionTitle: surveyQuestion.questionVersion.title,
+        versions: surveyQuestion.questionVersion.question?.versions,
       })),
       children: children
         ? transSurveyFlowElements(children, blockSort, fieldName)

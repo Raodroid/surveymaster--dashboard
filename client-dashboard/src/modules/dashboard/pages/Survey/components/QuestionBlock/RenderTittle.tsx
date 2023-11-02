@@ -8,7 +8,10 @@ import EndSurvey from './types/EndSurvey/EndSurvey';
 import Block from './types/Block/Block';
 import Branch from './types/Branch/Branch';
 import { useTranslation } from 'react-i18next';
-import { getParentNodeFieldName } from '@pages/Survey/components/SurveyTree/util';
+import {
+  getParentNodeFieldName,
+  transformToSurveyDataTreeNode,
+} from '@pages/Survey/components/SurveyTree/util';
 import { useField } from 'formik';
 import AddNewBlockElement from '@pages/Survey/components/AddNewBlockElement/AddNewBlockElement';
 import { ControlledInput } from '@/modules/common';
@@ -56,13 +59,16 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
     }
   }, [record]);
 
-  const blockError = useMemo<string>(() => {
-    return (error as unknown as { children: string })?.children || '';
-  }, [error]);
+  const blockError = (() => {
+    const errorChildren = (error as unknown as { children: string })?.children;
+    return typeof errorChildren === 'string' ? errorChildren : '';
+  })();
 
   const handleRemoveBlock = useCallback(() => {
     setParentNodeValue(
-      parentNodeValue.filter(node => node.fieldName !== fieldName),
+      transformToSurveyDataTreeNode(
+        parentNodeValue.filter(node => node.fieldName !== fieldName),
+      ),
     );
   }, [fieldName, parentNodeValue, setParentNodeValue]);
 
@@ -185,9 +191,7 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
           )}
           {touched && blockError && (
             <div
-              className={
-                'p-3 rounded border border-error ant-form-item-explain-error'
-              }
+              className={'p-3 rounded ant-form-item-explain-error font-[600]'}
             >
               {blockError}
             </div>

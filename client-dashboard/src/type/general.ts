@@ -66,7 +66,7 @@ export interface IOptionItem {
 
 export interface IOptionGroupItem {
   label: string | undefined;
-  options: { label: string; value: string }[];
+  options: { label: string; value: string; disabled?: boolean }[];
 }
 
 export type ObjectKey = Record<string | number, unknown>;

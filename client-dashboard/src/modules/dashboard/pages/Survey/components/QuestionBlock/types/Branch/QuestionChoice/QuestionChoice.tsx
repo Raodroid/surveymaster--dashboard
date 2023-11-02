@@ -9,7 +9,7 @@ import {
   defaultOperatorQuestion,
   questionChoiceMap,
 } from './util';
-import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
+import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext';
 import { ExtraSubBranchLogicDto } from '@pages/Survey/SurveyForm/type';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 
@@ -38,7 +38,6 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
       const optionSort = Number(spitedValue[2]);
 
       const selectedQuestion = questionIdMap[qId];
-
       if (!selectedQuestion) return;
       setValue({
         ...value,
@@ -64,7 +63,6 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
     if (!value.questionVersionId) {
       return () => null;
     }
-
     const questionType = questionIdMap[value.questionVersionId]?.type;
     return questionType ? questionChoiceMap[questionType] : () => null;
   }, [questionIdMap, value.questionVersionId]);

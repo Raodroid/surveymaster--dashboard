@@ -1,10 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
-import { DragTable } from '../../../../../components/DragTable/DragTable';
+import { DragTable } from '@components/DragTable/DragTable';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
-import { SortableHandle } from 'react-sortable-hoc';
-import { DragIcon, TrashOutlined } from 'icons';
-import templateVariable from 'app/template-variables.module.scss';
+import { TrashOutlined } from 'icons';
 import { useFormikContext } from 'formik';
 import {
   BaseQuestionVersionDto,
@@ -15,20 +13,13 @@ import { Button } from 'antd';
 import SimpleBar from 'simplebar-react';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
-import {
-  filterColumn,
-  IRenderColumnCondition,
-} from '../../../../../../../utils';
+
 import { AnswerListWrapper } from './style';
 import { INPUT_TYPES } from '@/modules/common/input/type';
-import { ControlledInput } from '../../../../../../common';
 import { generateRandom } from 'modules/common/funcs';
-
-const DragHandle = SortableHandle(() => (
-  <DragIcon
-    style={{ cursor: 'grab', color: templateVariable.text_primary_color }}
-  />
-));
+import { DragHandle } from '@/customize-components';
+import { ControlledInput } from '@/modules/common';
+import { filterColumn, IRenderColumnCondition } from '@/utils';
 
 const MultipleChoice = () => {
   const { t } = useTranslation();

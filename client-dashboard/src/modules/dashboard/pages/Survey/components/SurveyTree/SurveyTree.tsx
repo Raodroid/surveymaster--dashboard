@@ -4,13 +4,20 @@ import { DataNode, TreeProps } from 'antd/es/tree';
 import templateVariable from '@/app/template-variables.module.scss';
 import { DragIcon } from '@/icons';
 import { useField } from 'formik';
-import { transformToSurveyDataTreeNode } from '@pages/Survey/components/SurveyTree/util';
+import {
+  getParentNodeFieldName,
+  transformToSurveyDataTreeNode,
+} from '@pages/Survey/components/SurveyTree/util';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import {
+  questionValueType,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
 import QuestionBlock from '@pages/Survey/components/QuestionBlock/RenderTittle';
+import { SubSurveyFlowElement } from '@/type';
+import _get from 'lodash/get';
+import { DragHandle } from '@/customize-components';
 
 const loop = (
   data: SurveyDataTreeNode[],
@@ -38,19 +45,30 @@ const SurveyTree = () => {
 
   const { isViewMode } = useCheckSurveyFormMode();
 
-  // const gData = useMemo(() => {
-  //   return transformToSurveyDataTreeNode(value);
-  // }, [value]);
-
   const onDrop: TreeProps['onDrop'] = useCallback(
     info => {
-      const dropKey = info.node.key;
-      const dragKey = info.dragNode.key;
-      const dropPos = info.node.pos.split('-');
+      const { node, dragNode } = info;
+      const dropKey = node.key;
+      const dragKey = dragNode.key;
+      const dropPos = node.pos.split('-');
       const dropPosition =
         info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
-      const data = [...value];
+      const { dragOverGapBottom, dragOverGapTop } = node;
+      // check posistion is valid when drag
+      if (dragOverGapBottom || dragOverGapTop) {
+        if (node.fieldName.match(/'children'/)) {
+          const parent = getParentNodeFieldName(node.fieldName);
+          const parentNode: questionValueType = _get(value, parent);
+          if (parentNode && parentNode.type !== SubSurveyFlowElement.BRANCH) {
+            return;
+          }
+        }
+      } else if (node.type !== SubSurveyFlowElement.BRANCH) {
+        return;
+      }
+
+      const data = value;
       // Find dragObject
       let dragObj: SurveyDataTreeNode;
       loop(data, dragKey, (item, index, arr) => {
@@ -66,8 +84,8 @@ const SurveyTree = () => {
           item.children.unshift(dragObj);
         });
       } else if (
-        ((info.node as any).props.children || []).length > 0 && // Has children
-        (info.node as any).props.expanded && // Is expanded
+        ((node as any).props.children || []).length > 0 && // Has children
+        (node as any).props.expanded && // Is expanded
         dropPosition === 1 // On the bottom gap
       ) {
         loop(data, dropKey, item => {
@@ -102,14 +120,7 @@ const SurveyTree = () => {
           isViewMode
             ? false
             : {
-                icon: (
-                  <DragIcon
-                    style={{
-                      cursor: 'grab',
-                      color: templateVariable.text_primary_color,
-                    }}
-                  />
-                ),
+                icon: <DragHandle />,
               }
         }
         titleRender={d => <QuestionBlock record={d as SurveyDataTreeNode} />}

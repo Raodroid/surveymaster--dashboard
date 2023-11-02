@@ -132,7 +132,7 @@ const AddQuestionFormCategoryModal: FC<
         ) as IQuestion;
         if (
           value.some(
-            q => q.id === question?.id, // check if chosen version is in the same question but different version
+            q => q?.questionVersion?.question?.id === question?.id, // check if chosen version is in the same question but different version
           )
         ) {
           return result;
@@ -144,7 +144,7 @@ const AddQuestionFormCategoryModal: FC<
           category: question.masterCategory?.name as string,
           remark: '',
           sort,
-          id: question.latestCompletedVersion.questionId,
+          id: question.id,
           questionTitle: question.latestCompletedVersion.title,
         };
         sort += 1;

@@ -6,22 +6,16 @@ import { BaseQuestionVersionDto, IQuestionVersionOption } from 'type';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { ControlledInput } from '../../../../../../common';
-import { INPUT_TYPES } from '../../../../../../common/input/type';
-import { DragIcon, TrashOutlined } from 'icons';
+import { INPUT_TYPES } from '@input/type';
+import { TrashOutlined } from 'icons';
 import SimpleBar from 'simplebar-react';
-import { DragTable } from '../../../../../components/DragTable/DragTable';
+import { DragTable } from '@components/DragTable/DragTable';
 import { Button } from 'antd';
 import { filterColumn, formatBytes, IRenderColumnCondition } from 'utils';
-import { SortableHandle } from 'react-sortable-hoc';
 import templateVariable from 'app/template-variables.module.scss';
 import { generateRandom } from 'modules/common/funcs';
-
-const DragHandle = SortableHandle(() => (
-  <DragIcon
-    style={{ cursor: 'grab', color: templateVariable.text_primary_color }}
-  />
-));
+import { DragHandle } from '@/customize-components';
+import { ControlledInput } from '@/modules/common';
 
 const Photo = () => {
   const { t } = useTranslation();

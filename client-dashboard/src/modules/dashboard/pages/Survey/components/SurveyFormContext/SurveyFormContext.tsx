@@ -2,7 +2,6 @@ import {
   createContext,
   ReactElement,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -21,7 +20,6 @@ import {
   IQuestion,
   IQuestionVersion,
   ISurveyQuestionDto,
-  ISurveyVersion,
   ProjectTypes,
   SubSurveyFlowElementDto,
   SurveyVersionStatus,
@@ -44,6 +42,7 @@ import HannahCustomSpin from '@components/HannahCustomSpin';
 import { ROUTE_PATH } from '@/enums';
 import { transformSurveyVersion } from '@pages/Survey/components/SurveyPlayGround/util';
 import { Modal, notification } from 'antd';
+import { createQuestionMap } from '@pages/Survey/components/SurveyFormContext/util';
 
 const { confirm } = Modal;
 
@@ -95,7 +94,7 @@ const intValue: ISurveyFormContext = {
     isFetchingQuestion: false,
     searchParams: {
       q: '',
-      take: 10,
+      take: 20,
       page: 1,
       hasLatestCompletedVersion: true,
       isDeleted: false,
@@ -107,30 +106,12 @@ const intValue: ISurveyFormContext = {
   },
 };
 
-const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
-
-const createQuestionMap = (
-  input: ISurveyVersion['surveyFlowElements'] = [],
-  mapId: Record<string, IQuestionVersion>,
-) => {
-  input?.forEach(item => {
-    item.surveyQuestions?.forEach(q => {
-      const question = q.questionVersion;
-      if (question) {
-        mapId[q.questionVersionId] = question;
-      }
-    });
-
-    if (item.children) {
-      createQuestionMap(item.children, mapId);
-    }
-  });
-};
+export const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
 
 const SurveyFormProvider = (props: { children?: ReactElement }) => {
   const [context, setContext] = useState<ISurveyFormContext>(intValue);
 
-  const { isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery(
+  const { isLoading, fetchNextPage } = useInfiniteQuery(
     ['getQuestionList', context.question.searchParams],
     ({ pageParam = context.question.searchParams }) => {
       return QuestionBankService.getQuestions({
@@ -138,7 +119,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
       });
     },
     {
-      getNextPageParam: (lastPage, pages) => {
+      getNextPageParam: lastPage => {
         return lastPage.data.hasNextPage
           ? { ...context.question.searchParams, page: lastPage.data.page + 1 }
           : false;
@@ -155,41 +136,32 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           const normalizeByQuestionId: Record<
             string,
             IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
-          > = {};
-          const questionOptions = questionListData.pages.reduce(
-            (current: IOptionItem[], page) => {
-              (page.data?.data || []).forEach((q: IQuestion) => {
-                const latestQuestionVersionId = q.latestCompletedVersion?.id;
-                // const latestQuestionId = q?.id;
-                // if (
-                //   value?.some(
-                //     z =>
-                //       z.id === latestQuestionId || // check if chosen version is in the same question but different version
-                //       z.questionVersionId === latestQuestionVersionId, //check and filter out questions were automatically filled after uploading file
-                //   )
-                // ) {
-                //   return current;
-                // }
+          > = { ...s.question.questionIdMap };
 
-                normalizeByQuestionId[latestQuestionVersionId as string] = {
-                  ...q.latestCompletedVersion,
-                  masterCategory: q.masterCategory,
-                };
+          const questionOptions = [...s.question.questionOptions];
 
-                current.push({
-                  label: q?.latestCompletedVersion?.title,
-                  value: latestQuestionVersionId as string,
-                });
+          questionListData.pages.at(-1)?.data?.data.forEach((q: IQuestion) => {
+            const latestQuestionVersionId = q.latestCompletedVersion
+              ?.id as string;
+
+            if (!normalizeByQuestionId[latestQuestionVersionId]) {
+              questionOptions.push({
+                label: q?.latestCompletedVersion?.title,
+                value: latestQuestionVersionId,
               });
-              return current;
-            },
-            [],
-          );
+              normalizeByQuestionId[latestQuestionVersionId] = {
+                ...q.latestCompletedVersion,
+                masterCategory: q.masterCategory,
+              };
+            }
+          });
+
           return {
             ...s,
             question: {
               ...s.question,
-              hasNextQuestionPage: !!hasNextPage,
+              hasNextQuestionPage:
+                !!questionListData.pages.at(-1)?.data?.hasNextPage,
               fetchNextQuestionPage: fetchNextPage,
               questionOptions,
               questionIdMap: normalizeByQuestionId,
@@ -464,9 +436,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
             });
             return;
           }
-        }
 
-        if (isEditMode) {
           await updateSurveyMutation.mutateAsync({
             ...transformValue.version,
             surveyVersionId: currentSurveyVersion?.id as string,
@@ -534,23 +504,31 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   }, []);
 
   useEffect(() => {
-    const questionIdMap = {};
+    setContext(s => {
+      const questionIdMap = s.question.questionIdMap;
 
-    createQuestionMap(currentSurveyVersion?.surveyFlowElements, questionIdMap);
+      const questionOptions = s.question.questionOptions;
 
-    setContext(s => ({
-      ...s,
-      question: {
-        ...s.question,
-        questionIdMap: {
-          ...s.question.questionIdMap,
-          ...questionIdMap,
+      createQuestionMap(
+        currentSurveyVersion?.surveyFlowElements,
+        questionIdMap,
+        questionOptions,
+      );
+      return {
+        ...s,
+        question: {
+          ...s.question,
+          questionOptions: [...s.question.questionOptions, ...questionOptions],
+          questionIdMap: {
+            ...s.question.questionIdMap,
+            ...questionIdMap,
+          },
         },
-      },
-      form: {
-        ...s.form,
-      },
-    }));
+        form: {
+          ...s.form,
+        },
+      };
+    });
   }, [currentSurveyVersion?.surveyFlowElements]);
 
   return (
@@ -582,8 +560,4 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   );
 };
 
-const useSurveyFormContext = () => {
-  return useContext(SurveyFormContext);
-};
-
-export { SurveyFormProvider, useSurveyFormContext };
+export { SurveyFormProvider };

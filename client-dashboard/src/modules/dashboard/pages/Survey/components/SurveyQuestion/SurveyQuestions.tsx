@@ -12,11 +12,9 @@ import { questionValueType } from '@pages/Survey/SurveyForm/type';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import CopyButton from '@commonCom/CopyButton/CopyButton';
 import { DragTable } from '@components/DragTable/DragTable';
-import GroupSurveyButton, {
-  initNewRowValue,
-} from '../GroupSurveyButton/GroupSurveyButton';
+import GroupSurveyButton from '../GroupSurveyButton/GroupSurveyButton';
 import { ControlledInput } from '@/modules/common';
-import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
+import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext';
 import DynamicSelect from '../DynamicSelect/DynamicSelec';
 import { IOptionItem, SubSurveyFlowElementDto } from '@/type';
 import { gen_QID_template } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
@@ -37,12 +35,12 @@ const SurveyQuestions: FC<{
     },
     [setValue, value],
   );
-  const addQuestion = useCallback(() => {
-    setValue([...value, initNewRowValue]);
-  }, [setValue, value]);
+  // const addQuestion = useCallback(() => {
+  //   setValue([...value, initNewRowValue]);
+  // }, [setValue, value]);
 
   const { question } = useSurveyFormContext();
-  const { setSearchParams, questionOptions } = question;
+  const { setSearchParams, questionOptions, questionIdMap } = question;
 
   const [searchTxt, setSearchTxt] = useState<string>('');
 
@@ -50,8 +48,13 @@ const SurveyQuestions: FC<{
 
   const availableQuestionOptions = useMemo<IOptionItem[]>(() => {
     return questionOptions.reduce((res: IOptionItem[], item) => {
-      if (value?.some(i => i.questionVersionId === item.value)) return res;
-      return [...res, item];
+      return [
+        ...res,
+        {
+          ...item,
+          disabled: value?.some(i => i.questionVersionId === item.value),
+        },
+      ];
     }, []);
   }, [questionOptions, value]);
 
