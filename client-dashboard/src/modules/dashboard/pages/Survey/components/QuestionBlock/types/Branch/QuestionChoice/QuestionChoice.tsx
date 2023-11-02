@@ -9,7 +9,7 @@ import {
   defaultOperatorQuestion,
   questionChoiceMap,
 } from './util';
-import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
+import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext';
 import { ExtraSubBranchLogicDto } from '@pages/Survey/SurveyForm/type';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 

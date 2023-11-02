@@ -17,6 +17,7 @@ import {
 import QuestionBlock from '@pages/Survey/components/QuestionBlock/RenderTittle';
 import { SubSurveyFlowElement } from '@/type';
 import _get from 'lodash/get';
+import { DragHandle } from '@/customize-components';
 
 const loop = (
   data: SurveyDataTreeNode[],
@@ -119,14 +120,7 @@ const SurveyTree = () => {
           isViewMode
             ? false
             : {
-                icon: (
-                  <DragIcon
-                    style={{
-                      cursor: 'grab',
-                      color: templateVariable.text_primary_color,
-                    }}
-                  />
-                ),
+                icon: <DragHandle />,
               }
         }
         titleRender={d => <QuestionBlock record={d as SurveyDataTreeNode} />}

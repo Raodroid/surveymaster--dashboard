@@ -2,7 +2,6 @@ import {
   createContext,
   ReactElement,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -21,7 +20,6 @@ import {
   IQuestion,
   IQuestionVersion,
   ISurveyQuestionDto,
-  ISurveyVersion,
   ProjectTypes,
   SubSurveyFlowElementDto,
   SurveyVersionStatus,
@@ -44,6 +42,7 @@ import HannahCustomSpin from '@components/HannahCustomSpin';
 import { ROUTE_PATH } from '@/enums';
 import { transformSurveyVersion } from '@pages/Survey/components/SurveyPlayGround/util';
 import { Modal, notification } from 'antd';
+import { createQuestionMap } from '@pages/Survey/components/SurveyFormContext/util';
 
 const { confirm } = Modal;
 
@@ -95,7 +94,7 @@ const intValue: ISurveyFormContext = {
     isFetchingQuestion: false,
     searchParams: {
       q: '',
-      take: 10,
+      take: 20,
       page: 1,
       hasLatestCompletedVersion: true,
       isDeleted: false,
@@ -107,35 +106,7 @@ const intValue: ISurveyFormContext = {
   },
 };
 
-const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
-
-const createQuestionMap = (
-  input: ISurveyVersion['surveyFlowElements'] = [],
-  mapId: Record<string, IQuestionVersion>,
-  questionOptions: IOptionItem[],
-) => {
-  input?.forEach(item => {
-    item.surveyQuestions?.forEach(q => {
-      const question = q.questionVersion;
-
-      const keyID = question.id as string;
-
-      if (question) {
-        if (!mapId[keyID]) {
-          questionOptions.push({
-            label: question.title,
-            value: keyID,
-          });
-          mapId[keyID] = question;
-        }
-      }
-    });
-
-    if (item.children) {
-      createQuestionMap(item.children, mapId, questionOptions);
-    }
-  });
-};
+export const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
 
 const SurveyFormProvider = (props: { children?: ReactElement }) => {
   const [context, setContext] = useState<ISurveyFormContext>(intValue);
@@ -465,9 +436,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
             });
             return;
           }
-        }
 
-        if (isEditMode) {
           await updateSurveyMutation.mutateAsync({
             ...transformValue.version,
             surveyVersionId: currentSurveyVersion?.id as string,
@@ -549,7 +518,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         ...s,
         question: {
           ...s.question,
-          // questionOptions: [...s.question.questionOptions, ...questionOptions],
+          questionOptions: [...s.question.questionOptions, ...questionOptions],
           questionIdMap: {
             ...s.question.questionIdMap,
             ...questionIdMap,
@@ -591,8 +560,4 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   );
 };
 
-const useSurveyFormContext = () => {
-  return useContext(SurveyFormContext);
-};
-
-export { SurveyFormProvider, useSurveyFormContext };
+export { SurveyFormProvider };

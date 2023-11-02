@@ -14,7 +14,7 @@ import CopyButton from '@commonCom/CopyButton/CopyButton';
 import { DragTable } from '@components/DragTable/DragTable';
 import GroupSurveyButton from '../GroupSurveyButton/GroupSurveyButton';
 import { ControlledInput } from '@/modules/common';
-import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
+import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext';
 import DynamicSelect from '../DynamicSelect/DynamicSelec';
 import { IOptionItem, SubSurveyFlowElementDto } from '@/type';
 import { gen_QID_template } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';

@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext/SurveyFormContext';
+import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext';
 import { useTranslation } from 'react-i18next';
 import { useField } from 'formik';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
@@ -148,9 +148,7 @@ const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
         />
       ) : (
         <ControlledInput
-          notFoundContent={
-            isFetchingQuestion ? <div>Loading... </div> : undefined
-          }
+          loading={isFetchingQuestion}
           onBlur={onBlur}
           inputType={INPUT_TYPES.SELECT}
           style={{ width: '100%' }}
