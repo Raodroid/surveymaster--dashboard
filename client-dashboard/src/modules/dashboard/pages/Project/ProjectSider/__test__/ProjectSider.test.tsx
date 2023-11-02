@@ -1,21 +1,15 @@
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen } from '@testing-library/react';
 import {
   baseAxiosResponse,
   JestGeneralProviderHoc,
 } from '../../../../../../get-mock-data-jest-test';
-import { IProject, ProjectTypes } from '../../../../../../type';
-import * as hoc from '../../../../../common/hoc/useCheckScopeEntityDefault';
-import restoreAllMocks = jest.restoreAllMocks;
+import { IProject, ProjectTypes } from 'type';
 import * as router from 'react-router';
-import ProjectSider from '../index';
-import ProjectService from '../../../../../../services/survey-master-service/project.service';
+import ProjectSider from '../ProjectSider';
+import restoreAllMocks = jest.restoreAllMocks;
+import { ProjectService } from '@/services';
+
+import * as hoc from '../../../../../common/hoc/useCheckScopeEntityDefault';
 
 const project: IProject = {
   personResponsible: undefined,

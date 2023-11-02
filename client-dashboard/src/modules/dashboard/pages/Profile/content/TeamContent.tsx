@@ -22,7 +22,6 @@ import { useParseQueryString } from 'hooks/useParseQueryString';
 import { SearchIcon } from 'icons/SearchIcon';
 import _get from 'lodash/get';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc/useCheckScopeEntityDefault';
-import StyledPagination from 'modules/dashboard/components/StyledPagination';
 import qs from 'qs';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -47,6 +46,7 @@ import {
 } from './modals';
 import SimpleBar from 'simplebar-react';
 import HannahCustomSpin from '@components/HannahCustomSpin';
+import { StyledPagination } from '@/modules/dashboard';
 interface TeamMember extends UserPayload {
   key: string;
   name: string;

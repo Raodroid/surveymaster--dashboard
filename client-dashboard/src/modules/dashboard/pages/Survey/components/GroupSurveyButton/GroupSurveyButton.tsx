@@ -2,7 +2,7 @@ import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import React, { useCallback } from 'react';
 import { Button } from 'antd';
-import { QuestionType, SubSurveyFlowElementDto } from '@/type';
+import { QuestionType } from '@/type';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
 import { useToggle } from '@/utils';
 import { generateRandom } from '@/modules/common/funcs';

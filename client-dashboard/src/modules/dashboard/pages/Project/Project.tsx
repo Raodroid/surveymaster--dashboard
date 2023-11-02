@@ -1,17 +1,18 @@
 import { SCOPE_CONFIG } from 'enums';
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, Route, Routes } from 'react-router';
-import { AuthSelectors } from '../../../../redux/auth';
-import { useCheckScopeEntityDefault } from '../../../common/hoc';
-import ProjectContent from './ProjectContent';
-import DetailSurvey from '../Survey/DetailSurvey';
-import AddSurvey from '../Survey/DetailSurvey/Add';
-import { AddProject, EditProject } from './ProjectContent/components/Project';
-import SurveyManagement from '../Survey/SurveyManagement';
+import { AuthSelectors } from 'redux/auth';
+import ProjectContent from './ProjectContent/ProjectContent';
 import { ProjectContentWrapper } from './ProjectContent/styles';
-import ProjectSider from './ProjectSider';
+import ProjectSider from './ProjectSider/ProjectSider';
 import { ProjectWrapper } from './styles';
 import { projectRoutePath } from './util';
+import { AddSurvey, DetailSurvey, SurveyManagement } from '@pages/Survey';
+import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
+import {
+  AddProject,
+  EditProject,
+} from '@pages/Project/ProjectContent/components/Project';
 
 const Project = () => {
   const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');

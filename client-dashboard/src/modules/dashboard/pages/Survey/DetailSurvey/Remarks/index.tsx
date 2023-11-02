@@ -1,6 +1,6 @@
 import { Button, Form, Modal, notification } from 'antd';
 import { Formik } from 'formik';
-import { IBreadcrumbItem } from '@/modules/common/commonComponent/StyledBreadcrumb';
+import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 import { CustomSpinSuspense } from '@/modules/common/styles';
 import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project/util';
 import React, { useCallback, useMemo } from 'react';
@@ -16,7 +16,7 @@ import {
   ISurveyVersion,
 } from '@/type';
 import { onError } from '@/utils';
-import { projectSurveyParams } from '../index';
+import { projectSurveyParams } from '../DetailSurvey';
 import ProjectHeader from '../../../Project/ProjectContent/components/Header';
 import Inputs from '../Inputs';
 import { RemarksWrapper } from './styles';

@@ -1,12 +1,12 @@
-import { IBreadcrumbItem } from '@/modules/common/commonComponent/StyledBreadcrumb';
+import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 import { useMemo } from 'react';
 import { useParams } from 'react-router';
 import { AddSurveyWrapper } from './styles';
-import SurveyForm from '../../SurveyForm/SurveyForm';
 import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project/util';
 import ProjectHeader from '../../../Project/ProjectContent/components/Header';
 import { useTranslation } from 'react-i18next';
-import { projectSurveyParams } from '../index';
+import { projectSurveyParams } from '../DetailSurvey';
+import { SurveyForm } from '@pages/Survey';
 
 function AddSurvey() {
   const params = useParams<projectSurveyParams>();

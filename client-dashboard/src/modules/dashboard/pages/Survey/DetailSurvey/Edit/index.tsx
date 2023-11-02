@@ -1,13 +1,15 @@
-import { IBreadcrumbItem } from '@/modules/common/commonComponent/StyledBreadcrumb';
 import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
-import { projectSurveyParams } from '../index';
-import ProjectHeader from '../../../Project/ProjectContent/components/Header';
-import SurveyForm from '../../SurveyForm/SurveyForm';
+import {
+  projectSurveyParams,
+  SurveyForm,
+  useGetSurveyById,
+} from '@pages/Survey';
 import { EditSurveyWrapper } from './style';
-import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
+import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
+import ProjectHeader from '@pages/Project/ProjectContent/components/Header';
 
 function EditSurvey() {
   const params = useParams<projectSurveyParams>();

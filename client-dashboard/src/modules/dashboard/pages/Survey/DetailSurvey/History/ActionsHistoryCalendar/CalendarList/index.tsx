@@ -12,7 +12,7 @@ import Action from './Action';
 import { CalendarListWrapper } from './styles';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import { useParams } from 'react-router';
-import { projectSurveyParams } from '../../../index';
+import { projectSurveyParams } from '../../../DetailSurvey';
 
 const initialAction: IAction = {
   actionType: '',

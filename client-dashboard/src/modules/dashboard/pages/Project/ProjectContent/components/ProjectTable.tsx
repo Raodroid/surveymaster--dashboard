@@ -14,7 +14,7 @@ import ProjectService from 'services/survey-master-service/project.service';
 import { GetListQuestionDto, IGetParams, IProject } from 'type';
 import { useParseQueryString } from '@/hooks';
 import { onError } from '@/utils';
-import StyledPagination from '@components/StyledPagination';
+import { StyledPagination } from '@/modules/dashboard';
 import { projectRoutePath } from '../../util';
 import { ProjectTableWrapper } from '../styles';
 import { QsParams } from './project-filter/ProjectFilter';

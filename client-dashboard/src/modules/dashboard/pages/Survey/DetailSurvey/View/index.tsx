@@ -1,16 +1,16 @@
-import { IBreadcrumbItem } from '@/modules/common/commonComponent/StyledBreadcrumb';
+import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 import React, { useMemo } from 'react';
 import { generatePath, useParams } from 'react-router';
 import { ViewSurveyWrapper } from './styles';
-import SurveyForm from '../../SurveyForm/SurveyForm';
+import { SurveyForm } from '@pages/Survey';
 import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project/util';
 import ProjectHeader from '../../../Project/ProjectContent/components/Header';
-import { projectSurveyParams } from '../index';
+import { projectSurveyParams } from '../DetailSurvey';
 
-import { useToggle } from '../../../../../../utils';
 import { useLocation } from 'react-router-dom';
 import { ViewDetailSurveyDropDownMenuButton } from './ViewDetailSurveyDropDownBtn';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
+import { useToggle } from '@/utils';
 
 function ViewSurvey() {
   const params = useParams<projectSurveyParams>();

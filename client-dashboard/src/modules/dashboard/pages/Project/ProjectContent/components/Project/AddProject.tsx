@@ -2,7 +2,6 @@ import { Button, Form, notification } from 'antd';
 import { SCOPE_CONFIG } from 'enums';
 import { Formik } from 'formik';
 import { ProjectPayload } from 'interfaces/project';
-import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +14,7 @@ import { projectRoutePath } from '../../../util';
 import ProjectHeader from '../Header';
 import ProjectInputs from './ProjectInputs';
 import { AddProjectWrapper } from './styles';
+import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 
 const initialValues: ProjectPayload = {
   name: '',

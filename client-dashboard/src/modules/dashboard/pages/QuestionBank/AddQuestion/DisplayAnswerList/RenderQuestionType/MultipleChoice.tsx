@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { DragTable } from '@components/DragTable/DragTable';
+import { DragTable } from '@/modules/dashboard';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
 import { TrashOutlined } from 'icons';
@@ -15,7 +15,7 @@ import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
 
 import { AnswerListWrapper } from './style';
-import { INPUT_TYPES } from '@/modules/common/input/type';
+import { INPUT_TYPES } from '@input/type';
 import { generateRandom } from 'modules/common/funcs';
 import { DragHandle } from '@/customize-components';
 import { ControlledInput } from '@/modules/common';

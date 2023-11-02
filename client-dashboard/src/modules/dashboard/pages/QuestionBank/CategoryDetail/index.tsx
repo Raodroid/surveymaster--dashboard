@@ -21,7 +21,7 @@ import { QuestionBankService } from '@/services';
 import _get from 'lodash/get';
 import { ROUTE_PATH, size } from '@/enums';
 import { useNavigate } from 'react-router-dom';
-import StyledPagination from '../../../components/StyledPagination';
+import { StyledPagination } from '@/modules/dashboard';
 import qs from 'qs';
 import HannahCustomSpin from '@components/HannahCustomSpin';
 import SimpleBar from 'simplebar-react';

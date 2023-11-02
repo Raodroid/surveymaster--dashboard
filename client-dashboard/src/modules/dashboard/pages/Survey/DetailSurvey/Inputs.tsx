@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { InputsWrapper } from './styles';
 import { useGetProjectByIdQuery } from '../../Project/util';
 import { useParams } from 'react-router';
-import { ProjectTypes } from '../../../../../type';
+import { ProjectTypes } from 'type';
 
 function Inputs(props: {
   disabled?: boolean;

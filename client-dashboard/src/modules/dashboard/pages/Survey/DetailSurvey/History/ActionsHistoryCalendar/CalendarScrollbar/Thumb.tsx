@@ -9,7 +9,7 @@ import { QsParams } from '@pages/Project/ProjectContent/components/project-filte
 import { MONTH_HEIGHT } from '../../../utils';
 import { ThumbWrapper } from '../styles';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
-import { projectSurveyParams } from '../../../index';
+import { projectSurveyParams } from '../../../DetailSurvey';
 
 const thumbId = 'actions-history-thumb';
 

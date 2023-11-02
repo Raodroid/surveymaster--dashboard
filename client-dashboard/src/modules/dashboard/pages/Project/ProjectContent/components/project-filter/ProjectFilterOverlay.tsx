@@ -1,18 +1,18 @@
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useParseQueryString } from '../../../../../../../hooks';
 import { matchPath } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../../enums';
+import { ROUTE_PATH } from 'enums';
 import { useMemo } from 'react';
 import moment, { Moment } from 'moment';
 import qs from 'qs';
 import { ProjectFilterOverlayWrapper } from '../Header/styles';
 import { Formik } from 'formik';
 import { Button, Divider, Form } from 'antd';
-import { ArrowDown, Refresh } from '../../../../../../../icons';
-import { ControlledInput } from '../../../../../../common';
-import { INPUT_TYPES } from '../../../../../../common/input/type';
+import { ArrowDown, Refresh } from 'icons';
+import { ControlledInput } from '@/modules/common';
+import { INPUT_TYPES } from '@input/type';
 import { IFilter, QsParams } from './ProjectFilter';
+import { useParseQueryString } from '@/hooks';
 
 interface FilterParams {
   isDeleted?: boolean;

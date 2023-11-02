@@ -2,20 +2,20 @@ import { Button, Form, notification } from 'antd';
 import { SCOPE_CONFIG } from 'enums';
 import { Formik } from 'formik';
 import { ProjectPayload } from 'interfaces/project';
-import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
+import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { CustomSpinSuspense } from 'modules/common/styles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import ProjectService from 'services/survey-master-service/project.service';
 import { onError } from 'utils/funcs';
-import { PROJECT_FORM_SCHEMA } from '../../../../../../common/validate/validate';
-import { projectRoutePath, useGetProjectByIdQuery } from '../../../util';
+import { PROJECT_FORM_SCHEMA } from 'modules/common/validate/validate';
 import ProjectHeader from '../Header';
 import Inputs from './ProjectInputs';
 import { AddProjectWrapper, EditProjectWrapper } from './styles';
+import { ProjectService } from '@/services';
+import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project';
 
 function EditProject() {
   const params = useParams<{ projectId?: string }>();

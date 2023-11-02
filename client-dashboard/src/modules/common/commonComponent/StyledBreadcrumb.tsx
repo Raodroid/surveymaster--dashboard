@@ -1,8 +1,8 @@
 import React, { FC, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowLeft } from 'icons/';
-import templateVariable from '../../../app/template-variables.module.scss';
+import { ArrowRight, ArrowLeft } from 'icons';
+import templateVariable from '@/app/template-variables.module.scss';
 
 const BreadcrumbWrapper = styled.div<{ isMobile?: boolean }>`
   display: flex;
@@ -129,4 +129,4 @@ const StyledBreadcrumb: FC<IBreadcrumb> = props => {
   );
 };
 
-export default StyledBreadcrumb;
+export { StyledBreadcrumb };

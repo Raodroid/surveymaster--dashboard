@@ -5,8 +5,8 @@ import useHandleNavigate from '@/hooks/useHandleNavigate';
 import { useParseQueryString } from '@/hooks/useParseQueryString';
 
 import _get from 'lodash/get';
-import { IBreadcrumbItem } from '@/modules/common/commonComponent/StyledBreadcrumb';
-import StyledPagination from '@/modules/dashboard/components/StyledPagination';
+
+import { StyledPagination } from '@/modules/dashboard';
 import moment from 'moment';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,11 +16,13 @@ import { ProjectService, SurveyService } from '@/services';
 import SimpleBar from 'simplebar-react';
 import { IGetParams, ISurvey } from '@/type';
 import HannahCustomSpin from '@components/HannahCustomSpin';
-import { projectRoutePath } from '../../Project/util';
-import ProjectHeader from '../../Project/ProjectContent/components/Header';
-import { QsParams } from '../../Project/ProjectContent/components/project-filter/ProjectFilter';
+import { projectRoutePath } from '@pages/Project';
 import { SurveyWrapper, TableWrapper } from './style';
 import { SurveyDropDownMenu } from './SurveyDropDown';
+import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
+import { QsParams } from '@pages/Project/ProjectContent/components/project-filter/ProjectFilter';
+import ProjectHeader from '@pages/Project/ProjectContent/components/Header';
+
 const initParams: IGetParams = {
   q: '',
   page: 1,

@@ -3,20 +3,21 @@ import { size } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useField } from 'formik';
 import { Button } from 'antd';
-import DragHandle from '@/customize-components/DragHandle';
-import { INPUT_TYPES } from '@/modules/common/input/type';
 import { useDebounce } from '@/utils';
 import { useTranslation } from 'react-i18next';
-import { questionValueType } from '@pages/Survey/SurveyForm/type';
 
-import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
-import CopyButton from '@commonCom/CopyButton/CopyButton';
-import { DragTable } from '@components/DragTable/DragTable';
-import GroupSurveyButton from '../GroupSurveyButton/GroupSurveyButton';
-import { ControlledInput } from '@/modules/common';
-import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext';
-import DynamicSelect from '../DynamicSelect/DynamicSelec';
+import { ControlledInput, CopyButton } from '@/modules/common';
 import { IOptionItem, SubSurveyFlowElementDto } from '@/type';
+import { DragTable } from '@/modules/dashboard';
+import { INPUT_TYPES } from '@input/type';
+import {
+  useSurveyFormContext,
+  questionValueType,
+  useCheckSurveyFormMode,
+  DynamicSelect,
+  GroupSurveyButton,
+} from '@pages/Survey';
+import { DragHandle } from '@/customize-components';
 import { gen_QID_template } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
 
 const SurveyQuestions: FC<{
@@ -40,7 +41,7 @@ const SurveyQuestions: FC<{
   // }, [setValue, value]);
 
   const { question } = useSurveyFormContext();
-  const { setSearchParams, questionOptions, questionIdMap } = question;
+  const { setSearchParams, questionOptions } = question;
 
   const [searchTxt, setSearchTxt] = useState<string>('');
 

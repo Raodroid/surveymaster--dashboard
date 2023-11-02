@@ -8,7 +8,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
-import { projectSurveyParams } from '../index';
+import { projectSurveyParams } from '../DetailSurvey';
 import ActionsHistory from './ActionsHistory';
 import { ActionsHistoryContentWrapper, ActionsHistoryWrapper } from './styles';
 import { ISurvey, ProjectTypes } from '@/type';

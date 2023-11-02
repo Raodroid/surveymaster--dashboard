@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { ControlledInput } from '@/modules/common';
-import { INPUT_TYPES } from '@/modules/common/input/type';
 import { transformEnumToOption } from '@/utils';
 import { LogicOperator } from '@/type';
 import { useTranslation } from 'react-i18next';
-import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
+import { useCheckSurveyFormMode } from '@pages/Survey';
+import { INPUT_TYPES } from '@input/type';
 
 export interface IEmbeddedBlockChoice {
   fieldName: string;
