@@ -1,4 +1,4 @@
-import omit from 'lodash/number';
+import omit from 'lodash/omit';
 import isNumber from 'lodash/isNumber';
 import { BaseQuestionVersionDto, QuestionType } from '../../../../../type';
 
