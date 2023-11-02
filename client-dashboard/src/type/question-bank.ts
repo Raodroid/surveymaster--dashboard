@@ -294,7 +294,7 @@ export interface BaseQuestionVersionDto {
   numberMinLabel?: string;
   numberMax?: number;
   numberMaxLabel?: string;
-  maxDecimal?: number;
+  maxDecimal?: number | null;
   options?: IBaseQuestionOptionsVersionDto[];
   dateFormat?: DateFormat;
   timeFormat?: TimeFormat;

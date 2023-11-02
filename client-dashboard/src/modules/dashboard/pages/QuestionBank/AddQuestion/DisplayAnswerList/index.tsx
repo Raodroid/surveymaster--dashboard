@@ -114,7 +114,7 @@ const DisplayAnswerList = () => {
         </DisplayAnswerListWrapper>
       );
     case QuestionType.RANK_ORDER:
-      return <MultipleChoice />;
+      return <MultipleChoice isKeyPath={false} />;
     default:
       return null;
   }
