@@ -64,11 +64,6 @@ export const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
 
-export const convertB64ToBuffer = (dataB64: any) => {
-  const buffer = new Buffer(dataB64.split(',')[1], 'base64');
-  return { buffer, type: 'image/png' };
-};
-
 export const saveBlob = (blob: Blob, filename: string) => {
   if (navigator.msSaveBlob) {
     // IE 10+

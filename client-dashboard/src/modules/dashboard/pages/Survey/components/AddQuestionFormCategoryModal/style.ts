@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Modal } from 'antd';
 
 export const AddQuestionFormCategoryModalWrapper = styled(Modal)`

@@ -16,8 +16,8 @@ import { Formik } from 'formik';
 import { RollbackOutlined } from '../../../../../../../icons';
 import { Button, Form } from 'antd';
 import { ControlledInput } from '../../../../../../common';
-import { INPUT_TYPES } from '../../../../../../common/input/type';
-import styled from 'styled-components';
+import { INPUT_TYPES } from '@input/type';
+import styled from 'styled-components/macro';
 import templateVariable from '../../../../../../../app/template-variables.module.scss';
 import { transformEnumToOption } from '../../../../../../../utils';
 

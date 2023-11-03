@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table } from 'antd';
 import _get from 'lodash/get';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { TableProps } from 'antd/lib/table';
 import useWindowSize from 'modules/common/hoc/useWindowSize';
 import { tableSizeResponsive } from 'enums/screenSize';

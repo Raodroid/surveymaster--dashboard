@@ -4,8 +4,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
 import { Layout } from 'antd';
-import styled from 'styled-components';
-import { CustomSpinSuspense } from '../modules/common/styles';
+import styled from 'styled-components/macro';
+import { CustomSpinSuspense } from '@/modules/common';
 const { Content } = Layout;
 
 const LayoutNavbar = lazy(() => import('modules/dashboard/components/Navbar'));
@@ -15,7 +15,7 @@ export const ProtectedRoutes = () => {
   const isLogged = !!idToken;
 
   return isLogged ? (
-    <ProtectedRouteWrapper>
+    <Layout className={'mx-10 h-full'}>
       <Suspense fallback={<CustomSpinSuspense />}>
         <LayoutNavbar />
       </Suspense>
@@ -24,16 +24,12 @@ export const ProtectedRoutes = () => {
           <Outlet />
         </Suspense>
       </BodyAppWrapper>
-    </ProtectedRouteWrapper>
+    </Layout>
   ) : (
     <Navigate to={ROUTE_PATH.LOGIN} />
   );
 };
 
-const ProtectedRouteWrapper = styled(Layout)`
-  width: min(1440px, 100%);
-  margin: 0 auto;
-`;
 export const BodyAppWrapper = styled(Content)`
   height: 100%;
   margin-bottom: 1.5rem;

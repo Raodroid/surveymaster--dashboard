@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 export const DisplayAnswerWrapper = styled.div`
   tr.padding-top {

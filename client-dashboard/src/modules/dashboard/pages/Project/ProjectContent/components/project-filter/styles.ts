@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Button } from 'antd';
 export const ProjectFilterBtn = styled(Button)`
   padding: 2px;

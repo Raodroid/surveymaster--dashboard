@@ -1,4 +1,3 @@
-import styled from 'styled-components';
-import templateVariable from '../../../../../../app/template-variables.module.scss';
+import styled from 'styled-components/macro';
 
 export const SurveyPlayGroundWrapper = styled.div``;

@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { ROUTE_PATH } from '../../../../../enums';
+import styled from 'styled-components/macro';
+import { ROUTE_PATH } from '@/enums';
 import CharacterAvatar from '../../../../common/commonComponent/CharacterAvatar';
 import BaseMenu from '../BaseMenu';
 import { useSelector } from 'react-redux';

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Form } from 'antd';
 
 export const QuestionDetailFormWrapper = styled(Form)`

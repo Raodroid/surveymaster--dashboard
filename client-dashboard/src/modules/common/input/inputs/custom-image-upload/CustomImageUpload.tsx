@@ -49,7 +49,7 @@ const CustomImageUpload = (props: CustomUploadProps) => {
       if (data) {
         await UploadService.putWithFormFileAsync(data.url, options.file, type);
         options.onSuccess({
-          url: `${process.env.REACT_APP_S3_URL}/${data.filePath}`,
+          url: `${import.meta.env.VITE_APP_S3_URL}/${data.filePath}`,
         });
       }
     } catch (error) {

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import React, { useCallback } from 'react';
 import { LinkOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
