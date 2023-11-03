@@ -21,7 +21,6 @@ import { SCOPE_CONFIG } from 'enums/user';
 import { useParseQueryString } from 'hooks/useParseQueryString';
 import { SearchIcon } from 'icons/SearchIcon';
 import _get from 'lodash/get';
-import { useCheckScopeEntityDefault } from 'modules/common/hoc/useCheckScopeEntityDefault';
 import qs from 'qs';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,8 +30,8 @@ import { useLocation, useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
-import { IGetParams } from 'type';
-import { QsParams } from '../../Project/ProjectContent/components/project-filter/ProjectFilter';
+import { IGetParams, QsParams } from 'type';
+
 import {
   CustomFallbackStyled,
   DropDownMenuStyled,
@@ -47,6 +46,7 @@ import {
 import SimpleBar from 'simplebar-react';
 import HannahCustomSpin from '@components/HannahCustomSpin';
 import { StyledPagination } from '@/modules/dashboard';
+import { useCheckScopeEntityDefault } from '@/modules/common';
 interface TeamMember extends UserPayload {
   key: string;
   name: string;

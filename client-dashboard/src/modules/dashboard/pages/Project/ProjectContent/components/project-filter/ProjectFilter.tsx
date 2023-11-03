@@ -3,24 +3,16 @@ import { useParseQueryString } from 'hooks/useParseQueryString';
 import { ArrowDown, FilterOutlined } from 'icons';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProjectFilterBtn, ProjectFilterWrapper } from '../Header/styles';
+import { ProjectFilterBtn } from './styles';
 import { ProjectFilterOverlay } from './ProjectFilterOverlay';
+import { QsParams } from '@/type';
 
 export interface IFilter {
   counter?: number;
   setCounter?: (payload: number) => void;
 }
 
-export interface QsParams {
-  q?: string;
-  page?: number;
-  take?: number;
-  isDeleted?: string;
-  createdFrom?: string;
-  createdTo?: string;
-}
-
-function ProjectFilter() {
+export function ProjectFilter() {
   const [counter, setCounter] = useState(0);
   const { t } = useTranslation();
   const qsParams = useParseQueryString<QsParams>();
@@ -35,29 +27,25 @@ function ProjectFilter() {
   }, [qsParams]);
 
   return (
-    <ProjectFilterWrapper>
-      <Dropdown
-        overlay={
-          <ProjectFilterOverlay counter={counter} setCounter={setCounter} />
-        }
-        trigger={['click']}
-        placement="bottomRight"
+    <Dropdown
+      overlay={
+        <ProjectFilterOverlay counter={counter} setCounter={setCounter} />
+      }
+      trigger={['click']}
+      placement="bottomRight"
+    >
+      <ProjectFilterBtn
+        type="primary"
+        className="flex-j-end"
+        aria-label={'filter button'}
       >
-        <ProjectFilterBtn
-          type="primary"
-          className="flex-j-end"
-          aria-label={'filter button'}
-        >
-          <FilterOutlined />
-          {t('common.filters')}
-          <div className="counter flex-center">
-            {counter}
-            <ArrowDown />
-          </div>
-        </ProjectFilterBtn>
-      </Dropdown>
-    </ProjectFilterWrapper>
+        <FilterOutlined />
+        {t('common.filters')}
+        <div className="counter flex-center">
+          {counter}
+          <ArrowDown />
+        </div>
+      </ProjectFilterBtn>
+    </Dropdown>
   );
 }
-
-export default ProjectFilter;

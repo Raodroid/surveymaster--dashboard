@@ -7,9 +7,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
 import { HeaderStyled } from './styles';
-import { projectRoutePath } from '@pages/Project';
-import ProjectFilter from '../project-filter/ProjectFilter';
+
 import { IBreadcrumbItem, StyledBreadcrumb } from '@/modules/common';
+import { ROUTE_PATH } from '@/enums';
+import { ProjectFilter } from '../project-filter/ProjectFilter';
 
 function ProjectHeader(props: {
   routes?: IBreadcrumbItem[];
@@ -27,7 +28,7 @@ function ProjectHeader(props: {
   const base = [
     {
       name: 'Project',
-      href: projectRoutePath.ROOT,
+      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT,
     },
   ];
 

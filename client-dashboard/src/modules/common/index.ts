@@ -4,3 +4,6 @@ export { default as UncontrolledInput } from './input/uncontrolled-input/Uncontr
 export * from './validate/validate';
 export * from './hoc';
 export * from './commonComponent';
+
+export * from './styles';
+export * from './funcs';

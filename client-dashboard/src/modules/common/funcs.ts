@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 export function hexToHSL(H) {
   //source https://codesandbox.io/s/2zd4x?file=/src/index.js:179-187
   // Convert hex to RGB first

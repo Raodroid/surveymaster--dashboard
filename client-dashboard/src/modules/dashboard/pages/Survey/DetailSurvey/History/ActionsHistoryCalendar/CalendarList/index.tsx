@@ -5,14 +5,16 @@ import { CustomSpinSuspense } from '@/modules/common/styles';
 import moment from 'moment';
 import { useMemo } from 'react';
 import SimpleBar from 'simplebar-react';
-import { surveyActionType } from '@/type';
-import { QsParams } from '@pages/Project/ProjectContent/components/project-filter/ProjectFilter';
-import { useGetAllActionsHistory } from '../../../utils';
+import { surveyActionType, QsParams } from '@/type';
+
+import {
+  useGetAllActionsHistory,
+  useGetSurveyById,
+  projectSurveyParams,
+} from '@pages/Survey';
 import Action from './Action';
 import { CalendarListWrapper } from './styles';
-import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import { useParams } from 'react-router';
-import { projectSurveyParams } from '../../../DetailSurvey';
 
 const initialAction: IAction = {
   actionType: '',

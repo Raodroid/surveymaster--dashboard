@@ -1,4 +1,4 @@
-import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project/util';
+import { useGetProjectByIdQuery } from '@pages/Project/util';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
@@ -9,7 +9,8 @@ import {
 } from '@pages/Survey';
 import { EditSurveyWrapper } from './style';
 import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
-import ProjectHeader from '@pages/Project/ProjectContent/components/Header';
+import ProjectHeader from '@pages/Project/ProjectContent/components/Header/Header';
+import { ROUTE_PATH } from '@/enums';
 
 function EditSurvey() {
   const params = useParams<projectSurveyParams>();
@@ -22,14 +23,14 @@ function EditSurvey() {
     () => [
       {
         name: project.name || '...',
-        href: generatePath(projectRoutePath.SURVEY, {
+        href: generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
           projectId: params?.projectId,
         }),
       },
       {
         name: currentSurveyVersion?.name || '...',
         href: generatePath(
-          `${projectRoutePath.DETAIL_SURVEY.ROOT}?version=${currentSurveyVersion?.displayId}`,
+          `${ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT}?version=${currentSurveyVersion?.displayId}`,
           {
             projectId: params?.projectId,
             surveyId: params?.surveyId,
@@ -38,7 +39,7 @@ function EditSurvey() {
       },
       {
         name: t('common.editSurvey'),
-        href: projectRoutePath.DETAIL_SURVEY.EDIT,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
       },
     ],
     [params, currentSurveyVersion, project, t],

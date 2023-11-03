@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router';
-import { projectRoutePath } from '../../Project/util';
 import EditSurvey from './Edit';
 import ActionHistory from './History';
 import Remarks from './Remarks';
 import { DetailSurveyWrapper } from './styles';
 import ViewSurvey from './View';
+import { ROUTE_PATH } from '@/enums';
 
 export type projectSurveyParams = {
   projectId: string;
@@ -13,22 +13,26 @@ export type projectSurveyParams = {
 
 function DetailSurvey() {
   const subRoute = (route: string) =>
-    route.replace(projectRoutePath.DETAIL_SURVEY.ROOT, '');
+    route.replace(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, '');
 
   return (
     <DetailSurveyWrapper className="h-full flex flex-col">
       <Routes>
         <Route path="/" element={<ViewSurvey />} />
         <Route
-          path={subRoute(projectRoutePath.DETAIL_SURVEY.EDIT)}
+          path={subRoute(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT)}
           element={<EditSurvey />}
         />
         <Route
-          path={subRoute(projectRoutePath.DETAIL_SURVEY.HISTORY)}
+          path={subRoute(
+            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.HISTORY,
+          )}
           element={<ActionHistory />}
         />
         <Route
-          path={subRoute(projectRoutePath.DETAIL_SURVEY.REMARKS)}
+          path={subRoute(
+            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.REMARKS,
+          )}
           element={<Remarks />}
         />
       </Routes>

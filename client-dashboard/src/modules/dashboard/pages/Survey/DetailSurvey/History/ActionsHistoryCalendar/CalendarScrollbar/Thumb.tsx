@@ -1,15 +1,17 @@
-import { useParseQueryString } from '@/hooks/useParseQueryString';
+import { useParseQueryString } from '@/hooks';
 import moment from 'moment';
 import qs from 'qs';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useDebounce } from '@/utils';
 import { ACTIONS_HISTORY_ID } from './index';
-import { QsParams } from '@pages/Project/ProjectContent/components/project-filter/ProjectFilter';
-import { MONTH_HEIGHT } from '../../../utils';
+import {
+  MONTH_HEIGHT,
+  projectSurveyParams,
+  useGetSurveyById,
+} from '@pages/Survey';
 import { ThumbWrapper } from '../styles';
-import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
-import { projectSurveyParams } from '../../../DetailSurvey';
+import { QsParams } from '@/type';
 
 const thumbId = 'actions-history-thumb';
 

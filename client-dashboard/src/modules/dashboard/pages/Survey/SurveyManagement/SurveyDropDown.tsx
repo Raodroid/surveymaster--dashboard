@@ -2,10 +2,10 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { projectRoutePath, useGetProjectByIdQuery } from '../../Project/util';
+import { useGetProjectByIdQuery } from '@pages/Project';
 import { CreateSurveyBodyDto, ISurvey, ProjectTypes } from '@/type';
 import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
-import { MOMENT_FORMAT, SCOPE_CONFIG } from '@/enums';
+import { MOMENT_FORMAT, ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
 import { SurveyService } from '@/services';
 import { Modal, notification } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
@@ -186,10 +186,13 @@ export const SurveyDropDownMenu: FC<IDropDownMenu> = props => {
         case ACTION_ENUM.EDIT: {
           if (!params?.projectId) return;
           navigate(
-            generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, {
-              projectId: params?.projectId,
-              surveyId: record.id,
-            }) + `?version=${record?.latestVersion?.displayId}`,
+            generatePath(
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
+              {
+                projectId: params?.projectId,
+                surveyId: record.id,
+              },
+            ) + `?version=${record?.latestVersion?.displayId}`,
           );
           return;
         }

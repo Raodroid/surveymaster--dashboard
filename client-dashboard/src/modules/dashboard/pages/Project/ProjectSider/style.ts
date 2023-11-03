@@ -1,8 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { BaseSectionWrapper } from '../../../../common/styles';
-import { screenSize } from '../../../../../enums';
+import { screenSize } from '@/enums';
 import templateVariable from 'app/template-variables.module.scss';
+import { BaseSectionWrapper } from '@/modules/common/styles';
+
 export const ProjectSiderWrapper = styled(BaseSectionWrapper)`
   width: 290px;
   display: flex;

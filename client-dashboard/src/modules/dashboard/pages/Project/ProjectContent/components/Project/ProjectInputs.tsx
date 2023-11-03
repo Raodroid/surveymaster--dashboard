@@ -8,11 +8,11 @@ import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
 import { AdminService } from 'services';
 import { InputsWrapper } from './styles';
-import { transformEnumToOption } from '../../../../../../../utils';
-import { ProjectTypes } from '../../../../../../../type';
+import { ProjectTypes } from '@/type';
 import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../../enums';
+import { ROUTE_PATH } from 'enums';
 import _get from 'lodash/get';
+import { transformEnumToOption } from 'utils';
 
 function ProjectInputs() {
   const { t } = useTranslation();

@@ -3,14 +3,15 @@ import React, { useMemo } from 'react';
 import { generatePath, useParams } from 'react-router';
 import { ViewSurveyWrapper } from './styles';
 import { SurveyForm } from '@pages/Survey';
-import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project/util';
-import ProjectHeader from '../../../Project/ProjectContent/components/Header';
+import { useGetProjectByIdQuery } from '@pages/Project/util';
+import ProjectHeader from '../../../Project/ProjectContent/components/Header/Header';
 import { projectSurveyParams } from '../DetailSurvey';
 
 import { useLocation } from 'react-router-dom';
 import { ViewDetailSurveyDropDownMenuButton } from './ViewDetailSurveyDropDownBtn';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import { useToggle } from '@/utils';
+import { ROUTE_PATH } from '@/enums';
 
 function ViewSurvey() {
   const params = useParams<projectSurveyParams>();
@@ -24,13 +25,13 @@ function ViewSurvey() {
     () => [
       {
         name: project.name || '...',
-        href: generatePath(projectRoutePath.SURVEY, {
+        href: generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
           projectId: params?.projectId,
         }),
       },
       {
         name: currentSurveyVersion?.name || '...',
-        href: projectRoutePath.DETAIL_SURVEY.ROOT,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
       },
     ],
     [params?.projectId, project.name, currentSurveyVersion?.name],
@@ -49,14 +50,20 @@ function ViewSurvey() {
 
   const links: string[] = useMemo(
     () => [
-      generatePath(projectRoutePath.DETAIL_SURVEY.EDIT, paramMeter) +
-        queryString,
+      generatePath(
+        ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
+        paramMeter,
+      ) + queryString,
 
-      generatePath(projectRoutePath.DETAIL_SURVEY.HISTORY, paramMeter) +
-        queryString,
+      generatePath(
+        ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.HISTORY,
+        paramMeter,
+      ) + queryString,
 
-      generatePath(projectRoutePath.DETAIL_SURVEY.REMARKS, paramMeter) +
-        queryString,
+      generatePath(
+        ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.REMARKS,
+        paramMeter,
+      ) + queryString,
     ],
     [paramMeter, queryString],
   );

@@ -1,5 +1,5 @@
 import { Button, Form, notification } from 'antd';
-import { SCOPE_CONFIG } from 'enums';
+import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { Formik } from 'formik';
 import { ProjectPayload } from 'interfaces/project';
 import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
@@ -11,11 +11,11 @@ import { useMutation, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { onError } from 'utils/funcs';
 import { PROJECT_FORM_SCHEMA } from 'modules/common/validate/validate';
-import ProjectHeader from '../Header';
+import ProjectHeader from '../Header/Header';
 import Inputs from './ProjectInputs';
 import { AddProjectWrapper, EditProjectWrapper } from './styles';
 import { ProjectService } from '@/services';
-import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project';
+import { useGetProjectByIdQuery } from '@pages/Project';
 
 function EditProject() {
   const params = useParams<{ projectId?: string }>();
@@ -31,13 +31,13 @@ function EditProject() {
     () => [
       {
         name: project.name || '...',
-        href: generatePath(projectRoutePath.SURVEY, {
+        href: generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
           projectId: params?.projectId,
         }),
       },
       {
         name: t('common.projectDescription'),
-        href: projectRoutePath.PROJECT.EDIT,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT,
       },
     ],
     [params?.projectId, project.name, t],
@@ -48,7 +48,7 @@ function EditProject() {
       queryClient.invalidateQueries('getProjectById');
       queryClient.invalidateQueries('getProjects');
       notification.success({ message: t('common.updateSuccess') });
-      navigate(projectRoutePath.ROOT);
+      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
     },
     onError,
   });

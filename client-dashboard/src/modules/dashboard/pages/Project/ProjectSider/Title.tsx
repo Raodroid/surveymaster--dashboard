@@ -3,11 +3,10 @@ import { ExternalIcon, InternalIcon, ListIcon, PlusIcon } from 'icons';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { projectRoutePath } from '../util';
 import { TitleStyled } from './style';
-import { IProject, ProjectTypes } from '../../../../../type';
-import { useCheckScopeEntityDefault } from '../../../../common/hoc';
-import { SCOPE_CONFIG } from '../../../../../enums';
+import { IProject, ProjectTypes } from '@/type';
+import { useCheckScopeEntityDefault } from '@/modules/common';
+import { ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
 
 interface TitleProps {
   title: string;
@@ -32,7 +31,7 @@ function Title(props: TitleProps) {
 
   const handleTitleClick = () => {
     if (userId === params?.projectId) {
-      navigate(projectRoutePath.ROOT);
+      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
     } else {
       navigate(route_path);
     }
@@ -62,9 +61,12 @@ function Title(props: TitleProps) {
             aria-label={'create new survey'}
             onClick={() => {
               navigate(
-                generatePath(projectRoutePath.ADD_NEW_SURVEY, {
-                  projectId: params.projectId,
-                }),
+                generatePath(
+                  ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY,
+                  {
+                    projectId: params.projectId,
+                  },
+                ),
               );
             }}
           >

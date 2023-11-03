@@ -2,11 +2,12 @@ import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 import { useMemo } from 'react';
 import { useParams } from 'react-router';
 import { AddSurveyWrapper } from './styles';
-import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project/util';
-import ProjectHeader from '../../../Project/ProjectContent/components/Header';
+import { useGetProjectByIdQuery } from '@pages/Project/util';
 import { useTranslation } from 'react-i18next';
 import { projectSurveyParams } from '../DetailSurvey';
 import { SurveyForm } from '@pages/Survey';
+import { ROUTE_PATH } from '@/enums';
+import { ProjectHeader } from '@pages/Project';
 
 function AddSurvey() {
   const params = useParams<projectSurveyParams>();
@@ -18,11 +19,14 @@ function AddSurvey() {
     () => [
       {
         name: project?.name || '...',
-        href: projectRoutePath.SURVEY.replace(':projectId', project.id),
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY.replace(
+          ':projectId',
+          project.id,
+        ),
       },
       {
         name: t('common.addNewSurvey'),
-        href: projectRoutePath.ADD_NEW_SURVEY,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY,
       },
     ],
     [project?.name, project.id, t],

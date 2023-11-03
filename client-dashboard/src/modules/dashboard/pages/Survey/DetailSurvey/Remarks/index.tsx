@@ -2,7 +2,7 @@ import { Button, Form, Modal, notification } from 'antd';
 import { Formik } from 'formik';
 import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 import { CustomSpinSuspense } from '@/modules/common/styles';
-import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project/util';
+import { useGetProjectByIdQuery } from '@pages/Project/util';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
@@ -17,12 +17,13 @@ import {
 } from '@/type';
 import { onError } from '@/utils';
 import { projectSurveyParams } from '../DetailSurvey';
-import ProjectHeader from '../../../Project/ProjectContent/components/Header';
+import ProjectHeader from '../../../Project/ProjectContent/components/Header/Header';
 import Inputs from '../Inputs';
 import { RemarksWrapper } from './styles';
 import { useToggle } from '../../../../../../utils';
 import { ViewDetailSurveyDropDownMenuButton } from '../View/ViewDetailSurveyDropDownBtn';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
+import { ROUTE_PATH } from '@/enums';
 
 const { confirm } = Modal;
 
@@ -57,21 +58,21 @@ function Remarks() {
     () => [
       {
         name: project?.name || '...',
-        href: generatePath(projectRoutePath.SURVEY, {
+        href: generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
           projectId: params?.projectId,
         }),
       },
       {
         name: currentSurveyVersion?.name || '...',
         href:
-          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
             projectId: params?.projectId,
             surveyId: params?.surveyId,
           }) + queryString,
       },
       {
         name: t('common.remarks'),
-        href: projectRoutePath.DETAIL_SURVEY.REMARKS,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.REMARKS,
       },
     ],
     [
@@ -93,7 +94,7 @@ function Remarks() {
         await queryClient.invalidateQueries('getSurveyById');
         notification.success({ message: t('common.updateSuccess') });
         navigate(
-          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
             projectId: params?.projectId,
             surveyId: params?.surveyId,
           }) + `?version=${res.data.displayId}`,
@@ -127,7 +128,7 @@ function Remarks() {
           message: t('common.createSuccess'),
         });
         navigate(
-          generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
             projectId: params.projectId,
             surveyId: res.data.surveyId,
           }) + `?version=${res.data.displayId}`,
