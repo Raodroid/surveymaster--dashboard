@@ -3,7 +3,7 @@ import { useParseQueryString } from 'hooks/useParseQueryString';
 import { Chat, Clock, PenFilled } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import qs from 'qs';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
 import { HeaderStyled } from './styles';
@@ -12,12 +12,13 @@ import { IBreadcrumbItem, StyledBreadcrumb } from '@/modules/common';
 import { ROUTE_PATH } from '@/enums';
 import { ProjectFilter } from '../project-filter/ProjectFilter';
 
-function ProjectHeader(props: {
+interface IProjectHeader {
   routes?: IBreadcrumbItem[];
-  links?: string[];
-  search?: boolean;
-}) {
-  const { routes, links, search } = props;
+  showSearch?: boolean;
+  RightMenu?: ReactNode;
+}
+const ProjectHeader: FC<IProjectHeader> = props => {
+  const { routes, showSearch, RightMenu } = props;
   const searchRef = useRef<InputRef>(null);
   const [searchInput, setSearchInput] = useState('');
 
@@ -63,7 +64,7 @@ function ProjectHeader(props: {
     <HeaderStyled className="flex-center-start">
       <StyledBreadcrumb routes={base} />
 
-      {search && (
+      {showSearch && (
         <>
           <Form className="flex search-form" onFinish={handleSearch}>
             <Input
@@ -88,28 +89,9 @@ function ProjectHeader(props: {
           <ProjectFilter />
         </>
       )}
-
-      {links && (
-        <div className="wrapper flex-center">
-          <Link to={links[0]} aria-label={'edit survey link'}>
-            <PenFilled />
-          </Link>
-
-          <Divider type="vertical" style={{ height: 8, width: 1 }} />
-
-          <Link to={links[1]} aria-label={'go to history survey link'}>
-            <Clock />
-          </Link>
-
-          <Divider type="vertical" style={{ height: 8, width: 1 }} />
-
-          <Link to={links[2]} aria-label={'edit remark survey link'}>
-            <Chat />
-          </Link>
-        </div>
-      )}
+      {RightMenu}
     </HeaderStyled>
   );
-}
+};
 
 export default ProjectHeader;

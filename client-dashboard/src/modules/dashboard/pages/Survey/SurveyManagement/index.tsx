@@ -153,7 +153,7 @@ function SurveyTable() {
 
   return (
     <SurveyWrapper className="flex-column" centerLastChild>
-      <ProjectHeader routes={routes} search />
+      <ProjectHeader routes={routes} showSearch />
 
       <TableWrapper className="flex-column" ref={wrapperRef}>
         <HannahCustomSpin

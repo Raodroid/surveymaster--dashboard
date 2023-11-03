@@ -1,0 +1,33 @@
+{
+  "extends": [
+    // By extending from a plugin config, we can get recommended rules without having to add them manually.
+    "plugin:react/jsx-runtime",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+
+    // This disables the formatting rules in ESLint that Prettier is going to be responsible for handling.
+    // Make sure it"s always the last config, so it gets the chance to override other configs.
+    "eslint-config-prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint",  "react-hooks"],
+  "settings": {
+    "react": {
+      // Tells eslint-plugin-react to automatically detect the version of React to use.
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
+}
+
+

@@ -40,7 +40,7 @@ const MainMenu = () => {
     return result;
   }, [canReadProject, canReadQuestion]);
 
-  return <BaseMenu items={menuItems} className="main-menu-root" />;
+  return <BaseMenu items={menuItems} className="flex-1" />;
 };
 
 export default MainMenu;

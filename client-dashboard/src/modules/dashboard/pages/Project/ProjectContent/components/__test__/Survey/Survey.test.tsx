@@ -171,8 +171,8 @@ test('Survey: base render', async () => {
   screen.getByRole('link', {
     name: /route name/i,
   });
-  screen.getByRole('textbox', { name: /search survey/i });
-  screen.getByRole('button', { name: /submit search survey button/i });
+  screen.getByRole('textbox', { name: /showSearch survey/i });
+  screen.getByRole('button', { name: /submit showSearch survey button/i });
   screen.getByRole('columnheader', { name: /id/i });
   screen.getByRole('columnheader', { name: /survey title/i });
   screen.getByRole('columnheader', { name: /number of questions/i });

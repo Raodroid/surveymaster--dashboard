@@ -22,7 +22,7 @@ const MenuList: FC<IMenuList> = props => {
     <BaseMenu
       callback={onChangeMenu}
       items={allMenuItems}
-      className="main-menu-root"
+      className="flex-1"
       mode={'vertical'}
     />
   );

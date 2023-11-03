@@ -84,7 +84,7 @@ function TeamContent() {
   const allRoles = useSelector(AuthSelectors.getAllRoles);
   const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
 
-  const [search, setSearch] = useState('');
+  const [showSearch, setSearch] = useState('');
   const searchRef = useRef<InputRef>(null);
   const qsParams = useParseQueryString<QsParams>();
 

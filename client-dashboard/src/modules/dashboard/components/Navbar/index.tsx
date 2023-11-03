@@ -5,10 +5,10 @@ import { LogoIcon } from 'icons';
 import { Link } from 'react-router-dom';
 import MainMenu from './MainMenu';
 import RightMenu from './RightMenu';
-import { useMobile } from '../../../../utils';
 import MobileMenu from './MobileMenu';
 import { ConfigProvider } from 'antd';
-import { setSecondaryColor } from '../../../common/funcs';
+import { setSecondaryColor } from '@/modules/common';
+import { useMobile } from '@/utils';
 
 const NavBar = () => {
   const { isMobile } = useMobile();

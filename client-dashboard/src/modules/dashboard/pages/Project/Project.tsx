@@ -2,7 +2,7 @@ import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, Route, Routes } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
-import { ProjectWrapper, ProjectContentWrapper } from './styles';
+import { ProjectContentWrapper } from './styles';
 import { AddSurvey, DetailSurvey, SurveyManagement } from '@pages/Survey';
 import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 
@@ -12,6 +12,9 @@ import {
   AddProject,
   EditProject,
 } from '@pages/Project';
+import { Layout } from 'antd';
+
+const { Content } = Layout;
 
 const { PROJECT } = ROUTE_PATH.DASHBOARD_PATHS;
 
@@ -22,24 +25,26 @@ const Project = () => {
     SCOPE_CONFIG.ENTITY.SURVEY,
   );
 
+  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
+
   const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);
   const canReadSurveyinal = isFetching ? true : canReadSurvey;
 
   return (
-    <ProjectWrapper>
+    <Content>
       <Routes>
         <Route
           path="/"
           element={
             <>
-              <ProjectSider />
+              {/*<ProjectSider />*/}
               <ProjectContentWrapper>
                 <Outlet />
               </ProjectContentWrapper>
             </>
           }
         >
-          <Route path="/" element={<ProjectContent />} />
+          {canRead && <Route path="/" element={<ProjectContent />} />}
           {canReadSurveyinal && (
             <Route
               path={subRoute(PROJECT.SURVEY)}
@@ -67,7 +72,7 @@ const Project = () => {
           <Route path="*" element={<Navigate to={PROJECT.ROOT} />} />
         </Route>
       </Routes>
-    </ProjectWrapper>
+    </Content>
   );
 };
 

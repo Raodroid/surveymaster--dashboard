@@ -32,7 +32,7 @@ test('ProjectHeader: base render', async () => {
       <ProjectHeader
         routes={[{ name: 'Project 1', href: '/app/project/21' }]}
         links={['hannah', 'sofia', 'ana']}
-        search
+        showSearch
       />
     </JestGeneralProviderHoc>,
   );
@@ -44,8 +44,8 @@ test('ProjectHeader: base render', async () => {
   });
   screen.getByText(/project 1/i);
 
-  screen.getByRole('textbox', { name: /search survey/i });
-  screen.getByRole('button', { name: /submit search survey button/i });
+  screen.getByRole('textbox', { name: /showSearch survey/i });
+  screen.getByRole('button', { name: /submit showSearch survey button/i });
 
   screen.getByRole('link', {
     name: /edit survey link/i,
@@ -82,17 +82,17 @@ test('ProjectHeader: search survey feature', async () => {
       <ProjectHeader
         routes={[{ name: 'Project 1', href: '/app/project/21' }]}
         links={['hannah', 'sofia', 'ana']}
-        search
+        showSearch
       />
     </JestGeneralProviderHoc>,
   );
   await userEvent.type(
-    screen.getByRole('textbox', { name: /search survey/i }),
+    screen.getByRole('textbox', { name: /showSearch survey/i }),
     'survey name something',
   );
 
   fireEvent.click(
-    screen.getByRole('button', { name: /submit search survey button/i }),
+    screen.getByRole('button', { name: /submit showSearch survey button/i }),
   );
 
   expect(mockedUseNavigate).toHaveBeenCalledWith(

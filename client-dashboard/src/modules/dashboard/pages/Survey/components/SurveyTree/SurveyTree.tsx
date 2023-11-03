@@ -57,7 +57,7 @@ const SurveyTree = () => {
       const { dragOverGapBottom, dragOverGapTop } = node;
       // check posistion is valid when drag
       if (dragOverGapBottom || dragOverGapTop) {
-        if (node.fieldName.match(/'children'/)) {
+        if (node.fieldName.match(/'RightMenu'/)) {
           const parent = getParentNodeFieldName(node.fieldName);
           const parentNode: questionValueType = _get(value, parent);
           if (parentNode && parentNode.type !== SubSurveyFlowElement.BRANCH) {
@@ -84,7 +84,7 @@ const SurveyTree = () => {
           item.children.unshift(dragObj);
         });
       } else if (
-        ((node as any).props.children || []).length > 0 && // Has children
+        ((node as any).props.children || []).length > 0 && // Has RightMenu
         (node as any).props.expanded && // Is expanded
         dropPosition === 1 // On the bottom gap
       ) {
@@ -92,8 +92,8 @@ const SurveyTree = () => {
           item.children = item.children || [];
           // where to insert. New item was inserted to the start of the array in this example, but can be anywhere
           item.children.unshift(dragObj);
-          // in previous version, we use item.children.push(dragObj) to insert the
-          // item to the tail of the children
+          // in previous version, we use item.RightMenu.push(dragObj) to insert the
+          // item to the tail of the RightMenu
         });
       } else {
         let ar: SurveyDataTreeNode[] = [];
