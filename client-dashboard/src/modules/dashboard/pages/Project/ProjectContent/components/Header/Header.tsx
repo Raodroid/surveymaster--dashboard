@@ -2,16 +2,15 @@ import { Button, Divider, Form, Input, InputRef } from 'antd';
 import { useParseQueryString } from 'hooks/useParseQueryString';
 import { Chat, Clock, PenFilled } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
-import StyledBreadcrumb, {
-  IBreadcrumbItem,
-} from 'modules/common/commonComponent/StyledBreadcrumb';
 import qs from 'qs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
-import { projectRoutePath } from '../../../util';
-import ProjectFilter from '../project-filter/ProjectFilter';
 import { HeaderStyled } from './styles';
+
+import { IBreadcrumbItem, StyledBreadcrumb } from '@/modules/common';
+import { ROUTE_PATH } from '@/enums';
+import { ProjectFilter } from '../project-filter/ProjectFilter';
 
 function ProjectHeader(props: {
   routes?: IBreadcrumbItem[];
@@ -29,7 +28,7 @@ function ProjectHeader(props: {
   const base = [
     {
       name: 'Project',
-      href: projectRoutePath.ROOT,
+      href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT,
     },
   ];
 

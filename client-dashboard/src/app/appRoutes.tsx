@@ -12,8 +12,8 @@ import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
 
 const Home = lazy(() => import('modules/dashboard/pages/Home'));
-const Project = lazy(() => import('modules/dashboard/pages/Project'));
-const Profile = lazy(() => import('modules/dashboard/pages/Profile'));
+const Project = lazy(() => import('@pages/Project/Project'));
+const Profile = lazy(() => import('@pages/Profile/Profile'));
 const QuestionBank = lazy(() => import('modules/dashboard/pages/QuestionBank'));
 const ViewQuestion = lazy(
   () => import('modules/dashboard/pages/QuestionBank/ViewQuestion'),

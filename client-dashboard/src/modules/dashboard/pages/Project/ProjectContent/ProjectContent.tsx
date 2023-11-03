@@ -1,20 +1,18 @@
 import { SCOPE_CONFIG } from 'enums';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
-import ProjectHeader from './components/Header';
-import ProjectTable from './components/ProjectTable';
-import { ProjectHomeWrapper } from './styles';
+import { ProjectHeader, ProjectTable } from '@pages/Project';
 
 const ProjectContent = () => {
   const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
   return (
-    <ProjectHomeWrapper className="flex-column">
+    <div className="w-full h-full flex-column">
       {canRead && (
         <>
           <ProjectHeader search />
           <ProjectTable />
         </>
       )}
-    </ProjectHomeWrapper>
+    </div>
   );
 };
 

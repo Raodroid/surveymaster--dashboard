@@ -1,12 +1,11 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { MOMENT_FORMAT } from '@/enums';
-import useHandleNavigate from '@/hooks/useHandleNavigate';
-import { useParseQueryString } from '@/hooks/useParseQueryString';
+import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
+import { useHandleNavigate, useParseQueryString } from '@/hooks';
 
 import _get from 'lodash/get';
-import { IBreadcrumbItem } from '@/modules/common/commonComponent/StyledBreadcrumb';
-import StyledPagination from '@/modules/dashboard/components/StyledPagination';
+
+import { HannahCustomSpin, StyledPagination } from '@/modules/dashboard';
 import moment from 'moment';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,13 +13,12 @@ import { useQuery } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { ProjectService, SurveyService } from '@/services';
 import SimpleBar from 'simplebar-react';
-import { IGetParams, ISurvey } from '@/type';
-import HannahCustomSpin from '@components/HannahCustomSpin';
-import { projectRoutePath } from '../../Project/util';
-import ProjectHeader from '../../Project/ProjectContent/components/Header';
-import { QsParams } from '../../Project/ProjectContent/components/project-filter/ProjectFilter';
+import { IGetParams, ISurvey, QsParams } from '@/type';
 import { SurveyWrapper, TableWrapper } from './style';
 import { SurveyDropDownMenu } from './SurveyDropDown';
+import { ProjectHeader } from '@pages/Project/';
+import { IBreadcrumbItem } from '@/modules/common';
+
 const initParams: IGetParams = {
   q: '',
   page: 1,
@@ -76,7 +74,7 @@ function SurveyTable() {
     () => [
       {
         name: project?.data.name || '...',
-        href: projectRoutePath.SURVEY,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY,
       },
     ],
     [project],
@@ -138,10 +136,13 @@ function SurveyTable() {
             return {
               onClick: () =>
                 navigate(
-                  generatePath(projectRoutePath.DETAIL_SURVEY.ROOT, {
-                    projectId: params?.projectId,
-                    surveyId: record.id,
-                  }) + `?version=${record.latestVersion.displayId}`,
+                  generatePath(
+                    ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
+                    {
+                      projectId: params?.projectId,
+                      surveyId: record.id,
+                    },
+                  ) + `?version=${record.latestVersion.displayId}`,
                 ),
             };
           },

@@ -1,18 +1,18 @@
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useParseQueryString } from '../../../../../../../hooks';
 import { matchPath } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../../enums';
+import { ROUTE_PATH } from 'enums';
 import { useMemo } from 'react';
 import moment, { Moment } from 'moment';
 import qs from 'qs';
-import { ProjectFilterOverlayWrapper } from '../Header/styles';
 import { Formik } from 'formik';
 import { Button, Divider, Form } from 'antd';
-import { ArrowDown, Refresh } from '../../../../../../../icons';
-import { ControlledInput } from '../../../../../../common';
-import { INPUT_TYPES } from '../../../../../../common/input/type';
-import { IFilter, QsParams } from './ProjectFilter';
+import { ArrowDown, Refresh } from 'icons';
+import { ControlledInput } from '@/modules/common';
+import { INPUT_TYPES } from '@input/type';
+import { IFilter } from './ProjectFilter';
+import { useParseQueryString } from '@/hooks';
+import { QsParams } from '@/type';
 
 interface FilterParams {
   isDeleted?: boolean;
@@ -108,74 +108,72 @@ export function ProjectFilterOverlay(props: IFilter) {
   }, [isShowProjectTable, isShowSurveyTable]);
 
   return (
-    <ProjectFilterOverlayWrapper>
-      <Formik
-        enableReinitialize={true}
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-      >
-        {({ values, handleSubmit: handleFinish, setFieldValue }) => {
-          return (
-            <Form layout="vertical" onFinish={handleFinish}>
-              <div className="header flex-j-between">
-                <div className="left flex-center">
-                  {t('common.filters')}
-                  <div className="counter flex-center">{counter}</div>
-                </div>
-                <div className="right">
-                  <Button
-                    onClick={() => handleReset(values, setFieldValue)}
-                    aria-label={'clear filter'}
-                  >
-                    <Refresh />
-                  </Button>
-                </div>
+    <Formik
+      enableReinitialize={true}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+    >
+      {({ values, handleSubmit: handleFinish, setFieldValue }) => {
+        return (
+          <Form layout="vertical" onFinish={handleFinish}>
+            <div className="header flex-j-between">
+              <div className="left flex-center">
+                {t('common.filters')}
+                <div className="counter flex-center">{counter}</div>
               </div>
-              <Divider />
-              <div className="flex-column filters">
-                <ControlledInput
-                  name="isDeleted"
-                  inputType={INPUT_TYPES.CHECKBOX}
-                  children={optionName}
-                  aria-label={'isDeleted'}
-                />
-                <div className="dates-filter">
-                  <ControlledInput
-                    name="dateCreation"
-                    inputType={INPUT_TYPES.CHECKBOX}
-                    children={'Data Creation Range'}
-                    onChange={e => setFieldValue('dateCreation', e)}
-                    aria-label={'dateCreation'}
-                  />
-                  <div className="flex-center dates">
-                    <ControlledInput
-                      name="createdFrom"
-                      inputType={INPUT_TYPES.DAY_PICKER}
-                      suffixIcon={<ArrowDown />}
-                      aria-label={'createdFrom'}
-                    />
-                    -
-                    <ControlledInput
-                      name="createdTo"
-                      inputType={INPUT_TYPES.DAY_PICKER}
-                      suffixIcon={<ArrowDown />}
-                      aria-label={'createdTo'}
-                    />
-                  </div>
-                </div>
-
+              <div className="right">
                 <Button
-                  className="secondary-btn"
-                  type="primary"
-                  htmlType="submit"
+                  onClick={() => handleReset(values, setFieldValue)}
+                  aria-label={'clear filter'}
                 >
-                  {t('common.apply')}
+                  <Refresh />
                 </Button>
               </div>
-            </Form>
-          );
-        }}
-      </Formik>
-    </ProjectFilterOverlayWrapper>
+            </div>
+            <Divider />
+            <div className="flex-column filters">
+              <ControlledInput
+                name="isDeleted"
+                inputType={INPUT_TYPES.CHECKBOX}
+                children={optionName}
+                aria-label={'isDeleted'}
+              />
+              <div className="dates-filter">
+                <ControlledInput
+                  name="dateCreation"
+                  inputType={INPUT_TYPES.CHECKBOX}
+                  children={'Data Creation Range'}
+                  onChange={e => setFieldValue('dateCreation', e)}
+                  aria-label={'dateCreation'}
+                />
+                <div className="flex-center dates">
+                  <ControlledInput
+                    name="createdFrom"
+                    inputType={INPUT_TYPES.DAY_PICKER}
+                    suffixIcon={<ArrowDown />}
+                    aria-label={'createdFrom'}
+                  />
+                  -
+                  <ControlledInput
+                    name="createdTo"
+                    inputType={INPUT_TYPES.DAY_PICKER}
+                    suffixIcon={<ArrowDown />}
+                    aria-label={'createdTo'}
+                  />
+                </div>
+              </div>
+
+              <Button
+                className="secondary-btn"
+                type="primary"
+                htmlType="submit"
+              >
+                {t('common.apply')}
+              </Button>
+            </div>
+          </Form>
+        );
+      }}
+    </Formik>
   );
 }

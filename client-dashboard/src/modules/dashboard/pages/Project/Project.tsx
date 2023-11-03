@@ -1,20 +1,22 @@
-import { SCOPE_CONFIG } from 'enums';
+import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, Route, Routes } from 'react-router';
-import { AuthSelectors } from '../../../../redux/auth';
-import { useCheckScopeEntityDefault } from '../../../common/hoc';
-import ProjectContent from './ProjectContent';
-import DetailSurvey from '../Survey/DetailSurvey';
-import AddSurvey from '../Survey/DetailSurvey/Add';
-import { AddProject, EditProject } from './ProjectContent/components/Project';
-import SurveyManagement from '../Survey/SurveyManagement';
-import { ProjectContentWrapper } from './ProjectContent/styles';
-import ProjectSider from './ProjectSider';
-import { ProjectWrapper } from './styles';
-import { projectRoutePath } from './util';
+import { AuthSelectors } from 'redux/auth';
+import { ProjectWrapper, ProjectContentWrapper } from './styles';
+import { AddSurvey, DetailSurvey, SurveyManagement } from '@pages/Survey';
+import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
+
+import {
+  ProjectContent,
+  ProjectSider,
+  AddProject,
+  EditProject,
+} from '@pages/Project';
+
+const { PROJECT } = ROUTE_PATH.DASHBOARD_PATHS;
 
 const Project = () => {
-  const subRoute = (route: string) => route.replace(projectRoutePath.ROOT, '');
+  const subRoute = (route: string) => route.replace(PROJECT.ROOT, '');
 
   const { canRead: canReadSurvey } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.SURVEY,
@@ -40,29 +42,29 @@ const Project = () => {
           <Route path="/" element={<ProjectContent />} />
           {canReadSurveyinal && (
             <Route
-              path={subRoute(projectRoutePath.SURVEY)}
+              path={subRoute(PROJECT.SURVEY)}
               element={<SurveyManagement />}
             />
           )}
           {canReadSurveyinal && (
             <Route
-              path={subRoute(projectRoutePath.ADD_NEW_SURVEY)}
+              path={subRoute(PROJECT.ADD_NEW_SURVEY)}
               element={<AddSurvey />}
             />
           )}
           <Route
-            path={subRoute(projectRoutePath.PROJECT.ADD)}
+            path={subRoute(PROJECT.PROJECT.ADD)}
             element={<AddProject />}
           />
           <Route
-            path={subRoute(projectRoutePath.PROJECT.EDIT)}
+            path={subRoute(PROJECT.PROJECT.EDIT)}
             element={<EditProject />}
           />
           <Route
-            path={subRoute(projectRoutePath.DETAIL_SURVEY.ROOT + '/*')}
+            path={subRoute(PROJECT.DETAIL_SURVEY.ROOT + '/*')}
             element={<DetailSurvey />}
           />
-          <Route path="*" element={<Navigate to={projectRoutePath.ROOT} />} />
+          <Route path="*" element={<Navigate to={PROJECT.ROOT} />} />
         </Route>
       </Routes>
     </ProjectWrapper>

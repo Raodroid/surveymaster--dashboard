@@ -1,4 +1,4 @@
-import { SCOPE_CONFIG } from 'enums';
+import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { PlusIcon } from 'icons';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { CustomSpinSuspense } from 'modules/common/styles';
@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath } from 'react-router';
 import SimpleBar from 'simplebar-react';
-import { projectRoutePath, useGetAllProjects } from '../util';
+import { useGetAllProjects } from '../util';
 import { CustomNavLink, ProjectSiderWrapper } from './style';
 import Title from './Title';
 
@@ -31,9 +31,12 @@ const ProjectSider = () => {
                   project={e}
                   key={e.id}
                   title={e.name}
-                  routePath={generatePath(projectRoutePath.SURVEY, {
-                    projectId: e.id,
-                  })}
+                  routePath={generatePath(
+                    ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY,
+                    {
+                      projectId: e.id,
+                    },
+                  )}
                   id={e.id}
                 />
               ))}
@@ -43,7 +46,7 @@ const ProjectSider = () => {
       )}
       {canCreate && (
         <div className="add-new-project-btn-wrapper">
-          <CustomNavLink to={projectRoutePath.PROJECT.ADD}>
+          <CustomNavLink to={ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD}>
             <div
               className="new-project-btn"
               role={'link'}

@@ -2,20 +2,21 @@ import { Divider, Form } from 'antd';
 import { Formik } from 'formik';
 import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 import { CustomSpinSuspense } from '@/modules/common/styles';
-import { projectRoutePath, useGetProjectByIdQuery } from '@pages/Project/util';
+import { useGetProjectByIdQuery } from '@pages/Project/util';
 import moment from 'moment';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
 import SimpleBar from 'simplebar-react';
-import { projectSurveyParams } from '../index';
+import { projectSurveyParams } from '../DetailSurvey';
 import ActionsHistory from './ActionsHistory';
 import { ActionsHistoryContentWrapper, ActionsHistoryWrapper } from './styles';
 import { ISurvey, ProjectTypes } from '@/type';
 import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '@/modules/common/input/type';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
-import ProjectHeader from '@pages/Project/ProjectContent/components/Header';
+import ProjectHeader from '@pages/Project/ProjectContent/components/Header/Header';
+import { ROUTE_PATH } from '@/enums';
 
 interface IActionHistory extends ISurvey {
   displaySurveyId: string; // init value for Inputs component
@@ -33,14 +34,14 @@ function ActionHistory() {
     () => [
       {
         name: project?.name || '...',
-        href: generatePath(projectRoutePath.SURVEY, {
+        href: generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
           projectId: params.projectId,
         }),
       },
       {
         name: currentSurveyVersion?.name || '...',
         href: generatePath(
-          `${projectRoutePath.DETAIL_SURVEY.ROOT}?version=${currentSurveyVersion?.displayId}`,
+          `${ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT}?version=${currentSurveyVersion?.displayId}`,
           {
             projectId: params.projectId,
             surveyId: params.surveyId,
@@ -49,7 +50,7 @@ function ActionHistory() {
       },
       {
         name: t('common.actionsHistory'),
-        href: projectRoutePath.DETAIL_SURVEY.HISTORY,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.HISTORY,
       },
     ],
     [

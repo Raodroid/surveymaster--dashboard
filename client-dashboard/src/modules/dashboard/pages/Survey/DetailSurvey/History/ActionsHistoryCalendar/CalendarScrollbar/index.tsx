@@ -9,7 +9,7 @@ import Month from './Month';
 import Thumb from './Thumb';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import { useParams } from 'react-router';
-import { projectSurveyParams } from '../../../index';
+import { projectSurveyParams } from '../../../DetailSurvey';
 
 export enum ACTIONS_HISTORY_ID {
   MONTHS = 'actions-history-months',

@@ -3,15 +3,17 @@ import { BranchChoiceType, IOptionGroupItem, LogicOperator } from '@/type';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ControlledInput } from '@/modules/common';
-import { INPUT_TYPES } from '@/modules/common/input/type';
 import {
   defaultChoiceType,
   defaultOperatorQuestion,
   questionChoiceMap,
 } from './util';
-import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext';
-import { ExtraSubBranchLogicDto } from '@pages/Survey/SurveyForm/type';
-import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
+import {
+  ExtraSubBranchLogicDto,
+  useCheckSurveyFormMode,
+  useSurveyFormContext,
+} from '@pages/Survey';
+import { INPUT_TYPES } from '@input/type';
 
 export interface IQuestionChoice {
   fieldName: string;

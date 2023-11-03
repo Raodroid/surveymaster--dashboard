@@ -1,10 +1,10 @@
 import qs from 'qs';
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { QsParams } from '../modules/dashboard/pages/Project/ProjectContent/components/project-filter/ProjectFilter';
 import { useParseQueryString } from './useParseQueryString';
+import { QsParams } from '@/type';
 
-const useHandleNavigate = (initParams?: Record<string, any>) => {
+export const useHandleNavigate = (initParams?: Record<string, any>) => {
   const qsParams = useParseQueryString<QsParams>();
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -29,5 +29,3 @@ const useHandleNavigate = (initParams?: Record<string, any>) => {
   );
   return handleNavigate;
 };
-
-export default useHandleNavigate;

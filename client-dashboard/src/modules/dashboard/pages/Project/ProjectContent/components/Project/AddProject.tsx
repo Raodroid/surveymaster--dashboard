@@ -1,20 +1,18 @@
 import { Button, Form, notification } from 'antd';
-import { SCOPE_CONFIG } from 'enums';
+import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { Formik } from 'formik';
 import { ProjectPayload } from 'interfaces/project';
-import { IBreadcrumbItem } from 'modules/common/commonComponent/StyledBreadcrumb';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router';
-import ProjectService from 'services/survey-master-service/project.service';
 import { onError } from 'utils/funcs';
-import { PROJECT_FORM_SCHEMA } from '@/modules/common/validate/validate';
-import { projectRoutePath } from '../../../util';
-import ProjectHeader from '../Header';
+import ProjectHeader from '../Header/Header';
 import ProjectInputs from './ProjectInputs';
 import { AddProjectWrapper } from './styles';
+import { IBreadcrumbItem, PROJECT_FORM_SCHEMA } from '@/modules/common';
+import { ProjectService } from '@/services';
 
 const initialValues: ProjectPayload = {
   name: '',
@@ -35,7 +33,7 @@ function AddProject() {
     () => [
       {
         name: t('common.addNewProject'),
-        href: projectRoutePath.PROJECT.ADD,
+        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD,
       },
     ],
     [t],
@@ -46,7 +44,7 @@ function AddProject() {
       queryClient.invalidateQueries('getProjects');
       queryClient.invalidateQueries('getAllProjects');
       notification.success({ message: t('common.createSuccess') });
-      navigate(projectRoutePath.ROOT);
+      navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
     },
     onError,
   });

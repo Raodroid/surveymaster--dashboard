@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import React, { useCallback } from 'react';
 import { LinkOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
-import CopyButton from '@/modules/common/commonComponent/CopyButton/CopyButton';
+import { CopyButton } from '.';
 
 const Container = styled.div`
   display: flex;

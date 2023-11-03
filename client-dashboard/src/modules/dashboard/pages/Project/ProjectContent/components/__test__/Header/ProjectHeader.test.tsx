@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { JestGeneralProviderHoc } from '../../../../../../../../get-mock-data-jest-test';
 import clearAllMocks = jest.clearAllMocks;
 import userEvent from '@testing-library/user-event';
-import ProjectHeader from '../../Header';
+import ProjectHeader from '../../Header/Header';
 
 const mockedUseNavigate = jest.fn();
 

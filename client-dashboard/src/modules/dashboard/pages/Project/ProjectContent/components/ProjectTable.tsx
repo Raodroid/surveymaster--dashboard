@@ -10,20 +10,16 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-import ProjectService from 'services/survey-master-service/project.service';
-import { GetListQuestionDto, IGetParams, IProject } from 'type';
-import { useParseQueryString } from '@/hooks';
+import { GetListQuestionDto, IGetParams, IProject, QsParams } from 'type';
+import { useParseQueryString, useHandleNavigate } from '@/hooks';
 import { onError } from '@/utils';
-import StyledPagination from '@components/StyledPagination';
-import { projectRoutePath } from '../../util';
+import { HannahCustomSpin, StyledPagination } from '@/modules/dashboard';
 import { ProjectTableWrapper } from '../styles';
-import { QsParams } from './project-filter/ProjectFilter';
 import SimpleBar from 'simplebar-react';
 import { MenuDropDownWrapper } from '@/customize-components/styles';
-import HannahCustomSpin from '@components/HannahCustomSpin';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
-import { SCOPE_CONFIG } from 'enums';
-import useHandleNavigate from 'hooks/useHandleNavigate';
+import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
+import { ProjectService } from '@/services';
 
 const { confirm } = Modal;
 
@@ -184,9 +180,12 @@ function ProjectTable() {
                     <Menu.Item
                       onClick={() =>
                         navigate(
-                          generatePath(projectRoutePath.PROJECT.EDIT, {
-                            projectId: record?.id,
-                          }),
+                          generatePath(
+                            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT,
+                            {
+                              projectId: record?.id,
+                            },
+                          ),
                         )
                       }
                     >
@@ -240,7 +239,9 @@ function ProjectTable() {
       onClick: () =>
         !qsParams?.isDeleted &&
         navigate(
-          generatePath(projectRoutePath.SURVEY, { projectId: record.id }),
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
+            projectId: record.id,
+          }),
         ),
     };
   };

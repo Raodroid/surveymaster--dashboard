@@ -38,6 +38,15 @@ export interface IPagination {
   deleted?: boolean;
 }
 
+export interface QsParams {
+  q?: string;
+  page?: number;
+  take?: number;
+  isDeleted?: string;
+  createdFrom?: string;
+  createdTo?: string;
+}
+
 export interface FetchParamsSelect {
   page?: number | null;
   take?: number | null;
