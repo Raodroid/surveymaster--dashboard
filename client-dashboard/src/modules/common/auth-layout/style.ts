@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { screenSize } from 'enums/screenSize';
 import templateVariable from '../../../app/template-variables.module.scss';
 import { NavBarWrapper } from '../../dashboard/components/Navbar/styles';

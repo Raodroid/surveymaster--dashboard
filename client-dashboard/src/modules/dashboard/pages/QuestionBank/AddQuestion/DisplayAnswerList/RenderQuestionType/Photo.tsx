@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext } from 'formik';
 import { BaseQuestionVersionDto, IQuestionVersionOption } from 'type';

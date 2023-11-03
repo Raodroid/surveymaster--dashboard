@@ -24,7 +24,7 @@ import {
   AuthChallengePayload,
 } from './types';
 import { StandardAction } from '../types';
-import { clearAxiosToken } from '../../services/survey-master-service/base.service';
+import { clearAxiosToken } from '@/services/survey-master-service/base.service';
 import { AUTH_ERROR, AUTH_CHALLENGE } from 'enums';
 import { AuthSelectors } from '.';
 import { CognitoService } from 'services';
@@ -227,7 +227,7 @@ export function* getProfile() {
     yield put(getProfileSuccess(collections));
     yield put(updateRoles(collections));
 
-    if (process.env.REACT_APP_ENV === 'prod') {
+    if (import.meta.env.VITE_APP_ENV === 'prod') {
       // yield fork(identifyUserPageSense, profile?.data?.email);
       yield fork(identifyUserInspectlet, profile?.data?.email);
     }

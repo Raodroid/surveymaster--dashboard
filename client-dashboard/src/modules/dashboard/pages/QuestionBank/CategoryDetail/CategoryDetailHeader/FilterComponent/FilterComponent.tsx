@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from 'antd';

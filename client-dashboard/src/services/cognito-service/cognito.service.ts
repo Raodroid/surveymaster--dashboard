@@ -3,7 +3,7 @@ import { store } from 'store';
 import { AuthSelectors } from 'redux/auth';
 
 let cognitoIdentityServiceProvider = new CognitoIdentityServiceProvider({
-  region: process.env.REACT_APP_AWS_COGNITO_REGION as string,
+  region: import.meta.env.VITE_APP_AWS_COGNITO_REGION as string,
 });
 
 export interface ConfirmResetPasswordParams {
@@ -14,9 +14,9 @@ export interface ConfirmResetPasswordParams {
 }
 export class CognitoService {
   static resendCode(username: string): Promise<any> {
-    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
-    cognitoIdentityServiceProvider.config.region = process.env
-      .REACT_APP_AWS_COGNITO_REGION as string;
+    const clientId = import.meta.env.VITE_APP_AWS_COGNITO_CLIENT_ID as string;
+    cognitoIdentityServiceProvider.config.region = import.meta.env
+      .VITE_APP_AWS_COGNITO_REGION as string;
     let params = {
       ClientId: clientId,
       Username: username.toLowerCase(),
@@ -27,9 +27,9 @@ export class CognitoService {
   }
 
   static signInByCognito(username: string, password: string): Promise<any> {
-    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
-    cognitoIdentityServiceProvider.config.region = process.env
-      .REACT_APP_AWS_COGNITO_REGION as string;
+    const clientId = import.meta.env.VITE_APP_AWS_COGNITO_CLIENT_ID as string;
+    cognitoIdentityServiceProvider.config.region = import.meta.env
+      .VITE_APP_AWS_COGNITO_REGION as string;
     let params = {
       AuthFlow: 'USER_PASSWORD_AUTH',
       ClientId: clientId,
@@ -47,9 +47,9 @@ export class CognitoService {
     confirmationCode: string;
     userName: string;
   }): Promise<any> => {
-    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
-    cognitoIdentityServiceProvider.config.region = process.env
-      .REACT_APP_AWS_COGNITO_REGION as string;
+    const clientId = import.meta.env.VITE_APP_AWS_COGNITO_CLIENT_ID as string;
+    cognitoIdentityServiceProvider.config.region = import.meta.env
+      .VITE_APP_AWS_COGNITO_REGION as string;
     let parameters = {
       ClientId: clientId /* required */,
       ConfirmationCode: params.confirmationCode /* required */,
@@ -62,9 +62,9 @@ export class CognitoService {
   };
 
   static confirmForgotPassword = (params: { email: string }): Promise<any> => {
-    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
-    cognitoIdentityServiceProvider.config.region = process.env
-      .REACT_APP_AWS_COGNITO_REGION as string;
+    const clientId = import.meta.env.VITE_APP_AWS_COGNITO_CLIENT_ID as string;
+    cognitoIdentityServiceProvider.config.region = import.meta.env
+      .VITE_APP_AWS_COGNITO_REGION as string;
     let parameters = {
       ClientId: clientId /* required */,
       Username: params.email.toLowerCase() /* required */,
@@ -79,8 +79,8 @@ export class CognitoService {
     currentPassword: string,
     newPassword: string,
   ): Promise<any> {
-    cognitoIdentityServiceProvider.config.region = process.env
-      .REACT_APP_AWS_COGNITO_REGION as string;
+    cognitoIdentityServiceProvider.config.region = import.meta.env
+      .VITE_APP_AWS_COGNITO_REGION as string;
     let params = {
       AccessToken: accessToken /* required */,
       PreviousPassword: currentPassword /* required */,
@@ -95,9 +95,9 @@ export class CognitoService {
     session: string,
     type: string,
   ): Promise<any> {
-    const clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
-    cognitoIdentityServiceProvider.config.region = process.env
-      .REACT_APP_AWS_COGNITO_REGION as string;
+    const clientId = import.meta.env.VITE_APP_AWS_COGNITO_CLIENT_ID as string;
+    cognitoIdentityServiceProvider.config.region = import.meta.env
+      .VITE_APP_AWS_COGNITO_REGION as string;
     let challengeResponse = {
       SMS_MFA: {
         SMS_MFA_CODE: text,
@@ -120,9 +120,9 @@ export class CognitoService {
   }
 
   static async refreshToken(): Promise<any> {
-    let clientId = process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
-    cognitoIdentityServiceProvider.config.region = process.env
-      .REACT_APP_AWS_COGNITO_REGION as string;
+    let clientId = import.meta.env.VITE_APP_AWS_COGNITO_CLIENT_ID as string;
+    cognitoIdentityServiceProvider.config.region = import.meta.env
+      .VITE_APP_AWS_COGNITO_REGION as string;
     const state = store.getState();
     const refreshToken = AuthSelectors.getRefreshToken(state);
     const params = {

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 export const AddSurveyWrapper = styled.div`
   flex: 1;

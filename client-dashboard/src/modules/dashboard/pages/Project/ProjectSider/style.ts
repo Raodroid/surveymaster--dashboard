@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { screenSize } from '@/enums';
 import templateVariable from 'app/template-variables.module.scss';
 import { BaseSectionWrapper } from '@/modules/common/styles';

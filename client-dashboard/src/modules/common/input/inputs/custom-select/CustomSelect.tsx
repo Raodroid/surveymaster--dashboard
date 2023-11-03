@@ -1,7 +1,7 @@
 import React, { memo, useState, useMemo } from 'react';
 import { Select } from 'antd';
 import { SelectProps } from 'antd/lib/select';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { FetchParamsSelect } from 'type';
 import useFetchFilterOption from '../../../hoc/useFetchFilterOptions';
 import { Entities } from '@/enums';

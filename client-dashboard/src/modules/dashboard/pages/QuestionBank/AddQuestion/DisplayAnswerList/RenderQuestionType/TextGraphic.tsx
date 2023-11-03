@@ -1,7 +1,7 @@
 import React from 'react';
-import { INPUT_TYPES } from '../../../../../../common/input/type';
+import { INPUT_TYPES } from '@input/type';
 import { ControlledInput } from '../../../../../../common';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { formatBytes } from '../../../../../../../utils';
 import { useField } from 'formik';
 

@@ -109,25 +109,25 @@ yarn build:developement or yarn build:staging or yarn build:production
 - All envs in this repo:
 ```
 # Backend URL
-REACT_APP_BACKEND_API_URL=http://localhost:3001
+VITE_APP_BACKEND_API_URL=http://localhost:3001
 
 # Main cognito region, clientId, userPoolId of Amili Staff User Tenant User Pool
-REACT_APP_AWS_USER_POOL_ID=ap-southeast-1_UPaocXJke
-REACT_APP_AWS_COGNITO_REGION=ap-southeast-1
-REACT_APP_AWS_COGNITO_CLIENT_ID=2eih8kddhni495urbi1htaenpu
+VITE_APP_AWS_USER_POOL_ID=ap-southeast-1_UPaocXJke
+VITE_APP_AWS_COGNITO_REGION=ap-southeast-1
+VITE_APP_AWS_COGNITO_CLIENT_ID=2eih8kddhni495urbi1htaenpu
 
 # Main domain of v2 application
-REACT_APP_DOMAIN=v2.dev.bioandme.asia
+VITE_APP_DOMAIN=v2.dev.bioandme.asia
 
 # Key to use location third party api
-REACT_APP_X_CSCAPI_KEY=RmhEeU9CMUh1SVg0S0w4QWpxbjljZUQ0SUMxdHJZdGNXRTBkUktQcw==
+VITE_APP_X_CSCAPI_KEY=RmhEeU9CMUh1SVg0S0w4QWpxbjljZUQ0SUMxdHJZdGNXRTBkUktQcw==
 
 # S3 URL for public resource
-REACT_APP_S3_URL=https://amili-dev.s3-ap-southeast-1.amazonaws.com
+VITE_APP_S3_URL=https://amili-dev.s3-ap-southeast-1.amazonaws.com
 
 # Public key of Stripe
-REACT_APP_STRIPE_PUBLIC_KEY=pk_test_51IiwkWIRc3uYlxRVIjluLELhsJehh62Ee7rGfjRer46Jg2OF2TdPK6Cdg9yD9Qo0hyg8MU7m5vzBEkG8nMXJjBV000xnNpxfeh
+VITE_APP_STRIPE_PUBLIC_KEY=pk_test_51IiwkWIRc3uYlxRVIjluLELhsJehh62Ee7rGfjRer46Jg2OF2TdPK6Cdg9yD9Qo0hyg8MU7m5vzBEkG8nMXJjBV000xnNpxfeh
 
 # Default return address stick on the order label
-REACT_APP_RETURN_ADDRESS=15 jln kilang barat singapore, 159357
+VITE_APP_RETURN_ADDRESS=15 jln kilang barat singapore, 159357
 ```

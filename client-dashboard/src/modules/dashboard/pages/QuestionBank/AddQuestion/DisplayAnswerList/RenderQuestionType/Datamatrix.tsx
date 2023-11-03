@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { useFormikContext } from 'formik';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';

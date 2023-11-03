@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowLeft } from 'icons';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import templateVariable from '../../../app/template-variables.module.scss';
 
 interface IGoback {

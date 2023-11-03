@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 export const SurveyWrapper = styled.div<{ centerLastChild: boolean }>`
   height: 100%;

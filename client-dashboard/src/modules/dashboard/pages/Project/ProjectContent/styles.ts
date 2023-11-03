@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
   .ant-table-thead .ant-table-cell:nth-last-child(2) {

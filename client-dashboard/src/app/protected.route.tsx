@@ -4,7 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
 import { Layout } from 'antd';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { CustomSpinSuspense } from '../modules/common/styles';
 const { Content } = Layout;
 

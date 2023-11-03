@@ -4,7 +4,7 @@ class StripePromise {
   // private stripeInstance: Promise<Stripe | null>;
   // constructor() {
   //   this.stripeInstance = loadStripe(
-  //     process.env.REACT_APP_STRIPE_PUBLIC_KEY || '',
+  //     process.env.VITE_APP_STRIPE_PUBLIC_KEY || '',
   //   );
   // }
   // public get(): Promise<Stripe | null> {
