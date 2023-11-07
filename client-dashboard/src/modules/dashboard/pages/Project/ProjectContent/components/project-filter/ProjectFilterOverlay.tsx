@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import moment, { Moment } from 'moment';
 import qs from 'qs';
 import { Formik } from 'formik';
-import { Button, Divider, Form } from 'antd';
+import { Button, Divider, Form, Space } from 'antd';
 import { ArrowDown, Refresh } from 'icons';
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
@@ -108,72 +108,74 @@ export function ProjectFilterOverlay(props: IFilter) {
   }, [isShowProjectTable, isShowSurveyTable]);
 
   return (
-    <Formik
-      enableReinitialize={true}
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-    >
-      {({ values, handleSubmit: handleFinish, setFieldValue }) => {
-        return (
-          <Form layout="vertical" onFinish={handleFinish}>
-            <div className="header flex-j-between">
-              <div className="left flex-center">
-                {t('common.filters')}
-                <div className="counter flex-center">{counter}</div>
-              </div>
-              <div className="right">
-                <Button
-                  onClick={() => handleReset(values, setFieldValue)}
-                  aria-label={'clear filter'}
-                >
-                  <Refresh />
-                </Button>
-              </div>
-            </div>
-            <Divider />
-            <div className="flex-column filters">
-              <ControlledInput
-                name="isDeleted"
-                inputType={INPUT_TYPES.CHECKBOX}
-                children={optionName}
-                aria-label={'isDeleted'}
-              />
-              <div className="dates-filter">
-                <ControlledInput
-                  name="dateCreation"
-                  inputType={INPUT_TYPES.CHECKBOX}
-                  children={'Data Creation Range'}
-                  onChange={e => setFieldValue('dateCreation', e)}
-                  aria-label={'dateCreation'}
-                />
-                <div className="flex-center dates">
-                  <ControlledInput
-                    name="createdFrom"
-                    inputType={INPUT_TYPES.DAY_PICKER}
-                    suffixIcon={<ArrowDown />}
-                    aria-label={'createdFrom'}
-                  />
-                  -
-                  <ControlledInput
-                    name="createdTo"
-                    inputType={INPUT_TYPES.DAY_PICKER}
-                    suffixIcon={<ArrowDown />}
-                    aria-label={'createdTo'}
-                  />
+    <div className={'bg-white p-3 shadow-md'}>
+      <Formik
+        enableReinitialize={true}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+      >
+        {({ values, handleSubmit: handleFinish, setFieldValue }) => {
+          return (
+            <Form layout="vertical" onFinish={handleFinish}>
+              <div className="header flex-j-between">
+                <div className="left flex-center">
+                  {t('common.filters')}
+                  <div className="counter flex-center">{counter}</div>
+                </div>
+                <div className="right">
+                  <Button
+                    onClick={() => handleReset(values, setFieldValue)}
+                    aria-label={'clear filter'}
+                  >
+                    <Refresh />
+                  </Button>
                 </div>
               </div>
+              <Divider />
+              <div className="flex-column filters">
+                <ControlledInput
+                  name="isDeleted"
+                  inputType={INPUT_TYPES.CHECKBOX}
+                  children={optionName}
+                  aria-label={'isDeleted'}
+                />
+                <div className="dates-filter">
+                  <ControlledInput
+                    name="dateCreation"
+                    inputType={INPUT_TYPES.CHECKBOX}
+                    children={'Data Creation Range'}
+                    onChange={e => setFieldValue('dateCreation', e)}
+                    aria-label={'dateCreation'}
+                  />
+                  <div className="flex-center dates">
+                    <ControlledInput
+                      name="createdFrom"
+                      inputType={INPUT_TYPES.DAY_PICKER}
+                      suffixIcon={<ArrowDown />}
+                      aria-label={'createdFrom'}
+                    />
+                    -
+                    <ControlledInput
+                      name="createdTo"
+                      inputType={INPUT_TYPES.DAY_PICKER}
+                      suffixIcon={<ArrowDown />}
+                      aria-label={'createdTo'}
+                    />
+                  </div>
+                </div>
 
-              <Button
-                className="secondary-btn"
-                type="primary"
-                htmlType="submit"
-              >
-                {t('common.apply')}
-              </Button>
-            </div>
-          </Form>
-        );
-      }}
-    </Formik>
+                <Button
+                  className="secondary-btn"
+                  type="primary"
+                  htmlType="submit"
+                >
+                  {t('common.apply')}
+                </Button>
+              </div>
+            </Form>
+          );
+        }}
+      </Formik>{' '}
+    </div>
   );
 }

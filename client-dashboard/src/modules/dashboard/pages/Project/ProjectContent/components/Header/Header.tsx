@@ -1,30 +1,53 @@
 import { Button, Divider, Form, Input, InputRef } from 'antd';
 import { useParseQueryString } from 'hooks/useParseQueryString';
-import { Chat, Clock, PenFilled } from 'icons';
+import { PenFilled, PlusIcon } from 'icons';
 import { SearchIcon } from 'icons/SearchIcon';
 import qs from 'qs';
-import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from 'type';
-import { HeaderStyled } from './styles';
 
 import { IBreadcrumbItem, StyledBreadcrumb } from '@/modules/common';
 import { ROUTE_PATH } from '@/enums';
 import { ProjectFilter } from '../project-filter/ProjectFilter';
+import { useTranslation } from 'react-i18next';
+import { generatePath, useParams } from 'react-router';
+import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 
 interface IProjectHeader {
   routes?: IBreadcrumbItem[];
   showSearch?: boolean;
   RightMenu?: ReactNode;
+  showAddProjectBtn?: boolean;
+  showEditProjectBtn?: boolean;
+  showAddSurveyBtn?: boolean;
 }
 const ProjectHeader: FC<IProjectHeader> = props => {
-  const { routes, showSearch, RightMenu } = props;
+  const {
+    routes,
+    showSearch,
+    RightMenu,
+    showAddProjectBtn,
+    showAddSurveyBtn,
+    showEditProjectBtn,
+  } = props;
+
+  const { t } = useTranslation();
   const searchRef = useRef<InputRef>(null);
   const [searchInput, setSearchInput] = useState('');
 
-  const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const qsParams = useParseQueryString<IGetParams>();
+
+  const params = useParams<projectSurveyParams>();
 
   const base = [
     {
@@ -52,45 +75,84 @@ const ProjectHeader: FC<IProjectHeader> = props => {
     );
   }, [navigate, pathname, qsParams]);
 
-  const handleSubmitBtnClick = useCallback(() => {
-    if (!searchRef.current?.input?.value && !qsParams.q) {
-      searchRef.current?.focus();
-      return;
-    }
-    handleSearch();
-  }, [searchRef, handleSearch, qsParams]);
-
   return (
-    <HeaderStyled className="flex-center-start">
-      <StyledBreadcrumb routes={base} />
-
-      {showSearch && (
-        <>
-          <Form className="flex search-form" onFinish={handleSearch}>
-            <Input
-              placeholder={'Search...'}
-              ref={searchRef}
-              value={searchInput}
-              onChange={e => setSearchInput(e.target.value)}
-              allowClear
-              aria-label={'search survey'}
-            />
+    <div>
+      <div className="flex items-center justify-center h-[76px] px-[30px]">
+        <StyledBreadcrumb routes={base} />
+        <div className={'flex-1 flex items-center'}>
+          {showAddProjectBtn && (
             <Button
-              htmlType="submit"
-              onClick={handleSubmitBtnClick}
-              aria-label={'submit search survey button'}
+              type={'text'}
+              icon={<PlusIcon />}
+              size={'large'}
+              onClick={() => {
+                navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD);
+              }}
             >
-              <SearchIcon />
+              {t('common.addNewProject')}
             </Button>
-          </Form>
+          )}
+          {showAddSurveyBtn && (
+            <Button
+              type={'text'}
+              icon={<PlusIcon />}
+              size={'large'}
+              onClick={() => {
+                navigate(
+                  generatePath(
+                    ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY,
+                    {
+                      projectId: params?.projectId,
+                    },
+                  ),
+                );
+              }}
+            >
+              Add Survey
+            </Button>
+          )}
+        </div>
+        {showEditProjectBtn && (
+          <Button
+            type={'text'}
+            icon={<PenFilled />}
+            size={'large'}
+            onClick={() =>
+              navigate(
+                generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT, {
+                  projectId: params?.projectId,
+                }),
+              )
+            }
+          >
+            Edit Project
+          </Button>
+        )}
+        <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
 
-          <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+        {showSearch && (
+          <>
+            <Form className="flex w-[200px]" onFinish={handleSearch}>
+              <Input
+                placeholder={'Search...'}
+                ref={searchRef}
+                value={searchInput}
+                onChange={e => setSearchInput(e.target.value)}
+                allowClear
+                aria-label={'search survey'}
+                prefix={<SearchIcon />}
+                size={'large'}
+              />
+            </Form>
 
-          <ProjectFilter />
-        </>
-      )}
-      {RightMenu}
-    </HeaderStyled>
+            <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+
+            <ProjectFilter />
+          </>
+        )}
+        {RightMenu}
+      </div>
+    </div>
   );
 };
 

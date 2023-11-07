@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "projectId": "Project ID",
     "addBlock": "Add Block",
     "blockDescription": "Block Description",
     "EqualTo": "Equal To",

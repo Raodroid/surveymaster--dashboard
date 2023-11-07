@@ -3,23 +3,23 @@ import * as Yup from 'yup';
 import {
   GetListQuestionDto,
   IOptionItem,
-  QuestionType,
   IQuestionCategory,
-} from '../../../../../../../type';
+  QuestionType,
+} from 'type';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useGetAllCategories } from '../../../util';
 import moment from 'moment';
 import qs from 'qs';
-import { MOMENT_FORMAT, ROUTE_PATH } from '../../../../../../../enums';
+import { MOMENT_FORMAT, ROUTE_PATH } from 'enums';
 import { Formik } from 'formik';
-import { RollbackOutlined } from '../../../../../../../icons';
+import { RollbackOutlined } from 'icons';
 import { Button, Form } from 'antd';
-import { ControlledInput } from '../../../../../../common';
 import { INPUT_TYPES } from '@input/type';
 import styled from 'styled-components/macro';
-import templateVariable from '../../../../../../../app/template-variables.module.scss';
-import { transformEnumToOption } from '../../../../../../../utils';
+import templateVariable from 'app/template-variables.module.scss';
+import { transformEnumToOption } from 'utils';
+import { ControlledInput } from '@/modules/common';
 
 const CHECKBOX_KEY = {
   filterByCategory: 'filterByCategory',
@@ -146,7 +146,7 @@ export const FilerDropdown: FC<IFilerDropdown> = props => {
       onSubmit={onFinish}
       initialValues={initialFilterFormValues}
       validationSchema={formSchema}
-      render={({ handleSubmit, resetForm, values, setFieldValue }) => (
+      render={({ handleSubmit, resetForm, setFieldValue }) => (
         <FilerDropdownWrapper>
           <div className={'FilerDropdown__header'}>
             <div className={'FilerDropdown__header__main'}>

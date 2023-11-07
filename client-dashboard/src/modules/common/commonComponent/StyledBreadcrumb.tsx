@@ -25,12 +25,16 @@ const BreadcrumbWrapper = styled.div<{ isMobile?: boolean }>`
       }
     `}
 
+  border-top: none;
+
   .breadcrumb-item {
     display: inline-flex;
     align-items: center;
     a,
     svg {
+      font-size: 16px;
       margin-right: 1rem;
+      color: var(--ant-primary-color);
     }
     a {
       color: ${templateVariable.text_primary_color};
@@ -42,31 +46,11 @@ const BreadcrumbWrapper = styled.div<{ isMobile?: boolean }>`
         color: #00000073;
       }
     }
-    span {
-      color: ${templateVariable.primary_color};
-      &:first-child {
-        font-weight: 600;
-        margin-right: 5px;
-      }
-    }
-  }
-  .right-breadcrumb {
-    a {
-      color: ${templateVariable.primary_color};
-    }
-    svg {
-      transform: rotate(-90deg);
-      /* margin-left: 5px; */
-      path {
-        fill: ${templateVariable.primary_color};
-      }
-    }
   }
 `;
 
 export interface IBreadcrumb {
   routes: IBreadcrumbItem[];
-  rightEndBreadcrumbComponent?: string | ReactNode | Element;
   isMobile?: boolean;
 }
 export interface IBreadcrumbItem {
@@ -76,7 +60,7 @@ export interface IBreadcrumbItem {
 }
 
 const StyledBreadcrumb: FC<IBreadcrumb> = props => {
-  const { routes, rightEndBreadcrumbComponent, isMobile } = props;
+  const { routes, isMobile } = props;
   const navigator = useNavigate();
 
   const handleClick = () => {
@@ -109,7 +93,9 @@ const StyledBreadcrumb: FC<IBreadcrumb> = props => {
               >
                 {idx === array.length - 1 ? (
                   <>
-                    <span>{route.name}</span>
+                    <span className={'text-[16px] font-semibold mr-[5px]'}>
+                      {route.name}
+                    </span>
                     <span>{route.name1}</span>
                   </>
                 ) : (
@@ -122,9 +108,6 @@ const StyledBreadcrumb: FC<IBreadcrumb> = props => {
             );
           })}
       </div>
-      <div className={'right-breadcrumb'}>
-        {rightEndBreadcrumbComponent as ReactNode}
-      </div>{' '}
     </BreadcrumbWrapper>
   );
 };

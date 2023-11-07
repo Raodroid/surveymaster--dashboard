@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Input } from 'antd';
 
 import { FilterComponent } from './FilterComponent/FilterComponent';
-import { SearchIcon } from '../../../../../../icons/SearchIcon';
+import { SearchIcon } from '@/icons/SearchIcon';
 
 interface ICategoryDetailHeader {
   searchTxt: string;

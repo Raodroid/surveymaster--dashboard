@@ -1,10 +1,6 @@
 import styled from 'styled-components/macro';
 
 export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
-  .ant-table-thead .ant-table-cell:nth-last-child(2) {
-    text-align: ${props => (props.centerLastChild ? 'center' : '')};
-  }
-
   flex: 1;
   height: 100%;
   display: flex;

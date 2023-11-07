@@ -1,3 +1,5 @@
+import { CSSProperties, ReactNode } from 'react';
+
 export const defaultUserAvatarSrc =
   '/tiny-Img/Photos/Avatar/amili-user-default-avatar.svg';
 export const defaultCoachAvatarSrc =
@@ -89,3 +91,16 @@ export type Replace<
 > = {
   [K in keyof T]: K extends ReplacedKey ? NewValue[ReplacedKey] : T[K];
 };
+
+export type ActionThreeDropDownType<T> = {
+  record: T;
+  handleSelect: (input: { key: any; record: T }) => void;
+};
+
+export interface IMenuItem {
+  label: string | ReactNode;
+  key: string;
+  icon?: string | ReactNode;
+  style?: CSSProperties;
+  disabled?: boolean;
+}

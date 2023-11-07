@@ -1,4 +1,4 @@
-import { Button, Form, notification } from 'antd';
+import { Button, Divider, Form, notification, Spin } from 'antd';
 import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { Formik } from 'formik';
 import { ProjectPayload } from 'interfaces/project';
@@ -10,9 +10,9 @@ import { useNavigate } from 'react-router';
 import { onError } from 'utils/funcs';
 import ProjectHeader from '../Header/Header';
 import ProjectInputs from './ProjectInputs';
-import { AddProjectWrapper } from './styles';
 import { IBreadcrumbItem, PROJECT_FORM_SCHEMA } from '@/modules/common';
 import { ProjectService } from '@/services';
+import { SimpleBarCustom } from '@/customize-components';
 
 const initialValues: ProjectPayload = {
   name: '',
@@ -58,29 +58,39 @@ function AddProject() {
       {canCreate && (
         <>
           <ProjectHeader routes={routes} />
-          <AddProjectWrapper>
-            <Formik
-              initialValues={initialValues}
-              onSubmit={handleSubmit}
-              validationSchema={PROJECT_FORM_SCHEMA}
-            >
-              {({ handleSubmit: handleFinish }) => (
-                <Form layout="vertical" onFinish={handleFinish}>
-                  <ProjectInputs />
-                  <div className="footer">
-                    <Button
-                      type="primary"
-                      className="info-btn"
-                      htmlType="submit"
-                      loading={mutationCreateProject.isLoading}
-                    >
-                      {t('common.saveProject')}
-                    </Button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </AddProjectWrapper>
+          <div className={'flex-1 p-8 overflow-hidden'}>
+            <Spin spinning={mutationCreateProject.isLoading}>
+              <Formik
+                initialValues={initialValues}
+                onSubmit={handleSubmit}
+                validationSchema={PROJECT_FORM_SCHEMA}
+              >
+                {({ handleSubmit: handleFinish }) => (
+                  <Form
+                    layout="vertical"
+                    onFinish={handleFinish}
+                    className={'h-full flex flex-col'}
+                  >
+                    <div className={'flex-1 overflow-hidden'}>
+                      <SimpleBarCustom>
+                        <ProjectInputs />
+                      </SimpleBarCustom>
+                    </div>
+                    <div className="w-full">
+                      <Divider className={'m-0 mb-3'} />
+                      <Button
+                        type="primary"
+                        className="info-btn w-full"
+                        htmlType="submit"
+                      >
+                        {t('common.saveProject')}
+                      </Button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+            </Spin>
+          </div>
         </>
       )}
     </>

@@ -1,25 +1,33 @@
-import { Menu, Modal, notification, Table, Tooltip } from 'antd';
+import { Modal, notification, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
-import { PenFilled, TrashOutlined } from 'icons';
+import { ExternalIcon, InternalIcon, PenFilled, TrashOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
 import _get from 'lodash/get';
 import moment from 'moment';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-import { GetListQuestionDto, IGetParams, IProject, QsParams } from 'type';
-import { useParseQueryString, useHandleNavigate } from '@/hooks';
+import {
+  ActionThreeDropDownType,
+  GetListQuestionDto,
+  IGetParams,
+  IMenuItem,
+  IProject,
+  ProjectTypes,
+  QsParams,
+} from 'type';
+import { useHandleNavigate, useParseQueryString } from '@/hooks';
 import { onError } from '@/utils';
 import { HannahCustomSpin, StyledPagination } from '@/modules/dashboard';
 import { ProjectTableWrapper } from '../styles';
 import SimpleBar from 'simplebar-react';
-import { MenuDropDownWrapper } from '@/customize-components/styles';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
-import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
+import { EntityEnum, ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { ProjectService } from '@/services';
+import { keysAction, useSelectTableRecord } from '@/hooks/useSelectTableRecord';
+import ThreeDotsDropdown from '@/customize-components/ThreeDotsDropdown';
 
 const { confirm } = Modal;
 
@@ -51,8 +59,7 @@ function ProjectTable() {
 
   const [projectId, setProjectId] = useState('');
 
-  const { canRead, canRestore, canDelete, canUpdate } =
-    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
+  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
 
   const handleNavigate = useHandleNavigate(initParams);
 
@@ -72,10 +79,11 @@ function ProjectTable() {
 
   const getProjectListQuery = useQuery(
     ['getProjects', formatQsParams],
-    canRead ? () => getProjects(formatQsParams) : () => {},
+    () => getProjects(formatQsParams),
     {
       onError,
       refetchOnWindowFocus: false,
+      enabled: canRead,
     },
   );
 
@@ -115,12 +123,74 @@ function ProjectTable() {
     },
   );
 
+  const handleEdit = useCallback(
+    (record: IProject) =>
+      navigate(
+        generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT, {
+          projectId: record?.id,
+        }),
+      ),
+    [navigate],
+  );
+
+  const handleDelete = useCallback(() => {
+    confirm({
+      icon: null,
+      content: t('common.confirmDeleteProject'),
+      onOk() {
+        mutationDeleteProject.mutateAsync();
+      },
+    });
+  }, [mutationDeleteProject, t]);
+
+  const handleRestore = useCallback(() => {
+    confirm({
+      icon: null,
+      content: t('common.confirmRestoreProject'),
+      onOk() {
+        mutationRestoreProject.mutateAsync();
+      },
+    });
+  }, [mutationRestoreProject, t]);
+
+  const tableActions = useMemo<keysAction<IProject>>(
+    () => [
+      {
+        key: ACTION.EDIT,
+        action: handleEdit,
+      },
+      {
+        key: ACTION.DELETE,
+        action: handleDelete,
+      },
+      {
+        key: ACTION.RESTORE,
+        action: handleRestore,
+      },
+    ],
+    [handleDelete, handleEdit, handleRestore],
+  );
+
+  const { handleSelect, selectedRecord } =
+    useSelectTableRecord<IProject>(tableActions);
+
   const columns: ColumnsType<IProject> = useMemo(
     () => [
       {
         title: 'ID',
         dataIndex: 'displayId',
         key: 'id',
+      },
+      {
+        title: 'Type',
+        dataIndex: 'type',
+        key: 'id',
+        render: value =>
+          value === ProjectTypes.INTERNAL ? (
+            <InternalIcon className={'text-primary'} />
+          ) : (
+            <ExternalIcon />
+          ),
       },
       {
         title: t('common.projectTitle'),
@@ -145,11 +215,8 @@ function ProjectTable() {
         title: t('common.personInCharge'),
         dataIndex: 'createdBy',
         key: 'createdBy',
-        render: (_, record) => (
-          <div>
-            {`${record?.personResponsible?.firstName} ${record?.personResponsible?.lastName}`}
-          </div>
-        ),
+        render: (_, record) =>
+          `${record?.personResponsible?.firstName} ${record?.personResponsible?.lastName}`,
       },
       {
         title: t('common.dateOfCreation'),
@@ -164,7 +231,7 @@ function ProjectTable() {
         title: t('common.actions'),
         dataIndex: 'actions',
         key: 'actions',
-        width: 100,
+        width: 60,
         render: (_, record) => (
           <div
             className="flex-center actions"
@@ -173,78 +240,28 @@ function ProjectTable() {
               setProjectId(record.id);
             }}
           >
-            <ThreeDotsDropdown
-              overlay={
-                <MenuDropDownWrapper>
-                  {qsParams?.isDeleted !== 'true' && canUpdate && (
-                    <Menu.Item
-                      onClick={() =>
-                        navigate(
-                          generatePath(
-                            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT,
-                            {
-                              projectId: record?.id,
-                            },
-                          ),
-                        )
-                      }
-                    >
-                      <PenFilled /> {t('common.editProject')}
-                    </Menu.Item>
-                  )}
-
-                  {qsParams?.isDeleted !== 'true' && canDelete && (
-                    <Menu.Item
-                      onClick={() => {
-                        confirm({
-                          icon: null,
-                          content: t('common.confirmDeleteProject'),
-                          onOk() {
-                            mutationDeleteProject.mutateAsync();
-                          },
-                        });
-                      }}
-                    >
-                      <TrashOutlined /> {t('common.deleteProject')}
-                    </Menu.Item>
-                  )}
-                  {qsParams?.isDeleted === 'true' && canRestore && (
-                    <Menu.Item
-                      onClick={() => {
-                        confirm({
-                          icon: null,
-                          content: t('common.confirmRestoreProject'),
-                          onOk() {
-                            mutationRestoreProject.mutateAsync();
-                          },
-                        });
-                      }}
-                    >
-                      <Refresh /> {t('common.restoreProject')}
-                    </Menu.Item>
-                  )}
-                </MenuDropDownWrapper>
-              }
-              trigger={['click']}
-            />
+            <ActionThreeDropDown record={record} handleSelect={handleSelect} />
           </div>
         ),
       },
     ],
-    [navigate, qsParams, t, canDelete, canRestore, canUpdate],
+    [t, handleSelect],
   );
 
-  const onRow = (record: IProject) => {
-    return {
-      onClick: () =>
-        !qsParams?.isDeleted &&
-        navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
-            projectId: record.id,
-          }),
-        ),
-    };
-  };
+  const onRow = useCallback(
+    (record: IProject) => {
+      return {
+        onClick: () =>
+          !qsParams?.isDeleted &&
+          navigate(
+            generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
+              projectId: record.id,
+            }),
+          ),
+      };
+    },
+    [navigate, qsParams?.isDeleted],
+  );
 
   return (
     <>
@@ -280,3 +297,56 @@ function ProjectTable() {
 }
 
 export default ProjectTable;
+
+const ACTION = {
+  EDIT: 'EDIT',
+  DELETE: 'DELETE',
+  RESTORE: 'RESTORE',
+} as const;
+
+const ActionThreeDropDown: FC<ActionThreeDropDownType<IProject>> = props => {
+  const { record, handleSelect } = props;
+  const { t } = useTranslation();
+  const qsParams = useParseQueryString<QsParams>();
+
+  const { canDelete, canRestore, canUpdate } = useCheckScopeEntityDefault(
+    EntityEnum.PROJECT,
+  );
+
+  const items = useMemo<IMenuItem[]>(() => {
+    const baseMenu: IMenuItem[] = [];
+
+    if (qsParams.isDeleted) return baseMenu;
+
+    if (canUpdate) {
+      baseMenu.push({
+        key: ACTION.EDIT,
+        icon: <PenFilled className={'text-primary'} />,
+        label: <label className={''}> {t('common.editProject')}</label>,
+      });
+    }
+    if (canDelete) {
+      baseMenu.push({
+        key: ACTION.DELETE,
+        icon: <TrashOutlined className={'text-primary'} />,
+        label: <label className={''}> {t('common.deleteProject')}</label>,
+      });
+    }
+    if (canRestore) {
+      baseMenu.push({
+        key: ACTION.DELETE,
+        icon: <Refresh />,
+        label: <label className={''}> {t('common.restoreProject')}</label>,
+      });
+    }
+
+    return baseMenu;
+  }, [canDelete, canRestore, canUpdate, qsParams?.isDeleted, t]);
+
+  return (
+    <ThreeDotsDropdown
+      onChooseItem={key => handleSelect({ key, record })}
+      items={items}
+    />
+  );
+};

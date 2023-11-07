@@ -1,10 +1,9 @@
-import { Button, Form, notification } from 'antd';
+import { Button, Divider, Form, notification, Spin } from 'antd';
 import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { Formik } from 'formik';
 import { ProjectPayload } from 'interfaces/project';
 import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 import { useCheckScopeEntityDefault } from 'modules/common/hoc';
-import { CustomSpinSuspense } from 'modules/common/styles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
@@ -13,9 +12,9 @@ import { onError } from 'utils/funcs';
 import { PROJECT_FORM_SCHEMA } from 'modules/common/validate/validate';
 import ProjectHeader from '../Header/Header';
 import Inputs from './ProjectInputs';
-import { AddProjectWrapper, EditProjectWrapper } from './styles';
 import { ProjectService } from '@/services';
 import { useGetProjectByIdQuery } from '@pages/Project';
+import { SimpleBarCustom } from '@/customize-components';
 
 function EditProject() {
   const params = useParams<{ projectId?: string }>();
@@ -63,12 +62,12 @@ function EditProject() {
   const initialValues = useMemo(() => project, [project]);
 
   return (
-    <EditProjectWrapper className="flex-column">
+    <>
       {canUpdate && (
         <>
           <ProjectHeader routes={routes} />
-          <CustomSpinSuspense spinning={isLoading}>
-            <AddProjectWrapper>
+          <div className={'flex-1 p-8 overflow-hidden'}>
+            <Spin spinning={isLoading || mutationEditProject.isLoading}>
               <Formik
                 enableReinitialize={true}
                 initialValues={initialValues}
@@ -78,16 +77,20 @@ function EditProject() {
                 {({ handleSubmit: handleFinish }) => (
                   <Form
                     layout="vertical"
-                    className="flex-column"
+                    className={'h-full flex flex-col'}
                     onFinish={handleFinish}
                   >
-                    <Inputs />
-                    <div className="footer">
+                    <div className={'flex-1 overflow-hidden'}>
+                      <SimpleBarCustom>
+                        <Inputs />
+                      </SimpleBarCustom>
+                    </div>
+                    <div className="w-full">
+                      <Divider className={'m-0 mb-3'} />
                       <Button
                         type="primary"
-                        className="info-btn"
+                        className="info-btn w-full"
                         htmlType="submit"
-                        loading={mutationEditProject.isLoading}
                       >
                         {t('common.saveEdits')}
                       </Button>
@@ -95,11 +98,11 @@ function EditProject() {
                   </Form>
                 )}
               </Formik>
-            </AddProjectWrapper>
-          </CustomSpinSuspense>
+            </Spin>
+          </div>
         </>
       )}
-    </EditProjectWrapper>
+    </>
   );
 }
 

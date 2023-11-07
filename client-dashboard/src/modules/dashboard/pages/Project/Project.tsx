@@ -6,27 +6,20 @@ import { ProjectContentWrapper } from './styles';
 import { AddSurvey, DetailSurvey, SurveyManagement } from '@pages/Survey';
 import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 
-import {
-  ProjectContent,
-  ProjectSider,
-  AddProject,
-  EditProject,
-} from '@pages/Project';
+import { ProjectContent, AddProject, EditProject } from '@pages/Project';
 import { Layout } from 'antd';
 
 const { Content } = Layout;
 
 const { PROJECT } = ROUTE_PATH.DASHBOARD_PATHS;
+const subRoute = (route: string) => route.replace(PROJECT.ROOT, '');
 
 const Project = () => {
-  const subRoute = (route: string) => route.replace(PROJECT.ROOT, '');
-
   const { canRead: canReadSurvey } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.SURVEY,
   );
 
   const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
-
   const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);
   const canReadSurveyinal = isFetching ? true : canReadSurvey;
 
@@ -37,7 +30,6 @@ const Project = () => {
           path="/"
           element={
             <>
-              {/*<ProjectSider />*/}
               <ProjectContentWrapper>
                 <Outlet />
               </ProjectContentWrapper>

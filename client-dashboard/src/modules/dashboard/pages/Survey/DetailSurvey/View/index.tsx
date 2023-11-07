@@ -43,6 +43,7 @@ function ViewSurvey() {
   return (
     <>
       <ProjectHeader
+        showAddProjectBtn
         routes={routes}
         RightMenu={<HeaderRightMenu params={params} />}
       />

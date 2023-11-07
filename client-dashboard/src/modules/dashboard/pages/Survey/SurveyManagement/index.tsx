@@ -1,23 +1,48 @@
-import { Table } from 'antd';
+import { Modal, notification, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
-import { useHandleNavigate, useParseQueryString } from '@/hooks';
-
+import { MOMENT_FORMAT, ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
+import {
+  keysAction,
+  useHandleNavigate,
+  useParseQueryString,
+  useSelectTableRecord,
+} from '@/hooks';
 import _get from 'lodash/get';
 
-import { HannahCustomSpin, StyledPagination } from '@/modules/dashboard';
+import { StyledPagination } from '@/modules/dashboard';
 import moment from 'moment';
-import React, { useMemo, useRef } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { ProjectService, SurveyService } from '@/services';
 import SimpleBar from 'simplebar-react';
-import { IGetParams, ISurvey, QsParams } from '@/type';
-import { SurveyWrapper, TableWrapper } from './style';
-import { SurveyDropDownMenu } from './SurveyDropDown';
-import { ProjectHeader } from '@pages/Project/';
-import { IBreadcrumbItem } from '@/modules/common';
+import {
+  ActionThreeDropDownType,
+  CreateSurveyBodyDto,
+  IGetParams,
+  IMenuItem,
+  ISurvey,
+  ProjectTypes,
+  QsParams,
+} from '@/type';
+import {
+  ProjectBriefDetail,
+  ProjectHeader,
+  useGetProjectByIdQuery,
+} from '@pages/Project';
+import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
+import {
+  FileIconOutlined,
+  PenFilled,
+  RollbackOutlined,
+  TrashOutlined,
+} from '@/icons';
+import { onError, saveBlob } from '@/utils';
+import { ExportOutlined } from '@ant-design/icons';
+import { ThreeDotsDropdownAdvance } from '@/customize-components';
+
+const { confirm } = Modal;
 
 const initParams: IGetParams = {
   q: '',
@@ -32,6 +57,7 @@ function SurveyTable() {
   const qsParams = useParseQueryString<QsParams>();
   const { t } = useTranslation();
   const handleNavigate = useHandleNavigate(initParams);
+  const queryClient = useQueryClient();
 
   const formatQsParams = useMemo(() => {
     const formatQs: IGetParams = {
@@ -50,6 +76,148 @@ function SurveyTable() {
   const { data: project } = useQuery(['project', params.projectId], () =>
     ProjectService.getProjectById(params.projectId),
   );
+  const duplicateMutation = useMutation(
+    (data: CreateSurveyBodyDto & { surveyId: string }) => {
+      return SurveyService.duplicateSurvey(data as any);
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getSurveys');
+        notification.success({ message: t('common.duplicateSuccess') });
+      },
+      onError,
+    },
+  );
+
+  const deleteSurvey = useMutation(
+    (record: ISurvey) =>
+      SurveyService.deleteSurveyById({ id: record.id as string }),
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getSurveys');
+        notification.success({
+          message: t('common.deleteSuccess'),
+        });
+      },
+      onError,
+    },
+  );
+  const restoreSurvey = useMutation(
+    (record: ISurvey) =>
+      SurveyService.restoreSurveyById({ id: record.id as string }),
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getSurveys');
+        notification.success({
+          message: t('common.restoreSuccess'),
+        });
+      },
+      onError,
+    },
+  );
+
+  const handleDuplicateSurvey = useCallback((record: ISurvey) => {
+    duplicateMutation.mutateAsync({
+      version: {
+        name: `${record?.latestVersion?.name} (Copy)`,
+      },
+      projectId: params.projectId as string,
+      surveyId: record.id as string,
+    });
+  }, []);
+
+  const handleEdit = useCallback((record: ISurvey) => {
+    navigate(
+      generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
+        projectId: params?.projectId,
+        surveyId: record.id,
+      }) + `?version=${record?.latestVersion?.displayId}`,
+    );
+  }, []);
+  const handleExport = useCallback(async (record: ISurvey) => {
+    try {
+      const response = await SurveyService.getSurveyFile(
+        record.latestVersion?.id as string,
+      );
+
+      const data: {
+        SurveyElements: any[];
+        SurveyEntry: { SurveyName: string };
+      } = _get(response, 'data', {});
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: 'application/octet-stream',
+      });
+      saveBlob(
+        blob,
+        `${data.SurveyEntry.SurveyName}-${moment().format(
+          MOMENT_FORMAT.EXPORT,
+        )}.qsf`,
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  const handleDelete = useCallback(
+    (record: ISurvey) => {
+      confirm({
+        icon: null,
+        content: t('common.confirmDeleteSurvey'),
+        onOk() {
+          deleteSurvey.mutateAsync(record);
+        },
+      });
+    },
+    [deleteSurvey, t],
+  );
+  const handleRestore = useCallback(
+    (record: ISurvey) => {
+      confirm({
+        icon: null,
+        content: t('common.confirmRestoreSurvey'),
+        onOk() {
+          restoreSurvey.mutateAsync(record);
+        },
+      });
+    },
+    [restoreSurvey, t],
+  );
+
+  const tableActions = useMemo<keysAction<ISurvey>>(
+    () => [
+      {
+        key: ACTION.DUPLICATE_SURVEY,
+        action: handleDuplicateSurvey,
+      },
+      {
+        key: ACTION.EDIT,
+        action: handleEdit,
+      },
+      {
+        key: ACTION.EXPORT,
+        action: handleExport,
+      },
+      {
+        key: ACTION.DELETE,
+        action: handleDelete,
+      },
+      {
+        key: ACTION.RESTORE,
+        action: handleRestore,
+      },
+    ],
+    [
+      handleDelete,
+      handleDuplicateSurvey,
+      handleEdit,
+      handleExport,
+      handleRestore,
+    ],
+  );
+
+  const { handleSelect, selectedRecord } =
+    useSelectTableRecord<ISurvey>(tableActions);
 
   const getSurveyListQuery = useQuery(
     ['getSurveys', formatQsParams, params],
@@ -120,12 +288,12 @@ function SurveyTable() {
             className="flex-center actions"
             onClick={e => e.stopPropagation()}
           >
-            <SurveyDropDownMenu record={record} />
+            <ActionThreeDropDown record={record} handleSelect={handleSelect} />
           </div>
         ),
       },
     ],
-    [t],
+    [handleSelect, t],
   );
 
   const onRow = useMemo(
@@ -149,41 +317,121 @@ function SurveyTable() {
     [navigate, params?.projectId, qsParams.isDeleted],
   );
 
-  const wrapperRef = useRef<any>();
-
   return (
-    <SurveyWrapper className="flex-column" centerLastChild>
-      <ProjectHeader routes={routes} showSearch />
+    <div className="h-full flex flex-col">
+      <ProjectHeader
+        showAddSurveyBtn
+        showEditProjectBtn
+        routes={routes}
+        showSearch
+      />
+      <ProjectBriefDetail />
 
-      <TableWrapper className="flex-column" ref={wrapperRef}>
-        <HannahCustomSpin
-          parentRef={wrapperRef}
-          spinning={
-            getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
-          }
-        />
-        <SimpleBar className={'TableWrapper__body'}>
-          <Table
-            dataSource={surveys}
-            columns={columns}
-            onRow={onRow}
-            pagination={false}
-            rowKey={record => record.id as string}
-            scroll={{ x: 800 }}
-          />
+      <div className="h-full w-full p-2 relative overflow-hidden">
+        <SimpleBar className={'h-full overflow-scroll'}>
+          <Spin
+            spinning={
+              getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
+            }
+          >
+            <Table
+              rowClassName={'pointer'}
+              dataSource={surveys}
+              columns={columns}
+              onRow={onRow}
+              pagination={false}
+              rowKey={record => record.id as string}
+              scroll={{ x: 800 }}
+              className={'p-3'}
+            />
+          </Spin>
         </SimpleBar>
-        <StyledPagination
-          onChange={(page, pageSize) => {
-            handleNavigate({ page, take: pageSize });
-          }}
-          showSizeChanger
-          pageSize={formatQsParams.take}
-          total={total}
-          current={formatQsParams.page}
-        />
-      </TableWrapper>
-    </SurveyWrapper>
+      </div>
+      <StyledPagination
+        onChange={(page, pageSize) => {
+          handleNavigate({ page, take: pageSize });
+        }}
+        showSizeChanger
+        pageSize={formatQsParams.take}
+        total={total}
+        current={formatQsParams.page}
+      />
+    </div>
   );
 }
 
 export default SurveyTable;
+
+const ACTION = {
+  DUPLICATE_SURVEY: 'DUPLICATE_SURVEY',
+  RESTORE: 'RESTORE',
+  EDIT: 'EDIT',
+  EXPORT: 'EXPORT',
+  DELETE: 'DELETE',
+} as const;
+
+const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
+  const { record, handleSelect } = props;
+  const { t } = useTranslation();
+  const params = useParams<{ projectId?: string }>();
+
+  const { project } = useGetProjectByIdQuery(params?.projectId);
+  const isExternalProject = project.type === ProjectTypes.EXTERNAL;
+
+  const { canDelete, canRestore, canUpdate, canRead } =
+    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.QUESTION);
+
+  const items = useMemo<IMenuItem[]>(() => {
+    const baseMenu: IMenuItem[] = [];
+    if (canUpdate) {
+      baseMenu.push({
+        icon: <PenFilled className={'text-primary'} />,
+        label: t('common.editSurvey'),
+        key: ACTION.EDIT,
+      });
+      baseMenu.push({
+        icon: <FileIconOutlined className={'text-primary'} />,
+        label: <label>{t('common.duplicateSurvey')}</label>,
+        key: ACTION.DUPLICATE_SURVEY,
+      });
+      if (record.deletedAt && canRestore) {
+        baseMenu.push({
+          icon: <RollbackOutlined className={'text-primary'} />,
+          label: t('common.restoreSurvey'),
+          key: ACTION.RESTORE,
+        });
+      }
+    }
+
+    if (!isExternalProject && canRead) {
+      baseMenu.push({
+        icon: <ExportOutlined className={'text-primary'} />,
+        label: t('common.exportQualtricsJSON'),
+        key: ACTION.EXPORT,
+      });
+    }
+    if (canDelete && !record.deletedAt) {
+      baseMenu.push({
+        icon: <TrashOutlined className={'text-primary'} />,
+        label: t('common.deleteSurvey'),
+        key: ACTION.DELETE,
+      });
+    }
+    return baseMenu;
+  }, [
+    canDelete,
+    canRead,
+    canRestore,
+    canUpdate,
+    isExternalProject,
+    record.deletedAt,
+    t,
+  ]);
+
+  return (
+    <ThreeDotsDropdownAdvance
+      onChooseItem={key => handleSelect({ key, record })}
+      items={items}
+    />
+  );
+};

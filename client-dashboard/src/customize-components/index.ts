@@ -1,9 +1,9 @@
 export { default as CustomBtn } from './CustomBtn';
-export { default as CustomHeartCheckbox } from './CustomHeartCheckbox';
 export { default as CustomInput } from './CustomInput';
 export { default as CustomNotification } from './CustomNotification';
 export { default as CustomSelect } from './CustomSelect';
 export { default as CustomTable } from './CustomTable';
 export { default as CustomTag } from './CustomTag';
 export { default as DragHandle } from './DragHandle';
-export { default as ThreeDotsDropdown } from './ThreeDotsDropdown';
+export { default as SimpleBarCustom } from './SimpleBarCustom';
+export { default as ThreeDotsDropdownAdvance } from './ThreeDotsDropdown';

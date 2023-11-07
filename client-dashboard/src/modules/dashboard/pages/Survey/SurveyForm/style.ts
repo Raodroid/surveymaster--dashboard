@@ -81,3 +81,17 @@ export const QuestionListWrapper = styled.div`
     }
   }
 `;
+
+export const TemplateOptionWrapper = styled.div`
+  .survey-dropdown {
+    height: 250px;
+    overflow: scroll;
+    position: relative;
+    padding: 0 2rem 0 3rem;
+  }
+  .infinity-scroll {
+    position: absolute;
+    top: 32px;
+    width: calc(100% - 5rem);
+  }
+`;

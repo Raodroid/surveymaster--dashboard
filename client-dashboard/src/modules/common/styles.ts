@@ -5,6 +5,7 @@ import templateVariable from 'app/template-variables.module.scss';
 export const BaseSectionWrapper = styled.section`
   background: white;
   border-radius: ${templateVariable.border_radius};
+  height: 100%;
 `;
 
 export const FormWrapper = styled.div`
