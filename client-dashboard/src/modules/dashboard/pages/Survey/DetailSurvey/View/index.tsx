@@ -17,49 +17,43 @@ import { QsParams } from '@/type';
 import { ProjectHeader } from '@pages/Project';
 
 function ViewSurvey() {
-  const params = useParams<projectSurveyParams>();
-  const { project } = useGetProjectByIdQuery(params.projectId);
-  const { currentSurveyVersion, surveyData } = useGetSurveyById(
-    params.surveyId,
-  );
-
-  const routes: IBreadcrumbItem[] = useMemo(
-    () => [
-      {
-        name: project.name || '...',
-        href: generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
-          projectId: params?.projectId,
-        }),
-      },
-      {
-        name: currentSurveyVersion?.name || '...',
-        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
-      },
-    ],
-    [params?.projectId, project.name, currentSurveyVersion?.name],
-  );
-  const [isCallingAPI, toggleIsCallingAPI] = useToggle();
+  // const params = useParams<projectSurveyParams>();
+  // const { project } = useGetProjectByIdQuery(params.projectId);
+  // const { currentSurveyVersion, surveyData } = useGetSurveyById(
+  //   params.surveyId,
+  // );
+  //
+  // const routes: IBreadcrumbItem[] = useMemo(
+  //   () => [
+  //     {
+  //       name: project.name || '...',
+  //       href: generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
+  //         projectId: params?.projectId,
+  //       }),
+  //     },
+  //     {
+  //       name: currentSurveyVersion?.name || '...',
+  //       href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
+  //     },
+  //   ],
+  //   [params?.projectId, project.name, currentSurveyVersion?.name],
+  // );
+  // const [isCallingAPI, toggleIsCallingAPI] = useToggle();
 
   return (
     <>
-      <ProjectHeader
-        showAddProjectBtn
-        routes={routes}
-        RightMenu={<HeaderRightMenu params={params} />}
-      />
-
-      <ViewSurveyWrapper>
-        <div className={'version-section'}>
-          {surveyData.versions?.map(ver => (
-            <ViewDetailSurveyDropDownMenuButton
-              key={ver.id}
-              surveyVersion={ver}
-              callbackLoading={toggleIsCallingAPI}
-            />
-          ))}
-        </div>
-        <SurveyForm isLoading={isCallingAPI} />
-      </ViewSurveyWrapper>
+      {/*<ViewSurveyWrapper>*/}
+      {/*  <div className={'version-section'}>*/}
+      {/*    {surveyData.versions?.map(ver => (*/}
+      {/*      <ViewDetailSurveyDropDownMenuButton*/}
+      {/*        key={ver.id}*/}
+      {/*        surveyVersion={ver}*/}
+      {/*        callbackLoading={toggleIsCallingAPI}*/}
+      {/*      />*/}
+      {/*    ))}*/}
+      {/*  </div>*/}
+      <SurveyForm />
+      {/*</ViewSurveyWrapper>*/}
     </>
   );
 }
@@ -75,7 +69,7 @@ const HeaderRightMenu: FC<{ params: Partial<projectSurveyParams> }> = props => {
       projectId: params.projectId,
       surveyId: params.surveyId,
     };
-    const queryString = qsParams.q;
+    const queryString = qsParams.q || '';
     return [
       generatePath(
         ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,

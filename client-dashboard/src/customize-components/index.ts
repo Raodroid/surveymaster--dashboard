@@ -6,4 +6,4 @@ export { default as CustomTable } from './CustomTable';
 export { default as CustomTag } from './CustomTag';
 export { default as DragHandle } from './DragHandle';
 export { default as SimpleBarCustom } from './SimpleBarCustom';
-export { default as ThreeDotsDropdownAdvance } from './ThreeDotsDropdown';
+export { default as ThreeDotsDropdown } from './ThreeDotsDropdown';

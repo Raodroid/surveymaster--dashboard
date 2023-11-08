@@ -6,16 +6,16 @@ import {
   useHandleNavigate,
   useParseQueryString,
   useSelectTableRecord,
-} from '@/hooks';
+} from 'hooks';
 import _get from 'lodash/get';
 
-import { StyledPagination } from '@/modules/dashboard';
+import { StyledPagination } from 'modules/dashboard';
 import moment from 'moment';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { ProjectService, SurveyService } from '@/services';
+import { ProjectService, SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
 import {
   ActionThreeDropDownType,
@@ -40,7 +40,7 @@ import {
 } from '@/icons';
 import { onError, saveBlob } from '@/utils';
 import { ExportOutlined } from '@ant-design/icons';
-import { ThreeDotsDropdownAdvance } from '@/customize-components';
+import { ThreeDotsDropdown } from '@/customize-components';
 
 const { confirm } = Modal;
 
@@ -116,24 +116,30 @@ function SurveyTable() {
     },
   );
 
-  const handleDuplicateSurvey = useCallback((record: ISurvey) => {
-    duplicateMutation.mutateAsync({
-      version: {
-        name: `${record?.latestVersion?.name} (Copy)`,
-      },
-      projectId: params.projectId as string,
-      surveyId: record.id as string,
-    });
-  }, []);
+  const handleDuplicateSurvey = useCallback(
+    (record: ISurvey) => {
+      duplicateMutation.mutateAsync({
+        version: {
+          name: `${record?.latestVersion?.name} (Copy)`,
+        },
+        projectId: params.projectId as string,
+        surveyId: record.id as string,
+      });
+    },
+    [duplicateMutation, params.projectId],
+  );
 
-  const handleEdit = useCallback((record: ISurvey) => {
-    navigate(
-      generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
-        projectId: params?.projectId,
-        surveyId: record.id,
-      }) + `?version=${record?.latestVersion?.displayId}`,
-    );
-  }, []);
+  const handleEdit = useCallback(
+    (record: ISurvey) => {
+      navigate(
+        generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
+          projectId: params?.projectId,
+          surveyId: record.id,
+        }) + `?version=${record?.latestVersion?.displayId}`,
+      );
+    },
+    [navigate, params?.projectId],
+  );
   const handleExport = useCallback(async (record: ISurvey) => {
     try {
       const response = await SurveyService.getSurveyFile(
@@ -285,6 +291,7 @@ function SurveyTable() {
         width: 100,
         render: (_, record: ISurvey) => (
           <div
+            role="presentation"
             className="flex-center actions"
             onClick={e => e.stopPropagation()}
           >
@@ -429,7 +436,7 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
   ]);
 
   return (
-    <ThreeDotsDropdownAdvance
+    <ThreeDotsDropdown
       onChooseItem={key => handleSelect({ key, record })}
       items={items}
     />

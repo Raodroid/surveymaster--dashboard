@@ -47,10 +47,10 @@ function EditSurvey() {
 
   return (
     <>
-      <ProjectHeader routes={routes} />
-      <EditSurveyWrapper>
-        <SurveyForm />
-      </EditSurveyWrapper>
+      {/*<ProjectHeader routes={routes} />*/}
+      {/*<EditSurveyWrapper>*/}
+      <SurveyForm />
+      {/*</EditSurveyWrapper>*/}
     </>
   );
 }

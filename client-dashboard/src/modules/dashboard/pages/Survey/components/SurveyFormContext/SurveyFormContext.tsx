@@ -19,7 +19,9 @@ import {
   IPutSurveyVersionBodyDtoExtendId,
   IQuestion,
   IQuestionVersion,
+  ISurvey,
   ISurveyQuestionDto,
+  ISurveyVersion,
   ProjectTypes,
   SubSurveyFlowElementDto,
   SurveyVersionStatus,
@@ -31,6 +33,7 @@ import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import { useGetProjectByIdQuery } from '@pages/Project/util';
 import {
   IAddSurveyFormValues,
+  SurveyDataTreeNode,
   SurveyTemplateEnum,
 } from '@pages/Survey/SurveyForm/type';
 import {
@@ -71,7 +74,15 @@ interface ISurveyFormContext {
   form: {
     initialValues: IAddSurveyFormValues;
     onSubmit: (value: IAddSurveyFormValues) => void;
+    focusBlock?: SurveyDataTreeNode;
   };
+
+  survey: {
+    currentSurveyVersion?: ISurveyVersion;
+    surveyData?: ISurvey;
+  };
+
+  handleFocusBlock: (value: SurveyDataTreeNode) => void;
 }
 
 const intValue: ISurveyFormContext = {
@@ -80,7 +91,7 @@ const intValue: ISurveyFormContext = {
   setSurveyFormContext: <T extends keyof ISurveyFormContext>(
     value: Record<T, ISurveyFormContext[T]>,
   ) => {},
-
+  handleFocusBlock: (value: SurveyDataTreeNode) => {},
   question: {
     setSearchParams<T extends keyof GetListQuestionDto>(
       value: Record<T, GetListQuestionDto[T]>,
@@ -104,6 +115,7 @@ const intValue: ISurveyFormContext = {
     onSubmit(value: IAddSurveyFormValues): void {},
     initialValues: {} as IAddSurveyFormValues,
   },
+  survey: {},
 };
 
 export const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
@@ -503,6 +515,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     }));
   }, []);
 
+  const handleFocusBlock = useCallback((node: SurveyDataTreeNode) => {
+    setContext(s => ({ ...s, form: { ...s.form, focusBlock: node } }));
+  }, []);
+
   useEffect(() => {
     setContext(s => {
       const questionIdMap = s.question.questionIdMap;
@@ -537,6 +553,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         ...context,
         setSurveyFormContext,
         actionLoading,
+        handleFocusBlock,
         form: {
           ...context.form,
           initialValues,
@@ -546,6 +563,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           ...context.question,
           setSearchParams,
           isFetchingQuestion: isLoading,
+        },
+        survey: {
+          currentSurveyVersion,
+          surveyData,
         },
       }}
     >

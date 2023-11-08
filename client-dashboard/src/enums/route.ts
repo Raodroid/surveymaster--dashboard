@@ -18,6 +18,7 @@ export const ROUTE_PATH = {
         EDIT: '/app/project/:projectId/edit-project',
       },
       DETAIL_SURVEY: {
+        TEST: '/app/project/:projectId/:surveyId/test',
         ROOT: '/app/project/:projectId/:surveyId',
         EDIT: '/app/project/:projectId/:surveyId/edit',
         HISTORY: '/app/project/:projectId/:surveyId/action-history',

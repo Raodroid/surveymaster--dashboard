@@ -1,8 +1,6 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Tree } from 'antd';
 import { DataNode, TreeProps } from 'antd/es/tree';
-import templateVariable from '@/app/template-variables.module.scss';
-import { DragIcon } from '@/icons';
 import { useField } from 'formik';
 import {
   getParentNodeFieldName,
@@ -14,10 +12,11 @@ import {
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
-import QuestionBlock from '@pages/Survey/components/QuestionBlock/RenderTittle';
 import { SubSurveyFlowElement } from '@/type';
 import _get from 'lodash/get';
 import { DragHandle } from '@/customize-components';
+import { useSurveyFormContext } from '@pages/Survey';
+import QuestionBranchIcon from '@pages/SurveyNew/components/QuestionBranchIcon/QuestionBranchIcon';
 
 const loop = (
   data: SurveyDataTreeNode[],
@@ -43,6 +42,7 @@ const SurveyTree = () => {
     Array<SurveyDataTreeNode>
   >(rootSurveyFlowElementFieldName);
 
+  const { handleFocusBlock } = useSurveyFormContext();
   const { isViewMode } = useCheckSurveyFormMode();
 
   const onDrop: TreeProps['onDrop'] = useCallback(
@@ -116,6 +116,9 @@ const SurveyTree = () => {
   return (
     <div className={''}>
       <Tree
+        onSelect={(key, node) => {
+          handleFocusBlock(node.node as unknown as SurveyDataTreeNode);
+        }}
         draggable={
           isViewMode
             ? false
@@ -123,7 +126,12 @@ const SurveyTree = () => {
                 icon: <DragHandle />,
               }
         }
-        titleRender={d => <QuestionBlock record={d as SurveyDataTreeNode} />}
+        titleRender={d => (
+          <>
+            <QuestionBranchIcon type={d?.type} />
+          </>
+        )}
+        // titleRender={d => <QuestionBlock record={d as SurveyDataTreeNode} />}
         blockNode
         onDrop={onDrop}
         treeData={value as DataNode[]}

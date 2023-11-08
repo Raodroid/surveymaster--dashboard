@@ -32,7 +32,7 @@ import SimpleBar from 'simplebar-react';
 import { HannahCustomSpin, StyledPagination } from 'modules/dashboard';
 import { useCheckScopeEntityDefault } from 'modules/common';
 import { keysAction, useSelectTableRecord } from 'hooks';
-import { ThreeDotsDropdownAdvance } from 'customize-components';
+import { ThreeDotsDropdown } from 'customize-components';
 
 interface TeamMember extends UserPayload {
   key: string;
@@ -497,7 +497,7 @@ const ActionThreeDropDown: FC<
   ]);
 
   return (
-    <ThreeDotsDropdownAdvance
+    <ThreeDotsDropdown
       onChooseItem={key => handleSelect({ key, record })}
       items={items}
     />

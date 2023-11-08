@@ -69,7 +69,7 @@ export const saveBlob = (blob: Blob, filename: string) => {
     // IE 10+
     navigator.msSaveBlob(blob, filename);
   } else {
-    var link = document.createElement('a');
+    const link = document.createElement('a');
     if (link.download !== undefined) {
       // feature detection
       // Browsers that support HTML5 download attribute
@@ -85,7 +85,7 @@ export const saveBlob = (blob: Blob, filename: string) => {
 };
 
 export function downloadURI(uri, name) {
-  let link = document.createElement('a');
+  const link = document.createElement('a');
   // If you don't know the name or want to use
   // the webserver default set name = ''
   link.setAttribute('download', name);
@@ -131,7 +131,7 @@ export const useMobile = (mobileWidth: number = mobileSize) => {
 };
 
 export const useToggle = (
-  initValue: boolean = false,
+  initValue = false,
 ): [boolean, () => void, Dispatch<SetStateAction<boolean>>] => {
   const [open, setOpen] = useState(initValue);
   const toggle = useCallback(() => {
@@ -145,7 +145,7 @@ export const useToggle = (
   return [open, toggle, setOpen];
 };
 
-export const useDebounce = (value: string, time: number = 500) => {
+export const useDebounce = (value: string, time = 500) => {
   const [text, setText] = useState<string>('');
 
   useEffect(() => {

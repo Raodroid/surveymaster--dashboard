@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import BaseMenu from '../BaseMenu';
 import { mainMenuItem } from '../MainMenu';
 import { MenuProps } from 'antd';
-import { ROUTE_PATH } from '../../../../../enums';
+import { ROUTE_PATH } from 'enums';
 
 const allMenuItems: MenuProps['items'] = [
   ...mainMenuItem,

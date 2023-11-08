@@ -35,7 +35,7 @@ import { keysAction, useSelectTableRecord } from '@/hooks';
 import { generatePath } from 'react-router';
 import { useCheckScopeEntityDefault } from '@/modules/common';
 import { FileIconOutlined, PenFilled, TrashOutlined } from '@/icons';
-import { ThreeDotsDropdownAdvance } from '@/customize-components';
+import { ThreeDotsDropdown } from '@/customize-components';
 
 const { confirm } = Modal;
 interface ICategoryDetailContext {
@@ -290,6 +290,7 @@ const CategoryDetail = () => {
         width: 60,
         render: (value, _) => (
           <div
+            role="presentation"
             onClick={e => {
               e.stopPropagation();
             }}
@@ -435,7 +436,7 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<IQuestion>> = props => {
   }, [canCreate, canDelete, canUpdate, record?.deletedAt, t]);
 
   return (
-    <ThreeDotsDropdownAdvance
+    <ThreeDotsDropdown
       onChooseItem={key => handleSelect({ key, record })}
       items={items}
     />

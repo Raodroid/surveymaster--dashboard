@@ -9,7 +9,13 @@ module.exports = {
       black: '#000',
       primary: 'rgb(201 67 151)',
       secondary: '#25216a',
+      textColor: 'rgb(37 33 107)'
     },
+
+    extend:{
+      borderColor:'#F3EEF3',
+      borderRadius:'8px'
+    }
   },
   plugins: [],
   corePlugins: {

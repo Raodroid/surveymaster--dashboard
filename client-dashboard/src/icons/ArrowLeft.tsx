@@ -5,7 +5,7 @@ export const ArrowLeft = props => {
   return (
     <svg
       className={className}
-      style={{ ...style, transform: 'rotate(90deg)' }}
+      style={{ transform: 'rotate(90deg)', ...style }}
       width="12px"
       height="6px"
       viewBox="0 0 12 6"

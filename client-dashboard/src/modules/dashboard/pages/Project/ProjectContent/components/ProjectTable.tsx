@@ -234,6 +234,7 @@ function ProjectTable() {
         width: 60,
         render: (_, record) => (
           <div
+            role="presentation"
             className="flex-center actions"
             onClick={e => {
               e.stopPropagation();

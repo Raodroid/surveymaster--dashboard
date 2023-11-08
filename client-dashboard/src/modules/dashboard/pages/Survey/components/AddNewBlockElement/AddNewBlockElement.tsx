@@ -1,9 +1,9 @@
 import React, { FC, memo, useCallback } from 'react';
-import { Button } from 'antd';
+import { Menu } from 'antd';
 import { useField, useFormikContext } from 'formik';
 import { EmptyString, SubSurveyFlowElement } from '@/type';
 import { useTranslation } from 'react-i18next';
-import { objectKeys, useToggle } from '@/utils';
+import { objectKeys } from '@/utils';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import {
   IAddSurveyFormValues,
@@ -11,6 +11,9 @@ import {
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
 import { calcLevelNodeByFieldName } from '../SurveyTree/util';
+import QuestionBranchIcon from '@pages/SurveyNew/components/QuestionBranchIcon/QuestionBranchIcon';
+import { PlusOutlined } from '@ant-design/icons';
+import styled from 'styled-components/macro';
 
 const defaultNode: SurveyDataTreeNode = {
   blockSort: 0,
@@ -38,9 +41,8 @@ const AddNewBlockElement: FC<{
 }> = props => {
   const { fieldName } = props;
   const { t } = useTranslation();
-  const [show, toggleShow] = useToggle();
 
-  const { isViewMode } = useCheckSurveyFormMode();
+  const { isEditMode } = useCheckSurveyFormMode();
 
   const { values } = useFormikContext<IAddSurveyFormValues>();
 
@@ -91,8 +93,6 @@ const AddNewBlockElement: FC<{
 
   const handleAddElement = useCallback(
     (type: SubSurveyFlowElement) => {
-      toggleShow();
-
       const newBlockValue: SurveyDataTreeNode = {
         ...defaultNode,
         type,
@@ -107,43 +107,55 @@ const AddNewBlockElement: FC<{
         children: [...(value?.children || []), newBlockValue],
       });
     },
-    [fieldName, genKey, setValue, toggleShow, value],
+    [fieldName, genKey, setValue, value],
   );
 
   return (
-    <div className={''}>
-      <div className={show ? 'show-ui' : 'hide-ui'}>
-        <div className={'p-6 border my-6'}>
-          <div className={'flex gap-3 items-center mb-3'}>
-            <h2 className={'m-0'}>What do you want to add </h2>
-            <Button type={'text'} size={'small'} onClick={toggleShow}>
-              ({t('common.cancel')})
-            </Button>
-          </div>
-          <div className={'flex gap-3 items-center'}>
-            {objectKeys(SubSurveyFlowElement).map(key => (
-              <Button
-                // disabled={
-                //   SubSurveyFlowElement[key] === SubSurveyFlowElement.BRANCH
-                // }
-                key={key}
-                onClick={() => {
-                  handleAddElement(SubSurveyFlowElement[key]);
-                }}
-              >
-                {t(`common.${SubSurveyFlowElement[key]}`)}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </div>
-      {!isViewMode && (
-        <Button type={'primary'} className={'py-3 w-full'} onClick={toggleShow}>
-          {t('common.addBlock')}
-        </Button>
+    <>
+      {isEditMode && (
+        <MenuWrapper
+          className={'rounded !bg-[#007AE7] text-white m-0 w-[175px]'}
+          defaultSelectedKeys={['mail']}
+          theme={'dark'}
+          onSelect={e => {
+            handleAddElement(e.key as SubSurveyFlowElement);
+          }}
+        >
+          <Menu.SubMenu
+            className={'m-0'}
+            key="mail"
+            theme={'light'}
+            title={
+              <span className={'text-white font-semibold'}>
+                {t('common.addBlock')}
+              </span>
+            }
+            icon={<PlusOutlined className={'text-white'} />}
+          >
+            {objectKeys(SubSurveyFlowElement).map(key => {
+              const val = SubSurveyFlowElement[key];
+              return (
+                <Menu.Item key={val}>
+                  <div className={'pb-2 flex gap-3 items-center'}>
+                    <QuestionBranchIcon type={val} />
+                    <span className={'font-semibold'}>
+                      {t(`common.${val}`)}
+                    </span>
+                  </div>
+                </Menu.Item>
+              );
+            })}
+          </Menu.SubMenu>
+        </MenuWrapper>
       )}
-    </div>
+    </>
   );
 };
 
 export default memo(AddNewBlockElement);
+
+const MenuWrapper = styled(Menu)`
+  .ant-menu-submenu-title {
+    margin: 0;
+  }
+`;
