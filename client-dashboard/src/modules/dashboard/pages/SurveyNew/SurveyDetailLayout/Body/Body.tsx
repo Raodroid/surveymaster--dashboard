@@ -8,6 +8,7 @@ import {
   AddNewBlockElement,
   rootSurveyFlowElementFieldName,
 } from '@pages/Survey';
+import SimpleBar from 'simplebar-react';
 
 const ASIDE_WIDTH = 427; //px
 
@@ -26,10 +27,10 @@ const Body = () => {
         className={'overflow-hidden h-full transition-[width]'}
         style={{ width: expanded ? '100%' : ASIDE_WIDTH }}
       >
-        <div className={'h-full w-full overflow-scroll p-6'}>
+        <SimpleBar className={'h-full overflow-scroll p-6'}>
           <SurveyStructureTree />
           <AddNewBlockElement fieldName={rootSurveyFlowElementFieldName} />
-        </div>
+        </SimpleBar>
       </div>
 
       <Divider className={'m-0 h-full'} type={'vertical'} />

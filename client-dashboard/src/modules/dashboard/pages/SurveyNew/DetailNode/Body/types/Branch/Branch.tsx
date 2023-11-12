@@ -1,6 +1,6 @@
 import React, { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ControlledInput } from '@/modules/common';
+import { ControlledInput, UncontrolledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@/modules/common/input/type';
 import { FieldArray, useField, useFormikContext } from 'formik';
 import {
@@ -22,6 +22,7 @@ import {
   IAddSurveyFormValues,
 } from '@pages/Survey/SurveyForm/type';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
+import { PlusIcon, PlusOutLinedIcon, TrashOutlined } from '@/icons';
 
 const defaultLogicBranch: EmptyString<ExtraSubBranchLogicDto> = {
   blockSort_qId: '',
@@ -73,7 +74,13 @@ const Branch: FC<QuestionBlockProps> = props => {
               const LogicComponent = componentMap[logicType];
               return (
                 <div className={'flex gap-3'} key={index}>
-                  {index !== 0 && (
+                  {index === 0 ? (
+                    <UncontrolledInput
+                      className={`w-[70px] view-mode`}
+                      inputType={INPUT_TYPES.INPUT}
+                      value={'If'}
+                    />
+                  ) : (
                     <ControlledInput
                       className={`w-[70px] ${isViewMode ? 'view-mode' : ''}`}
                       inputType={INPUT_TYPES.SELECT}
@@ -103,12 +110,10 @@ const Branch: FC<QuestionBlockProps> = props => {
                     <Button
                       size={'small'}
                       className={'px-2'}
-                      danger
-                      shape="circle"
+                      type={'text'}
                       onClick={() => remove(index)}
-                    >
-                      -
-                    </Button>
+                      icon={<TrashOutlined />}
+                    />
                   )}
                 </div>
               );
@@ -116,6 +121,7 @@ const Branch: FC<QuestionBlockProps> = props => {
             <div>
               {!isViewMode && (
                 <Button
+                  icon={<PlusOutLinedIcon />}
                   className={'w-full'}
                   onClick={() => {
                     push(defaultLogicBranch);

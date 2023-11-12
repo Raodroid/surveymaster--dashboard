@@ -7,6 +7,7 @@ module.exports = {
       success: '#36BB9D',
       white: '#fff',
       black: '#000',
+      info:'#007AE7',
       primary: 'rgb(201 67 151)',
       secondary: '#25216a',
       textColor: 'rgb(37 33 107)'

@@ -1,6 +1,6 @@
 import React, { FC, useCallback } from 'react';
 import { Button, Tooltip } from 'antd';
-import { CopyOutlined } from '@ant-design/icons';
+import { CopyOutlinedIcon } from 'icons';
 
 const CopyButton: FC<{ content: string | undefined | number }> = props => {
   const { content } = props;
@@ -11,9 +11,10 @@ const CopyButton: FC<{ content: string | undefined | number }> = props => {
     <Tooltip title={'Copied'} trigger="focus">
       <Tooltip title={content} placement={'bottom'}>
         <Button
-          className={'url-col-item'}
+          className={'url-col-item text-textColor'}
           size="small"
-          icon={<CopyOutlined />}
+          type={'text'}
+          icon={<CopyOutlinedIcon />}
           onClick={handleCopy}
           aria-label="Copy Icon"
         />

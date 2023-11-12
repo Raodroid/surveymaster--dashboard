@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { size } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useField } from 'formik';
-import { Button } from 'antd';
+import { Button, Divider, Tag, Tooltip } from 'antd';
 import { useDebounce } from '@/utils';
 import { useTranslation } from 'react-i18next';
 
@@ -19,6 +19,7 @@ import {
 } from '@pages/Survey';
 import { DragHandle } from '@/customize-components';
 import { gen_QID_template } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
+import { Chat, TrashOutlined } from '@/icons';
 
 const SurveyQuestions: FC<{
   fieldName: string;
@@ -36,9 +37,6 @@ const SurveyQuestions: FC<{
     },
     [setValue, value],
   );
-  // const addQuestion = useCallback(() => {
-  //   setValue([...value, initNewRowValue]);
-  // }, [setValue, value]);
 
   const { question } = useSurveyFormContext();
   const { setSearchParams, questionOptions } = question;
@@ -69,111 +67,128 @@ const SurveyQuestions: FC<{
     () => [
       {
         dataIndex: 'order',
+        render: () => {
+          return <DragHandle />;
+        },
+      },
+      {
+        dataIndex: 'order',
         render: (value, record, index) => {
           const content = gen_QID_template({
             blockSort: blockData.blockSort as number,
             sort: (index + 1) as number,
           });
           return (
-            <span
-              style={{
-                display: 'inline-flex',
-                gap: '1.5rem',
-                alignItems: 'center',
-              }}
-            >
-              {!isViewMode && <DragHandle />}
-              <span>{content}</span>
-              <CopyButton content={content} />
-            </span>
+            <div className={''}>
+              <Tooltip title={record.questionTitle}>
+                <p
+                  className={
+                    'overflow-hidden truncate w-[500px] text-[16px] font-semibold'
+                  }
+                >
+                  {record.questionTitle}
+                </p>
+              </Tooltip>
+              <span className={'flex items-center gap-3'}>
+                <div className={'flex gap-1 items-center'}>
+                  <p className={'m-0'}>
+                    <span className={'font-semibold text-[12px]'}>ID:</span>{' '}
+                    <span className={'text-[12px]'}>{content}</span>
+                  </p>
+                  <CopyButton content={content} />
+                </div>
+
+                <Divider type="vertical" className={'h-[8px]'} />
+
+                <div className={'flex gap-1.5 items-center text-info'}>
+                  <Chat />
+                  <span className={'font-semibold text-[12px]'}>
+                    {t('common.remark')}
+                  </span>{' '}
+                </div>
+              </span>
+            </div>
           );
         },
       },
       // {
-      //   title: t('common.parameter'),
-      //   dataIndex: 'parameter',
-      //   width: 200,
-      //   render: (value, record, index) => {
+      //   title: t('common.question'),
+      //   dataIndex: 'questionVersionId',
+      //   width: 300,
+      //   render: (value, record, questionIndex) => {
       //     return (
-      //       <>
-      //         <ControlledInput
-      //           style={{ width: '100%' }}
-      //           inputType={INPUT_TYPES.INPUT}
-      //           name={`${fieldName}[${index}].parameter`}
-      //         />
-      //       </>
+      //       <DynamicSelect
+      //         parentFieldName={`${fieldName}.surveyQuestions`}
+      //         availableQuestionOptions={availableQuestionOptions}
+      //         setSearchTxt={setSearchTxt}
+      //         fieldName={`${fieldName}.surveyQuestions[${questionIndex}]`}
+      //         className={isViewMode ? 'view-mode' : ''}
+      //       />
       //     );
       //   },
       // },
+      // {
+      //   title: '',
+      //   dataIndex: 'remark',
+      //   render: (value, record, questionIndex) => (
+      //     <div className={'mt-[26px]'}>
+      //       <ControlledInput
+      //         className={isViewMode ? 'view-mode' : ''}
+      //         style={{ width: '100%' }}
+      //         inputType={INPUT_TYPES.INPUT}
+      //         name={`${fieldName}.surveyQuestions[${questionIndex}].remark`}
+      //       />
+      //     </div>
+      //   ),
+      // },
       {
-        title: t('common.category'),
+        title: '',
         dataIndex: 'category',
         width: 100,
-      },
-      {
-        title: t('common.type'),
-        dataIndex: 'type',
-        width: 150,
-        render: value => {
-          return value ? t(`questionType.${value}`) : '';
-        },
-      },
-      {
-        title: t('common.question'),
-        dataIndex: 'questionVersionId',
-        width: 300,
-        render: (value, record, questionIndex) => {
-          return (
-            <DynamicSelect
-              parentFieldName={`${fieldName}.surveyQuestions`}
-              availableQuestionOptions={availableQuestionOptions}
-              setSearchTxt={setSearchTxt}
-              fieldName={`${fieldName}.surveyQuestions[${questionIndex}]`}
-              className={isViewMode ? 'view-mode' : ''}
-            />
-          );
-        },
-      },
-      {
-        title: t('common.remark'),
-        dataIndex: 'remark',
-        render: (value, record, questionIndex) => (
-          <div className={'mt-[26px]'}>
-            <ControlledInput
-              className={isViewMode ? 'view-mode' : ''}
-              style={{ width: '100%' }}
-              inputType={INPUT_TYPES.INPUT}
-              name={`${fieldName}.surveyQuestions[${questionIndex}].remark`}
-            />
-          </div>
+        render: value => (
+          <span
+            className={
+              'border border-info rounded-[1rem] font-semibold text-info text-[12px] py-[4px] px-[8px]'
+            }
+          >
+            {value}
+          </span>
         ),
       },
       {
         title: '',
+        dataIndex: 'type',
+        width: 150,
+        render: value => {
+          return value ? (
+            <span
+              className={
+                'border border-info rounded-[1rem] font-semibold text-info text-[12px] py-[4px] px-[8px]'
+              }
+            >
+              {t(`questionType.${value}`)}
+            </span>
+          ) : (
+            ''
+          );
+        },
+      },
+      {
+        title: '',
         dataIndex: 'action',
-        width: 60,
+        width: 40,
         render: (value, record, index) =>
           isViewMode ? null : (
             <Button
+              type={'text'}
               size={'small'}
-              className={'px-2'}
-              danger
-              shape="circle"
+              icon={<TrashOutlined />}
               onClick={() => removeQuestion(index)}
-            >
-              -
-            </Button>
+            />
           ),
       },
     ],
-    [
-      t,
-      blockData?.blockSort,
-      isViewMode,
-      fieldName,
-      availableQuestionOptions,
-      removeQuestion,
-    ],
+    [t, blockData.blockSort, isViewMode, removeQuestion],
   );
 
   return (

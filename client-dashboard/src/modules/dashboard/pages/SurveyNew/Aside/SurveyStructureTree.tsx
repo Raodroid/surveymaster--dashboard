@@ -17,7 +17,6 @@ import _get from 'lodash/get';
 import { SubSurveyFlowElement } from '@/type';
 import { DragHandle } from '@/customize-components';
 import QuestionBlock from '@pages/Survey/components/QuestionBlock/RenderTittle';
-import QuestionBranchIcon from '@pages/SurveyNew/components/QuestionBranchIcon/QuestionBranchIcon';
 import styled from 'styled-components/macro';
 
 const loop = (
@@ -120,14 +119,14 @@ const SurveyStructureTree: React.FC = () => {
       onSelect={(key, node) => {
         handleFocusBlock(node.node as unknown as SurveyDataTreeNode);
       }}
-      draggable
-      // draggable={
-      //   isViewMode
-      //     ? false
-      //     : {
-      //         icon: <DragHandle />,
-      //       }
-      // }
+      // draggable
+      draggable={
+        isViewMode
+          ? false
+          : {
+              icon: <DragHandle />,
+            }
+      }
       titleRender={d => <QuestionBlock record={d as SurveyDataTreeNode} />}
       blockNode
       onDrop={onDrop}
@@ -144,11 +143,11 @@ const WrapperTree = styled(Tree)`
   .ant-tree-list-holder-inner {
   }
   .ant-tree-treenode {
-    width: fit-content;
+    width: max-content;
   }
   .ant-tree-node-content-wrapper {
     padding: 0;
-    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
   }
   .ant-tree-title {
     border-color: #c7c7c7;

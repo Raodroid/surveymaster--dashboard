@@ -181,7 +181,7 @@ const AddQuestionFormCategoryModal: FC<
         </Button>
       }
       centered
-      title={t('common.addAllQuestionsFromOneCategory')}
+      title={t('common.addWholeCategory')}
     >
       <div className={'AddQuestionFormCategoryModal_body'}>
         <SimpleBar>

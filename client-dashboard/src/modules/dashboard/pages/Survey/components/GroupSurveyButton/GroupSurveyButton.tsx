@@ -8,6 +8,7 @@ import { useToggle } from '@/utils';
 import { generateRandom } from '@/modules/common/funcs';
 import { GroupSurveyButtonWrapper } from './style';
 import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
+import { PlusOutLinedIcon } from '@/icons';
 
 export const initNewRowValue: questionValueType = {
   remark: '',
@@ -43,11 +44,21 @@ const GroupSurveyButton = (props: { fieldNameRoot: string }) => {
 
   return (
     <GroupSurveyButtonWrapper>
-      <Button onClick={toggleLoadCategoryForm}>
-        {t('common.addAllQuestionsFromOneCategory')}
-      </Button>
-      <Button type={'primary'} onClick={handleAddRow}>
+      <Button
+        type={'primary'}
+        onClick={handleAddRow}
+        className={'info-btn'}
+        icon={<PlusOutLinedIcon />}
+      >
         {t('common.addRow')}
+      </Button>
+      <Button
+        type={'text'}
+        onClick={toggleLoadCategoryForm}
+        className={'info-btn'}
+        icon={<PlusOutLinedIcon />}
+      >
+        {t('common.addWholeCategory')}
       </Button>
       {openLoadCategoryForm && (
         <AddQuestionFormCategoryModal

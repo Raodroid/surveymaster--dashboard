@@ -64,7 +64,6 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
     <div className={'p-6 flex items-center gap-1'}>
       <>
         <QuestionBranchIcon type={focusBlock?.type} />
-
         {focusBlock?.type === SubSurveyFlowElement.BLOCK ? (
           <ControlledInput
             className={`w-[200px] hide-helper-text ${
@@ -78,19 +77,22 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
             {t(`common.${focusBlock?.type}`)}
           </span>
         )}
-
-        <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
-        <Button
-          type={'text'}
-          icon={<DuplicateIcon />}
-          onClick={handleDuplicateBlock}
-        />
-        <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
-        <Button
-          type={'text'}
-          icon={<TrashOutlined />}
-          onClick={handleRemoveBlock}
-        />
+        {!isViewMode && (
+          <>
+            <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+            <Button
+              type={'text'}
+              icon={<DuplicateIcon />}
+              onClick={handleDuplicateBlock}
+            />
+            <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+            <Button
+              type={'text'}
+              icon={<TrashOutlined />}
+              onClick={handleRemoveBlock}
+            />
+          </>
+        )}
       </>
     </div>
   );

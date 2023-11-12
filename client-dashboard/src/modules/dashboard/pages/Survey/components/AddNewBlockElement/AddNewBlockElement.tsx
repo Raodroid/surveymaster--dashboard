@@ -14,6 +14,7 @@ import { calcLevelNodeByFieldName } from '../SurveyTree/util';
 import QuestionBranchIcon from '@pages/SurveyNew/components/QuestionBranchIcon/QuestionBranchIcon';
 import { PlusOutlined } from '@ant-design/icons';
 import styled from 'styled-components/macro';
+import { PlusOutLinedIcon } from '@/icons';
 
 const defaultNode: SurveyDataTreeNode = {
   blockSort: 0,
@@ -130,7 +131,7 @@ const AddNewBlockElement: FC<{
                 {t('common.addBlock')}
               </span>
             }
-            icon={<PlusOutlined className={'text-white'} />}
+            icon={<PlusOutLinedIcon className={'text-white'} />}
           >
             {objectKeys(SubSurveyFlowElement).map(key => {
               const val = SubSurveyFlowElement[key];

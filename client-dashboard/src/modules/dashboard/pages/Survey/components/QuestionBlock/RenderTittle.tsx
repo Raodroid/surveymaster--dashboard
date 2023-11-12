@@ -57,20 +57,11 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
       >
         <div className={'flex gap-3 items-center'}>
           <QuestionBranchIcon type={record?.type} />
-
-          {record?.type === SubSurveyFlowElement.BLOCK ? (
-            <ControlledInput
-              className={`w-[200px] hide-helper-text ${
-                isViewMode ? 'view-mode' : ''
-              }`}
-              inputType={INPUT_TYPES.INPUT}
-              name={`${fieldName}.blockDescription`}
-            />
-          ) : (
-            <span className={'font-semibold'}>
-              {t(`common.${record?.type}`)}
-            </span>
-          )}
+          <span className={'font-semibold'}>
+            {record?.type === SubSurveyFlowElement.BLOCK
+              ? value?.blockDescription
+              : t(`common.${record?.type}`)}
+          </span>
 
           <span
             className={

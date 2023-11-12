@@ -32,3 +32,6 @@ export * from './BranchIcon';
 export * from './EmbeddedTypeIcon';
 export * from './DiagramIcon';
 export * from './FlagIcon';
+export * from './SaveIcon';
+export * from './CopyOutlinedIcon';
+export * from './PlusOutLinedIcon';

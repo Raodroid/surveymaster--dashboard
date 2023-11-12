@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { SubSurveyFlowElement } from '@/type';
 import { Block, Branch, Embedded, EndSurvey } from './types';
 import { QuestionBlockProps, SurveyDataTreeNode } from '@pages/Survey';
+import SimpleBar from 'simplebar-react';
 
 const contentMap: Record<SubSurveyFlowElement, FC<QuestionBlockProps>> = {
   [SubSurveyFlowElement.END_SURVEY]: EndSurvey,
@@ -16,9 +17,9 @@ const Body: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   const Content = contentMap[focusBlock.type];
 
   return (
-    <div className={'p-6'}>
+    <SimpleBar className={'h-full overflow-scroll p-6'}>
       <Content fieldName={focusBlock.fieldName} />
-    </div>
+    </SimpleBar>
   );
 };
 

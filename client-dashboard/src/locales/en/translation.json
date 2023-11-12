@@ -20,6 +20,8 @@
     "foods": "Foods"
   },
   "common": {
+    "embeddedData": "Embedded Data",
+    "saveEdit": "Save Edit",
     "projectId": "Project ID",
     "addBlock": "Add Block",
     "blockDescription": "Block Description",
@@ -90,6 +92,7 @@
     "searchCategory": "Search Category",
     "questionCategory": "Question Category",
     "addAllQuestionsFromOneCategory": "Add All Questions from One Category",
+    "addWholeCategory": "Add Whole Category",
     "addOneMoreQuestion": "Add One More Question",
     "addOneMoreField": "Add One More Field",
     "surveyQuestionList": "Survey Question List",
