@@ -128,7 +128,7 @@ const SurveyTree = () => {
         }
         titleRender={d => (
           <>
-            <QuestionBranchIcon type={d?.type} />
+            <QuestionBranchIcon type={(d as SurveyDataTreeNode)?.type} />
           </>
         )}
         // titleRender={d => <QuestionBlock record={d as SurveyDataTreeNode} />}

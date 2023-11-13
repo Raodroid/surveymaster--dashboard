@@ -72,7 +72,7 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
   return (
     <>
       <ControlledInput
-        className={`min-w-[150px] ${isViewMode ? 'view-mode' : ''}`}
+        className={`w-[250px] ${isViewMode ? 'view-mode' : ''}`}
         value={value.questionVersionId}
         // onSearch={value => {
         //   setSearchTxt(value);

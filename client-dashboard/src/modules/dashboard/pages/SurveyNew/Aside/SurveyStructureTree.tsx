@@ -43,7 +43,7 @@ const SurveyStructureTree: React.FC = () => {
     Array<SurveyDataTreeNode>
   >(rootSurveyFlowElementFieldName);
 
-  const { handleFocusBlock } = useSurveyFormContext();
+  const { handleFocusBlock, form } = useSurveyFormContext();
   const { isViewMode } = useCheckSurveyFormMode();
 
   const onDrop: TreeProps['onDrop'] = useCallback(
@@ -68,6 +68,8 @@ const SurveyStructureTree: React.FC = () => {
       } else if (node.type !== SubSurveyFlowElement.BRANCH) {
         return;
       }
+
+      handleFocusBlock(undefined);
 
       const data = value;
       // Find dragObject
@@ -111,7 +113,7 @@ const SurveyStructureTree: React.FC = () => {
       }
       setGData(transformToSurveyDataTreeNode(data));
     },
-    [value, setGData],
+    [handleFocusBlock, value, setGData],
   );
 
   return (
@@ -119,7 +121,7 @@ const SurveyStructureTree: React.FC = () => {
       onSelect={(key, node) => {
         handleFocusBlock(node.node as unknown as SurveyDataTreeNode);
       }}
-      // draggable
+      selectedKeys={form.focusBlock?.key ? [form.focusBlock.key] : []}
       draggable={
         isViewMode
           ? false

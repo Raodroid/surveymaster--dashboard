@@ -16,7 +16,7 @@ const Header = () => {
   const { survey } = useSurveyFormContext();
   const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
     ver => ({
-      label: `Version ${ver.displayId}`,
+      label: `Version ${ver.displayId}`.toUpperCase(),
       value: ver?.id || '',
     }),
   );
@@ -30,7 +30,7 @@ const Header = () => {
         size={'large'}
         value={params.surveyId}
         options={versions}
-        className={'w-[150px]'}
+        className={'w-[200px]'}
       />
       {isViewMode && (
         <Button

@@ -17,9 +17,9 @@ const Body: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   const Content = contentMap[focusBlock.type];
 
   return (
-    <SimpleBar className={'h-full overflow-scroll p-6'}>
+    <div className={'flex-1 w-full p-6 overflow-hidden flex flex-col'}>
       <Content fieldName={focusBlock.fieldName} />
-    </SimpleBar>
+    </div>
   );
 };
 

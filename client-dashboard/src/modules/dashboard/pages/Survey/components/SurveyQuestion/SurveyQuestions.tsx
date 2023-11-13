@@ -20,6 +20,7 @@ import {
 import { DragHandle } from '@/customize-components';
 import { gen_QID_template } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
 import { Chat, TrashOutlined } from '@/icons';
+import SimpleBar from 'simplebar-react';
 
 const SurveyQuestions: FC<{
   fieldName: string;
@@ -75,7 +76,7 @@ const SurveyQuestions: FC<{
         dataIndex: 'order',
         render: (value, record, index) => {
           const content = gen_QID_template({
-            blockSort: blockData.blockSort as number,
+            blockSort: blockData?.blockSort as number,
             sort: (index + 1) as number,
           });
           return (
@@ -146,13 +147,13 @@ const SurveyQuestions: FC<{
         dataIndex: 'category',
         width: 100,
         render: value => (
-          <span
+          <div
             className={
-              'border border-info rounded-[1rem] font-semibold text-info text-[12px] py-[4px] px-[8px]'
+              'overflow-hidden w-full overflow-ellipsis whitespace-nowrap border border-info rounded-[1rem] font-semibold text-info text-[12px] py-[4px] px-[8px]'
             }
           >
             {value}
-          </span>
+          </div>
         ),
       },
       {
@@ -188,21 +189,23 @@ const SurveyQuestions: FC<{
           ),
       },
     ],
-    [t, blockData.blockSort, isViewMode, removeQuestion],
+    [t, blockData?.blockSort, isViewMode, removeQuestion],
   );
 
   return (
-    <div className={''}>
-      <DragTable
-        scroll={{ x: size.large }}
-        columns={columns}
-        rowClassName={'border'}
-        dataSource={value}
-        pagination={false}
-        setDataTable={setValue}
-      />
+    <>
+      <SimpleBar className={'h-full overflow-scroll flex-1'}>
+        <DragTable
+          scroll={{ x: size.large }}
+          columns={columns}
+          rowClassName={'border'}
+          dataSource={value}
+          pagination={false}
+          setDataTable={setValue}
+        />
+      </SimpleBar>
       {!isViewMode && <GroupSurveyButton fieldNameRoot={fieldName} />}
-    </div>
+    </>
   );
 };
 

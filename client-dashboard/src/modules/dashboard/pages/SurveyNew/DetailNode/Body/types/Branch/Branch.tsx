@@ -22,7 +22,8 @@ import {
   IAddSurveyFormValues,
 } from '@pages/Survey/SurveyForm/type';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
-import { PlusIcon, PlusOutLinedIcon, TrashOutlined } from '@/icons';
+import { PlusOutLinedIcon, TrashOutlined } from '@/icons';
+import SimpleBar from 'simplebar-react';
 
 const defaultLogicBranch: EmptyString<ExtraSubBranchLogicDto> = {
   blockSort_qId: '',
@@ -63,78 +64,81 @@ const Branch: FC<QuestionBlockProps> = props => {
   }, [values.version?.surveyFlowElements]);
 
   return (
-    <div>
-      <FieldArray
-        name={fieldName}
-        render={({ push, remove }) => (
-          <div>
-            {(branchLogics || []).map((list, index) => {
-              const { logicType } = list;
+    <FieldArray
+      name={fieldName}
+      render={({ push, remove }) => (
+        <>
+          <SimpleBar className={'h-full overflow-scroll flex-1'}>
+            <div className={'min-w-[770px]'}>
+              {(branchLogics || []).map((list, index) => {
+                const { logicType } = list;
 
-              const LogicComponent = componentMap[logicType];
-              return (
-                <div className={'flex gap-3'} key={index}>
-                  {index === 0 ? (
-                    <UncontrolledInput
-                      className={`w-[70px] view-mode`}
-                      inputType={INPUT_TYPES.INPUT}
-                      value={'If'}
-                    />
-                  ) : (
-                    <ControlledInput
-                      className={`w-[70px] ${isViewMode ? 'view-mode' : ''}`}
-                      inputType={INPUT_TYPES.SELECT}
-                      name={`${fieldName}[${index}].conjunction`}
-                      options={objectKeys(Conjunction).map(key => ({
-                        value: Conjunction[key],
-                        label: Conjunction[key],
-                      }))}
-                    />
-                  )}
-                  <ControlledInput
-                    className={`w-[120px] ${isViewMode ? 'view-mode' : ''}`}
-                    inputType={INPUT_TYPES.SELECT}
-                    name={`${fieldName}[${index}].logicType`}
-                    options={transformEnumToOption(BranchLogicType, i =>
-                      t(`common.${i}`),
+                const LogicComponent = componentMap[logicType];
+                return (
+                  <div className={'flex gap-3'} key={index}>
+                    {index === 0 ? (
+                      <UncontrolledInput
+                        className={`w-[70px] view-mode`}
+                        inputType={INPUT_TYPES.INPUT}
+                        value={'If'}
+                      />
+                    ) : (
+                      <ControlledInput
+                        className={`w-[70px] ${isViewMode ? 'view-mode' : ''}`}
+                        inputType={INPUT_TYPES.SELECT}
+                        name={`${fieldName}[${index}].conjunction`}
+                        options={objectKeys(Conjunction).map(key => ({
+                          value: Conjunction[key],
+                          label: Conjunction[key],
+                        }))}
+                      />
                     )}
-                  />
-
-                  <LogicComponent
-                    fieldName={fieldName}
-                    index={index}
-                    options={options}
-                  />
-
-                  {!isViewMode && (
-                    <Button
-                      size={'small'}
-                      className={'px-2'}
-                      type={'text'}
-                      onClick={() => remove(index)}
-                      icon={<TrashOutlined />}
+                    <ControlledInput
+                      className={`w-[120px] ${isViewMode ? 'view-mode' : ''}`}
+                      inputType={INPUT_TYPES.SELECT}
+                      name={`${fieldName}[${index}].logicType`}
+                      options={transformEnumToOption(BranchLogicType, i =>
+                        t(`common.${i}`),
+                      )}
                     />
-                  )}
-                </div>
-              );
-            })}
-            <div>
-              {!isViewMode && (
-                <Button
-                  icon={<PlusOutLinedIcon />}
-                  className={'w-full'}
-                  onClick={() => {
-                    push(defaultLogicBranch);
-                  }}
-                >
-                  {t('common.addCondition')}
-                </Button>
-              )}
+
+                    <LogicComponent
+                      fieldName={fieldName}
+                      index={index}
+                      options={options}
+                    />
+
+                    {!isViewMode && (
+                      <Button
+                        size={'small'}
+                        className={'px-2'}
+                        type={'text'}
+                        onClick={() => remove(index)}
+                        icon={<TrashOutlined />}
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
+          </SimpleBar>
+          <div>
+            {!isViewMode && (
+              <Button
+                type={'primary'}
+                icon={<PlusOutLinedIcon />}
+                className={'info-btn w-full'}
+                onClick={() => {
+                  push(defaultLogicBranch);
+                }}
+              >
+                {t('common.addCondition')}
+              </Button>
+            )}
           </div>
-        )}
-      />
-    </div>
+        </>
+      )}
+    />
   );
 };
 

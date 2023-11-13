@@ -40,7 +40,7 @@ const Body = () => {
         className={'overflow-hidden h-full transition-[width]'}
         style={{ width: expanded ? 0 : `calc(100% - ${ASIDE_WIDTH}px)` }}
       >
-        <div className={'h-full w-full overflow-scroll'}>
+        <div className={'h-full w-full overflow-hidden'}>
           <DetailNode />
         </div>
       </div>

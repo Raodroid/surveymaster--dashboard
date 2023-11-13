@@ -116,11 +116,11 @@ const AddNewBlockElement: FC<{
       {isEditMode && (
         <MenuWrapper
           className={'rounded !bg-[#007AE7] text-white m-0 w-[175px]'}
-          defaultSelectedKeys={['mail']}
           theme={'dark'}
           onSelect={e => {
             handleAddElement(e.key as SubSurveyFlowElement);
           }}
+          selectedKeys={[]}
         >
           <Menu.SubMenu
             className={'m-0'}

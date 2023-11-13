@@ -1,14 +1,12 @@
 import React from 'react';
 import { Divider, Form } from 'antd';
 import { Formik } from 'formik';
-import { useTranslation } from 'react-i18next';
 import {
   SURVEY_EXTERNAL_FORM_SCHEMA,
   SURVEY_INTERNAL_FORM_SCHEMA,
 } from '@/modules/common';
 
 import { SurveyFormProvider, useSurveyFormContext } from '../components';
-import { useCheckSurveyFormMode } from '@pages/Survey';
 import Header from '@pages/SurveyNew/SurveyDetailLayout/Header/Header';
 import Body from '@pages/SurveyNew/SurveyDetailLayout/Body/Body';
 
@@ -23,14 +21,8 @@ const SurveyForm = () => {
 export default SurveyForm;
 
 const SurveyFormContent = () => {
-  const { t } = useTranslation();
-
   const { form, isExternalProject, actionLoading } = useSurveyFormContext();
   const { initialValues, onSubmit } = form;
-
-  const { isViewMode, isEditMode } = useCheckSurveyFormMode();
-
-  const className = isViewMode ? 'view-mode' : '';
 
   return (
     <Formik

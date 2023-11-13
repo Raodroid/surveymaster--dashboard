@@ -82,7 +82,7 @@ interface ISurveyFormContext {
     surveyData?: ISurvey;
   };
 
-  handleFocusBlock: (value: SurveyDataTreeNode) => void;
+  handleFocusBlock: (value: SurveyDataTreeNode | undefined) => void;
 }
 
 const intValue: ISurveyFormContext = {
@@ -91,7 +91,7 @@ const intValue: ISurveyFormContext = {
   setSurveyFormContext: <T extends keyof ISurveyFormContext>(
     value: Record<T, ISurveyFormContext[T]>,
   ) => {},
-  handleFocusBlock: (value: SurveyDataTreeNode) => {},
+  handleFocusBlock: (value: SurveyDataTreeNode | undefined) => {},
   question: {
     setSearchParams<T extends keyof GetListQuestionDto>(
       value: Record<T, GetListQuestionDto[T]>,
@@ -515,9 +515,12 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     }));
   }, []);
 
-  const handleFocusBlock = useCallback((node: SurveyDataTreeNode) => {
-    setContext(s => ({ ...s, form: { ...s.form, focusBlock: node } }));
-  }, []);
+  const handleFocusBlock = useCallback(
+    (node: SurveyDataTreeNode | undefined) => {
+      setContext(s => ({ ...s, form: { ...s.form, focusBlock: node } }));
+    },
+    [],
+  );
 
   useEffect(() => {
     setContext(s => {

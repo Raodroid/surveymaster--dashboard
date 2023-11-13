@@ -4,8 +4,6 @@ import { SubSurveyFlowElement } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { useField } from 'formik';
 import AddNewBlockElement from '@pages/Survey/components/AddNewBlockElement/AddNewBlockElement';
-import { ControlledInput } from '@/modules/common';
-import { INPUT_TYPES } from '@input/type';
 import { DEFAULT_THEME_COLOR } from '@/enums';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { SurveyDataTreeNode } from '@pages/Survey/SurveyForm/type';
@@ -63,13 +61,15 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
               : t(`common.${record?.type}`)}
           </span>
 
-          <span
-            className={
-              'px-[8px] rounded-[1rem] bg-[#23256714] text-[12px] font-semibold'
-            }
-          >
-            {childrenLength}
-          </span>
+          {record?.type !== SubSurveyFlowElement.END_SURVEY && (
+            <span
+              className={
+                'px-[8px] rounded-[1rem] bg-[#23256714] text-[12px] font-semibold'
+              }
+            >
+              {childrenLength}
+            </span>
+          )}
         </div>
 
         {touched && blockError && (
