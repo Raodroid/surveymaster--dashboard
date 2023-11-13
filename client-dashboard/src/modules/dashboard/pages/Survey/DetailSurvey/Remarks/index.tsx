@@ -15,13 +15,12 @@ import {
   IPutSurveyVersionBodyDtoExtendId,
   ISurveyVersion,
 } from '@/type';
-import { onError } from '@/utils';
 import { projectSurveyParams } from '../DetailSurvey';
 import ProjectHeader from '../../../Project/ProjectContent/components/Header/Header';
 import Inputs from '../Inputs';
 import { RemarksWrapper } from './styles';
-import { useToggle } from '../../../../../../utils';
-import { ViewDetailSurveyDropDownMenuButton } from '../View/ViewDetailSurveyDropDownBtn';
+import { useToggle, onError } from 'utils';
+import { ViewDetailSurveyDropDownMenuButton } from './ViewDetailSurveyDropDownBtn';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import { ROUTE_PATH } from '@/enums';
 

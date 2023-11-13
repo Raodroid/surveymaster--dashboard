@@ -10,11 +10,12 @@ import {
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
-import { calcLevelNodeByFieldName } from '../SurveyTree/util';
-import QuestionBranchIcon from '@pages/SurveyNew/components/QuestionBranchIcon/QuestionBranchIcon';
-import { PlusOutlined } from '@ant-design/icons';
+import { calcLevelNodeByFieldName } from '../../DetailSurvey/SurveyDetailLayout/Body/Aside/util';
 import styled from 'styled-components/macro';
 import { PlusOutLinedIcon } from '@/icons';
+import { useSurveyFormContext } from '@pages/Survey';
+import _uniq from 'lodash/uniq';
+import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
 
 const defaultNode: SurveyDataTreeNode = {
   blockSort: 0,
@@ -42,6 +43,7 @@ const AddNewBlockElement: FC<{
 }> = props => {
   const { fieldName } = props;
   const { t } = useTranslation();
+  const { setSurveyFormContext } = useSurveyFormContext();
 
   const { isEditMode } = useCheckSurveyFormMode();
 
@@ -101,14 +103,32 @@ const AddNewBlockElement: FC<{
       };
       if (isRootPath(fieldName, value)) {
         setValue([...value, newBlockValue]);
+
+        setSurveyFormContext(oldState => ({
+          ...oldState,
+          tree: {
+            ...oldState.tree,
+            focusBlock: newBlockValue,
+          },
+        }));
         return;
       }
       setValue({
         ...value,
         children: [...(value?.children || []), newBlockValue],
       });
+
+      //auto expend parent root branch and focus on new block
+      setSurveyFormContext(oldState => ({
+        ...oldState,
+        tree: {
+          ...oldState.tree,
+          expendKeys: _uniq([...oldState.tree.expendKeys, fieldName]),
+          focusBlock: newBlockValue,
+        },
+      }));
     },
-    [fieldName, genKey, setValue, value],
+    [fieldName, genKey, setSurveyFormContext, setValue, value],
   );
 
   return (
@@ -118,6 +138,7 @@ const AddNewBlockElement: FC<{
           className={'rounded !bg-[#007AE7] text-white m-0 w-[175px]'}
           theme={'dark'}
           onSelect={e => {
+            e.domEvent.stopPropagation();
             handleAddElement(e.key as SubSurveyFlowElement);
           }}
           selectedKeys={[]}

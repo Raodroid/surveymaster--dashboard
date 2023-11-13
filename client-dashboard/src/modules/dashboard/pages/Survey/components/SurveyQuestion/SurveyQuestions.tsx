@@ -2,25 +2,23 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { size } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useField } from 'formik';
-import { Button, Divider, Tag, Tooltip } from 'antd';
+import { Button, Divider, Tooltip } from 'antd';
 import { useDebounce } from '@/utils';
 import { useTranslation } from 'react-i18next';
 
-import { ControlledInput, CopyButton } from '@/modules/common';
+import { CopyButton } from '@/modules/common';
 import { IOptionItem, SubSurveyFlowElementDto } from '@/type';
 import { DragTable } from '@/modules/dashboard';
-import { INPUT_TYPES } from '@input/type';
 import {
-  useSurveyFormContext,
+  GroupSurveyButton,
   questionValueType,
   useCheckSurveyFormMode,
-  DynamicSelect,
-  GroupSurveyButton,
+  useSurveyFormContext,
 } from '@pages/Survey';
 import { DragHandle } from '@/customize-components';
-import { gen_QID_template } from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
 import { Chat, TrashOutlined } from '@/icons';
 import SimpleBar from 'simplebar-react';
+import { gen_QID_template } from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/Body/types/Branch';
 
 const SurveyQuestions: FC<{
   fieldName: string;

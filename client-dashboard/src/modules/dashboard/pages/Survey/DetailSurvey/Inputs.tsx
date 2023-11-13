@@ -1,12 +1,12 @@
 import { Divider } from 'antd';
 import { ControlledInput } from '@/modules/common';
-import { INPUT_TYPES } from '@/modules/common/input/type';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputsWrapper } from './styles';
-import { useGetProjectByIdQuery } from '../../Project/util';
+import { useGetProjectByIdQuery } from '@pages/Project';
 import { useParams } from 'react-router';
 import { ProjectTypes } from 'type';
+import { INPUT_TYPES } from '@input/type';
 
 function Inputs(props: {
   disabled?: boolean;

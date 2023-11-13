@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { projectSurveyParams } from '../DetailSurvey';
 import { SurveyForm } from '@pages/Survey';
 import { ROUTE_PATH } from '@/enums';
-import { ProjectHeader } from '@pages/Project';
 
 function AddSurvey() {
   const params = useParams<projectSurveyParams>();
@@ -34,8 +33,6 @@ function AddSurvey() {
 
   return (
     <>
-      <ProjectHeader routes={routes} />
-
       <AddSurveyWrapper>
         <SurveyForm />
       </AddSurveyWrapper>

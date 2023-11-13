@@ -1,9 +1,8 @@
 import { Route, Routes } from 'react-router';
-import EditSurvey from './Edit';
 import ActionHistory from './History';
 import Remarks from './Remarks';
-import ViewSurvey from './View';
 import { ROUTE_PATH } from '@/enums';
+import { SurveyForm } from '@pages/Survey';
 
 export type projectSurveyParams = {
   projectId: string;
@@ -16,10 +15,10 @@ function DetailSurvey() {
 
   return (
     <Routes>
-      <Route path="/" element={<ViewSurvey />} />
+      <Route path="/" element={<SurveyForm />} />
       <Route
         path={subRoute(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT)}
-        element={<EditSurvey />}
+        element={<SurveyForm />}
       />
       <Route
         path={subRoute(

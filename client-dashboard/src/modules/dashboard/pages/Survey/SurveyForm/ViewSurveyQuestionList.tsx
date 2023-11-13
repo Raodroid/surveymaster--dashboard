@@ -3,9 +3,9 @@ import { ColumnsType } from 'antd/lib/table';
 import { useTranslation } from 'react-i18next';
 import { ISurveyQuestion, ProjectTypes } from '@/type';
 import { useMemo } from 'react';
-import { filterColumn, IRenderColumnCondition } from '../../../../../utils';
-import { useGetProjectByIdQuery } from '../../Project/util';
+import { useGetProjectByIdQuery } from '@pages/Project';
 import { useParams } from 'react-router';
+import { filterColumn, IRenderColumnCondition } from '@/utils';
 
 function ViewSurveyQuestionList(props: { questions?: ISurveyQuestion[] }) {
   const { questions } = props;

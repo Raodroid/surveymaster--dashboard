@@ -17,7 +17,7 @@ import { ROUTE_PATH } from '@/enums';
 import {
   block_qId_template,
   gen_row_column_BranchChoiceType,
-} from '@pages/Survey/components/QuestionBlock/types/Branch/QuestionChoice/util';
+} from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/Body/types/Branch';
 
 const transSurveyFlowElements = (
   input: SurveyFlowElementResponseDto[] = [],
@@ -48,7 +48,6 @@ const transSurveyFlowElements = (
           blockSort_qId: block_qId_template({
             blockSort: logic.blockSort,
             questionVersionId: logic.questionVersionId,
-            optionSort: Number.isInteger(optionSort) ? optionSort : undefined,
           }),
         };
         if (

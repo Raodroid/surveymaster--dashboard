@@ -1,6 +1,8 @@
-import {
+import React, {
   createContext,
+  Dispatch,
   ReactElement,
+  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -43,16 +45,16 @@ import {
 } from '@pages/Survey/SurveyForm/util';
 import HannahCustomSpin from '@components/HannahCustomSpin';
 import { ROUTE_PATH } from '@/enums';
-import { transformSurveyVersion } from '@pages/Survey/components/SurveyPlayGround/util';
 import { Modal, notification } from 'antd';
-import { createQuestionMap } from '@pages/Survey/components/SurveyFormContext/util';
+import {
+  createQuestionMap,
+  transformSurveyVersion,
+} from '@pages/Survey/components/SurveyFormContext/util';
 
 const { confirm } = Modal;
 
 interface ISurveyFormContext {
-  setSurveyFormContext: <T extends keyof ISurveyFormContext>(
-    value: Record<T, ISurveyFormContext[T]>,
-  ) => void;
+  setSurveyFormContext: Dispatch<SetStateAction<ISurveyFormContext>>;
   isExternalProject: boolean;
   actionLoading: boolean;
 
@@ -74,7 +76,10 @@ interface ISurveyFormContext {
   form: {
     initialValues: IAddSurveyFormValues;
     onSubmit: (value: IAddSurveyFormValues) => void;
+  };
+  tree: {
     focusBlock?: SurveyDataTreeNode;
+    expendKeys: React.Key[];
   };
 
   survey: {
@@ -83,15 +88,15 @@ interface ISurveyFormContext {
   };
 
   handleFocusBlock: (value: SurveyDataTreeNode | undefined) => void;
+  handleExpendTree: (expendKeys: React.Key[]) => void;
 }
 
 const intValue: ISurveyFormContext = {
   actionLoading: false,
   isExternalProject: false,
-  setSurveyFormContext: <T extends keyof ISurveyFormContext>(
-    value: Record<T, ISurveyFormContext[T]>,
-  ) => {},
+
   handleFocusBlock: (value: SurveyDataTreeNode | undefined) => {},
+  handleExpendTree: (value: React.Key[]) => {},
   question: {
     setSearchParams<T extends keyof GetListQuestionDto>(
       value: Record<T, GetListQuestionDto[T]>,
@@ -115,7 +120,15 @@ const intValue: ISurveyFormContext = {
     onSubmit(value: IAddSurveyFormValues): void {},
     initialValues: {} as IAddSurveyFormValues,
   },
+  tree: {
+    expendKeys: [],
+  },
   survey: {},
+  setSurveyFormContext: function (
+    value: React.SetStateAction<ISurveyFormContext>,
+  ): void {
+    throw new Error('Function not implemented.');
+  },
 };
 
 export const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
@@ -517,10 +530,17 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
 
   const handleFocusBlock = useCallback(
     (node: SurveyDataTreeNode | undefined) => {
-      setContext(s => ({ ...s, form: { ...s.form, focusBlock: node } }));
+      console.log('here');
+      setContext(s => ({ ...s, tree: { ...s.tree, focusBlock: node } }));
     },
     [],
   );
+  const handleExpendTree = useCallback((expandedKeysValue: React.Key[]) => {
+    setContext(s => ({
+      ...s,
+      tree: { ...s.tree, expendKeys: expandedKeysValue },
+    }));
+  }, []);
 
   useEffect(() => {
     setContext(s => {
@@ -554,9 +574,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     <SurveyFormContext.Provider
       value={{
         ...context,
-        setSurveyFormContext,
+        setSurveyFormContext: setContext,
         actionLoading,
         handleFocusBlock,
+        handleExpendTree,
         form: {
           ...context.form,
           initialValues,

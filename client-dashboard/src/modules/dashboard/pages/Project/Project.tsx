@@ -8,7 +8,7 @@ import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 
 import { ProjectContent, AddProject, EditProject } from '@pages/Project';
 import { Layout } from 'antd';
-import Body from '@pages/SurveyNew/SurveyDetailLayout/Layout';
+import Body from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Layout';
 
 const { Content } = Layout;
 
