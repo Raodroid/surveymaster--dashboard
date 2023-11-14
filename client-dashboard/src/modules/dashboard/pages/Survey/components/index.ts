@@ -4,4 +4,5 @@ export { default as DynamicSelect } from './DynamicSelect/DynamicSelect';
 export { default as GroupSurveyButton } from './GroupSurveyButton/GroupSurveyButton';
 export { default as QuestionBranchIcon } from './QuestionBranchIcon/QuestionBranchIcon';
 export { default as SurveyQuestion } from './SurveyQuestion/SurveyQuestions';
+export { default as AddNewQuestionModal } from './AddNewQuestionModal/AddNewQuestionModal';
 export * from './SurveyFormContext';

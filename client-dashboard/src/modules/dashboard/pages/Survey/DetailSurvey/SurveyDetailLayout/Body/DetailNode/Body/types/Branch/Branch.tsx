@@ -22,8 +22,8 @@ import {
 } from '@pages/Survey/SurveyForm/type';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { PlusOutLinedIcon, TrashOutlined } from '@/icons';
-import SimpleBar from 'simplebar-react';
 import { getQuestionFromAllBlocks } from './QuestionChoice/util';
+import { SimpleBarCustom } from '@/customize-components';
 
 const defaultLogicBranch: EmptyString<ExtraSubBranchLogicDto> = {
   blockSort_qId: '',
@@ -68,7 +68,7 @@ const Branch: FC<QuestionBlockProps> = props => {
       name={fieldName}
       render={({ push, remove }) => (
         <>
-          <SimpleBar className={'h-full overflow-scroll flex-1'}>
+          <SimpleBarCustom>
             <div className={'min-w-[770px]'}>
               {(branchLogics || []).map((list, index) => {
                 const { logicType } = list;
@@ -121,7 +121,7 @@ const Branch: FC<QuestionBlockProps> = props => {
                 );
               })}
             </div>
-          </SimpleBar>
+          </SimpleBarCustom>
           <div>
             {!isViewMode && (
               <Button

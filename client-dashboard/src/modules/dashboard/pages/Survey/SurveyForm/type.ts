@@ -74,8 +74,6 @@ export interface IAddSurveyFormValues
     }
   > {
   createdAt?: string | Date | null;
-  template: SurveyTemplateEnum | string;
-  duplicateSurveyId?: string;
   surveyId: string;
   surveyVersionId?: string;
 }

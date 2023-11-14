@@ -1,17 +1,21 @@
-import React, { FC, useCallback, useMemo } from 'react';
-import { SurveyDataTreeNode, useCheckSurveyFormMode } from '@pages/Survey';
-import { useTranslation } from 'react-i18next';
+import React, { FC, useCallback } from 'react';
 import {
-  getParentNodeFieldName,
-  transformToSurveyDataTreeNode,
-} from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/Aside/util';
+  QuestionBranchIcon,
+  SurveyDataTreeNode,
+  useCheckSurveyFormMode,
+} from '@pages/Survey';
+import { useTranslation } from 'react-i18next';
+
 import { useField } from 'formik';
 import { SubSurveyFlowElement } from '@/type';
-import QuestionBranchIcon from '@pages/Survey/components/QuestionBranchIcon/QuestionBranchIcon';
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
 import { Button, Divider } from 'antd';
 import { DuplicateIcon, TrashOutlined } from '@/icons';
+import {
+  getParentNodeFieldName,
+  transformToSurveyDataTreeNode,
+} from '../../Aside/util';
 
 const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   const { focusBlock } = props;
@@ -25,31 +29,12 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
 
-  const [{ value }, { error, touched }] =
-    useField<SurveyDataTreeNode>(fieldName);
-
-  const childrenLength = useMemo<number>(() => {
-    switch (focusBlock?.type) {
-      case SubSurveyFlowElement.BLOCK:
-        return focusBlock?.surveyQuestions?.length || 0;
-      case SubSurveyFlowElement.BRANCH:
-        return focusBlock?.branchLogics?.length || 0;
-      case SubSurveyFlowElement.EMBEDDED_DATA:
-        return focusBlock?.listEmbeddedData?.length || 0;
-      default:
-        return 0;
-    }
-  }, [focusBlock]);
-
-  const blockError = (() => {
-    const errorChildren = (error as unknown as { children: string })?.children;
-    return typeof errorChildren === 'string' ? errorChildren : '';
-  })();
+  const [{ value }] = useField<SurveyDataTreeNode>(fieldName);
 
   const handleRemoveBlock = useCallback(() => {
     setParentNodeValue(
       transformToSurveyDataTreeNode(
-        parentNodeValue.filter(node => node.fieldName !== fieldName),
+        (parentNodeValue || []).filter(node => node.fieldName !== fieldName),
       ),
     );
   }, [fieldName, parentNodeValue, setParentNodeValue]);

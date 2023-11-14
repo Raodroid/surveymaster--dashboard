@@ -20,6 +20,7 @@ import { ProjectFilter } from '../project-filter/ProjectFilter';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
+import AddSurveyButton from './AddSurveyButton';
 
 interface IProjectHeader {
   routes?: IBreadcrumbItem[];
@@ -76,83 +77,73 @@ const ProjectHeader: FC<IProjectHeader> = props => {
   }, [navigate, pathname, qsParams]);
 
   return (
-    <div>
-      <div className="flex items-center justify-center h-[76px] px-[30px]">
-        <StyledBreadcrumb routes={base} />
-        <div className={'flex-1 flex items-center'}>
-          {showAddProjectBtn && (
+    <>
+      <div>
+        <div className="flex items-center justify-center h-[76px] px-[30px]">
+          <StyledBreadcrumb routes={base} />
+          <div className={'flex-1 flex items-center'}>
+            {showAddProjectBtn && (
+              <Button
+                type={'text'}
+                icon={<PlusIcon />}
+                size={'large'}
+                onClick={() => {
+                  navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD);
+                }}
+              >
+                {t('common.addNewProject')}
+              </Button>
+            )}
+            {showAddSurveyBtn && <AddSurveyButton />}
+          </div>
+          {showEditProjectBtn && (
             <Button
               type={'text'}
-              icon={<PlusIcon />}
+              icon={<PenFilled />}
               size={'large'}
-              onClick={() => {
-                navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD);
-              }}
-            >
-              {t('common.addNewProject')}
-            </Button>
-          )}
-          {showAddSurveyBtn && (
-            <Button
-              type={'text'}
-              icon={<PlusIcon />}
-              size={'large'}
-              onClick={() => {
+              onClick={() =>
                 navigate(
                   generatePath(
-                    ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY,
+                    ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT,
                     {
                       projectId: params?.projectId,
                     },
                   ),
-                );
-              }}
+                )
+              }
             >
-              Add Survey
+              {t('common.editProject')}
             </Button>
           )}
-        </div>
-        {showEditProjectBtn && (
-          <Button
-            type={'text'}
-            icon={<PenFilled />}
-            size={'large'}
-            onClick={() =>
-              navigate(
-                generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT, {
-                  projectId: params?.projectId,
-                }),
-              )
-            }
-          >
-            Edit Project
-          </Button>
-        )}
-        <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+          <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
 
-        {showSearch && (
-          <>
-            <Form className="flex w-[200px]" onFinish={handleSearch}>
-              <Input
-                placeholder={'Search...'}
-                ref={searchRef}
-                value={searchInput}
-                onChange={e => setSearchInput(e.target.value)}
-                allowClear
-                aria-label={'search survey'}
-                prefix={<SearchIcon />}
-                size={'large'}
+          {showSearch && (
+            <>
+              <Form className="flex w-[200px]" onFinish={handleSearch}>
+                <Input
+                  placeholder={'Search...'}
+                  ref={searchRef}
+                  value={searchInput}
+                  onChange={e => setSearchInput(e.target.value)}
+                  allowClear
+                  aria-label={'search survey'}
+                  prefix={<SearchIcon />}
+                  size={'large'}
+                />
+              </Form>
+
+              <Divider
+                type="vertical"
+                style={{ margin: '0 16px', height: 8 }}
               />
-            </Form>
 
-            <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
-
-            <ProjectFilter />
-          </>
-        )}
-        {RightMenu}
+              <ProjectFilter />
+            </>
+          )}
+          {RightMenu}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

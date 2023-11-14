@@ -1,6 +1,7 @@
 import { IProject } from './project';
 import { IQuestionVersion } from '@/type/question-bank';
 import { UserPayload } from '@/redux/user';
+import { SurveyTemplateEnum } from '@pages/Survey';
 
 export enum SubSurveyFlowElement {
   BLOCK = 'Block',
@@ -171,13 +172,15 @@ export interface ISurveyVersionBaseDto {
 export interface CreateSurveyBodyDto {
   projectId: string;
   version?: ISurveyVersionBaseDto;
+  template?: SurveyTemplateEnum | string;
+  duplicateSurveyId?: string;
 }
 
 export interface IPostSurveyVersionBodyDto extends ISurveyVersionBaseDto {
   surveyId: string;
 }
 
-export interface IPutSurveyVersionBodyDto extends ISurveyVersionBaseDto {}
+export type IPutSurveyVersionBodyDto = ISurveyVersionBaseDto;
 
 export interface IPutSurveyVersionBodyDtoExtendId
   extends IPutSurveyVersionBodyDto {

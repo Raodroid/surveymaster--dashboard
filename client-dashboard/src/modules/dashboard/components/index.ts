@@ -5,3 +5,4 @@ export { default as GeneralSectionHeader } from './GeneralSectionHeader';
 export { default as HannahCustomSpin } from './HannahCustomSpin';
 export { default as Navbar } from './Navbar';
 export { default as ProfilesMenu } from './ProfilesMenu';
+export { default as Block } from './Block/Block';

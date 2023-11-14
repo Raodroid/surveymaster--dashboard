@@ -7,8 +7,11 @@ import DetailNode from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/Detai
 import {
   AddNewBlockElement,
   rootSurveyFlowElementFieldName,
+  SurveyDataTreeNode,
 } from '@pages/Survey';
-import SimpleBar from 'simplebar-react';
+import { SimpleBarCustom } from '@/customize-components';
+import { useField } from 'formik';
+import EmptyBlock from '../EmptyBlock/EmptyBlock';
 
 const ASIDE_WIDTH = 427; //px
 
@@ -16,6 +19,13 @@ const ICON_BUTTON_WIDTH = 30;
 
 const Body = () => {
   const [expanded, toggleExpanded] = useToggle();
+  const [{ value }] = useField<Array<SurveyDataTreeNode>>(
+    rootSurveyFlowElementFieldName,
+  );
+
+  if (!value.length) {
+    return <EmptyBlock />;
+  }
   return (
     <div
       className={
@@ -27,10 +37,10 @@ const Body = () => {
         className={'overflow-hidden h-full transition-[width]'}
         style={{ width: expanded ? '100%' : ASIDE_WIDTH }}
       >
-        <SimpleBar className={'h-full overflow-scroll p-6'}>
+        <SimpleBarCustom>
           <SurveyStructureTree />
           <AddNewBlockElement fieldName={rootSurveyFlowElementFieldName} />
-        </SimpleBar>
+        </SimpleBarCustom>
       </div>
 
       <Divider className={'m-0 h-full'} type={'vertical'} />

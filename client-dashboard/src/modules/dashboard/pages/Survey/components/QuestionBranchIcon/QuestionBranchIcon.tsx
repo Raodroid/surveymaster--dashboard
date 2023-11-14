@@ -7,7 +7,7 @@ import {
   QuestionTypeIcon,
 } from '@/icons';
 
-const mapIcon: Record<
+export const mapBlockIcon: Record<
   SubSurveyFlowElement,
   FC<SVGAttributes<HTMLOrSVGElement>>
 > = {
@@ -17,7 +17,7 @@ const mapIcon: Record<
   [SubSurveyFlowElement.EMBEDDED_DATA]: EmbeddedTypeIcon,
 };
 
-const color: Record<SubSurveyFlowElement, string> = {
+export const blockColor: Record<SubSurveyFlowElement, string> = {
   [SubSurveyFlowElement.END_SURVEY]: '#1CA62D',
   [SubSurveyFlowElement.BRANCH]: '#C820FF',
   [SubSurveyFlowElement.BLOCK]: '#2B36BA',
@@ -26,12 +26,12 @@ const color: Record<SubSurveyFlowElement, string> = {
 
 const QuestionBranchIcon: FC<{ type: SubSurveyFlowElement }> = props => {
   const { type } = props;
-  const Icon = mapIcon[type];
+  const Icon = mapBlockIcon[type];
 
   return (
     <div
       className={'w-[24px] h-[24px] rounded flex items-center justify-center'}
-      style={{ background: color[type] }}
+      style={{ background: blockColor[type] }}
     >
       <Icon style={{ color: 'white' }} />
     </div>

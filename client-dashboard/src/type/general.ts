@@ -104,3 +104,8 @@ export interface IMenuItem {
   style?: CSSProperties;
   disabled?: boolean;
 }
+
+export type IModal = {
+  open: boolean;
+  toggleOpen: () => void;
+};

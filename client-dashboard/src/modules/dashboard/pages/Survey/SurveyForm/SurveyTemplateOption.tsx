@@ -12,6 +12,10 @@ import { useParams } from 'react-router';
 import { IAddSurveyFormValues, SurveyTemplateEnum } from './type';
 import { onError, useDebounce } from 'utils';
 import { TemplateOptionWrapper } from './style';
+import { ControlledInput } from '@/modules/common';
+import { INPUT_TYPES } from '@input/type';
+import { SimpleBarCustom } from '@/customize-components';
+import { DEFAULT_THEME_COLOR } from '@/enums';
 
 const columns: ColumnsType<ISurvey> = [
   {
@@ -31,7 +35,8 @@ const columns: ColumnsType<ISurvey> = [
 export const TemplateOption = () => {
   const { t } = useTranslation();
   const [searchTxt, setSearchTxt] = useState<string>('');
-  const { values, setFieldValue } = useFormikContext<IAddSurveyFormValues>();
+  const { values, setFieldValue, errors, touched } =
+    useFormikContext<IAddSurveyFormValues>();
 
   const params = useParams<{ projectId?: string }>();
 
@@ -97,28 +102,33 @@ export const TemplateOption = () => {
     },
     [setFieldValue],
   );
+  const hasError = touched.template && errors.duplicateSurveyId;
 
   return (
     <TemplateOptionWrapper>
-      <Radio.Group
+      <ControlledInput
+        label={t('common.template')}
         onChange={onChange}
-        value={values.template}
-        style={{ padding: '1.5rem', width: '100%' }}
-      >
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Radio value={SurveyTemplateEnum.NEW} className={'full-width'}>
-            {t(`surveyTemplateEnum.${SurveyTemplateEnum.NEW}`)}
-          </Radio>
-          <Radio
-            value={SurveyTemplateEnum.DUPLICATE}
-            className={'full-width child-span-force-full-width duplicate'}
-          >
-            {t(`surveyTemplateEnum.${SurveyTemplateEnum.DUPLICATE}`)}
-          </Radio>
-        </Space>
-      </Radio.Group>
+        options={[
+          {
+            label: t(`surveyTemplateEnum.${SurveyTemplateEnum.NEW}`),
+            value: SurveyTemplateEnum.NEW,
+          },
+          {
+            label: t(`surveyTemplateEnum.${SurveyTemplateEnum.DUPLICATE}`),
+            value: SurveyTemplateEnum.DUPLICATE,
+          },
+        ]}
+        name={'template'}
+        inputType={INPUT_TYPES.SELECT}
+      />
       {values.template === SurveyTemplateEnum.DUPLICATE && (
-        <div className={'survey-dropdown'}>
+        <div
+          className={'survey-dropdown border border-solid'}
+          style={{
+            borderColor: hasError ? DEFAULT_THEME_COLOR.ERROR : '#F3EEF3',
+          }}
+        >
           <Input
             onChange={e => setSearchTxt(e.target.value)}
             style={{ width: '100%' }}
@@ -135,18 +145,20 @@ export const TemplateOption = () => {
             initialLoad={false}
             threshold={10}
           >
-            <div style={{ height: 200, overflow: 'scroll' }}>
-              <Table
-                rowSelection={{
-                  type: 'radio',
-                  ...rowSelection,
-                }}
-                columns={columns}
-                dataSource={surveys}
-                pagination={false}
-                loading={isLoading}
-                rowKey={record => record.id as string}
-              />
+            <div style={{ height: 200 }}>
+              <SimpleBarCustom>
+                <Table
+                  rowSelection={{
+                    type: 'radio',
+                    ...rowSelection,
+                  }}
+                  columns={columns}
+                  dataSource={surveys}
+                  pagination={false}
+                  loading={isLoading}
+                  rowKey={record => record.id as string}
+                />
+              </SimpleBarCustom>
             </div>
           </InfiniteScroll>
         </div>

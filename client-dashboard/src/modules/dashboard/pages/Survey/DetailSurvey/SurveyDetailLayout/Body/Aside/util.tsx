@@ -8,7 +8,7 @@ export const transformToSurveyDataTreeNode = (
   parentBlockSort?: number,
   parentFieldName?: string,
 ): SurveyDataTreeNode[] => {
-  return data.map((i, index) => {
+  return (data || []).map((i, index) => {
     const fieldName = !parentFieldName
       ? `${rootSurveyFlowElementFieldName}[${index}]`
       : `${parentFieldName}.children[${index}]`;

@@ -5,10 +5,10 @@ import { FieldArray, useField } from 'formik';
 import { SubEmbeddedDataDto } from '@/type';
 import { Button, Divider } from 'antd';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
-import { QuestionBlockProps } from '@pages/Survey/components/QuestionBlock/types/type';
 import { PlusOutLinedIcon, TrashOutlined } from '@/icons';
-import ControlledInputHasTopLabel from '@input/input-has-top-label/ControlledInputHasTopLabel';
 import SimpleBar from 'simplebar-react';
+import { QuestionBlockProps } from '../type';
+import { ControlledInputHasTopLabel } from '@/modules/common/input';
 
 const defaultListEmbeddedData: SubEmbeddedDataDto = {
   field: '',

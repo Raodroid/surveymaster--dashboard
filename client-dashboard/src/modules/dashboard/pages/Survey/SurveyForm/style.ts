@@ -83,15 +83,16 @@ export const QuestionListWrapper = styled.div`
 `;
 
 export const TemplateOptionWrapper = styled.div`
+  margin-bottom: 1.5rem;
   .survey-dropdown {
     height: 250px;
     overflow: scroll;
     position: relative;
-    padding: 0 2rem 0 3rem;
+    padding: 1rem;
   }
   .infinity-scroll {
     position: absolute;
-    top: 32px;
-    width: calc(100% - 5rem);
+    top: 50px;
+    width: calc(100% - 1rem);
   }
 `;

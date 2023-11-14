@@ -11,7 +11,7 @@ import React, {
 } from 'react';
 import { onError, useToggle } from '@/utils';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
-import { QuestionBankService, SurveyService, UploadService } from '@/services';
+import { QuestionBankService, SurveyService } from '@/services';
 import {
   CreateSurveyBodyDto,
   GetListQuestionDto,
@@ -36,7 +36,6 @@ import { useGetProjectByIdQuery } from '@pages/Project/util';
 import {
   IAddSurveyFormValues,
   SurveyDataTreeNode,
-  SurveyTemplateEnum,
 } from '@pages/Survey/SurveyForm/type';
 import {
   isSurveyFlowChange,
@@ -136,7 +135,7 @@ export const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
 const SurveyFormProvider = (props: { children?: ReactElement }) => {
   const [context, setContext] = useState<ISurveyFormContext>(intValue);
 
-  const { isLoading, fetchNextPage } = useInfiniteQuery(
+  const { isFetching, fetchNextPage } = useInfiniteQuery(
     ['getQuestionList', context.question.searchParams],
     ({ pageParam = context.question.searchParams }) => {
       return QuestionBankService.getQuestions({
@@ -251,38 +250,38 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     },
   );
 
-  const addSurveyMutation = useMutation(
-    (data: CreateSurveyBodyDto) => {
-      return SurveyService.createSurvey(data);
-    },
-    {
-      onSuccess: async res => {
-        const newVersion = res.data.versions[0];
-        const fileType = 'application/octet-stream';
-
-        if (excelUploadFile) {
-          const file = excelUploadFile as Blob;
-          const res = await SurveyService.getSignedUrl({
-            filename: file['name'] as string,
-            surveyVersionId: newVersion.id,
-            fileType: fileType,
-          });
-          const { data } = res;
-          await UploadService.putWithFormFileAsync(data.url, file, fileType);
-          // await mutationUploadExcelFile.mutateAsync(newVersion.id);
-        }
-        await onSuccess();
-
-        navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
-            projectId: params.projectId,
-            surveyId: newVersion.surveyId,
-          }) + `?version=${newVersion.displayId}`,
-        );
-      },
-      onError,
-    },
-  );
+  // const addSurveyMutation = useMutation(
+  //   (data: CreateSurveyBodyDto) => {
+  //     return SurveyService.createSurvey(data);
+  //   },
+  //   {
+  //     onSuccess: async res => {
+  //       const newVersion = res.data.versions[0];
+  //       const fileType = 'application/octet-stream';
+  //
+  //       if (excelUploadFile) {
+  //         const file = excelUploadFile as Blob;
+  //         const res = await SurveyService.getSignedUrl({
+  //           filename: file['name'] as string,
+  //           surveyVersionId: newVersion.id,
+  //           fileType: fileType,
+  //         });
+  //         const { data } = res;
+  //         await UploadService.putWithFormFileAsync(data.url, file, fileType);
+  //         // await mutationUploadExcelFile.mutateAsync(newVersion.id);
+  //       }
+  //       await onSuccess();
+  //
+  //       navigate(
+  //         generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
+  //           projectId: params.projectId,
+  //           surveyId: newVersion.surveyId,
+  //         }) + `?version=${newVersion.displayId}`,
+  //       );
+  //     },
+  //     onError,
+  //   },
+  // );
 
   const addSurveyVersionMutation = useMutation(
     (data: IPostSurveyVersionBodyDto) => {
@@ -345,7 +344,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   const actionLoading =
     mutationUploadExcelFile.isLoading ||
     duplicateSurveyMutation.isLoading ||
-    addSurveyMutation.isLoading ||
+    // addSurveyMutation.isLoading ||
     updateSurveyMutation.isLoading ||
     addSurveyVersionMutation.isLoading;
 
@@ -426,16 +425,16 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           //   });
           //   return;
           // }
-          await addSurveyMutation.mutateAsync({
-            projectId,
-            version: {
-              name: values.version?.name,
-              remark: values.version?.remark,
-              surveyFlowElements: transformSurveyFlowValues,
-              status: SurveyVersionStatus.COMPLETED,
-            },
-          });
-          return;
+          // await addSurveyMutation.mutateAsync({
+          //   projectId,
+          //   version: {
+          //     name: values.version?.name,
+          //     remark: values.version?.remark,
+          //     surveyFlowElements: transformSurveyFlowValues,
+          //     status: SurveyVersionStatus.COMPLETED,
+          //   },
+          // });
+          // return;
         }
         const transformValue: CreateSurveyBodyDto = {
           version: transformSurveyVersion(values),
@@ -472,22 +471,22 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           return;
         }
 
-        if (values.template === SurveyTemplateEnum.DUPLICATE) {
-          await duplicateSurveyMutation.mutateAsync({
-            version: {
-              name: transformValue.version?.name,
-              remark: transformValue.version?.remark,
-            },
-            projectId: params.projectId as string,
-            surveyId: duplicateSurveyId as string,
-          });
-          return;
-        }
-
-        if (values.template === SurveyTemplateEnum.NEW) {
-          await addSurveyMutation.mutateAsync(transformValue);
-          return;
-        }
+        // if (values.template === SurveyTemplateEnum.DUPLICATE) {
+        //   await duplicateSurveyMutation.mutateAsync({
+        //     version: {
+        //       name: transformValue.version?.name,
+        //       remark: transformValue.version?.remark,
+        //     },
+        //     projectId: params.projectId as string,
+        //     surveyId: duplicateSurveyId as string,
+        //   });
+        //   return;
+        // }
+        //
+        // if (values.template === SurveyTemplateEnum.NEW) {
+        //   await addSurveyMutation.mutateAsync(transformValue);
+        //   return;
+        // }
       } finally {
         toggleLoading();
       }
@@ -498,22 +497,14 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
       toggleLoading,
       isExternalProject,
       isEditMode,
-      addSurveyMutation,
-      projectId,
       currentSurveyVersion?.status,
       currentSurveyVersion?.id,
       t,
       addSurveyVersionMutation,
       params.surveyId,
-      params.projectId,
       updateSurveyMutation,
-      duplicateSurveyMutation,
     ],
   );
-
-  const setSurveyFormContext = useCallback(value => {
-    setContext(s => ({ ...s, ...value }));
-  }, []);
 
   const setSearchParams = useCallback(value => {
     setContext(s => ({
@@ -530,7 +521,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
 
   const handleFocusBlock = useCallback(
     (node: SurveyDataTreeNode | undefined) => {
-      console.log('here');
       setContext(s => ({ ...s, tree: { ...s.tree, focusBlock: node } }));
     },
     [],
@@ -586,7 +576,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         question: {
           ...context.question,
           setSearchParams,
-          isFetchingQuestion: isLoading,
+          isFetchingQuestion: isFetching,
         },
         survey: {
           currentSurveyVersion,

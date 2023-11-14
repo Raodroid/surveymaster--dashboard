@@ -77,11 +77,12 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
             {blockError}
           </div>
         )}
-        <div className={'w-full mt-3'}>
-          {record.type === SubSurveyFlowElement.BRANCH && (
+
+        {record.type === SubSurveyFlowElement.BRANCH && (
+          <div className={'w-full mt-3'}>
             <AddNewBlockElement fieldName={fieldName} />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>
   );

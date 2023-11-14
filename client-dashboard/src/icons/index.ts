@@ -34,4 +34,6 @@ export * from './DiagramIcon';
 export * from './FlagIcon';
 export * from './SaveIcon';
 export * from './CopyOutlinedIcon';
+export * from './SingleChoiceCubeIcon';
+export * from './CubeIcon';
 export * from './PlusOutLinedIcon';

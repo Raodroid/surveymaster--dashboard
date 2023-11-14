@@ -276,7 +276,7 @@ export const ADD_QUESTION_FIELDS = Yup.object().shape({
     }),
 });
 
-const SURVEY_FORM_SCHEMA = {
+export const SURVEY_FORM_SCHEMA = {
   name: Yup.string().required(INVALID_FIELDS.REQUIRED),
   remark: Yup.string(),
 };
@@ -508,7 +508,7 @@ export const SURVEY_INTERNAL_FORM_SCHEMA = Yup.object().shape({
       then: Yup.object().shape({
         ...SURVEY_FORM_SCHEMA,
         surveyFlowElements: Yup.array()
-          .min(1)
+          // .min(1)
           .of(
             Yup.object().shape({
               ...QUESTION_BLOCK_VALIDATION,

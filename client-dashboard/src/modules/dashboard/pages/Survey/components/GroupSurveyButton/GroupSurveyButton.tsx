@@ -6,9 +6,9 @@ import { QuestionType } from '@/type';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
 import { useToggle } from '@/utils';
 import { generateRandom } from '@/modules/common/funcs';
-import { GroupSurveyButtonWrapper } from './style';
 import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
 import { PlusOutLinedIcon } from '@/icons';
+import { AddNewQuestionModal } from '@pages/Survey';
 
 export const initNewRowValue: questionValueType = {
   remark: '',
@@ -26,28 +26,18 @@ const GroupSurveyButton = (props: { fieldNameRoot: string }) => {
   const { fieldNameRoot } = props;
 
   const fieldName = `${fieldNameRoot}.surveyQuestions`;
-  const [{ value }, , { setValue }] = useField<questionValueType[]>(fieldName);
 
   const { t } = useTranslation();
   const [openLoadCategoryForm, toggleLoadCategoryForm] = useToggle();
 
-  const handleAddRow = useCallback(() => {
-    setValue([
-      ...value,
-      {
-        ...initNewRowValue,
-        id: generateRandom().toString(),
-        sort: (value.at(-1)?.sort || 0) + 1,
-      },
-    ]);
-  }, [setValue, value]);
+  const [openAddQuestionModal, toggleAddQuestionModal] = useToggle();
 
   return (
-    <GroupSurveyButtonWrapper>
+    <div className={'flex gap-3'}>
       <Button
         type={'primary'}
-        onClick={handleAddRow}
-        className={'info-btn'}
+        onClick={toggleAddQuestionModal}
+        className={'info-btn flex-1'}
         icon={<PlusOutLinedIcon />}
       >
         {t('common.addRow')}
@@ -55,11 +45,16 @@ const GroupSurveyButton = (props: { fieldNameRoot: string }) => {
       <Button
         type={'text'}
         onClick={toggleLoadCategoryForm}
-        className={'info-btn'}
+        className={'info-btn flex-1'}
         icon={<PlusOutLinedIcon />}
       >
         {t('common.addWholeCategory')}
       </Button>
+      <AddNewQuestionModal
+        open={openAddQuestionModal}
+        toggleOpen={toggleAddQuestionModal}
+        fieldName={fieldName}
+      />
       {openLoadCategoryForm && (
         <AddQuestionFormCategoryModal
           open={openLoadCategoryForm}
@@ -67,7 +62,7 @@ const GroupSurveyButton = (props: { fieldNameRoot: string }) => {
           fieldName={fieldName}
         />
       )}
-    </GroupSurveyButtonWrapper>
+    </div>
   );
 };
 export default GroupSurveyButton;
