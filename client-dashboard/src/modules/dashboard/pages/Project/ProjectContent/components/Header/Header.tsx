@@ -140,6 +140,7 @@ const ProjectHeader: FC<IProjectHeader> = props => {
               <ProjectFilter />
             </>
           )}
+          <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
           {RightMenu}
         </div>
       </div>

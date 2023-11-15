@@ -8,7 +8,6 @@ import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 
 import { ProjectContent, AddProject, EditProject } from '@pages/Project';
 import { Layout } from 'antd';
-import Body from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Layout';
 
 const { Content } = Layout;
 
@@ -38,10 +37,7 @@ const Project = () => {
           }
         >
           {canRead && <Route path="/" element={<ProjectContent />} />}
-          <Route
-            path={subRoute(PROJECT.DETAIL_SURVEY.TEST)}
-            element={<Body />}
-          />
+
           {canReadSurveyinal && (
             <Route
               path={subRoute(PROJECT.SURVEY)}

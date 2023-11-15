@@ -40,8 +40,8 @@ const EmptyBlock = () => {
         ...defaultNode,
         type,
         blockSort: 1,
-        fieldName: `${rootSurveyFlowElementFieldName}.children[0]`,
-        key: `${rootSurveyFlowElementFieldName}.children[0]`,
+        fieldName: `${rootSurveyFlowElementFieldName}[0]`,
+        key: `${rootSurveyFlowElementFieldName}[0]`,
       };
 
       setValue([newBlockValue]);

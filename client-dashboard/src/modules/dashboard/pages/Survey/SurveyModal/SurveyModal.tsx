@@ -2,11 +2,7 @@ import React, { FC, useCallback } from 'react';
 import { CreateSurveyBodyDto, IModal, SurveyVersionStatus } from '@/type';
 import { Button, Form, Modal, notification, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
-import {
-  ControlledInput,
-  FormWrapper,
-  SURVEY_INTERNAL_FORM_SCHEMA,
-} from '@/modules/common';
+import { ControlledInput, SURVEY_INTERNAL_FORM_SCHEMA } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
 import { Formik } from 'formik';
 import { TemplateOption } from '@pages/Survey/SurveyForm/SurveyTemplateOption';
@@ -137,12 +133,8 @@ const SurveyModal: FC<IModal> = props => {
           validationSchema={SURVEY_INTERNAL_FORM_SCHEMA}
         >
           {({ handleSubmit }) => (
-            <FormWrapper>
-              <Form
-                layout={'vertical'}
-                onFinish={handleSubmit}
-                className={'sign-in-form'}
-              >
+            <>
+              <Form layout={'vertical'} onFinish={handleSubmit}>
                 <TemplateOption />
                 <ControlledInput
                   inputType={INPUT_TYPES.INPUT}
@@ -163,7 +155,7 @@ const SurveyModal: FC<IModal> = props => {
                   {t('common.createSurvey')}
                 </Button>
               </Form>
-            </FormWrapper>
+            </>
           )}
         </Formik>
       </Spin>

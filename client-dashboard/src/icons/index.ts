@@ -37,3 +37,5 @@ export * from './CopyOutlinedIcon';
 export * from './SingleChoiceCubeIcon';
 export * from './CubeIcon';
 export * from './PlusOutLinedIcon';
+export * from './DetailIcon';
+export * from './PlayIcon';

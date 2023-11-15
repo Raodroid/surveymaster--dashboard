@@ -3,6 +3,7 @@ import {
   QuestionBranchIcon,
   SurveyDataTreeNode,
   useCheckSurveyFormMode,
+  useSurveyFormContext,
 } from '@pages/Survey';
 import { useTranslation } from 'react-i18next';
 
@@ -16,6 +17,7 @@ import {
   getParentNodeFieldName,
   transformToSurveyDataTreeNode,
 } from '../../Aside/util';
+import _uniq from 'lodash/uniq';
 
 const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   const { focusBlock } = props;
@@ -28,6 +30,7 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
 
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
+  const { setSurveyFormContext } = useSurveyFormContext();
 
   const [{ value }] = useField<SurveyDataTreeNode>(fieldName);
 
@@ -37,13 +40,34 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
         (parentNodeValue || []).filter(node => node.fieldName !== fieldName),
       ),
     );
-  }, [fieldName, parentNodeValue, setParentNodeValue]);
+    setSurveyFormContext(oldState => ({
+      ...oldState,
+      tree: {
+        ...oldState.tree,
+        focusBlock: undefined,
+      },
+    }));
+  }, [fieldName, parentNodeValue, setParentNodeValue, setSurveyFormContext]);
 
   const handleDuplicateBlock = useCallback(() => {
+    const parentBlockSort = parentLayerFieldName
+      .match(/(.*)\.children.*$/)?.[1]
+      ?.match(/\[([0-9+])\]$/)?.[1];
+
+    if (parentBlockSort) {
+      setParentNodeValue(
+        transformToSurveyDataTreeNode(
+          [...parentNodeValue, value],
+          Number(parentBlockSort),
+          parentLayerFieldName,
+        ),
+      );
+      return;
+    }
     setParentNodeValue(
       transformToSurveyDataTreeNode([...parentNodeValue, value]),
     );
-  }, [parentNodeValue, setParentNodeValue, value]);
+  }, [parentLayerFieldName, parentNodeValue, setParentNodeValue, value]);
 
   return (
     <div className={'p-6 flex items-center gap-1'}>
