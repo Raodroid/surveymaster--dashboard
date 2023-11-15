@@ -18,6 +18,7 @@ import {
   IOptionItem,
   IPaginationResponse,
   IPostSurveyVersionBodyDto,
+  IProject,
   IPutSurveyVersionBodyDtoExtendId,
   IQuestion,
   IQuestionVersion,
@@ -85,6 +86,9 @@ interface ISurveyFormContext {
     currentSurveyVersion?: ISurveyVersion;
     surveyData?: ISurvey;
   };
+  project: {
+    projectData?: IProject;
+  };
 
   handleFocusBlock: (value: SurveyDataTreeNode | undefined) => void;
   handleExpendTree: (expendKeys: React.Key[]) => void;
@@ -123,6 +127,7 @@ const intValue: ISurveyFormContext = {
     expendKeys: [],
   },
   survey: {},
+  project: {},
   setSurveyFormContext: function (
     value: React.SetStateAction<ISurveyFormContext>,
   ): void {
@@ -581,6 +586,9 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         survey: {
           currentSurveyVersion,
           surveyData,
+        },
+        project: {
+          projectData: project,
         },
       }}
     >

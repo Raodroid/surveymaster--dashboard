@@ -1,4 +1,4 @@
-import React, { FC, Fragment, ReactNode, useCallback, useMemo } from 'react';
+import React, { Fragment, ReactNode, useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import { SurveyBriefDetail, useSurveyFormContext } from '@pages/Survey';
 import { Button, Divider, Modal, notification, Spin } from 'antd';
@@ -16,17 +16,71 @@ import {
   ACTION,
   ActionThreeDropDown,
 } from './SurveyVersionActionThreeDropdown';
-import { ProjectFilter } from '@pages/Project/ProjectContent/components/project-filter/ProjectFilter';
 import { Link } from 'react-router-dom';
 import { Chat, Clock, PenFilled } from '@/icons';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
+import { IBreadcrumbItem } from '@/modules/common';
 
 const { confirm } = Modal;
 
 const ViewModeHeader = () => {
   const params = useParams<{ projectId?: string; surveyId?: string }>();
 
+  const { survey, project } = useSurveyFormContext();
+
+  const routes: IBreadcrumbItem[] = useMemo(
+    () => [
+      {
+        name: project?.projectData?.name || '...',
+        href: generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
+          projectId: params?.projectId,
+        }),
+      },
+      {
+        name: survey.currentSurveyVersion?.name || '...',
+        href: `${generatePath(
+          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
+          {
+            projectId: params?.projectId,
+            surveyId: params.surveyId,
+          },
+        )}?version=${survey.currentSurveyVersion?.id}`,
+      },
+    ],
+    [
+      params?.projectId,
+      params.surveyId,
+      project?.projectData?.name,
+      survey.currentSurveyVersion?.id,
+      survey.currentSurveyVersion?.name,
+    ],
+  );
+
+  return (
+    <>
+      <ProjectHeader RightMenu={<RightMenu />} routes={routes} />
+      <SurveyBriefDetail />
+    </>
+  );
+};
+
+export default ViewModeHeader;
+
+const genLink = (
+  input: string,
+  version?: string,
+  params?: Readonly<Partial<projectSurveyParams>>,
+) => {
+  return `${generatePath(input, {
+    projectId: params?.projectId,
+    surveyId: params?.surveyId,
+  })}?version=${version}`;
+};
+
+const RightMenu = () => {
   const { t } = useTranslation();
+  const qsParams = useParseQueryString<IGetParams & { version?: string }>();
+  const params = useParams<projectSurveyParams>();
   const { survey } = useSurveyFormContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -142,43 +196,6 @@ const ViewModeHeader = () => {
 
   const { handleSelect, selectedRecord } =
     useSelectTableRecord<ISurveyVersion>(tableActions);
-  return (
-    <>
-      <ProjectHeader RightMenu={<RightMenu />} />
-      <Spin
-        spinning={
-          isExporting || deleteMutation.isLoading || completeMutation.isLoading
-        }
-      >
-        {survey.currentSurveyVersion && (
-          <ActionThreeDropDown
-            record={survey.currentSurveyVersion}
-            handleSelect={handleSelect}
-          />
-        )}
-      </Spin>
-      <SurveyBriefDetail />
-    </>
-  );
-};
-
-export default ViewModeHeader;
-
-const genLink = (
-  input: string,
-  version?: string,
-  params?: Readonly<Partial<projectSurveyParams>>,
-) => {
-  return `${generatePath(input, {
-    projectId: params?.projectId,
-    surveyId: params?.surveyId,
-  })}?version=${version}`;
-};
-
-const RightMenu = () => {
-  const { t } = useTranslation();
-  const qsParams = useParseQueryString<IGetParams & { version?: string }>();
-  const params = useParams<projectSurveyParams>();
 
   const items = useMemo<{ icon: ReactNode; label: string; href: string }[]>(
     () => [
@@ -223,6 +240,20 @@ const RightMenu = () => {
           {t('common.remarks')}
         </span>
       </Button>
+      {survey.currentSurveyVersion && (
+        <Spin
+          spinning={
+            isExporting ||
+            deleteMutation.isLoading ||
+            completeMutation.isLoading
+          }
+        >
+          <ActionThreeDropDown
+            record={survey.currentSurveyVersion}
+            handleSelect={handleSelect}
+          />
+        </Spin>
+      )}
     </div>
   );
 };

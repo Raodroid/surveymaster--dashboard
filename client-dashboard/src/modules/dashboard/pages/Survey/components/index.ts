@@ -7,4 +7,5 @@ export { default as SurveyQuestion } from './SurveyQuestion/SurveyQuestions';
 export { default as AddNewQuestionModal } from './AddNewQuestionModal/AddNewQuestionModal';
 export { default as SurveyDetailDrawer } from './SurveyDetailDrawer/SurveyDetailDrawer';
 export { default as SurveyBriefDetail } from './SurveyBriefDetail/SurveyBriefDetail';
+export { default as UpdateQuestionVersion } from './UpdateQuestionVersion/UpdateQuestionVersion';
 export * from './SurveyFormContext';

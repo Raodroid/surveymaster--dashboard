@@ -52,7 +52,7 @@ const CreateEditSurveyHeader = () => {
               projectId: params?.projectId,
               surveyId: params?.surveyId,
             },
-          )}?version=${survey.currentSurveyVersion?.id}`}
+          )}?version=${survey.currentSurveyVersion?.displayId}`}
         >
           <PlayIcon />
           <span className={'!text-[1rem] font-semibold'}>

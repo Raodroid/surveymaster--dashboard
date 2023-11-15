@@ -23,6 +23,7 @@ const MainMenu = () => {
   const { canRead: canReadQuestion } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTION,
   );
+
   const { canRead: canReadProject } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.PROJECT,
   );

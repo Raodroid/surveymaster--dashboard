@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { size } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useField } from 'formik';
@@ -6,17 +6,20 @@ import { Button, Divider, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { CopyButton } from '@/modules/common';
-import { SubSurveyFlowElementDto } from '@/type';
-import { DragTable } from '@/modules/dashboard';
+import { IQuestionVersion, SubSurveyFlowElementDto } from '@/type';
+import { DragTable, RoundedTag } from '@/modules/dashboard';
 import {
   GroupSurveyButton,
   questionValueType,
+  UpdateQuestionVersion,
   useCheckSurveyFormMode,
+  useSurveyFormContext,
 } from '@pages/Survey';
 import { DragHandle } from '@/customize-components';
-import { Chat, TrashOutlined } from '@/icons';
+import { Chat, Clock, TrashOutlined } from '@/icons';
 import SimpleBar from 'simplebar-react';
 import { gen_QID_template } from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/Body/types/Branch';
+import { useToggle } from '@/utils';
 
 const QuestionTable: FC<{
   fieldName: string;
@@ -28,23 +31,62 @@ const QuestionTable: FC<{
     `${fieldName}.surveyQuestions`,
   );
   const [{ value: blockData }] = useField<SubSurveyFlowElementDto>(fieldName);
+
+  const { question } = useSurveyFormContext();
+
   const removeQuestion = useCallback(
     (questionIndex: number) => {
       setValue(value.filter((i, idx) => idx !== questionIndex));
     },
     [setValue, value],
   );
+  const [selectedQuestion, setSelectedQuestion] = useState<{
+    index: number | null;
+    data: IQuestionVersion | null;
+  }>({ index: null, data: null });
+
+  const handleSelectNewQuestionVersion = useCallback(
+    newQuestionVersionId => {
+      const questionId = selectedQuestion.data?.questionId;
+      if (!questionId) return;
+
+      setValue(
+        value.map((i, idx) => {
+          if (idx !== selectedQuestion.index) return i;
+
+          const chooseVersionQuestion = question.questionIdMap[
+            questionId
+          ]?.question?.versions.find(ver => ver.id === newQuestionVersionId);
+
+          if (!chooseVersionQuestion) return i;
+
+          return {
+            ...i,
+            type: chooseVersionQuestion?.type as string,
+            questionTitle: chooseVersionQuestion?.title as string,
+            id: questionId,
+            questionVersionId: newQuestionVersionId,
+            createdAt: chooseVersionQuestion.createdAt,
+          };
+        }),
+      );
+    },
+    [
+      question.questionIdMap,
+      selectedQuestion.data?.questionId,
+      selectedQuestion.index,
+      setValue,
+      value,
+    ],
+  );
+
+  const [openUpdateVersionQuestionModal, toggleUpdateVersionQuestionModal] =
+    useToggle();
 
   const { isViewMode } = useCheckSurveyFormMode();
 
-  const columns: ColumnsType<questionValueType> = useMemo(
-    () => [
-      {
-        dataIndex: 'order',
-        render: () => {
-          return <DragHandle />;
-        },
-      },
+  const columns: ColumnsType<questionValueType> = useMemo(() => {
+    let base = [
       {
         dataIndex: 'order',
         render: (value, record, index) => {
@@ -101,20 +143,6 @@ const QuestionTable: FC<{
       //     );
       //   },
       // },
-      // {
-      //   title: '',
-      //   dataIndex: 'remark',
-      //   render: (value, record, questionIndex) => (
-      //     <div className={'mt-[26px]'}>
-      //       <ControlledInput
-      //         className={isViewMode ? 'view-mode' : ''}
-      //         style={{ width: '100%' }}
-      //         inputType={INPUT_TYPES.INPUT}
-      //         name={`${fieldName}.surveyQuestions[${questionIndex}].remark`}
-      //       />
-      //     </div>
-      //   ),
-      // },
       {
         title: '',
         dataIndex: 'category',
@@ -134,36 +162,56 @@ const QuestionTable: FC<{
         dataIndex: 'type',
         width: 150,
         render: value => {
-          return value ? (
-            <span
-              className={
-                'border border-info rounded-[1rem] font-semibold text-info text-[12px] py-[4px] px-[8px]'
-              }
-            >
-              {t(`questionType.${value}`)}
-            </span>
-          ) : (
-            ''
-          );
+          return value ? <RoundedTag title={t(`questionType.${value}`)} /> : '';
         },
       },
       {
         title: '',
         dataIndex: 'action',
         width: 40,
-        render: (value, record, index) =>
+        render: (value, record: questionValueType, index) =>
           isViewMode ? null : (
-            <Button
-              type={'text'}
-              size={'small'}
-              icon={<TrashOutlined />}
-              onClick={() => removeQuestion(index)}
-            />
+            <div className={'flex items-center gap-2'}>
+              <Button
+                type={'text'}
+                size={'small'}
+                icon={<TrashOutlined />}
+                onClick={() => removeQuestion(index)}
+              />
+              <Button
+                type={'text'}
+                size={'small'}
+                icon={<Clock />}
+                onClick={() => {
+                  const questionVersion = record?.questionVersion;
+                  if (!questionVersion) return;
+                  setSelectedQuestion({ index, data: questionVersion });
+                  toggleUpdateVersionQuestionModal();
+                }}
+              />
+            </div>
           ),
       },
-    ],
-    [t, blockData?.blockSort, isViewMode, removeQuestion],
-  );
+    ];
+    if (!isViewMode) {
+      base = [
+        {
+          dataIndex: 'order',
+          render: () => {
+            return <DragHandle />;
+          },
+        },
+        ...base,
+      ];
+    }
+    return base;
+  }, [
+    isViewMode,
+    blockData?.blockSort,
+    t,
+    removeQuestion,
+    toggleUpdateVersionQuestionModal,
+  ]);
 
   return (
     <>
@@ -177,6 +225,12 @@ const QuestionTable: FC<{
           setDataTable={setValue}
         />
       </SimpleBar>
+      <UpdateQuestionVersion
+        open={openUpdateVersionQuestionModal}
+        toggleOpen={toggleUpdateVersionQuestionModal}
+        questionVersion={selectedQuestion?.data}
+        handleSelectNewQuestionVersion={handleSelectNewQuestionVersion}
+      />
       {!isViewMode && <GroupSurveyButton fieldNameRoot={fieldName} />}
     </>
   );

@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "questionChangeLog": "Question Change Log",
     "previewSurvey": "Preview Survey",
     "surveyChangeLog": "Survey Change Log",
     "surveyId": "Survey ID",
