@@ -1,4 +1,4 @@
-import { Modal, notification, Table, Tooltip } from 'antd';
+import { Divider, Modal, notification, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { ExternalIcon, InternalIcon, PenFilled, TrashOutlined } from 'icons';
 import { Refresh } from 'icons/Refresh';
@@ -11,15 +11,15 @@ import { generatePath } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import {
   ActionThreeDropDownType,
-  GetListQuestionDto,
   IGetParams,
   IMenuItem,
   IProject,
+  ProjectQueryParam,
   ProjectTypes,
   QsParams,
 } from 'type';
 import { useHandleNavigate, useParseQueryString } from '@/hooks';
-import { onError } from '@/utils';
+import { objectKeys, onError } from '@/utils';
 import { HannahCustomSpin, StyledPagination } from '@/modules/dashboard';
 import { ProjectTableWrapper } from '../styles';
 import SimpleBar from 'simplebar-react';
@@ -38,8 +38,8 @@ const initParams: IGetParams = {
   isDeleted: false,
 };
 
-const getProjects = (params: GetListQuestionDto) => {
-  const newParams: GetListQuestionDto = {
+const getProjects = (params: ProjectQueryParam) => {
+  const newParams: ProjectQueryParam = {
     ...params,
   };
   for (const key in newParams) {
@@ -54,7 +54,9 @@ function ProjectTable() {
   const wrapperRef = useRef<any>();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const qsParams = useParseQueryString<QsParams>();
+  const qsParams = useParseQueryString<
+    QsParams & { type: ProjectTypes | 'All' }
+  >();
   const queryClient = useQueryClient();
 
   const [projectId, setProjectId] = useState('');
@@ -64,16 +66,25 @@ function ProjectTable() {
   const handleNavigate = useHandleNavigate(initParams);
 
   const formatQsParams = useMemo(() => {
-    const formatQs: IGetParams = {
+    const formatQs: ProjectQueryParam = {
       q: qsParams.q || initParams.q,
       page: Number(qsParams.page) || initParams.page,
       take: Number(qsParams.take) || initParams.take,
       isDeleted: qsParams.isDeleted === 'true',
-      createdFrom: moment(qsParams.createdFrom)?.startOf('day')?.format(),
-      createdTo: moment(qsParams.createdTo)?.endOf('day')?.format(),
+      types:
+        qsParams.type === 'All'
+          ? objectKeys(ProjectTypes).map(key => ProjectTypes[key])
+          : [qsParams.type],
     };
-    if (!qsParams.createdFrom) delete formatQs.createdFrom;
-    if (!qsParams.createdTo) delete formatQs.createdTo;
+
+    if (qsParams.createdFrom) {
+      formatQs.createdFrom = moment(qsParams.createdFrom)
+        ?.startOf('day')
+        ?.format();
+    }
+    if (qsParams.createdTo) {
+      formatQs.createdTo = moment(qsParams.createdTo)?.endOf('day')?.format();
+    }
     return formatQs;
   }, [qsParams]);
 
@@ -269,9 +280,7 @@ function ProjectTable() {
       <ProjectTableWrapper ref={wrapperRef} centerLastChild>
         <HannahCustomSpin
           parentRef={wrapperRef}
-          spinning={
-            getProjectListQuery.isLoading || getProjectListQuery.isFetching
-          }
+          spinning={getProjectListQuery.isLoading}
         />
         <SimpleBar className={'ProjectTableWrapper__body'}>
           <Table
@@ -283,14 +292,20 @@ function ProjectTable() {
             scroll={{ x: 800 }}
           />
         </SimpleBar>
+        <Divider className={'m-0'} />
         <StyledPagination
           onChange={(page, pageSize) => {
             handleNavigate({ page, take: pageSize });
           }}
           showSizeChanger
           pageSize={formatQsParams.take}
-          total={total}
+          total={50 || total}
           current={formatQsParams.page}
+          showTotal={total => (
+            <span>
+              Total: <span className={'font-semibold'}>{total}</span>
+            </span>
+          )}
         />
       </ProjectTableWrapper>
     </>

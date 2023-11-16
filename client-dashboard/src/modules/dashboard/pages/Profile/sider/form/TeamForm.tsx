@@ -51,7 +51,7 @@ function TeamForm() {
             <Form
               layout="vertical"
               onFinish={handleFinish}
-              className="flex-column"
+              className="flex flex-col"
             >
               <div className="title">{t('common.inviteNewMember')}</div>
               <div className="input-wrapper">
@@ -59,7 +59,7 @@ function TeamForm() {
                   <InviteMemberInputs edit={false} />
                 </SimpleBar>
               </div>
-              <div className="flex-center footer flex-column">
+              <div className="flex-center footer flex flex-col">
                 <div className="flex">
                   <Button
                     type="primary"

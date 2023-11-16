@@ -12,7 +12,7 @@ function Remark(props: RemarkProps) {
   const { index } = props;
   const { t } = useTranslation();
   return (
-    <RemarkWrapper className="flex-column">
+    <RemarkWrapper className="flex flex-col">
       <ControlledInput
         isFastField
         name={`questions[${index}].questionVersion.title`}

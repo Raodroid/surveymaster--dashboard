@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Navigate, Outlet, Route, Routes } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { ProjectContentWrapper } from './styles';
-import { AddSurvey, DetailSurvey, SurveyManagement } from '@pages/Survey';
+import { DetailSurvey, SurveyManagement } from '@pages/Survey';
 import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 
 import { ProjectContent, AddProject, EditProject } from '@pages/Project';
@@ -42,12 +42,6 @@ const Project = () => {
             <Route
               path={subRoute(PROJECT.SURVEY)}
               element={<SurveyManagement />}
-            />
-          )}
-          {canReadSurveyinal && (
-            <Route
-              path={subRoute(PROJECT.ADD_NEW_SURVEY)}
-              element={<AddSurvey />}
             />
           )}
           <Route

@@ -337,7 +337,7 @@ function TeamContent() {
     <TeamContentStyled>
       <div className="cell padding-24 name title flex-a-center">AMiLi</div>
 
-      <div className="cell flex-column" style={{ overflow: 'hidden' }}>
+      <div className="cell flex flex-col" style={{ overflow: 'hidden' }}>
         {canRead && (
           <>
             <div className="search padding-24 flex-center">

@@ -2,7 +2,7 @@ import React, { Fragment, ReactNode, useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import { SurveyBriefDetail, useSurveyFormContext } from '@pages/Survey';
 import { Button, Divider, Modal, notification, Spin } from 'antd';
-import { IGetParams, ISurveyVersion } from '@/type';
+import { IGetParams, IOptionItem, ISurveyVersion } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
@@ -56,10 +56,32 @@ const ViewModeHeader = () => {
     ],
   );
 
+  const { t } = useTranslation();
+
+  const surveyRoutes = useMemo<IOptionItem[]>(
+    () => [
+      {
+        label: t('common.surveyId'),
+        value: survey.currentSurveyVersion?.displayId || '',
+      },
+      {
+        label: t('common.creationDate'),
+        value: moment(survey.currentSurveyVersion?.createdAt).format(
+          MOMENT_FORMAT.DOB,
+        ),
+      },
+    ],
+    [
+      survey.currentSurveyVersion?.createdAt,
+      survey.currentSurveyVersion?.displayId,
+      t,
+    ],
+  );
+
   return (
     <>
       <ProjectHeader RightMenu={<RightMenu />} routes={routes} />
-      <SurveyBriefDetail />
+      <SurveyBriefDetail routes={surveyRoutes} />
     </>
   );
 };

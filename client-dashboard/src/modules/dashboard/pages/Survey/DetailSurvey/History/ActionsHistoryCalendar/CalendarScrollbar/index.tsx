@@ -1,15 +1,13 @@
-import { Input } from 'antd';
-import { ControlledInput } from '@/modules/common';
-import { INPUT_TYPES } from '@/modules/common/input/type';
 import moment from 'moment';
 import { memo, useMemo } from 'react';
-import { useGetAllActionsHistory } from '../../../utils';
-import { CalendarScrollbarWrapper, MonthsWrapper } from '../styles';
+import { useGetAllActionsHistory } from '@pages/Survey';
 import Month from './Month';
 import Thumb from './Thumb';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import { useParams } from 'react-router';
 import { projectSurveyParams } from '../../../DetailSurvey';
+import { useTranslation } from 'react-i18next';
+import { MOMENT_FORMAT } from '@/enums';
 
 export enum ACTIONS_HISTORY_ID {
   MONTHS = 'actions-history-months',
@@ -19,6 +17,7 @@ export enum ACTIONS_HISTORY_ID {
 
 function CalendarScrollbar() {
   const { histories } = useGetAllActionsHistory();
+  const { t } = useTranslation();
   const params = useParams<projectSurveyParams>();
   const { surveyData } = useGetSurveyById(params.surveyId);
 
@@ -45,38 +44,39 @@ function CalendarScrollbar() {
   }, [histories]);
 
   return (
-    <CalendarScrollbarWrapper>
-      <div className="height-100 flex-column calendar-wrapper">
-        <div className="input-wrapper flex-center">
-          <Input disabled name="today" value="Today" />
-        </div>
-        <MonthsWrapper id={ACTIONS_HISTORY_ID.MONTHS_WRAPPER}>
+    <div className={'w-[80px] overflow-hidden'}>
+      <div className="h-full flex flex-col gap-3">
+        <span className="font-semibold">{t('common.today')}</span>
+
+        <div
+          className={'relative overflow-hidden flex-1 w-[50px]'}
+          id={ACTIONS_HISTORY_ID.MONTHS_WRAPPER}
+        >
           {surveyData ? <Thumb /> : null}
 
-          <div className="months" id={ACTIONS_HISTORY_ID.MONTHS}>
+          <div className="relative" id={ACTIONS_HISTORY_ID.MONTHS}>
             {months.map((month: string, index: number) => {
               const props: {
-                key: string;
                 month: string;
                 renderLines?: boolean;
               } = {
-                key: month + index,
                 month: moment(month, 'MMM.YYYY').format('MMM'),
                 renderLines: true,
               };
               if (!monthsHaveData.some(elm => elm === month))
                 delete props?.renderLines;
-              return <Month {...props} />;
+              return <Month key={month + index} {...props} />;
             })}
           </div>
-        </MonthsWrapper>
-        <ControlledInput
-          disabled
-          name="createdAt"
-          inputType={INPUT_TYPES.INPUT}
-        />
+        </div>
+
+        <span className="font-semibold">
+          {surveyData.createdAt
+            ? moment(surveyData.createdAt).format(MOMENT_FORMAT.DOB)
+            : ''}
+        </span>
       </div>
-    </CalendarScrollbarWrapper>
+    </div>
   );
 }
 

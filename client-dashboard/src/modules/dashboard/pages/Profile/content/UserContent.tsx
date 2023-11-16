@@ -68,7 +68,7 @@ function UserContent() {
         <Divider />
 
         <div className="notifications padding-24 flex-j-between flex-a-center custom-ant-hover">
-          <div className="wrapper flex-column">
+          <div className="wrapper flex flex-col">
             <span className="title">{t('common.notifications')}</span>
             <p>
               {t('common.sendNotifications')}{' '}
@@ -89,7 +89,7 @@ function UserContent() {
 
       <div className="cell others">
         <div className="padding-24 flex-j-between">
-          <div className="wrapper flex-column">
+          <div className="wrapper flex flex-col">
             <span className="title">{t('common.signOutAllOtherSessions')}</span>
             <p>{t('sign')}</p>
           </div>

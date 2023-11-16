@@ -35,23 +35,6 @@ export const ActionsHistoryContentWrapper = styled.div`
     overflow: hidden;
     grid-area: actionsHistory;
   }
-
-  .divider {
-    grid-area: divider;
-    height: 100%;
-    width: 1px;
-    margin: auto;
-    margin-top: 0;
-  }
-
-  .survey-info {
-    padding-top: 28px;
-  }
-`;
-
-export const ActionsHistoryCalendarWrapper = styled.div`
-  border-top: 1px solid #f3eef3;
-  padding-top: 28px;
 `;
 
 export const QuestionListWrapper = styled.div`

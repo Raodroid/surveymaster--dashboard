@@ -112,15 +112,14 @@ export const useCheckSurveyFormMode = () => {
     end: true,
     caseSensitive: true,
   });
-  const createSurveyRouteMath = useMatch({
-    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ADD_NEW_SURVEY,
+  const viewSurveyRouteMath = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
     end: true,
     caseSensitive: true,
   });
 
   const isEditMode = !!editSurveyRouteMath;
-  const isCreateMode = !!createSurveyRouteMath;
+  const isViewMode = !!viewSurveyRouteMath;
 
-  const isViewMode = !(isEditMode || isCreateMode);
-  return { isViewMode, isEditMode, isCreateMode };
+  return { isViewMode, isEditMode };
 };

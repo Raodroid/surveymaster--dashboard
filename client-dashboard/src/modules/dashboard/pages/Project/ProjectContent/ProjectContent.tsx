@@ -23,7 +23,7 @@ const ProjectContent = () => {
   const { canCreate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
 
   return (
-    <div className="w-full h-full flex-column">
+    <div className="w-full h-full flex flex-col">
       <ProjectHeader showSearch showAddProjectBtn={canCreate} />
       <Radio.Group
         onChange={e =>

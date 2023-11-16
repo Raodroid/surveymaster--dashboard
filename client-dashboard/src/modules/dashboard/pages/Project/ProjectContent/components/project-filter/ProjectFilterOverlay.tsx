@@ -132,7 +132,7 @@ export function ProjectFilterOverlay(props: IFilter) {
                 </div>
               </div>
               <Divider />
-              <div className="flex-column filters">
+              <div className="flex flex-col filters">
                 <ControlledInput
                   name="isDeleted"
                   inputType={INPUT_TYPES.CHECKBOX}

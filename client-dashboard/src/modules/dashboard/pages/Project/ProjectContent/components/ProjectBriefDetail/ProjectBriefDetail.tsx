@@ -6,7 +6,7 @@ import moment from 'moment';
 import { MOMENT_FORMAT } from '@/enums';
 import { Button, Divider, Tooltip } from 'antd';
 import { IOptionItem } from '@/type';
-import { CopyOutlined } from '@ant-design/icons';
+import { CopyOutlinedIcon } from '@/icons';
 
 const Item = (input: IOptionItem) => {
   const { label, value } = input;
@@ -47,7 +47,8 @@ const ProjectBriefDetail = () => {
     [
       project.createdAt,
       project.displayId,
-      project.personInCharge,
+      project.personResponsible?.firstName,
+      project.personResponsible?.lastName,
       project.type,
       t,
     ],
@@ -70,7 +71,11 @@ const ProjectBriefDetail = () => {
         })}
         <Item label={t('common.description')} value={''} />
         <Tooltip title={project.description}>
-          <Button icon={<CopyOutlined />} type={'text'} className={'info-btn'}>
+          <Button
+            icon={<CopyOutlinedIcon />}
+            type={'text'}
+            className={'info-btn font-semibold'}
+          >
             {t('common.view')}
           </Button>
         </Tooltip>

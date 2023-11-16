@@ -1,4 +1,5 @@
 import { UserPayload } from '../redux/user';
+import { ProjectTypes } from '@/type/project';
 export interface UserUpdatedDto {
   // roles: number[]; Don't allow user update their role by this api
   firstName: string;
@@ -347,6 +348,16 @@ export interface IGetParams {
 
 export type GetListQuestionDto = IGetParams & {
   types?: QuestionType[];
+  hasLatestCompletedVersion?: boolean;
+  body?: {
+    masterVariableNames?: string[];
+    categoryIds?: string[];
+    subCategoryIds?: string[];
+  };
+};
+
+export type ProjectQueryParam = IGetParams & {
+  types?: ProjectTypes[];
   hasLatestCompletedVersion?: boolean;
   body?: {
     masterVariableNames?: string[];

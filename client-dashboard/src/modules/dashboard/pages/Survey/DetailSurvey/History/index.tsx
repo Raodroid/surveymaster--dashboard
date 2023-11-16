@@ -11,12 +11,14 @@ import SimpleBar from 'simplebar-react';
 import { projectSurveyParams } from '../DetailSurvey';
 import ActionsHistory from './ActionsHistory';
 import { ActionsHistoryContentWrapper, ActionsHistoryWrapper } from './styles';
-import { ISurvey, ProjectTypes } from '@/type';
+import { IOptionItem, ISurvey, ProjectTypes } from '@/type';
 import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '@/modules/common/input/type';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import ProjectHeader from '@pages/Project/ProjectContent/components/Header/Header';
-import { ROUTE_PATH } from '@/enums';
+import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
+import { SurveyBriefDetail } from '@pages/Survey';
+import { SimpleBarCustom } from '@/customize-components';
 
 interface IActionHistory extends ISurvey {
   displaySurveyId: string; // init value for Inputs component
@@ -49,7 +51,7 @@ function ActionHistory() {
         ),
       },
       {
-        name: t('common.actionsHistory'),
+        name: t('common.showChangeLog'),
         href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.HISTORY,
       },
     ],
@@ -71,49 +73,42 @@ function ActionHistory() {
     };
   }, [surveyData]);
 
+  const surveyRoutes = useMemo<IOptionItem[]>(
+    () => [
+      {
+        label: t('common.surveyId'),
+        value: surveyData?.displayId || '',
+      },
+      {
+        label: t('common.creationDate'),
+        value: moment(surveyData?.createdAt).format(MOMENT_FORMAT.DOB),
+      },
+    ],
+    [surveyData?.createdAt, surveyData?.displayId, t],
+  );
+
   const handleSubmit = () => {};
 
   return (
     <>
       <ProjectHeader routes={routes} />
+      <SurveyBriefDetail routes={surveyRoutes} />
+      <Divider className={'m-0'} />
+
       <ActionsHistoryWrapper>
-        <CustomSpinSuspense spinning={isLoading}>
-          <Formik
-            initialValues={initialValue}
-            onSubmit={handleSubmit}
-            enableReinitialize={true}
-          >
-            {({ handleSubmit: handleFinish }) => (
-              <Form
-                layout="vertical"
-                className="height-100"
-                onFinish={handleFinish}
-              >
-                <SimpleBar style={{ height: '100%' }}>
-                  <ActionsHistoryContentWrapper>
-                    <ActionsHistory />
-                    <Divider type="vertical" className="divider" />
-                    <div className={'survey-info'}>
-                      <div className="title">
-                        {project.type === ProjectTypes.EXTERNAL
-                          ? t('common.external')
-                          : null}{' '}
-                        {t('common.surveyParameters')}:
-                      </div>
-                      <ControlledInput
-                        name="displaySurveyId"
-                        label="ID"
-                        type="text"
-                        className="surveyId view-mode"
-                        inputType={INPUT_TYPES.INPUT}
-                      />
-                    </div>
-                  </ActionsHistoryContentWrapper>
-                </SimpleBar>
-              </Form>
-            )}
-          </Formik>
-        </CustomSpinSuspense>
+        {/*<CustomSpinSuspense spinning={isLoading}>*/}
+        <Formik
+          initialValues={initialValue}
+          onSubmit={handleSubmit}
+          enableReinitialize={true}
+        >
+          {({ handleSubmit: handleFinish }) => (
+            <Form layout="vertical" className="h-full" onFinish={handleFinish}>
+              <ActionsHistory />
+            </Form>
+          )}
+        </Formik>
+        {/*</CustomSpinSuspense>*/}
       </ActionsHistoryWrapper>
     </>
   );

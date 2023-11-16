@@ -1,9 +1,5 @@
 import { Button, Divider, Select } from 'antd';
-import {
-  SurveyDetailDrawer,
-  useCheckSurveyFormMode,
-  useSurveyFormContext,
-} from '@pages/Survey';
+import { SurveyDetailDrawer, useSurveyFormContext } from '@pages/Survey';
 import { IOptionItem } from '@/type';
 import { PlayIcon, SaveIcon } from '@/icons';
 import { useTranslation } from 'react-i18next';
@@ -15,9 +11,6 @@ import { Link } from 'react-router-dom';
 const CreateEditSurveyHeader = () => {
   const { t } = useTranslation();
   const params = useParams<projectSurveyParams>();
-
-  const { isCreateMode } = useCheckSurveyFormMode();
-
   const { survey } = useSurveyFormContext();
   const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
     ver => ({
@@ -32,14 +25,13 @@ const CreateEditSurveyHeader = () => {
         <h3 className={'text-[16px] font-semibold m-0'}>
           {survey.currentSurveyVersion?.name}
         </h3>
-        {!isCreateMode && (
-          <Select
-            size={'large'}
-            value={survey.currentSurveyVersion?.id}
-            options={versions}
-            className={'w-[200px]'}
-          />
-        )}
+
+        <Select
+          size={'large'}
+          value={survey.currentSurveyVersion?.id}
+          options={versions}
+          className={'w-[200px]'}
+        />
 
         <SurveyDetailDrawer />
         <div className={'flex-1'} />

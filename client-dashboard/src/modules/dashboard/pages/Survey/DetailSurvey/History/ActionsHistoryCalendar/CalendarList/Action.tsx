@@ -1,35 +1,39 @@
 import { IAction } from '@/interfaces';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import { useHandleActionType } from '../../../utils';
-import { ActionWrapper } from './styles';
+import { genHandleActionType } from '@pages/Survey';
+import { Avatar, Divider } from 'antd';
+import React from 'react';
 
 function Action(props: { action: IAction; today?: boolean }) {
   const { action, today = false } = props;
   const { t } = useTranslation();
 
-  const actionText = useHandleActionType(action);
-
-  if (!action) return <></>;
+  if (!action) return null;
+  if (!action.actionType)
+    return <div className={`font-[500]`}>{t('actionType.noActionsYet')}</div>;
 
   return (
-    <ActionWrapper className="flex-column">
-      <div className="flex-j-start header-wrapper">
-        {today ? (
-          <span className="date">{t('common.today')}</span>
-        ) : (
-          <span className="date">
-            {action?.createdAt
-              ? moment(action.createdAt).format('DD.MM')
-              : t('common.today')}
+    <div className="w-full overflow-hidden flex gap-4 text-textColor">
+      <Avatar src={action.owner.avatar} />
+
+      <div className={''}>
+        <div className="flex items-center h-[32px]">
+          <span className="font-[500]">
+            {action.owner.firstName + ' ' + action.owner.lastName}
           </span>
-        )}
-        <span className="auth">
-          {action.owner.firstName + ' ' + action.owner.lastName}
-        </span>
+
+          <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+
+          <span className="opacity-40">
+            {today || !action?.createdAt
+              ? t('common.today')
+              : moment(action.createdAt).fromNow()}
+          </span>
+        </div>
+        <div className={`font-[500]`}>{genHandleActionType(action, t)}</div>
       </div>
-      <div className={`action ${today ? 'today' : ''}`}>{actionText}</div>
-    </ActionWrapper>
+    </div>
   );
 }
 

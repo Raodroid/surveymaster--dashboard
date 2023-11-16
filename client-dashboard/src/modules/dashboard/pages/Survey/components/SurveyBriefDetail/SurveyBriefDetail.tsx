@@ -5,6 +5,7 @@ import { MOMENT_FORMAT } from '@/enums';
 import { Divider } from 'antd';
 import { IOptionItem } from '@/type';
 import { useSurveyFormContext } from '@pages/Survey';
+import { IBreadcrumbItem } from '@/modules/common';
 
 const Item = (input: IOptionItem) => {
   const { label, value } = input;
@@ -16,35 +17,13 @@ const Item = (input: IOptionItem) => {
   );
 };
 
-const SurveyBriefDetail = () => {
-  const { survey } = useSurveyFormContext();
-  const { t } = useTranslation();
-
-  const data = useMemo<IOptionItem[]>(
-    () => [
-      {
-        label: t('common.surveyId'),
-        value: survey.currentSurveyVersion?.displayId || '',
-      },
-      {
-        label: t('common.creationDate'),
-        value: moment(survey.currentSurveyVersion?.createdAt).format(
-          MOMENT_FORMAT.DOB,
-        ),
-      },
-    ],
-    [
-      survey.currentSurveyVersion?.createdAt,
-      survey.currentSurveyVersion?.displayId,
-      t,
-    ],
-  );
-
+const SurveyBriefDetail = (props: { routes: IOptionItem[] }) => {
+  const { routes } = props;
   return (
     <>
       <Divider className={'m-0'} />
       <div className={'flex items-center gap-3 py-3 px-8'}>
-        {data.map(item => {
+        {routes.map(item => {
           return (
             <Fragment key={item.value}>
               <Item label={item.label} value={item.value || '...'} />

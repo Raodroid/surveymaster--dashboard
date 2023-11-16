@@ -208,6 +208,7 @@
     "remark": "Remark",
     "questionRemarks": "Question Remarks",
     "actionsHistory": "Actions History",
+    "showChangeLog": "Show Change Log",
     "signOutAllOtherSessions": "Sign Out All Other Sessions",
     "dontReceiveCode": "Did not receive your code?",
     "alreadyHasAccount": "Already have an account",
@@ -575,5 +576,9 @@
     "rowName": "Row Name",
     "columnName": "Column Name",
     "photoDescription": "Photo Description"
+  },
+  "status": {
+    "DRAFT": "Draft",
+    "COMPLETED" : "Completed"
   }
 }

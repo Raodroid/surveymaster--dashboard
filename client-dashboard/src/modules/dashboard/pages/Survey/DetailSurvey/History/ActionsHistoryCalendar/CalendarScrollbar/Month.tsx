@@ -1,6 +1,6 @@
 import { generateRandom } from '@/modules/common/funcs';
 import { memo, useCallback } from 'react';
-import { MONTH_HEIGHT } from '../../../utils';
+import { MONTH_HEIGHT } from '@pages/Survey';
 import { MonthWrapper } from '../styles';
 
 // %

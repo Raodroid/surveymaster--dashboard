@@ -7,7 +7,6 @@ import { ISurveyQuestion } from '@/type';
 import { QuestionListWrapper, QuestionWrapper } from './styles';
 import SimpleBar from 'simplebar-react';
 import { useTranslation } from 'react-i18next';
-import { size } from '../../../../../../enums';
 
 const columns: ColumnsType<ISurveyQuestion> = [
   {

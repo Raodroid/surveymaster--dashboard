@@ -4,10 +4,10 @@ import { ActionsHistoryCalendarContentWrapper } from './styles';
 
 function ActionsHistoryCalendar() {
   return (
-    <ActionsHistoryCalendarContentWrapper className="flex">
+    <div className={'h-full flex gap-[3rem] p-8'}>
       <CalendarScrollbar />
       <CalendarList />
-    </ActionsHistoryCalendarContentWrapper>
+    </div>
   );
 }
 

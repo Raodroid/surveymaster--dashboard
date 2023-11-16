@@ -13,6 +13,7 @@ import { useGetAllCategories } from '../../util';
 
 import SimpleBarReact from 'simplebar-react';
 import HannahCustomSpin from '@components/HannahCustomSpin';
+import { SimpleBarCustom } from '@/customize-components';
 
 const getItem = (
   label: React.ReactNode,
@@ -108,22 +109,18 @@ const QuestionBankSiderMainContent = () => {
       <div className={'QuestionBankSiderMainContent__body'} ref={ref}>
         <HannahCustomSpin parentRef={ref} spinning={isLoading} />
 
-        <SimpleBarReact
-          style={{ height: 'calc(100% - 40px)', overflowX: 'hidden' }}
-        >
-          <div className={'category-list'}>
-            <Menu
-              expandIcon={() => null}
-              mode="inline"
-              openKeys={openKey}
-              style={{ width: '100%' }}
-              selectedKeys={selectedKey}
-              onOpenChange={onOpenChange}
-              items={transformedCategories}
-              onSelect={handleOnSelect}
-            />
-          </div>
-        </SimpleBarReact>
+        <SimpleBarCustom>
+          <Menu
+            expandIcon={() => null}
+            mode="inline"
+            openKeys={openKey}
+            style={{ width: '100%' }}
+            selectedKeys={selectedKey}
+            onOpenChange={onOpenChange}
+            items={transformedCategories}
+            onSelect={handleOnSelect}
+          />
+        </SimpleBarCustom>
       </div>
     </QuestionBankSiderMainContentWrapper>
   );

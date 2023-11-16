@@ -1,20 +1,18 @@
-import { Divider, Empty } from 'antd';
+import { Divider, List, Spin } from 'antd';
 import { useParseQueryString } from '@/hooks/useParseQueryString';
 import { IAction } from '@/interfaces';
-import { CustomSpinSuspense } from '@/modules/common/styles';
 import moment from 'moment';
 import { useMemo } from 'react';
-import SimpleBar from 'simplebar-react';
-import { surveyActionType, QsParams } from '@/type';
+import { QsParams, surveyActionType } from '@/type';
 
 import {
+  projectSurveyParams,
   useGetAllActionsHistory,
   useGetSurveyById,
-  projectSurveyParams,
 } from '@pages/Survey';
 import Action from './Action';
-import { CalendarListWrapper } from './styles';
 import { useParams } from 'react-router';
+import { SimpleBarCustom } from '@/customize-components';
 
 const initialAction: IAction = {
   actionType: '',
@@ -71,31 +69,31 @@ function CalendarList() {
   }, [qsParams, histories]);
 
   return (
-    <CalendarListWrapper>
-      <CustomSpinSuspense spinning={isGetHistoryLoading}>
-        <Action action={createAction} />
-        <Divider className="list-divider" />
-        <div className="list flex-column">
-          <SimpleBar
-            style={{
-              maxHeight: '100%',
-              paddingRight: 10,
-            }}
-          >
-            {actionsFiltered
-              ? actionsFiltered.map(action => (
+    <div className={'flex-1 h-full flex flex-col'}>
+      <Action action={todayAction} today />
+
+      <Divider className={'mb-0'} />
+
+      <div className={'flex-1 overflow-hidden'}>
+        <Spin spinning={isGetHistoryLoading}>
+          <SimpleBarCustom>
+            <List
+              itemLayout="horizontal"
+              dataSource={actionsFiltered}
+              renderItem={action => (
+                <List.Item key={action.id}>
                   <Action key={action.id} action={action} />
-                ))
-              : null}
-            {actionsFiltered && actionsFiltered.length === 0 ? (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-            ) : null}
-          </SimpleBar>
-        </div>
-        <Divider className="list-divider" />
-        <Action action={todayAction} today />
-      </CustomSpinSuspense>
-    </CalendarListWrapper>
+                </List.Item>
+              )}
+            />
+          </SimpleBarCustom>
+        </Spin>
+      </div>
+
+      <Divider className={'mt-0'} />
+
+      <Action action={createAction} />
+    </div>
   );
 }
 

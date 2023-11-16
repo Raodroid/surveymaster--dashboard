@@ -1,12 +1,18 @@
 import React, { FC, ReactNode } from 'react';
 
-const RoundedTag: FC<{ title: string | ReactNode }> = props => {
-  const { title } = props;
+const defaultColor = '#007AE7';
+
+const RoundedTag: FC<{ title: string | ReactNode; color?: string }> = props => {
+  const { title, color } = props;
   return (
     <span
       className={
-        'border border-info rounded-[1rem] font-semibold text-info text-[12px] py-[4px] px-[8px]'
+        'border border-info rounded-[1rem] font-semibold text-[12px] text-info py-[4px] px-[8px]'
       }
+      style={{
+        borderColor: color || defaultColor,
+        color: color || defaultColor,
+      }}
     >
       {title}
     </span>

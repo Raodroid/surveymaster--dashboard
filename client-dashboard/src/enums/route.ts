@@ -12,7 +12,7 @@ export const ROUTE_PATH = {
     PROJECT: {
       ROOT: '/app/project',
       SURVEY: '/app/project/:projectId',
-      ADD_NEW_SURVEY: '/app/project/:projectId/add-survey',
+      // ADD_NEW_SURVEY: '/app/project/:projectId/add-survey',
       PROJECT: {
         ADD: '/app/project/add-project',
         EDIT: '/app/project/:projectId/edit-project',

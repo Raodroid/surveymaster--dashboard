@@ -37,8 +37,7 @@ export const useGetAllActionsHistory = (): {
 
 export const MONTH_HEIGHT = 124;
 
-export const useHandleActionType = (action: IAction) => {
-  const { t } = useTranslation();
+export const genHandleActionType = (action: IAction, t) => {
   if (!action) return '';
 
   switch (action.actionType) {

@@ -9,7 +9,7 @@ import {
 } from 'hooks';
 import _get from 'lodash/get';
 
-import { StyledPagination } from 'modules/dashboard';
+import { RoundedTag, StyledPagination } from 'modules/dashboard';
 import moment from 'moment';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +25,7 @@ import {
   ISurvey,
   ProjectTypes,
   QsParams,
+  SurveyVersionStatus,
 } from '@/type';
 import {
   ProjectBriefDetail,
@@ -260,7 +261,6 @@ function SurveyTable() {
         title: 'ID',
         dataIndex: 'displayId',
         key: 'displayId',
-        width: 150,
       },
       {
         title: t('common.surveyTitle'),
@@ -268,21 +268,25 @@ function SurveyTable() {
         key: 'name',
       },
       {
-        title: t('common.numberOfQuestions'),
-        dataIndex: ['latestVersion', 'numberOfQuestions'],
-        key: 'numberOfQuestions',
-        width: 200,
-      },
-      {
-        title: t('common.dateOfCreation'),
+        title: t('common.creationDate'),
         dataIndex: 'createdAt',
         key: 'createdAt',
-        width: 200,
         render: (text: Date) => {
           return text
             ? moment(text).format(MOMENT_FORMAT.FULL_DATE_FORMAT)
             : '--';
         },
+      },
+      {
+        title: t('common.status'),
+        dataIndex: ['latestVersion', 'status'],
+        key: 'status',
+        render: (value: SurveyVersionStatus) => (
+          <RoundedTag
+            title={t(`status.${value}`)}
+            color={value === SurveyVersionStatus.DRAFT ? '#232567' : '#00AB00'}
+          />
+        ),
       },
       {
         title: t('common.actions'),
