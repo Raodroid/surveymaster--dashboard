@@ -1,5 +1,5 @@
 import React, { FC, memo, useCallback } from 'react';
-import { Menu } from 'antd';
+import { Button, Dropdown, Menu } from 'antd';
 import { useField, useFormikContext } from 'formik';
 import { EmptyString, SubSurveyFlowElement } from '@/type';
 import { useTranslation } from 'react-i18next';
@@ -40,8 +40,9 @@ const isRootPath = (
 
 const AddNewBlockElement: FC<{
   fieldName: string;
+  type: 'button' | 'icon';
 }> = props => {
-  const { fieldName } = props;
+  const { fieldName, type } = props;
   const { t } = useTranslation();
   const { setSurveyFormContext } = useSurveyFormContext();
 
@@ -131,50 +132,81 @@ const AddNewBlockElement: FC<{
     [fieldName, genKey, setSurveyFormContext, setValue, value],
   );
 
-  return (
-    <>
-      {isEditMode && (
-        <MenuWrapper
-          className={'rounded !bg-[#007AE7] text-white m-0 w-[175px]'}
-          theme={'dark'}
-          onSelect={e => {
-            e.domEvent.stopPropagation();
-            handleAddElement(e.key as SubSurveyFlowElement);
-          }}
-          selectedKeys={[]}
+  if (!isEditMode) return null;
+
+  if (type === 'button')
+    return (
+      <MenuWrapper
+        className={'rounded !bg-[#007AE7] text-white m-0 w-[175px]'}
+        theme={'dark'}
+        onSelect={e => {
+          e.domEvent.stopPropagation();
+          handleAddElement(e.key as SubSurveyFlowElement);
+        }}
+        selectedKeys={[]}
+      >
+        <Menu.SubMenu
+          className={'m-0'}
+          key="mail"
+          theme={'light'}
+          title={
+            <span className={'text-white font-semibold'}>
+              {t('common.addBlock')}
+            </span>
+          }
+          icon={<PlusOutLinedIcon className={'text-white'} />}
         >
-          <Menu.SubMenu
-            className={'m-0'}
-            key="mail"
-            theme={'light'}
-            title={
-              <span className={'text-white font-semibold'}>
-                {t('common.addBlock')}
-              </span>
-            }
-            icon={<PlusOutLinedIcon className={'text-white'} />}
-          >
-            {objectKeys(SubSurveyFlowElement).map(key => {
-              const val = SubSurveyFlowElement[key];
-              return (
-                <Menu.Item key={val}>
-                  <div className={'pb-2 flex gap-3 items-center'}>
-                    <QuestionBranchIcon type={val} />
-                    <span className={'font-semibold'}>
-                      {t(`common.${val}`)}
-                    </span>
-                  </div>
-                </Menu.Item>
-              );
-            })}
-          </Menu.SubMenu>
-        </MenuWrapper>
-      )}
-    </>
+          {objectKeys(SubSurveyFlowElement).map(key => {
+            const val = SubSurveyFlowElement[key];
+            return (
+              <Menu.Item key={val}>
+                <div className={'pb-2 flex gap-3 items-center'}>
+                  <QuestionBranchIcon type={val} />
+                  <span className={'font-semibold'}>{t(`common.${val}`)}</span>
+                </div>
+              </Menu.Item>
+            );
+          })}
+        </Menu.SubMenu>
+      </MenuWrapper>
+    );
+
+  return (
+    <Dropdown
+      trigger={['hover']}
+      menu={{
+        items: objectKeys(SubSurveyFlowElement).map(key => {
+          const val = SubSurveyFlowElement[key];
+          return {
+            label: (
+              <div className={'pb-2 flex gap-3 items-center'}>
+                <QuestionBranchIcon type={val} />
+                <span className={'font-semibold'}>{t(`common.${val}`)}</span>
+              </div>
+            ),
+            key: val,
+          };
+        }),
+        onClick: e => {
+          e.domEvent.stopPropagation();
+          handleAddElement(e.key as SubSurveyFlowElement);
+        },
+      }}
+    >
+      <Button
+        type={'primary'}
+        shape={'round'}
+        className={'!px-[3px] !h-[20px]'}
+        size={'small'}
+        icon={<PlusOutLinedIcon />}
+      />
+    </Dropdown>
   );
 };
 
 export default memo(AddNewBlockElement);
+
+export { defaultNode, isRootPath };
 
 const MenuWrapper = styled(Menu)`
   .ant-menu-submenu-title {

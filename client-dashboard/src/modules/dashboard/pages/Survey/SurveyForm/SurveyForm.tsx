@@ -21,7 +21,7 @@ const SurveyForm = () => {
 export default SurveyForm;
 
 const SurveyFormContent = () => {
-  const { form, isExternalProject, actionLoading } = useSurveyFormContext();
+  const { form, isExternalProject } = useSurveyFormContext();
   const { initialValues, onSubmit } = form;
 
   return (

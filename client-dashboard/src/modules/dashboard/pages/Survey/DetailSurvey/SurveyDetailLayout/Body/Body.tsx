@@ -1,6 +1,6 @@
 import React from 'react';
 import { useToggle } from '@/utils';
-import { Button, Divider } from 'antd';
+import { Button, Divider, Empty } from 'antd';
 import { ArrowLeft } from '@/icons';
 import SurveyStructureTree from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/Aside/SurveyStructureTree';
 import DetailNode from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/DetailNode';
@@ -8,6 +8,7 @@ import {
   AddNewBlockElement,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
+  useCheckSurveyFormMode,
 } from '@pages/Survey';
 import { SimpleBarCustom } from '@/customize-components';
 import { useField } from 'formik';
@@ -22,8 +23,12 @@ const Body = () => {
   const [{ value }] = useField<Array<SurveyDataTreeNode>>(
     rootSurveyFlowElementFieldName,
   );
+  const { isViewMode } = useCheckSurveyFormMode();
 
   if (!value.length) {
+    if (isViewMode) {
+      return <Empty className={'w-full h-full flex flex-col justify-center'} />;
+    }
     return <EmptyBlock />;
   }
   return (
@@ -34,12 +39,15 @@ const Body = () => {
     >
       {/*aside*/}
       <div
-        className={'overflow-hidden h-full transition-[width]'}
+        className={'overflow-hidden h-full transition-[width] pl-3'}
         style={{ width: expanded ? '100%' : ASIDE_WIDTH }}
       >
         <SimpleBarCustom>
           <SurveyStructureTree />
-          <AddNewBlockElement fieldName={rootSurveyFlowElementFieldName} />
+          <AddNewBlockElement
+            fieldName={rootSurveyFlowElementFieldName}
+            type={'button'}
+          />
         </SimpleBarCustom>
       </div>
 

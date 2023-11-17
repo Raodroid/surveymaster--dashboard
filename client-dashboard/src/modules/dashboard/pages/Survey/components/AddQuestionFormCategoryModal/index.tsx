@@ -13,6 +13,7 @@ import { useField } from 'formik';
 import _get from 'lodash/get';
 import SimpleBar from 'simplebar-react';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
+import { PlusOutLinedIcon } from '@/icons';
 
 interface IAddQuestionFormCategoryModal {
   open: boolean;
@@ -164,6 +165,8 @@ const AddQuestionFormCategoryModal: FC<
       width={650}
       footer={
         <Button
+          icon={<PlusOutLinedIcon />}
+          className={'info-btn'}
           type={'primary'}
           disabled={!selectedQuestionIdList.length}
           onClick={handleAddQuestions}

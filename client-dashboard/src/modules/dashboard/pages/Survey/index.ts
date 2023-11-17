@@ -6,3 +6,4 @@ export * from './SurveyForm/util';
 export { default as SurveyManagement } from './SurveyManagement';
 export { default as SurveyModal } from './SurveyModal/SurveyModal';
 export * from './SurveyManagement/util';
+export * from './util';

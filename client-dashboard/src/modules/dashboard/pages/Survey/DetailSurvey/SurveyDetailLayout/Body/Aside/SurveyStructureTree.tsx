@@ -158,10 +158,12 @@ export default SurveyStructureTree;
 
 const WrapperTree = styled(Tree)`
   padding-right: 1rem;
+  padding-top: 2rem;
   .ant-tree-list-holder-inner {
   }
   .ant-tree-treenode {
     width: max-content;
+    z-index: 1;
   }
   .ant-tree-node-content-wrapper {
     padding: 0;
@@ -181,6 +183,31 @@ const WrapperTree = styled(Tree)`
     transform: translateX(0px);
   }
   .ant-tree-indent-unit {
-    transform: translateX(-2px);
+    transform: translateX(6px);
+  }
+  .ant-tree-switcher {
+    width: 40px;
+  }
+  .ant-tree-switcher-leaf-line {
+    &:before {
+      right: 19px;
+      border-width: 1.5px;
+      top: -27px;
+    }
+    &:after {
+      border: 0;
+      content: '';
+      background-image: url('/src/assets/icons/branch.svg');
+      width: 21px;
+      height: 29px;
+      right: 0;
+    }
+  }
+  .ant-tree-show-line .ant-tree-indent-unit:before {
+    right: 4px;
+  }
+  .ant-tree-treenode-leaf-last .ant-tree-switcher-leaf-line:before {
+    top: -25px !important;
+    height: 70px !important;
   }
 `;

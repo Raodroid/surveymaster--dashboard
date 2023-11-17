@@ -7,3 +7,4 @@ export { default as CustomTag } from './CustomTag';
 export { default as DragHandle } from './DragHandle';
 export { default as SimpleBarCustom } from './SimpleBarCustom';
 export { default as ThreeDotsDropdown } from './ThreeDotsDropdown';
+export { default as RoundedSelect } from './RoundedSelect';

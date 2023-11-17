@@ -42,9 +42,9 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
 
   const { question } = useSurveyFormContext();
   const {
+    newQuestions,
     questionIdMap,
     setSearchParams,
-    questionOptions,
     hasNextQuestionPage,
     fetchNextQuestionPage,
     isFetchingQuestion,
@@ -52,12 +52,26 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
 
   const debounceSearchText = useDebounce(searchTxt);
 
-  const availableQuestionOptions = useMemo<IOptionItem[]>(() => {
-    return questionOptions.reduce((res: IOptionItem[], item) => {
-      if (value?.some(i => i.questionVersionId === item.value)) return res;
-      return [...res, item];
-    }, []);
-  }, [questionOptions, value]);
+  const availableQuestionOptions = useMemo<
+    Array<IOptionItem & { categoryName: string }>
+  >(
+    () =>
+      (newQuestions || []).reduce(
+        (res: Array<IOptionItem & { categoryName: string }>, item) => {
+          if (value?.some(i => i.questionVersionId === item?.id)) return res;
+          return [
+            ...res,
+            {
+              label: item.title,
+              value: item.id as string,
+              categoryName: item?.masterCategory?.name || '',
+            },
+          ];
+        },
+        [],
+      ),
+    [newQuestions, value],
+  );
 
   const handleOnClose = useCallback(() => {
     setSearchParams({ q: '' });
@@ -99,23 +113,22 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
 
   const refLoading = useRef<Element>();
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(() => {
-      if (hasNextQuestionPage) {
-        console.log('called');
-        fetchNextQuestionPage();
-      }
-    });
+  const observer = useMemo(
+    () =>
+      new IntersectionObserver(() => {
+        if (hasNextQuestionPage) {
+          console.log('called');
+          fetchNextQuestionPage();
+        }
+      }),
+    [fetchNextQuestionPage, hasNextQuestionPage],
+  );
 
-    if (refLoading.current) {
-      observer.observe(refLoading.current);
-    }
+  useEffect(() => {
     return () => {
-      if (refLoading.current) {
-        observer.unobserve(refLoading.current);
-      }
+      if (refLoading.current) observer.unobserve(refLoading.current);
     };
-  }, [fetchNextQuestionPage, hasNextQuestionPage]);
+  }, [observer]);
 
   return (
     <AddNewQuestionModalWrapper
@@ -148,20 +161,21 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
                 }
               >
                 <div className={'font-semibold mb-2'}>{item.label}</div>
-                <div className={'text-[12px]'}>Category</div>
+                <div className={'text-[12px]'}>{item.categoryName}</div>
               </List.Item>
             )}
           />
-          {hasNextQuestionPage && (
-            <div
-              className="mb-5"
-              ref={
-                refLoading as unknown as LegacyRef<HTMLDivElement> | undefined
+          <div
+            className={`mb-5 ${hasNextQuestionPage ? 'visible' : 'hidden'}`}
+            ref={newRef => {
+              if (newRef) {
+                refLoading.current = newRef;
+                observer.observe(newRef);
               }
-            >
-              Loading...
-            </div>
-          )}
+            }}
+          >
+            Loading...
+          </div>
         </SimpleBarCustom>
       </Spin>
     </AddNewQuestionModalWrapper>

@@ -299,7 +299,7 @@ function ProjectTable() {
           }}
           showSizeChanger
           pageSize={formatQsParams.take}
-          total={50 || total}
+          total={total}
           current={formatQsParams.page}
           showTotal={total => (
             <span>

@@ -23,7 +23,7 @@ const SurveyDetailDrawer = () => {
         icon={<DetailIcon />}
         size={'large'}
       >
-        {t('common.details')}
+        <span className={'font-semibold'}>{t('common.details')}</span>
       </Button>
       <Drawer
         title={

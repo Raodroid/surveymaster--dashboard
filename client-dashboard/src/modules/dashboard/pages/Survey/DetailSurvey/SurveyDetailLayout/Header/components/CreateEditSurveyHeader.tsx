@@ -7,6 +7,7 @@ import { generatePath, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/enums';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { Link } from 'react-router-dom';
+import RoundedSelect from '../../../../../../../../customize-components/RoundedSelect';
 
 const CreateEditSurveyHeader = () => {
   const { t } = useTranslation();
@@ -26,8 +27,7 @@ const CreateEditSurveyHeader = () => {
           {survey.currentSurveyVersion?.name}
         </h3>
 
-        <Select
-          size={'large'}
+        <RoundedSelect
           value={survey.currentSurveyVersion?.id}
           options={versions}
           className={'w-[200px]'}

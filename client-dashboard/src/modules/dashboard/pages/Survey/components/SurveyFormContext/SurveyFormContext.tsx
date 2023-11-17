@@ -15,7 +15,6 @@ import { QuestionBankService, SurveyService } from '@/services';
 import {
   CreateSurveyBodyDto,
   GetListQuestionDto,
-  IOptionItem,
   IPaginationResponse,
   IPostSurveyVersionBodyDto,
   IProject,
@@ -63,9 +62,13 @@ interface ISurveyFormContext {
       string,
       IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
     >;
+    newQuestions: Array<
+      IQuestionVersion & {
+        masterCategory: IQuestion['masterCategory'];
+      }
+    >;
     fetchNextQuestionPage: () => void;
     hasNextQuestionPage: boolean;
-    questionOptions: IOptionItem[];
     searchParams: GetListQuestionDto;
     isFetchingQuestion: boolean;
     setSearchParams: <T extends keyof GetListQuestionDto>(
@@ -104,12 +107,10 @@ const intValue: ISurveyFormContext = {
     setSearchParams<T extends keyof GetListQuestionDto>(
       value: Record<T, GetListQuestionDto[T]>,
     ): void {},
-
+    newQuestions: [],
     questionIdMap: {},
-    // selectedRowKeys,
     hasNextQuestionPage: false,
     fetchNextQuestionPage: () => {},
-    questionOptions: [],
     isFetchingQuestion: false,
     searchParams: {
       q: '',
@@ -167,17 +168,23 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
             IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
           > = { ...s.question.questionIdMap };
 
-          const questionOptions = [...s.question.questionOptions];
+          const newQuestions: Array<
+            IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
+          > = [];
+          questionListData.pages.forEach(page => {
+            page.data.data.forEach(q => {
+              newQuestions.push({
+                ...q.latestCompletedVersion,
+                masterCategory: q.masterCategory,
+              });
+            });
+          });
 
           questionListData.pages.at(-1)?.data?.data.forEach((q: IQuestion) => {
             const latestQuestionVersionId = q.latestCompletedVersion
               ?.id as string;
 
             if (!normalizeByQuestionId[latestQuestionVersionId]) {
-              questionOptions.push({
-                label: q?.latestCompletedVersion?.title,
-                value: latestQuestionVersionId,
-              });
               normalizeByQuestionId[latestQuestionVersionId] = {
                 ...q.latestCompletedVersion,
                 masterCategory: q.masterCategory,
@@ -189,10 +196,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
             ...s,
             question: {
               ...s.question,
+              newQuestions,
               hasNextQuestionPage:
                 !!questionListData.pages.at(-1)?.data?.hasNextPage,
               fetchNextQuestionPage: fetchNextPage,
-              questionOptions,
               questionIdMap: normalizeByQuestionId,
             },
           };
@@ -255,39 +262,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     },
   );
 
-  // const addSurveyMutation = useMutation(
-  //   (data: CreateSurveyBodyDto) => {
-  //     return SurveyService.createSurvey(data);
-  //   },
-  //   {
-  //     onSuccess: async res => {
-  //       const newVersion = res.data.versions[0];
-  //       const fileType = 'application/octet-stream';
-  //
-  //       if (excelUploadFile) {
-  //         const file = excelUploadFile as Blob;
-  //         const res = await SurveyService.getSignedUrl({
-  //           filename: file['name'] as string,
-  //           surveyVersionId: newVersion.id,
-  //           fileType: fileType,
-  //         });
-  //         const { data } = res;
-  //         await UploadService.putWithFormFileAsync(data.url, file, fileType);
-  //         // await mutationUploadExcelFile.mutateAsync(newVersion.id);
-  //       }
-  //       await onSuccess();
-  //
-  //       navigate(
-  //         generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
-  //           projectId: params.projectId,
-  //           surveyId: newVersion.surveyId,
-  //         }) + `?version=${newVersion.displayId}`,
-  //       );
-  //     },
-  //     onError,
-  //   },
-  // );
-
   const addSurveyVersionMutation = useMutation(
     (data: IPostSurveyVersionBodyDto) => {
       return SurveyService.createSurveyVersion(data);
@@ -349,7 +323,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   const actionLoading =
     mutationUploadExcelFile.isLoading ||
     duplicateSurveyMutation.isLoading ||
-    // addSurveyMutation.isLoading ||
     updateSurveyMutation.isLoading ||
     addSurveyVersionMutation.isLoading;
 
@@ -541,18 +514,14 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     setContext(s => {
       const questionIdMap = s.question.questionIdMap;
 
-      const questionOptions = s.question.questionOptions;
-
       createQuestionMap(
         currentSurveyVersion?.surveyFlowElements,
         questionIdMap,
-        questionOptions,
       );
       return {
         ...s,
         question: {
           ...s.question,
-          questionOptions: [...s.question.questionOptions, ...questionOptions],
           questionIdMap: {
             ...s.question.questionIdMap,
             ...questionIdMap,

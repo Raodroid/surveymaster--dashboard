@@ -8,6 +8,8 @@ import { DEFAULT_THEME_COLOR } from '@/enums';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { SurveyDataTreeNode } from '@pages/Survey/SurveyForm/type';
 import QuestionBranchIcon from '@pages/Survey/components/QuestionBranchIcon/QuestionBranchIcon';
+import styled from 'styled-components/macro';
+import InsertBlockButton from '@pages/Survey/components/AddNewBlockElement/InsertBlockButton';
 
 const bgColor: Record<SubSurveyFlowElement, string> = {
   [SubSurveyFlowElement.END_SURVEY]: '#1CA62D20',
@@ -20,7 +22,7 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   const { t } = useTranslation();
   const { record } = props;
   const fieldName = record.fieldName;
-  const { isViewMode } = useCheckSurveyFormMode();
+  const { isEditMode } = useCheckSurveyFormMode();
 
   const [{ value }, { error, touched }] =
     useField<SurveyDataTreeNode>(fieldName);
@@ -45,8 +47,10 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
 
   return (
     <>
-      <div
-        className={'rounded-[6px] border p-2 w-fit'}
+      <Wrapper
+        className={`group rounded-[6px] border p-2 w-fit ${
+          record.type === SubSurveyFlowElement.BRANCH ? 'hannah' : ''
+        }`}
         style={{
           background: bgColor[record.type],
           borderColor:
@@ -70,6 +74,9 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
               {childrenLength}
             </span>
           )}
+          {isEditMode && record.type === SubSurveyFlowElement.BRANCH && (
+            <AddNewBlockElement fieldName={fieldName} type={'icon'} />
+          )}
         </div>
 
         {touched && blockError && (
@@ -78,14 +85,22 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
           </div>
         )}
 
-        {record.type === SubSurveyFlowElement.BRANCH && (
-          <div className={'w-full mt-3'}>
-            <AddNewBlockElement fieldName={fieldName} />
-          </div>
-        )}
-      </div>
+        <span className={'group-hover:visible invisible add-icon p-0'}>
+          <InsertBlockButton fieldName={fieldName} />
+        </span>
+      </Wrapper>
     </>
   );
 };
 
 export default memo(QuestionBlock);
+
+const Wrapper = styled.div`
+  .add-icon {
+    position: absolute;
+    top: -20px;
+    left: -30px;
+    z-index: 1;
+    height: 20px;
+  }
+`;

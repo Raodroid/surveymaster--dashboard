@@ -1,13 +1,13 @@
-import React, { memo, useState, useMemo } from 'react';
+import React, { memo, useState, useMemo, useCallback } from 'react';
 import { Select } from 'antd';
 import { SelectProps } from 'antd/lib/select';
 import styled from 'styled-components/macro';
 import { FetchParamsSelect } from 'type';
-import useFetchFilterOption from '../../../hoc/useFetchFilterOptions';
 import { Entities } from '@/enums';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { ArrowDown } from '@/icons';
-import templateVariable from '../../../../../app/template-variables.module.scss';
+import templateVariable from '@/app/template-variables.module.scss';
+import useFetchFilterOption from '@hoc/useFetchFilterOptions';
 
 export type CustomSelectProps = SelectProps<string | number> & {
   entity?: Entities;
@@ -62,12 +62,15 @@ const CustomSelect = (props: CustomSelectProps) => {
         ],
   );
 
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
-    if (props?.onSearch) {
-      props.onSearch(value);
-    }
-  };
+  const handleSearch = useCallback(
+    (value: string) => {
+      setSearchValue(value);
+      if (props?.onSearch) {
+        props.onSearch(value);
+      }
+    },
+    [props],
+  );
 
   const handleClear = () => {
     setSearchValue('');

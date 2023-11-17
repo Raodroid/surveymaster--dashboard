@@ -1,5 +1,6 @@
 import React, { FC, useCallback } from 'react';
 import {
+  getParentBlockSort,
   QuestionBranchIcon,
   SurveyDataTreeNode,
   useCheckSurveyFormMode,
@@ -35,11 +36,23 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   const [{ value }] = useField<SurveyDataTreeNode>(fieldName);
 
   const handleRemoveBlock = useCallback(() => {
-    setParentNodeValue(
-      transformToSurveyDataTreeNode(
-        (parentNodeValue || []).filter(node => node.fieldName !== fieldName),
-      ),
-    );
+    const parentBlockSort = getParentBlockSort(parentLayerFieldName);
+
+    if (!isNaN(parentBlockSort)) {
+      setParentNodeValue(
+        transformToSurveyDataTreeNode(
+          (parentNodeValue || []).filter(node => node.fieldName !== fieldName),
+          parentBlockSort,
+          parentLayerFieldName,
+        ),
+      );
+    } else {
+      setParentNodeValue(
+        transformToSurveyDataTreeNode(
+          (parentNodeValue || []).filter(node => node.fieldName !== fieldName),
+        ),
+      );
+    }
     setSurveyFormContext(oldState => ({
       ...oldState,
       tree: {
@@ -47,18 +60,22 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
         focusBlock: undefined,
       },
     }));
-  }, [fieldName, parentNodeValue, setParentNodeValue, setSurveyFormContext]);
+  }, [
+    fieldName,
+    parentLayerFieldName,
+    parentNodeValue,
+    setParentNodeValue,
+    setSurveyFormContext,
+  ]);
 
   const handleDuplicateBlock = useCallback(() => {
-    const parentBlockSort = parentLayerFieldName
-      .match(/(.*)\.children.*$/)?.[1]
-      ?.match(/\[([0-9+])\]$/)?.[1];
+    const parentBlockSort = getParentBlockSort(parentLayerFieldName);
 
-    if (parentBlockSort) {
+    if (!isNaN(parentBlockSort)) {
       setParentNodeValue(
         transformToSurveyDataTreeNode(
           [...parentNodeValue, value],
-          Number(parentBlockSort),
+          parentBlockSort,
           parentLayerFieldName,
         ),
       );
