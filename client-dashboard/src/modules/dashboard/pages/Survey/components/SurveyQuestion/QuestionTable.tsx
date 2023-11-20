@@ -127,22 +127,6 @@ const QuestionTable: FC<{
           );
         },
       },
-      // {
-      //   title: t('common.question'),
-      //   dataIndex: 'questionVersionId',
-      //   width: 300,
-      //   render: (value, record, questionIndex) => {
-      //     return (
-      //       <DynamicSelect
-      //         parentFieldName={`${fieldName}.surveyQuestions`}
-      //         availableQuestionOptions={availableQuestionOptions}
-      //         setSearchTxt={setSearchTxt}
-      //         fieldName={`${fieldName}.surveyQuestions[${questionIndex}]`}
-      //         className={isViewMode ? 'view-mode' : ''}
-      //       />
-      //     );
-      //   },
-      // },
       {
         title: '',
         dataIndex: 'category',

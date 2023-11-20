@@ -71,7 +71,7 @@ const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
   );
   const onScroll = useCallback(
     async event => {
-      let target = event.target;
+      const target = event.target;
       if (
         !isFetchingQuestion &&
         target.scrollTop + target.offsetHeight === target.scrollHeight

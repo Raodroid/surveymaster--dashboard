@@ -21,7 +21,7 @@ const SurveyForm = () => {
 export default SurveyForm;
 
 const SurveyFormContent = () => {
-  const { form, isExternalProject } = useSurveyFormContext();
+  const { form, project } = useSurveyFormContext();
   const { initialValues, onSubmit } = form;
 
   return (
@@ -29,7 +29,7 @@ const SurveyFormContent = () => {
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={
-        isExternalProject
+        project.isExternalProject
           ? SURVEY_EXTERNAL_FORM_SCHEMA
           : SURVEY_INTERNAL_FORM_SCHEMA
       }

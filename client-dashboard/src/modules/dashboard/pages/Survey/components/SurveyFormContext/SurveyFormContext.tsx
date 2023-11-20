@@ -24,8 +24,9 @@ import {
   ISurvey,
   ISurveyQuestionDto,
   ISurveyVersion,
+  ISurveyVersionBaseDto,
   ProjectTypes,
-  SubSurveyFlowElementDto,
+  SubSurveyFlowElement,
   SurveyVersionStatus,
 } from '@/type';
 import { generatePath, useParams } from 'react-router';
@@ -54,7 +55,6 @@ const { confirm } = Modal;
 
 interface ISurveyFormContext {
   setSurveyFormContext: Dispatch<SetStateAction<ISurveyFormContext>>;
-  isExternalProject: boolean;
   actionLoading: boolean;
 
   question: {
@@ -91,6 +91,8 @@ interface ISurveyFormContext {
   };
   project: {
     projectData?: IProject;
+    isExternalProject: boolean;
+    setExcelUploadFile: Dispatch<SetStateAction<string | Blob>>;
   };
 
   handleFocusBlock: (value: SurveyDataTreeNode | undefined) => void;
@@ -99,10 +101,9 @@ interface ISurveyFormContext {
 
 const intValue: ISurveyFormContext = {
   actionLoading: false,
-  isExternalProject: false,
-
   handleFocusBlock: (value: SurveyDataTreeNode | undefined) => {},
   handleExpendTree: (value: React.Key[]) => {},
+
   question: {
     setSearchParams<T extends keyof GetListQuestionDto>(
       value: Record<T, GetListQuestionDto[T]>,
@@ -128,7 +129,10 @@ const intValue: ISurveyFormContext = {
     expendKeys: [],
   },
   survey: {},
-  project: {},
+  project: {
+    isExternalProject: false,
+    setExcelUploadFile: value => {},
+  },
   setSurveyFormContext: function (
     value: React.SetStateAction<ISurveyFormContext>,
   ): void {
@@ -237,6 +241,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
       ...transformInitSurveyFormData(currentSurveyVersion),
       projectId,
       surveyId: surveyData.displayId || '',
+      selectedRowKeys: [],
     };
   }, [currentSurveyVersion, projectId, surveyData?.displayId]);
 
@@ -328,7 +333,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
 
   const onSubmit = useCallback(
     async (values: IAddSurveyFormValues) => {
-      const { version, duplicateSurveyId } = values;
+      const { version, selectedRowKeys } = values;
 
       const { initialValues } = context.form;
 
@@ -340,131 +345,106 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
       try {
         toggleLoading();
         if (isExternalProject) {
-          const transformSurveyFlowValues: SubSurveyFlowElementDto[] = (
-            version?.surveyFlowElements || []
-          ).map(flow => ({
-            ...flow,
-            surveyQuestions: (flow.surveyQuestions || []).reduce(
-              (res: ISurveyQuestionDto[], q) => {
-                // if (
-                //   selectedRowKeys &&
-                //   !selectedRowKeys.some(key => key === q.questionVersionId)
-                // ) {
-                //   return res;
-                // }
-                return [
-                  ...res,
-                  {
-                    sort: res.length + 1,
-                    remark: q.remark,
-                    questionVersionId: q.questionVersionId,
-                    parameter: q.parameter,
-                  },
-                ];
-              },
-              [],
-            ),
-          }));
+          if (!selectedRowKeys || !selectedRowKeys.length) return;
 
-          // if (isEditMode) {
-          //   if (
-          //     currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
-          //     isSurveyFlowChange(
-          //       questions,
-          //       initialValues.version.questions,
-          //     )
-          //   ) {
-          //     confirm({
-          //       icon: null,
-          //       content: t('common.confirmCreateNewExternalSurveyVersion'),
-          //       onOk() {
-          //         addSurveyVersionMutation.mutateAsync({
-          //           surveyId: params.surveyId as string,
-          //           ...transformSurveyFlowValues.version,
-          //           status: SurveyVersionStatus.DRAFT,
-          //         });
-          //         return;
-          //       },
-          //       onCancel() {
-          //         return;
-          //       },
-          //     });
-          //
-          //     return;
-          //   }
-          //
-          //   await updateSurveyMutation.mutateAsync({
-          //     ...transformSurveyFlowValues.version,
-          //     surveyVersionId: currentSurveyVersion?.id as string,
-          //     name: transformSurveyFlowValues.version?.name || '',
-          //     questions: transformSurveyFlowValues.version?.questions || [],
-          //     status: transformSurveyFlowValues.version?.status || SurveyVersionStatus.DRAFT,
-          //     remark: transformSurveyFlowValues.version.remark || null,
-          //   });
-          //   return;
-          // }
-          // await addSurveyMutation.mutateAsync({
-          //   projectId,
-          //   version: {
-          //     name: values.version?.name,
-          //     remark: values.version?.remark,
-          //     surveyFlowElements: transformSurveyFlowValues,
-          //     status: SurveyVersionStatus.COMPLETED,
-          //   },
-          // });
-          // return;
-        }
-        const transformValue: CreateSurveyBodyDto = {
-          version: transformSurveyVersion(values),
-          projectId: values.projectId,
-        };
-        if (isEditMode) {
+          const transformSurveyQuestions: ISurveyQuestionDto[] = (
+            version?.surveyFlowElements?.[0].surveyQuestions || []
+          ).reduce((res: ISurveyQuestionDto[], q) => {
+            if (!selectedRowKeys.some(key => key === q.questionVersionId)) {
+              return res;
+            }
+            const newItem: ISurveyQuestionDto = {
+              sort: res.length + 1,
+              remark: q.remark,
+              questionVersionId: q.questionVersionId,
+              parameter: q.parameter,
+            };
+            return [...res, newItem];
+          }, []);
+
+          const transformValues: ISurveyVersionBaseDto = {
+            status: SurveyVersionStatus.DRAFT,
+            surveyFlowElements: [
+              {
+                type: SubSurveyFlowElement.BLOCK,
+                sort: 0,
+                blockSort: 0,
+                blockDescription: '',
+                surveyQuestions: transformSurveyQuestions,
+              },
+            ],
+            name: values.version?.remark as string,
+            remark: values.version?.remark,
+          };
+
+          const initQuestions =
+            initialValues.version?.surveyFlowElements?.[0].surveyQuestions;
+          const newQuestions =
+            values.version?.surveyFlowElements?.[0].surveyQuestions;
+
           if (
             currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
-            isSurveyFlowChange(
-              version?.surveyFlowElements,
-              initialValues.version?.surveyFlowElements,
-            )
+            isSurveyFlowChange(initQuestions, newQuestions)
           ) {
             confirm({
               icon: null,
-              content: t('common.confirmCreateNewSurveyVersion'),
+              content: t('common.confirmCreateNewExternalSurveyVersion'),
               onOk() {
                 addSurveyVersionMutation.mutateAsync({
+                  ...transformValues,
                   surveyId: params.surveyId as string,
-                  ...transformValue.version,
+                  status: SurveyVersionStatus.DRAFT,
                 });
+                return;
+              },
+              onCancel() {
+                return;
               },
             });
+
             return;
           }
 
           await updateSurveyMutation.mutateAsync({
-            ...transformValue.version,
+            ...transformValues,
             surveyVersionId: currentSurveyVersion?.id as string,
-            name: transformValue.version?.name || '',
-            status: transformValue.version?.status || SurveyVersionStatus.DRAFT,
-            remark: transformValue.version?.remark || null,
+            status: values.version?.status || SurveyVersionStatus.DRAFT,
           });
           return;
         }
 
-        // if (values.template === SurveyTemplateEnum.DUPLICATE) {
-        //   await duplicateSurveyMutation.mutateAsync({
-        //     version: {
-        //       name: transformValue.version?.name,
-        //       remark: transformValue.version?.remark,
-        //     },
-        //     projectId: params.projectId as string,
-        //     surveyId: duplicateSurveyId as string,
-        //   });
-        //   return;
-        // }
-        //
-        // if (values.template === SurveyTemplateEnum.NEW) {
-        //   await addSurveyMutation.mutateAsync(transformValue);
-        //   return;
-        // }
+        const transformValue: CreateSurveyBodyDto = {
+          version: transformSurveyVersion(values),
+          projectId: values.projectId,
+        };
+
+        if (
+          currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
+          isSurveyFlowChange(
+            version?.surveyFlowElements,
+            initialValues.version?.surveyFlowElements,
+          )
+        ) {
+          confirm({
+            icon: null,
+            content: t('common.confirmCreateNewSurveyVersion'),
+            onOk() {
+              addSurveyVersionMutation.mutateAsync({
+                surveyId: params.surveyId as string,
+                ...transformValue.version,
+              });
+            },
+          });
+          return;
+        }
+
+        await updateSurveyMutation.mutateAsync({
+          ...transformValue.version,
+          surveyVersionId: currentSurveyVersion?.id as string,
+          name: transformValue.version?.name || '',
+          status: transformValue.version?.status || SurveyVersionStatus.DRAFT,
+          remark: transformValue.version?.remark || null,
+        });
       } finally {
         toggleLoading();
       }
@@ -474,7 +454,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
       navigate,
       toggleLoading,
       isExternalProject,
-      isEditMode,
       currentSurveyVersion?.status,
       currentSurveyVersion?.id,
       t,
@@ -558,6 +537,8 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         },
         project: {
           projectData: project,
+          isExternalProject: project.type === ProjectTypes.EXTERNAL,
+          setExcelUploadFile,
         },
       }}
     >

@@ -53,7 +53,7 @@ const CreateEditSurveyHeader = () => {
         </Link>
         <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
         <Button type={'primary'} htmlType={'submit'} icon={<SaveIcon />}>
-          {t('common.saveEdit')}
+          {t('common.completed')}
         </Button>
       </div>
     </>

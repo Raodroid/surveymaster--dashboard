@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "env-cmd -f .env.dev vite",
+    "start": "env-cmd -f .env.dev vite --host 0.0.0.0",
     "build:development": "env-cmd -f .env.development tsc && vite build",
     "build:dev-server": "env-cmd -f .env.dev-server tsc && vite build",
     "build:stg": "env-cmd -f .env.stg tsc && vite build",

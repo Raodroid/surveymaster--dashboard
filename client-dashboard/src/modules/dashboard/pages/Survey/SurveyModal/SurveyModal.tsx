@@ -50,7 +50,7 @@ const SurveyModal: FC<IModal> = props => {
         await onSuccess();
 
         navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
             projectId: params.projectId,
             surveyId: newVersion.surveyId,
           }) + `?version=${newVersion.displayId}`,
@@ -68,7 +68,7 @@ const SurveyModal: FC<IModal> = props => {
     {
       onSuccess: async res => {
         const newVersion = res.data.versions[0];
-        const fileType = 'application/octet-stream';
+        // const fileType = 'application/octet-stream';
 
         // if (excelUploadFile) {
         //   const file = excelUploadFile as Blob;
@@ -84,7 +84,7 @@ const SurveyModal: FC<IModal> = props => {
         // await onSuccess();
 
         navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
             projectId: params.projectId,
             surveyId: newVersion.surveyId,
           }) + `?version=${newVersion.displayId}`,

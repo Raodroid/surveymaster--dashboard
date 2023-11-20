@@ -94,7 +94,7 @@ export type Replace<
 
 export type ActionThreeDropDownType<T> = {
   record: T;
-  handleSelect: (input: { key: any; record: T }) => void;
+  handleSelect: (input: { key: any; record: T; index?: number }) => void;
 };
 
 export interface IMenuItem {

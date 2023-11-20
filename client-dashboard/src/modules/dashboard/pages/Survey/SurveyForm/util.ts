@@ -7,6 +7,7 @@ import {
 import {
   ExtraSubBranchLogicDto,
   IAddSurveyFormValues,
+  questionValueType,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
   SurveyTemplateEnum,
@@ -100,8 +101,8 @@ export const transformInitSurveyFormData = (
 };
 
 export const isSurveyFlowChange = (
-  newSurveyFlow: SubSurveyFlowElementDto[] = [],
-  initSurveyFlow: SubSurveyFlowElementDto[] = [],
+  newSurveyFlow: unknown[] = [],
+  initSurveyFlow: unknown[] = [],
 ): boolean => {
   return !isEqual(newSurveyFlow, initSurveyFlow);
 };

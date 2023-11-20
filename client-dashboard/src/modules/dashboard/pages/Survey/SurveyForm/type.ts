@@ -76,6 +76,7 @@ export interface IAddSurveyFormValues
   createdAt?: string | Date | null;
   surveyId: string;
   surveyVersionId?: string;
+  selectedRowKeys: string[]; //for external survey only
 }
 
 export const rootSurveyFlowElementFieldName = 'version.surveyFlowElements';

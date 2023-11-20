@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 export type keysAction<T> = {
   key: string;
-  action?: (record: T) => void;
+  action?: (record: T, index?: number) => void;
 }[];
 
 export const useSelectTableRecord = <T,>(actions: keysAction<T>) => {
@@ -13,7 +13,7 @@ export const useSelectTableRecord = <T,>(actions: keysAction<T>) => {
       const { key, record } = props;
       setSelectedRecord(record);
 
-      const x = actions.find((i) => i.key === key);
+      const x = actions.find(i => i.key === key);
 
       if (x && x.action) {
         x.action(record);
