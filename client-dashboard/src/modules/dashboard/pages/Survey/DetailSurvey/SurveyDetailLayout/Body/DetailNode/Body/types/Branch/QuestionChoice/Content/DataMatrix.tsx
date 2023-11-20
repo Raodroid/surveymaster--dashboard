@@ -93,8 +93,8 @@ const DataMatrix: FC<IQuestionChoiceComponent> = props => {
       setValue({
         ...value,
         row_column_BranchChoiceType,
-        column: col === NaN ? undefined : col,
-        row: row === NaN ? undefined : row,
+        column: isNaN(col) ? undefined : col,
+        row: isNaN(row) ? undefined : row,
         choiceType: branchChoiceType,
         operator: isSelectableValueOperator
           ? LogicOperator.SELECTED

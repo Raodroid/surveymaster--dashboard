@@ -80,7 +80,7 @@ function UserContent() {
               </span>
             </p>
           </div>
-          <div className="wrapper flex-j-end flex-a-center switch-wrapper">
+          <div className="wrapper flex justify-end flex-a-center switch-wrapper">
             <span>{t('common.turnedOn')}</span>
             <Switch className="info-btn" />
           </div>
@@ -93,7 +93,7 @@ function UserContent() {
             <span className="title">{t('common.signOutAllOtherSessions')}</span>
             <p>{t('sign')}</p>
           </div>
-          <div className="wrapper flex-j-end">
+          <div className="wrapper flex justify-end">
             <Button
               type="primary"
               className="btn"

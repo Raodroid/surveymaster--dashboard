@@ -53,8 +53,8 @@ const FormField: FC<IQuestionChoiceComponent> = props => {
       setValue({
         ...value,
         row_column_BranchChoiceType,
-        column: col === NaN ? undefined : col,
-        row: row === NaN ? undefined : row,
+        column: isNaN(col) ? undefined : col,
+        row: isNaN(row) ? undefined : row,
         choiceType: BranchChoiceType.CHOICE_TEXT_ENTRY_VALUE,
         operator: LogicOperator.EQUAL_TO,
       });

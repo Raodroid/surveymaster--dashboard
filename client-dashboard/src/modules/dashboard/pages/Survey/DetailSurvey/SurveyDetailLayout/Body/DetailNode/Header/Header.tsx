@@ -1,10 +1,13 @@
 import React, { FC, useCallback } from 'react';
 import {
   getParentBlockSort,
+  getParentChildrenFieldName,
+  getParentFieldName,
   QuestionBranchIcon,
   SurveyDataTreeNode,
   useCheckSurveyFormMode,
   useSurveyFormContext,
+  transformToSurveyDataTreeNode,
 } from '@pages/Survey';
 import { useTranslation } from 'react-i18next';
 
@@ -14,11 +17,6 @@ import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
 import { Button, Divider } from 'antd';
 import { DuplicateIcon, TrashOutlined } from '@/icons';
-import {
-  getParentNodeFieldName,
-  transformToSurveyDataTreeNode,
-} from '../../Aside/util';
-import _uniq from 'lodash/uniq';
 
 const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   const { focusBlock } = props;
@@ -27,7 +25,7 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
 
   const { isViewMode } = useCheckSurveyFormMode();
 
-  const parentLayerFieldName = getParentNodeFieldName(fieldName);
+  const parentLayerFieldName = getParentChildrenFieldName(fieldName);
 
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
@@ -37,13 +35,13 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
 
   const handleRemoveBlock = useCallback(() => {
     const parentBlockSort = getParentBlockSort(parentLayerFieldName);
-
     if (!isNaN(parentBlockSort)) {
+      const parentFieldName = getParentFieldName(fieldName);
       setParentNodeValue(
         transformToSurveyDataTreeNode(
           (parentNodeValue || []).filter(node => node.fieldName !== fieldName),
           parentBlockSort,
-          parentLayerFieldName,
+          parentFieldName,
         ),
       );
     } else {
@@ -69,14 +67,18 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   ]);
 
   const handleDuplicateBlock = useCallback(() => {
-    const parentBlockSort = getParentBlockSort(parentLayerFieldName);
+    if (!parentNodeValue) return;
+
+    const parentBlockSort = getParentBlockSort(fieldName);
 
     if (!isNaN(parentBlockSort)) {
+      const parentFieldName = fieldName.match(/(.*)\.children.*$/)?.[1];
+
       setParentNodeValue(
         transformToSurveyDataTreeNode(
           [...parentNodeValue, value],
           parentBlockSort,
-          parentLayerFieldName,
+          parentFieldName,
         ),
       );
       return;
@@ -84,7 +86,7 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
     setParentNodeValue(
       transformToSurveyDataTreeNode([...parentNodeValue, value]),
     );
-  }, [parentLayerFieldName, parentNodeValue, setParentNodeValue, value]);
+  }, [fieldName, parentNodeValue, setParentNodeValue, value]);
 
   return (
     <div className={'p-6 flex items-center gap-1'}>

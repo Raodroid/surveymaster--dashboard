@@ -36,7 +36,7 @@ export function ProjectFilter() {
     >
       <ProjectFilterBtn
         type="primary"
-        className="flex-j-end"
+        className="flex justify-end"
         aria-label={'filter button'}
       >
         <FilterOutlined />

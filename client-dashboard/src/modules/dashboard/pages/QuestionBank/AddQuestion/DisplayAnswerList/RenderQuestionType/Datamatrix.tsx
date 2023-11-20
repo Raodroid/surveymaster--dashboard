@@ -34,7 +34,7 @@ const Datamatrix = () => {
     end: true,
     caseSensitive: true,
   });
-  const className = !!isViewMode ? 'view-mode' : undefined;
+  const className = isViewMode ? 'view-mode' : undefined;
 
   const handleAdd = useCallback(
     (key: 'rows' | 'columns') => {

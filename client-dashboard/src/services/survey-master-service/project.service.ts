@@ -14,7 +14,7 @@ export default class ProjectService {
   }
 
   static createProject(payload: ProjectPayload): Promise<AxiosResponse> {
-    return APIService.post('projects', payload);
+    return APIService.post(EntityEnum.PROJECT, payload);
   }
 
   static updateProject(payload: ProjectPayload): Promise<AxiosResponse> {

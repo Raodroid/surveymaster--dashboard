@@ -10,10 +10,9 @@ import {
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
-import { calcLevelNodeByFieldName } from '../../DetailSurvey/SurveyDetailLayout/Body/Aside/util';
 import styled from 'styled-components/macro';
 import { PlusOutLinedIcon } from '@/icons';
-import { useSurveyFormContext } from '@pages/Survey';
+import { calcLevelNodeByFieldName, useSurveyFormContext } from '@pages/Survey';
 import _uniq from 'lodash/uniq';
 import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
 
@@ -63,7 +62,6 @@ const AddNewBlockElement: FC<{
       key: string;
     } => {
       if (isRootPath(currentFieldName, value)) {
-        // return (values?.version?.surveyFlowElements?.length || 0) + 1;
         const blockIndex = values?.version?.surveyFlowElements?.length || 0;
         const fieldName = rootSurveyFlowElementFieldName + `[${blockIndex}]`;
         return {
@@ -102,6 +100,7 @@ const AddNewBlockElement: FC<{
         type,
         ...genKey(fieldName),
       };
+
       if (isRootPath(fieldName, value)) {
         setValue([...value, newBlockValue]);
 

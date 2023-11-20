@@ -7,15 +7,14 @@ import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
 import { Button, Dropdown } from 'antd';
 import { PlusOutLinedIcon } from '@/icons';
 import {
+  getBranchLevel,
   getParentBlockSort,
+  getParentChildrenFieldName,
+  getParentFieldName,
   SurveyDataTreeNode,
   useSurveyFormContext,
-} from '@pages/Survey';
-import _uniq from 'lodash/uniq';
-import {
-  getParentNodeFieldName,
   transformToSurveyDataTreeNode,
-} from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/Aside/util';
+} from '@pages/Survey';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 
@@ -23,7 +22,7 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
   const { fieldName } = props;
   const { t } = useTranslation();
 
-  const parentLayerFieldName = getParentNodeFieldName(fieldName);
+  const parentLayerFieldName = getParentChildrenFieldName(fieldName);
 
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
@@ -31,8 +30,9 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
 
   const handleAddElement = useCallback(
     (type: SubSurveyFlowElement) => {
-      let currentLevel: number | string | undefined =
-        fieldName.match(/([0-9]+)\]$/)?.[1];
+      if (!parentNodeValue) return;
+
+      let currentLevel: number | string | undefined = getBranchLevel(fieldName);
 
       if (!currentLevel) {
         return;
@@ -49,11 +49,12 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
       (newValue || []).splice(currentLevel, 0, newBlockValue);
 
       if (!isNaN(parentBlockSort)) {
+        const parentFieldName = getParentFieldName(fieldName);
         setParentNodeValue(
           transformToSurveyDataTreeNode(
             newValue,
             parentBlockSort,
-            parentLayerFieldName,
+            parentFieldName,
           ),
         );
       } else {

@@ -8,11 +8,9 @@ import {
   SurveyDataTreeNode,
   useCheckSurveyFormMode,
   useSurveyFormContext,
-} from '@pages/Survey';
-import {
-  getParentNodeFieldName,
+  getParentChildrenFieldName,
   transformToSurveyDataTreeNode,
-} from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/Aside/util';
+} from '@pages/Survey';
 import _get from 'lodash/get';
 import { SubSurveyFlowElement } from '@/type';
 import { DragHandle } from '@/customize-components';
@@ -59,7 +57,7 @@ const SurveyStructureTree: React.FC = () => {
       // check posistion is valid when drag
       if (dragOverGapBottom || dragOverGapTop) {
         if (node.fieldName.match(/'RightMenu'/)) {
-          const parent = getParentNodeFieldName(node.fieldName);
+          const parent = getParentChildrenFieldName(node.fieldName);
           const parentNode: questionValueType = _get(value, parent);
           if (parentNode && parentNode.type !== SubSurveyFlowElement.BRANCH) {
             return;
@@ -208,6 +206,6 @@ const WrapperTree = styled(Tree)`
   }
   .ant-tree-treenode-leaf-last .ant-tree-switcher-leaf-line:before {
     top: -25px !important;
-    height: 70px !important;
+    height: 45px !important;
   }
 `;
