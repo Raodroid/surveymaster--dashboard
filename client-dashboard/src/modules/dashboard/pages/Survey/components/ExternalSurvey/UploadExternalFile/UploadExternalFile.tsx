@@ -1,32 +1,19 @@
-import React, { FC, useCallback, useState } from 'react';
-
+import React, { useCallback, useState } from 'react';
 import { Button, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { UploadExternalFileWrapper } from './style';
 import * as XLSX from 'xlsx';
 import Dragger from 'antd/lib/upload/Dragger';
-import { RollbackOutlined } from '@/icons';
-import { useToggle } from '@/utils';
 import { useField } from 'formik';
-import {
-  IQuestion,
-  IQuestionVersion,
-  ProjectTypes,
-  QuestionVersionStatus,
-} from '@/type';
+import { IQuestion, IQuestionVersion, QuestionVersionStatus } from '@/type';
 import { QuestionBankService } from '@/services';
 import moment from 'moment';
-import { useGetProjectByIdQuery } from '@pages/Project';
-import { useParams } from 'react-router';
-import GroupSurveyButton, {
-  initNewRowValue,
-} from '@pages/Survey/components/GroupSurveyButton/GroupSurveyButton';
-// import DisplayAnswer from '@pages/Survey/components/DisplayAnswer/DisplayAnswer';
+import { initNewRowValue } from '@pages/Survey/components/GroupSurveyButton/GroupSurveyButton';
 import {
   questionValueType,
   rootSurveyFlowElementFieldName,
 } from '@pages/Survey/SurveyForm/type';
-import DisplayAnswer from '../DisplayAnswer/DisplayAnswer';
+import { useSurveyFormContext } from '@pages/Survey';
 
 const storeResultX = {};
 
@@ -81,25 +68,14 @@ const createBinaryFile = (excelFile, callback) => {
   reader.readAsBinaryString(excelFile);
 };
 
-const questionBlockDefault = 0;
-
-const UploadExternalFile: FC<{
-  setExcelUploadFile: (value: string | Blob) => void;
-}> = props => {
-  const { setExcelUploadFile } = props;
+const UploadExternalFile = () => {
   const { t } = useTranslation();
-  const [fileColumnTitle, setFileColumnTitle] = useState<string[] | undefined>(
-    undefined,
-  );
+  const { project } = useSurveyFormContext();
+  const { setExcelUploadFile } = project;
 
   const [{ value }, , { setValue }] = useField<questionValueType[]>(
-    `${rootSurveyFlowElementFieldName}[${questionBlockDefault}].surveyQuestions`,
+    `${rootSurveyFlowElementFieldName}[0].surveyQuestions`,
   );
-
-  const [displayParameterTable, toggleDisplayParameterTable] = useToggle(
-    value?.length !== 0,
-  );
-
   const handleFiles = useCallback(
     (file: File) => {
       const reader = new FileReader();
@@ -204,11 +180,10 @@ const UploadExternalFile: FC<{
           });
           handleFiles(info.file.originFileObj);
           setUploading(false);
-          toggleDisplayParameterTable();
         });
       }
     },
-    [handleFiles, setExcelUploadFile, toggleDisplayParameterTable],
+    [handleFiles, setExcelUploadFile],
   );
 
   const onDrop = useCallback(
@@ -219,79 +194,23 @@ const UploadExternalFile: FC<{
   );
 
   return (
-    <div className={'p-8'}>
-      {displayParameterTable && (
-        <>
-          <UploadExternalFileWrapper>
-            {fileColumnTitle ? (
-              <>
-                <div className={'display-file-data'}>
-                  <div className={'display-file-data__table'}>
-                    {fileColumnTitle.slice(0, 6).map(x => (
-                      <div
-                        className={'display-file-data__table__column'}
-                        key={x}
-                      >
-                        <span className={'display-file-data__table__cell'}>
-                          {x}
-                        </span>
-                        <span className={'display-file-data__table__cell'} />
-                        <span className={'display-file-data__table__cell'} />
-                        <span className={'display-file-data__table__cell'} />
-                        <span className={'display-file-data__table__cell'} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <Spin spinning={isUploading}>
-                <Dragger
-                  name={'file'}
-                  onChange={onChange}
-                  onDrop={onDrop}
-                  multiple={false}
-                  accept={'.csv,.xlsx'}
-                >
-                  <p className="ant-upload-text">{t('common.dragYourCSV')}</p>
-                  <p className="ant-upload-hint">OR</p>
-                  <Button className={'info-btn'} type={'primary'}>
-                    {t('common.browseLocalFile')}
-                  </Button>
-                </Dragger>
-              </Spin>
-            )}
-          </UploadExternalFileWrapper>
-          {fileColumnTitle && (
-            <div className={'flex gap-3'}>
-              <Button
-                type={'primary'}
-                className={'info-btn'}
-                onClick={toggleDisplayParameterTable}
-              >
-                {t('common.confirmFile')}
-              </Button>
-              <Button
-                type={'text'}
-                className={'info-btn '}
-                icon={<RollbackOutlined />}
-                onClick={() => {
-                  setFileColumnTitle(undefined);
-                }}
-              >
-                {t('common.selectAnotherFile')}
-              </Button>
-            </div>
-          )}
-        </>
-      )}
-      {!displayParameterTable && (
-        <DisplayAnswer
-          onChangeUploadFile={onChange}
-          questionBlockIndex={questionBlockDefault}
-        />
-      )}
-    </div>
+    <UploadExternalFileWrapper>
+      <Spin spinning={isUploading}>
+        <Dragger
+          name={'file'}
+          onChange={onChange}
+          onDrop={onDrop}
+          multiple={false}
+          accept={'.csv,.xlsx'}
+        >
+          <p className="ant-upload-text">{t('common.dragYourCSV')}</p>
+          <p className="ant-upload-hint">OR</p>
+          <Button className={'info-btn'} type={'primary'}>
+            {t('common.browseLocalFile')}
+          </Button>
+        </Dragger>
+      </Spin>
+    </UploadExternalFileWrapper>
   );
 };
 

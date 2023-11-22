@@ -6,6 +6,7 @@ import SurveyStructureTree from '@pages/Survey/DetailSurvey/SurveyDetailLayout/B
 import DetailNode from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/DetailNode';
 import {
   AddNewBlockElement,
+  ExternalSurvey,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
   useCheckSurveyFormMode,
@@ -14,7 +15,6 @@ import {
 import { SimpleBarCustom } from '@/customize-components';
 import { useField } from 'formik';
 import EmptyBlock from '../EmptyBlock/EmptyBlock';
-import UploadExternalFile from '@pages/Survey/components/EditSurveyQuestionList/UploadExternalFile';
 
 const ASIDE_WIDTH = 427; //px
 
@@ -27,13 +27,13 @@ const Body = () => {
   );
   const { isViewMode } = useCheckSurveyFormMode();
   const { form, project } = useSurveyFormContext();
-  const { isExternalProject, setExcelUploadFile } = project;
+  const { isExternalProject } = project;
 
   if (isExternalProject) {
     if (isViewMode && !value.length) {
       return <Empty className={'w-full h-full flex flex-col justify-center'} />;
     }
-    return <UploadExternalFile setExcelUploadFile={setExcelUploadFile} />;
+    return <ExternalSurvey />;
   }
 
   if (form.initialValues) {
@@ -49,9 +49,7 @@ const Body = () => {
 
   return (
     <div
-      className={
-        'relative flex min-w-[1000px] w-[calc(100vw-5rem)] h-full overflow-hidden'
-      }
+      className={'relative flex w-[calc(100vw-5rem)] h-full overflow-hidden'}
     >
       {/*aside*/}
       <div

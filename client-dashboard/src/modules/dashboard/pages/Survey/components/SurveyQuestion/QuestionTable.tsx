@@ -83,10 +83,10 @@ const QuestionTable: FC<{
   const [openUpdateVersionQuestionModal, toggleUpdateVersionQuestionModal] =
     useToggle();
 
-  const { isViewMode } = useCheckSurveyFormMode();
+  const { isViewMode, isEditMode } = useCheckSurveyFormMode();
 
   const columns: ColumnsType<questionValueType> = useMemo(() => {
-    let base = [
+    let base: ColumnsType<questionValueType> = [
       {
         dataIndex: 'order',
         render: (value, record, index) => {
@@ -131,30 +131,31 @@ const QuestionTable: FC<{
         title: '',
         dataIndex: 'category',
         width: 100,
-        render: value => (
-          <div
-            className={
-              'overflow-hidden w-full overflow-ellipsis whitespace-nowrap border border-info rounded-[1rem] font-semibold text-info text-[12px] py-[4px] px-[8px]'
-            }
-          >
-            {value}
-          </div>
-        ),
+        render: value => <RoundedTag title={value} />,
       },
       {
         title: '',
         dataIndex: 'type',
-        width: 150,
+        width: 200,
         render: value => {
           return value ? <RoundedTag title={t(`questionType.${value}`)} /> : '';
         },
       },
-      {
-        title: '',
-        dataIndex: 'action',
-        width: 40,
-        render: (value, record: questionValueType, index) =>
-          isViewMode ? null : (
+    ];
+    if (isEditMode) {
+      base = [
+        {
+          dataIndex: 'order',
+          render: () => {
+            return <DragHandle />;
+          },
+        },
+        ...base,
+        {
+          title: '',
+          dataIndex: 'action',
+          width: 60,
+          render: (value, record: questionValueType, index) => (
             <div className={'flex items-center gap-2'}>
               <Button
                 type={'text'}
@@ -175,22 +176,12 @@ const QuestionTable: FC<{
               />
             </div>
           ),
-      },
-    ];
-    if (!isViewMode) {
-      base = [
-        {
-          dataIndex: 'order',
-          render: () => {
-            return <DragHandle />;
-          },
         },
-        ...base,
       ];
     }
     return base;
   }, [
-    isViewMode,
+    isEditMode,
     blockData?.blockSort,
     t,
     removeQuestion,
@@ -199,11 +190,11 @@ const QuestionTable: FC<{
 
   return (
     <>
-      <SimpleBar className={'h-full overflow-scroll flex-1'}>
+      <SimpleBar className={'h-full overflow-y-scroll flex-1'}>
         <DragTable
-          scroll={{ x: size.large }}
+          scroll={{ x: 500 }}
           columns={columns}
-          rowClassName={'border'}
+          rowClassName={'border hannah'}
           dataSource={value}
           pagination={false}
           setDataTable={setValue}

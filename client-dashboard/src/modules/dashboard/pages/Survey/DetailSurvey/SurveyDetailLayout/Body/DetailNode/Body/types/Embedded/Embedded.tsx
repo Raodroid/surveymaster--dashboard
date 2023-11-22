@@ -31,7 +31,7 @@ const Embedded: FC<QuestionBlockProps> = props => {
       render={({ push, remove }) => (
         <>
           <SimpleBar className={'h-full overflow-scroll flex-1'}>
-            <div className={'min-w-[770px]'}>
+            <div className={'min-w-[500px]'}>
               {(listEmbeddedData || []).map((list, index) => (
                 <Fragment key={index}>
                   <span className={'font-semibold text-[16px]'}>

@@ -7,7 +7,7 @@ const RoundedTag: FC<{ title: string | ReactNode; color?: string }> = props => {
   return (
     <span
       className={
-        'border border-info rounded-[1rem] font-semibold text-[12px] text-info py-[4px] px-[8px]'
+        'border border-info rounded-[1rem] font-semibold text-[12px] text-info py-[4px] px-[8px] whitespace-nowrap'
       }
       style={{
         borderColor: color || defaultColor,

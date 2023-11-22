@@ -1,15 +1,15 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useField, useFormikContext } from 'formik';
-import { Badge, Button, Table, Upload } from 'antd';
+import { Badge, Button, Table } from 'antd';
 import moment from 'moment';
 
-import { initNewRowValue } from '../GroupSurveyButton/GroupSurveyButton';
+import { initNewRowValue } from '../../GroupSurveyButton/GroupSurveyButton';
 import {
   IAddSurveyFormValues,
   questionValueType,
   rootSurveyFlowElementFieldName,
 } from '@pages/Survey/SurveyForm/type';
-import { useDebounce, usePrevious } from '@/utils';
+import { useDebounce } from '@/utils';
 import {
   ActionThreeDropDownType,
   IMenuItem,
@@ -22,14 +22,18 @@ import { ColumnsType } from 'antd/es/table';
 import { ControlledInput, useCheckScopeEntityDefault } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
 import UncontrollInput from '@input/uncontrolled-input/UncontrollInput';
-import { DragTable } from '@/modules/dashboard/components/DragTable/DragTable';
+import { DragTable } from '@components/DragTable/DragTable';
 import { DragHandle, ThreeDotsDropdown } from '@/customize-components';
-import { DisplayAnswerWrapper } from './style';
-import { determineVersionOfSurveyQuestion } from '../EditSurveyQuestionList/UploadExternalFile';
+import { determineVersionOfSurveyQuestion } from '../UploadExternalFile/UploadExternalFile';
 import { useTranslation } from 'react-i18next';
-import { DynamicSelect, useSurveyFormContext } from '@pages/Survey';
+import {
+  DynamicSelect,
+  useCheckSurveyFormMode,
+  useSurveyFormContext,
+} from '@pages/Survey';
 import { SuffixIcon } from '@/icons';
 import { keysAction, useSelectTableRecord } from '@/hooks';
+import SimpleBar from 'simplebar-react';
 
 interface IExpandableTable extends questionValueType {
   createdAt: string | Date | null;
@@ -42,13 +46,12 @@ const rowExpandable = (record: questionValueType) => {
   return newVersions.length !== 1;
 };
 
-const DisplayAnswer = (props: {
-  questionBlockIndex: number;
-  onChangeUploadFile: (input: unknown) => void;
-}) => {
-  const { onChangeUploadFile, questionBlockIndex } = props;
+const questionBlockIndex = 0;
+
+const DisplayAnswer = () => {
   const [searchTxt, setSearchTxt] = useState<string>('');
   const debounceSearchText = useDebounce(searchTxt);
+  const { isEditMode } = useCheckSurveyFormMode();
 
   const { t } = useTranslation();
   const fieldName = `${rootSurveyFlowElementFieldName}[${questionBlockIndex}].surveyQuestions`;
@@ -124,28 +127,8 @@ const DisplayAnswer = (props: {
   const { handleSelect, selectedRecord } =
     useSelectTableRecord<questionValueType>(tableActions);
 
-  const columns: ColumnsType<questionValueType> = useMemo(
-    () => [
-      {
-        title: t('common.order'),
-        dataIndex: 'order',
-        width: 100,
-        shouldCellUpdate: (record, prevRecord) => false,
-        render: (value, record, index) => {
-          return (
-            <span
-              style={{
-                display: 'inline-flex',
-                gap: '1.5rem',
-                alignItems: 'center',
-              }}
-            >
-              <DragHandle />
-              <span>{index}</span>
-            </span>
-          );
-        },
-      },
+  const columns: ColumnsType<questionValueType> = useMemo(() => {
+    let base: ColumnsType<questionValueType> = [
       {
         title: t('common.parameter'),
         dataIndex: 'parameter',
@@ -155,7 +138,7 @@ const DisplayAnswer = (props: {
           return (
             <>
               <ControlledInput
-                style={{ width: '100%' }}
+                className={`${isEditMode ? '' : 'view-mode'} w-full`}
                 inputType={INPUT_TYPES.INPUT}
                 name={`${rootSurveyFlowElementFieldName}[0].surveyQuestions[${index}].parameter`}
               />
@@ -188,61 +171,59 @@ const DisplayAnswer = (props: {
               fieldName={`${fieldName}[${index}]`}
               availableQuestionOptions={availableQuestionOptions}
               parentFieldName={rootSurveyFlowElementFieldName}
+              className={`${isEditMode ? '' : 'view-mode'} w-full`}
             />
           );
         },
       },
-      // {
-      //   title: t('common.remark'),
-      //   dataIndex: 'remark',
-      //   shouldCellUpdate: (record, prevRecord) => false,
-      //   render: (value, record, index) => (
-      //     <ControlledInput
-      //       style={{ width: '100%' }}
-      //       inputType={INPUT_TYPES.INPUT}
-      //       name={`version.questions[${index}].remark`}
-      //     />
-      //   ),
-      // },
-      // {
-      //   title: '',
-      //   dataIndex: 'action',
-      //   shouldCellUpdate: (record, prevRecord) => false,
-      //   width: 60,
-      //   render: (value, record, qIndex) => (
-      //     <ActionDropDown
-      //       record={record}
-      //       rowExpandable={rowExpandable}
-      //       questionBlockIndex={questionBlockIndex}
-      //       isExternalProject={isExternalProject}
-      //       fieldName={`${fieldName}[${qIndex}]`}
-      //       rowIndex={qIndex}
-      //     />
-      //   ),
-      // },
-      {
-        title: '',
-        dataIndex: 'id',
-        width: 60,
-        render: (value, _, idx) => (
-          <div
-            role="presentation"
-            onClick={e => {
-              e.stopPropagation();
-            }}
-          >
-            <ActionThreeDropDown
-              record={_}
-              handleSelect={handleSelect}
-              index={idx}
-              questionIdMap={questionIdMap}
-            />
-          </div>
-        ),
-      },
-    ],
-    [availableQuestionOptions, fieldName, handleSelect, questionIdMap, t],
-  );
+    ];
+
+    if (isEditMode) {
+      base = [
+        {
+          title: t('common.order'),
+          dataIndex: 'order',
+          width: 100,
+          shouldCellUpdate: (record, prevRecord) => false,
+          render: (value, record, index) => {
+            return (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  gap: '1.5rem',
+                  alignItems: 'center',
+                }}
+              >
+                <DragHandle />
+                <span>{index}</span>
+              </span>
+            );
+          },
+        },
+        ...base,
+        {
+          title: '',
+          dataIndex: 'id',
+          width: 60,
+          render: (value, _, idx) => (
+            <div
+              role="presentation"
+              onClick={e => {
+                e.stopPropagation();
+              }}
+            >
+              <ActionThreeDropDown
+                record={_}
+                handleSelect={handleSelect}
+                index={idx}
+              />
+            </div>
+          ),
+        },
+      ];
+    }
+    return base;
+  }, [availableQuestionOptions, fieldName, handleSelect, isEditMode, t]);
 
   const expandTableColumn: ColumnsType<IExpandableTable> = useMemo(() => {
     const renderBlankKeys = ['action', 'remark', 'parameter'];
@@ -334,15 +315,6 @@ const DisplayAnswer = (props: {
 
   const [checked, setChecked] = useState<React.Key[]>([]);
 
-  const preVersionQuestion = usePrevious(value);
-
-  // useEffect(() => {
-  //   // if (isCreateMode) return;
-  //   if (!preVersionQuestion) {
-  //     setChecked(value.map(i => i.questionVersionId));
-  //   }
-  // }, [preVersionQuestion, value]);
-
   const onSelectChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: questionValueType[]) => {
       const nextValue = selectedRows.map(x => x.questionVersionId);
@@ -429,38 +401,36 @@ const DisplayAnswer = (props: {
   // );
 
   return (
-    <DisplayAnswerWrapper>
-      <DragTable
-        scroll={{ x: size.large }}
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={dataSource}
-        pagination={false}
-        renderRowClassName={renderRowClassName}
-        expandable={{
-          expandedRowRender,
-          rowExpandable,
-          expandRowByClick: false,
-          expandIconColumnIndex: -1,
-          defaultExpandAllRows: true,
-        }}
-        setDataTable={setDataTable}
-      />
-      <div className={'DisplayAnswerWrapper__footer'}>
-        <Upload
-          onChange={onChangeUploadFile}
-          accept={'.csv,.xlsx'}
-          multiple={false}
-        >
-          <Button type={'primary'} disabled>
-            {t('common.clickToUpload')}
+    <div className={'w-full h-full flex flex-col over-hidden'}>
+      <SimpleBar className={'flex-1 overflow-y-scroll'}>
+        <div className={''}>
+          <DragTable
+            scroll={{ x: size.large }}
+            rowSelection={isEditMode ? rowSelection : undefined}
+            columns={columns}
+            dataSource={dataSource}
+            pagination={false}
+            renderRowClassName={renderRowClassName}
+            expandable={{
+              expandedRowRender,
+              rowExpandable,
+              expandRowByClick: false,
+              expandIconColumnIndex: -1,
+              defaultExpandAllRows: true,
+            }}
+            setDataTable={setDataTable}
+          />
+        </div>
+      </SimpleBar>
+
+      {isEditMode && (
+        <div className={'w-full pt-8'}>
+          <Button className={'w-full'} type={'primary'} onClick={handleAddRow}>
+            {t('common.addRow')}
           </Button>
-        </Upload>
-        <Button type={'primary'} onClick={handleAddRow}>
-          {t('common.addRow')}
-        </Button>
-      </div>
-    </DisplayAnswerWrapper>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -472,11 +442,10 @@ enum ACTION {
 }
 const ActionThreeDropDown: FC<
   ActionThreeDropDownType<questionValueType> & {
-    questionIdMap: any;
     index: number;
   }
 > = props => {
-  const { record, handleSelect, questionIdMap, index } = props;
+  const { record, handleSelect, index } = props;
   const { t } = useTranslation();
   const { canUpdate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.SURVEY);
   const hasNewVersion = rowExpandable(record);
