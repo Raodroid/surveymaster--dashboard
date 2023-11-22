@@ -38,4 +38,6 @@ export * from './SingleChoiceCubeIcon';
 export * from './CubeIcon';
 export * from './PlusOutLinedIcon';
 export * from './DetailIcon';
+export * from './DownloadIcon';
 export * from './PlayIcon';
+export * from './LightingIcon';

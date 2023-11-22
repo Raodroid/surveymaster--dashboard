@@ -8,14 +8,15 @@ import { ROUTE_PATH } from '@/enums';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { Link } from 'react-router-dom';
 import RoundedSelect from '../../../../../../../../customize-components/RoundedSelect';
+import SurveyVersionSelect from '../../../../components/SurveyVersionSelect/SurveyVersionSelect';
 
-const CreateEditSurveyHeader = () => {
+const EditSurveyHeader = () => {
   const { t } = useTranslation();
   const params = useParams<projectSurveyParams>();
   const { survey } = useSurveyFormContext();
   const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
     ver => ({
-      label: `Version ${ver.displayId}`.toUpperCase(),
+      label: ver.displayId,
       value: ver?.id || '',
     }),
   );
@@ -27,10 +28,9 @@ const CreateEditSurveyHeader = () => {
           {survey.currentSurveyVersion?.name}
         </h3>
 
-        <RoundedSelect
+        <SurveyVersionSelect
           value={survey.currentSurveyVersion?.id}
           options={versions}
-          className={'w-[200px]'}
         />
 
         <SurveyDetailDrawer />
@@ -60,4 +60,4 @@ const CreateEditSurveyHeader = () => {
   );
 };
 
-export default CreateEditSurveyHeader;
+export default EditSurveyHeader;

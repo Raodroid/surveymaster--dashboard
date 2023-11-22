@@ -77,6 +77,7 @@ const Body = () => {
         </div>
       </div>
 
+      {/* slide button */}
       <Button
         type={'dashed'}
         className={`absolute bottom-6 left-[${ASIDE_WIDTH}px] transition-all`}

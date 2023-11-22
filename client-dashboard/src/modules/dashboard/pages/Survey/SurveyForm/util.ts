@@ -86,6 +86,7 @@ export const transformInitSurveyFormData = (
   input?: ISurveyVersion,
 ): IAddSurveyFormValues => {
   return {
+    selectedRowKeys: [],
     surveyVersionId: input?.id,
     createdAt: input?.survey?.createdAt,
     version: {

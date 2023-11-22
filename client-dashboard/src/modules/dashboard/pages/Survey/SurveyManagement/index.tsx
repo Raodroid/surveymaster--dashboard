@@ -34,6 +34,7 @@ import {
 } from '@pages/Project';
 import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
 import {
+  DownloadIcon,
   FileIconOutlined,
   PenFilled,
   RollbackOutlined,
@@ -416,7 +417,7 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
 
     if (!isExternalProject && canRead) {
       baseMenu.push({
-        icon: <ExportOutlined className={'text-primary'} />,
+        icon: <DownloadIcon className={'text-primary'} />,
         label: t('common.exportQualtricsJSON'),
         key: ACTION.EXPORT,
       });

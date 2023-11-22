@@ -1,11 +1,16 @@
 import React, { Fragment, ReactNode, useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
-import { SurveyBriefDetail, useSurveyFormContext } from '@pages/Survey';
-import { Button, Divider, Modal, notification, Spin } from 'antd';
+import {
+  SurveyBriefDetail,
+  SurveyVersionRemarkButton,
+  SurveyVersionSelect,
+  useSurveyFormContext,
+} from '@pages/Survey';
+import { Divider, Modal, notification, Spin } from 'antd';
 import { IGetParams, IOptionItem, ISurveyVersion } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
+import { EntityEnum, MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
 import { onError, saveBlob, useToggle } from '@/utils';
@@ -17,9 +22,9 @@ import {
   ActionThreeDropDown,
 } from './SurveyVersionActionThreeDropdown';
 import { Link } from 'react-router-dom';
-import { Chat, Clock, PenFilled } from '@/icons';
+import { Clock, PenFilled } from '@/icons';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
-import { IBreadcrumbItem } from '@/modules/common';
+import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
 
 const { confirm } = Modal;
 
@@ -101,11 +106,21 @@ const genLink = (
 
 const RightMenu = () => {
   const { t } = useTranslation();
+  const { canUpdate, canDelete } = useCheckScopeEntityDefault(
+    EntityEnum.SURVEY,
+  );
   const qsParams = useParseQueryString<IGetParams & { version?: string }>();
   const params = useParams<projectSurveyParams>();
   const { survey } = useSurveyFormContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
+    ver => ({
+      label: ver.displayId,
+      value: ver?.id || '',
+    }),
+  );
+
   const deleteMutation = useMutation(
     (data: { id: string }) => {
       return SurveyService.deleteSurveyVersion(data);
@@ -219,17 +234,10 @@ const RightMenu = () => {
   const { handleSelect, selectedRecord } =
     useSelectTableRecord<ISurveyVersion>(tableActions);
 
-  const items = useMemo<{ icon: ReactNode; label: string; href: string }[]>(
-    () => [
-      {
-        label: t('common.editSurvey'),
-        icon: <PenFilled />,
-        href: genLink(
-          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
-          qsParams?.version,
-          params,
-        ),
-      },
+  const items = useMemo<
+    { icon: ReactNode; label: string; href: string }[]
+  >(() => {
+    let base = [
       {
         label: t('common.surveyChangeLog'),
         icon: <Clock />,
@@ -239,13 +247,32 @@ const RightMenu = () => {
           params,
         ),
       },
-    ],
-    [params, qsParams?.version, t],
-  );
+    ];
+    if (canUpdate) {
+      base = [
+        {
+          label: t('common.editSurvey'),
+          icon: <PenFilled />,
+          href: genLink(
+            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
+            qsParams?.version,
+            params,
+          ),
+        },
+        ...base,
+      ];
+    }
+    return base;
+  }, [canUpdate, params, qsParams?.version, t]);
 
   return (
     <div className={'flex items-center'}>
-      {items.map((i, idx) => {
+      <SurveyVersionSelect
+        value={survey.currentSurveyVersion?.id}
+        options={versions}
+      />
+      <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+      {items.map(i => {
         return (
           <Fragment key={i.href}>
             <Link to={i.href} className={'flex items-center gap-2'}>
@@ -256,12 +283,7 @@ const RightMenu = () => {
           </Fragment>
         );
       })}
-
-      <Button type={'text'} icon={<Chat />} className={'px-1'}>
-        <span className={'!text-[1rem] font-semibold'}>
-          {t('common.remarks')}
-        </span>
-      </Button>
+      <SurveyVersionRemarkButton />
       {survey.currentSurveyVersion && (
         <Spin
           spinning={

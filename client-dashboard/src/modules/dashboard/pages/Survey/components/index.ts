@@ -9,4 +9,7 @@ export { default as SurveyDetailDrawer } from './SurveyDetailDrawer/SurveyDetail
 export { default as SurveyBriefDetail } from './SurveyBriefDetail/SurveyBriefDetail';
 export { default as UpdateQuestionVersion } from './UpdateQuestionVersion/UpdateQuestionVersion';
 export { default as ExternalSurvey } from './ExternalSurvey/ExternalSurvey';
+export { default as RemarkSection } from './RemarkSection/RemarkSection';
+export { default as SurveyVersionRemarkButton } from './SurveyVersionRemarkModal/SurveyVersionRemarkButton';
+export { default as SurveyVersionSelect } from './SurveyVersionSelect/SurveyVersionSelect';
 export * from './SurveyFormContext';

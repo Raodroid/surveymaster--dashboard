@@ -58,7 +58,7 @@ interface ISurveyFormContext {
   actionLoading: boolean;
 
   question: {
-    questionIdMap: Record<
+    questionVersionIdMap: Record<
       string,
       IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
     >;
@@ -109,7 +109,7 @@ const intValue: ISurveyFormContext = {
       value: Record<T, GetListQuestionDto[T]>,
     ): void {},
     newQuestions: [],
-    questionIdMap: {},
+    questionVersionIdMap: {},
     hasNextQuestionPage: false,
     fetchNextQuestionPage: () => {},
     isFetchingQuestion: false,
@@ -170,7 +170,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           const normalizeByQuestionId: Record<
             string,
             IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
-          > = { ...s.question.questionIdMap };
+          > = { ...s.question.questionVersionIdMap };
 
           const newQuestions: Array<
             IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
@@ -204,7 +204,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
               hasNextQuestionPage:
                 !!questionListData.pages.at(-1)?.data?.hasNextPage,
               fetchNextQuestionPage: fetchNextPage,
-              questionIdMap: normalizeByQuestionId,
+              questionVersionIdMap: normalizeByQuestionId,
             },
           };
         });
@@ -491,7 +491,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
 
   useEffect(() => {
     setContext(s => {
-      const questionIdMap = s.question.questionIdMap;
+      const questionIdMap = s.question.questionVersionIdMap;
 
       createQuestionMap(
         currentSurveyVersion?.surveyFlowElements,
@@ -501,8 +501,8 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         ...s,
         question: {
           ...s.question,
-          questionIdMap: {
-            ...s.question.questionIdMap,
+          questionVersionIdMap: {
+            ...s.question.questionVersionIdMap,
             ...questionIdMap,
           },
         },

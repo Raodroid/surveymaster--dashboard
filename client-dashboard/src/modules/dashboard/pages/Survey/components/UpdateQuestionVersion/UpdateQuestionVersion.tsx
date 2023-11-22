@@ -6,21 +6,26 @@ import { SimpleBarCustom } from '@/customize-components';
 import { RoundedTag } from '@components/index';
 import moment from 'moment';
 import { MOMENT_FORMAT } from '@/enums';
+import { questionValueType } from '@pages/Survey';
 
 interface IUpdateQuestionVersionModal extends IModal {
-  questionVersion: IQuestionVersion | null;
+  questionVersion: questionValueType | null;
   handleSelectNewQuestionVersion: (questionVersionId: string) => void;
+  currentVersionId?: string;
 }
 
 const UpdateQuestionVersionModal: FC<IUpdateQuestionVersionModal> = props => {
-  const { open, questionVersion, toggleOpen, handleSelectNewQuestionVersion } =
-    props;
+  const {
+    open,
+    questionVersion,
+    toggleOpen,
+    handleSelectNewQuestionVersion,
+    currentVersionId,
+  } = props;
   const { t } = useTranslation();
-  const dataSource = (questionVersion?.question?.versions || []).sort((a, b) =>
+  const dataSource = (questionVersion?.versions || []).sort((a, b) =>
     moment(a?.createdAt).isAfter(b?.createdAt) ? -1 : 1,
   );
-
-  // const { question } = useSurveyFormContext();
 
   return (
     <>
@@ -53,7 +58,12 @@ const UpdateQuestionVersionModal: FC<IUpdateQuestionVersionModal> = props => {
                       <span
                         className={'w-[8px] h-[8px] rounded-full'}
                         style={{
-                          background: index === 0 ? '#00AB00' : '#FF634E',
+                          background:
+                            currentVersionId === item.id
+                              ? '#000'
+                              : index === 0
+                              ? '#00AB00'
+                              : '#FF634E',
                         }}
                       ></span>
                       <span className={'text-[12px] text-textColor'}>

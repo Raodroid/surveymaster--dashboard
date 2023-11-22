@@ -200,7 +200,7 @@ function ProjectTable() {
           value === ProjectTypes.INTERNAL ? (
             <InternalIcon className={'text-primary'} />
           ) : (
-            <ExternalIcon />
+            <ExternalIcon className={'text-primary'} />
           ),
       },
       {

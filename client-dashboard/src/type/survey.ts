@@ -203,3 +203,24 @@ export enum surveyActionType {
   // CHANGE_PERSON_IN_CHARGE = 'CHANGE_PERSON_IN_CHARGE',
   // ADD_QUESTION_BY_ADD_CATEGORY = 'ADD_QUESTION_BY_ADD_CATEGORY',
 }
+
+export interface ISurveyRemark {
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  deletedAt: string;
+  id: string;
+  questionId: string;
+  owner: UserPayload;
+  remark: string;
+}
+export interface IQuestionRemark {
+  createdAt?: string;
+  createdBy?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+  id: string;
+  questionId: string;
+  owner: UserPayload;
+  remark: string;
+}

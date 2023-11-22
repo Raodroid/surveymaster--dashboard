@@ -59,7 +59,7 @@ const DisplayAnswer = () => {
   const [{ value }, , { setValue }] = useField<questionValueType[]>(fieldName);
 
   const { question } = useSurveyFormContext();
-  const { questionIdMap, newQuestions, setSearchParams } = question;
+  const { questionVersionIdMap, newQuestions, setSearchParams } = question;
 
   const availableQuestionOptions = useMemo<
     Array<IOptionItem & { categoryName: string }>
@@ -138,6 +138,7 @@ const DisplayAnswer = () => {
           return (
             <>
               <ControlledInput
+                placeholder={'paremeter'}
                 className={`${isEditMode ? '' : 'view-mode'} w-full`}
                 inputType={INPUT_TYPES.INPUT}
                 name={`${rootSurveyFlowElementFieldName}[0].surveyQuestions[${index}].parameter`}
@@ -351,17 +352,17 @@ const DisplayAnswer = () => {
   const renderRowClassName = useCallback(
     record => {
       if (!record) return '';
-      const isNewQuestion = !Object.keys(questionIdMap).some(
+      const isNewQuestion = !Object.keys(questionVersionIdMap).some(
         questionVersionId =>
-          !!questionIdMap?.[record.questionVersionId] ||
-          questionIdMap?.[questionVersionId].question?.versions.some(
+          !!questionVersionIdMap?.[record.questionVersionId] ||
+          questionVersionIdMap?.[questionVersionId].question?.versions.some(
             ver => ver?.id === record.questionVersionId,
           ), // check if the value was existed in survey
       );
 
       return !isNewQuestion ? 'padding-top' : '';
     },
-    [questionIdMap],
+    [questionVersionIdMap],
   );
 
   // const handleDecline = useCallback(
