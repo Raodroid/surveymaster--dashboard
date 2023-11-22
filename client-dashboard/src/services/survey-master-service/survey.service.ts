@@ -129,4 +129,14 @@ export default class SurveyService {
       },
     );
   }
+
+  static createSurveyRemark(params: {
+    surveyVersionId: string;
+    remark: string;
+  }) {
+    return APIService.post(
+      `/${EntityEnum.SURVEY}/survey_version_remark`,
+      params,
+    );
+  }
 }

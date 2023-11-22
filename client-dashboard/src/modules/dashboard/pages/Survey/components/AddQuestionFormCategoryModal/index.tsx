@@ -108,7 +108,6 @@ const AddQuestionFormCategoryModal: FC<
     () => _get(getQuestionByCategoryIdListQuery.data, 'data.data', []),
     [getQuestionByCategoryIdListQuery.data],
   );
-  // console.log('\n ==> questions', questions);
 
   const handleTyping = useCallback(
     e => {
