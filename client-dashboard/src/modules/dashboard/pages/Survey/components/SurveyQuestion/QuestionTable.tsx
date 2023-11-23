@@ -1,19 +1,18 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { size } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useField } from 'formik';
-import { Button, Divider, Tooltip } from 'antd';
+import { Button, Divider } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { CopyButton } from '@/modules/common';
-import { IQuestionVersion, SubSurveyFlowElementDto } from '@/type';
+import { SubSurveyFlowElementDto } from '@/type';
 import { DragTable, RoundedTag } from '@/modules/dashboard';
 import {
   GroupSurveyButton,
   questionValueType,
+  RemarkSection,
   UpdateQuestionVersion,
   useCheckSurveyFormMode,
-  useSurveyFormContext,
 } from '@pages/Survey';
 import { DragHandle } from '@/customize-components';
 import { Chat, Clock, TrashOutlined } from '@/icons';
@@ -32,8 +31,6 @@ const QuestionTable: FC<{
   );
   const [{ value: blockData }] = useField<SubSurveyFlowElementDto>(fieldName);
 
-  const { question } = useSurveyFormContext();
-
   const removeQuestion = useCallback(
     (questionIndex: number) => {
       setValue(value.filter((i, idx) => idx !== questionIndex));
@@ -42,25 +39,24 @@ const QuestionTable: FC<{
   );
   const [selectedQuestion, setSelectedQuestion] = useState<{
     index: number | null;
-    data: IQuestionVersion | null;
+    data: questionValueType | null;
   }>({ index: null, data: null });
 
   const handleSelectNewQuestionVersion = useCallback(
     newQuestionVersionId => {
-      const questionId = selectedQuestion.data?.questionId;
+      const questionId = selectedQuestion.data?.id;
       if (!questionId) return;
 
       setValue(
         value.map((i, idx) => {
           if (idx !== selectedQuestion.index) return i;
-
-          const chooseVersionQuestion = question.questionIdMap[
-            questionId
-          ]?.question?.versions.find(ver => ver.id === newQuestionVersionId);
+          const chooseVersionQuestion = selectedQuestion.data?.versions?.find(
+            ver => ver.id === newQuestionVersionId,
+          );
 
           if (!chooseVersionQuestion) return i;
 
-          return {
+          const newValue: questionValueType = {
             ...i,
             type: chooseVersionQuestion?.type as string,
             questionTitle: chooseVersionQuestion?.title as string,
@@ -68,12 +64,14 @@ const QuestionTable: FC<{
             questionVersionId: newQuestionVersionId,
             createdAt: chooseVersionQuestion.createdAt,
           };
+
+          return newValue;
         }),
       );
     },
     [
-      question.questionIdMap,
-      selectedQuestion.data?.questionId,
+      selectedQuestion.data?.id,
+      selectedQuestion.data?.versions,
       selectedQuestion.index,
       setValue,
       value,
@@ -89,57 +87,35 @@ const QuestionTable: FC<{
     let base: ColumnsType<questionValueType> = [
       {
         dataIndex: 'order',
-        render: (value, record, index) => {
-          const content = gen_QID_template({
-            blockSort: blockData?.blockSort as number,
-            sort: (index + 1) as number,
-          });
-          return (
-            <div className={''}>
-              <Tooltip title={record.questionTitle}>
-                <p
-                  className={
-                    'overflow-hidden truncate w-[500px] text-[16px] font-semibold'
-                  }
-                >
-                  {record.questionTitle}
-                </p>
-              </Tooltip>
-              <span className={'flex items-center gap-3'}>
-                <div className={'flex gap-1 items-center'}>
-                  <p className={'m-0'}>
-                    <span className={'font-semibold text-[12px]'}>ID:</span>{' '}
-                    <span className={'text-[12px]'}>{content}</span>
-                  </p>
-                  <CopyButton content={content} />
-                </div>
-
-                <Divider type="vertical" className={'h-[8px]'} />
-
-                <div className={'flex gap-1.5 items-center text-info'}>
-                  <Chat />
-                  <span className={'font-semibold text-[12px]'}>
-                    {t('common.remark')}
-                  </span>{' '}
-                </div>
-              </span>
-            </div>
-          );
-        },
+        render: (value, record, index) => (
+          <DisplayQuestionColumn
+            record={record}
+            index={index}
+            blockSort={blockData.blockSort as number}
+            fieldName={`${fieldName}.surveyQuestions[${index}]`}
+          />
+        ),
       },
       {
         title: '',
         dataIndex: 'category',
         width: 100,
-        render: value => <RoundedTag title={value} />,
+        render: value => (
+          <div className={'h-full mt-[50px]'}>
+            {' '}
+            <RoundedTag title={value} />
+          </div>
+        ),
       },
       {
         title: '',
         dataIndex: 'type',
         width: 200,
-        render: value => {
-          return value ? <RoundedTag title={t(`questionType.${value}`)} /> : '';
-        },
+        render: value => (
+          <div className={'h-full mt-[50px]'}>
+            {value ? <RoundedTag title={t(`questionType.${value}`)} /> : ''}
+          </div>
+        ),
       },
     ];
     if (isEditMode) {
@@ -156,7 +132,7 @@ const QuestionTable: FC<{
           dataIndex: 'action',
           width: 60,
           render: (value, record: questionValueType, index) => (
-            <div className={'flex items-center gap-2'}>
+            <div className={'h-full mt-[50px] flex justify-center gap-2'}>
               <Button
                 type={'text'}
                 size={'small'}
@@ -170,7 +146,7 @@ const QuestionTable: FC<{
                 onClick={() => {
                   const questionVersion = record?.questionVersion;
                   if (!questionVersion) return;
-                  setSelectedQuestion({ index, data: questionVersion });
+                  setSelectedQuestion({ index, data: record });
                   toggleUpdateVersionQuestionModal();
                 }}
               />
@@ -182,7 +158,8 @@ const QuestionTable: FC<{
     return base;
   }, [
     isEditMode,
-    blockData?.blockSort,
+    blockData.blockSort,
+    fieldName,
     t,
     removeQuestion,
     toggleUpdateVersionQuestionModal,
@@ -201,6 +178,7 @@ const QuestionTable: FC<{
         />
       </SimpleBar>
       <UpdateQuestionVersion
+        currentVersionId={selectedQuestion.data?.questionVersionId}
         open={openUpdateVersionQuestionModal}
         toggleOpen={toggleUpdateVersionQuestionModal}
         questionVersion={selectedQuestion?.data}
@@ -212,3 +190,79 @@ const QuestionTable: FC<{
 };
 
 export default QuestionTable;
+
+const DisplayQuestionColumn: FC<{
+  record: questionValueType;
+  index: number;
+  blockSort: number;
+  fieldName: string;
+}> = props => {
+  const { record, index, blockSort, fieldName } = props;
+  const { t } = useTranslation();
+  const [expanded, toggleExpanded] = useToggle();
+
+  const content = gen_QID_template({
+    blockSort,
+    sort: (index + 1) as number,
+  });
+
+  return (
+    <div className={''}>
+      <p
+        className={
+          'overflow-hidden truncate w-[500px] text-[16px] font-semibold'
+        }
+      >
+        {record.questionTitle}
+      </p>
+      <span className={'flex items-center gap-3 pb-3'}>
+        <div className={'flex gap-1 items-center'}>
+          <p className={'m-0'}>
+            <span className={'font-semibold text-[12px]'}>ID:</span>{' '}
+            <span className={'text-[12px]'}>{content}</span>
+          </p>
+          <CopyButton content={content} />
+        </div>
+
+        <Divider type="vertical" className={'h-[8px]'} />
+
+        <div className={'flex gap-1.5 items-center text-info '}>
+          <Button
+            shape={'round'}
+            type={expanded ? 'primary' : 'text'}
+            className={'info-btn'}
+            icon={<Chat />}
+            onClick={toggleExpanded}
+          >
+            <span className={'font-semibold text-[12px]'}>
+              {t('common.remark')}
+            </span>
+            <span
+              className={
+                'font-semibold text-[12px] rounded-[32px] px-3 py-[3px] text-[#007AE7]'
+              }
+              style={{
+                background: expanded ? '#fff' : '#cae3ff',
+              }}
+            >
+              {record?.remarks?.length || '0'}
+            </span>
+          </Button>
+        </div>
+      </span>
+      <div
+        className={'max-w-[630px] overflow-hidden transition-[height]'}
+        style={{ height: expanded ? '100%' : 0 }}
+      >
+        <SimpleBar className={'max-h-[260px] h-full overflow-scroll pr-1'}>
+          <div className={'p-3'}>
+            <RemarkSection
+              remarks={record?.remarks || []}
+              fieldName={fieldName}
+            />
+          </div>
+        </SimpleBar>
+      </div>
+    </div>
+  );
+};

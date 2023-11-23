@@ -9,7 +9,7 @@ import { useGetProjectByIdQuery } from '@pages/Project/util';
 import { useCheckScopeEntityDefault } from '@hoc/index';
 import { MOMENT_FORMAT, ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { PenFilled, ThreeDotsIcon, TrashOutlined } from '@/icons';
+import { LightingIcon, ThreeDotsIcon, TrashOutlined } from '@/icons';
 import { ExportOutlined } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
 import _get from 'lodash/get';
@@ -58,7 +58,7 @@ export const ViewDetailSurveyDropDownMenuButton: FC<
 
     if (canUpdate && isDraftVersion) {
       baseMenu.push({
-        icon: <PenFilled />,
+        icon: <LightingIcon className={'text-primary'} />,
         label: t('direction.markAsCompleted'),
         key: ACTION_ENUM.COMPLETE,
       });
@@ -226,13 +226,14 @@ export const ViewDetailSurveyDropDownMenuButton: FC<
       size={'small'}
       buttonsRender={() => [
         <Button
+          key={'title'}
           className={'info-btn'}
           type={isSelected ? 'primary' : 'default'}
           onClick={changeViewVersion}
         >
           {surveyVersion.displayId}
         </Button>,
-        <Button className={'info-btn'}>
+        <Button key={'icon'} className={'info-btn'}>
           <ThreeDotsIcon style={{ width: 12, height: 12 }} />
         </Button>,
       ]}

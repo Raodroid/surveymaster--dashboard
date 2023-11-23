@@ -30,7 +30,7 @@ const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
 
   const { question, form } = useSurveyFormContext();
   const {
-    questionIdMap,
+    questionVersionIdMap,
     hasNextQuestionPage,
     fetchNextQuestionPage,
     isFetchingQuestion,
@@ -84,7 +84,7 @@ const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
 
   const handleOnChange = useCallback(
     questionId => {
-      const chooseQuestion = questionIdMap[questionId];
+      const chooseQuestion = questionVersionIdMap[questionId];
 
       if (chooseQuestion) {
         setValue({
@@ -102,7 +102,7 @@ const DynamicSelect: FC<IDynamicSelectQuestion> = props => {
         setSearchTxt('');
       }
     },
-    [questionIdMap, setValue, value, setSearchTxt],
+    [questionVersionIdMap, setValue, value, setSearchTxt],
   );
 
   const isNewQuestion = useMemo(() => {

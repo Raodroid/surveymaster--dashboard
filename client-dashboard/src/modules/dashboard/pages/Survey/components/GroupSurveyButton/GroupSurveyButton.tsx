@@ -11,7 +11,7 @@ import {
 } from '@pages/Survey';
 
 export const initNewRowValue: questionValueType = {
-  remark: '',
+  remarks: [],
   parameter: '',
   sort: Math.random(),
   questionVersionId: '',
@@ -33,7 +33,7 @@ const GroupSurveyButton = (props: { fieldNameRoot: string }) => {
   const [openAddQuestionModal, toggleAddQuestionModal] = useToggle();
 
   return (
-    <div className={'flex gap-3'}>
+    <div className={'flex gap-3 pt-8'}>
       <Button
         type={'primary'}
         onClick={toggleAddQuestionModal}
@@ -55,13 +55,12 @@ const GroupSurveyButton = (props: { fieldNameRoot: string }) => {
         toggleOpen={toggleAddQuestionModal}
         fieldName={fieldName}
       />
-      {openLoadCategoryForm && (
-        <AddQuestionFormCategoryModal
-          open={openLoadCategoryForm}
-          onCancel={toggleLoadCategoryForm}
-          fieldName={fieldName}
-        />
-      )}
+
+      <AddQuestionFormCategoryModal
+        open={openLoadCategoryForm}
+        onCancel={toggleLoadCategoryForm}
+        fieldName={fieldName}
+      />
     </div>
   );
 };

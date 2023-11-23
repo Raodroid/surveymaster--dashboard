@@ -6,7 +6,7 @@ import {
 
 import {
   ExtraSubBranchLogicDto,
-  IAddSurveyFormValues,
+  IEditSurveyFormValues,
   questionValueType,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
@@ -84,8 +84,9 @@ const transSurveyFlowElements = (
 
 export const transformInitSurveyFormData = (
   input?: ISurveyVersion,
-): IAddSurveyFormValues => {
+): IEditSurveyFormValues => {
   return {
+    selectedRowKeys: [],
     surveyVersionId: input?.id,
     createdAt: input?.survey?.createdAt,
     version: {

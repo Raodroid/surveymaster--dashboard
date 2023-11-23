@@ -65,7 +65,7 @@ export type questionValueType = ISurveyQuestionDto & {
   questionVersion?: IQuestionVersion;
 };
 
-export interface IAddSurveyFormValues
+export interface IEditSurveyFormValues
   extends Replace<
     CreateSurveyBodyDto,
     'version',

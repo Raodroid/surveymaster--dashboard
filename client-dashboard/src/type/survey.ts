@@ -158,13 +158,13 @@ export enum SurveyVersionStatus {
 export interface ISurveyQuestionDto {
   questionVersionId: string;
   sort?: number;
-  remark?: string;
+  remarks?: IQuestionRemark[];
   parameter?: string;
 }
 
 export interface ISurveyVersionBaseDto {
   name?: string;
-  remark?: string | null;
+  remarks?: string[] | null;
   status?: SurveyVersionStatus;
   surveyFlowElements?: SubSurveyFlowElementDto[];
 }
@@ -202,4 +202,25 @@ export enum surveyActionType {
   UPDATE_VERSION_QUESTION = 'UPDATE_VERSION_QUESTION',
   // CHANGE_PERSON_IN_CHARGE = 'CHANGE_PERSON_IN_CHARGE',
   // ADD_QUESTION_BY_ADD_CATEGORY = 'ADD_QUESTION_BY_ADD_CATEGORY',
+}
+
+export interface ISurveyRemark {
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  deletedAt: string;
+  id: string;
+  questionId: string;
+  owner: UserPayload;
+  remark: string;
+}
+export interface IQuestionRemark {
+  createdAt?: string;
+  createdBy?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+  id?: string;
+  questionId?: string;
+  owner?: UserPayload;
+  remark: string;
 }

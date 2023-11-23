@@ -1,50 +1,37 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useField, useFormikContext } from 'formik';
-import { Badge, Button, Table } from 'antd';
-import moment from 'moment';
+import { Button, Popover } from 'antd';
 
 import { initNewRowValue } from '../../GroupSurveyButton/GroupSurveyButton';
 import {
-  IAddSurveyFormValues,
+  IEditSurveyFormValues,
   questionValueType,
   rootSurveyFlowElementFieldName,
 } from '@pages/Survey/SurveyForm/type';
-import { useDebounce } from '@/utils';
-import {
-  ActionThreeDropDownType,
-  IMenuItem,
-  IOptionItem,
-  IQuestionVersion,
-} from '@/type';
-import { MOMENT_FORMAT, SCOPE_CONFIG, size } from '@/enums';
+import { useDebounce, useToggle } from '@/utils';
+import { ActionThreeDropDownType, IMenuItem, IOptionItem } from '@/type';
+import { SCOPE_CONFIG, size } from '@/enums';
 import { generateRandom } from '@/modules/common/funcs';
 import { ColumnsType } from 'antd/es/table';
 import { ControlledInput, useCheckScopeEntityDefault } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
-import UncontrollInput from '@input/uncontrolled-input/UncontrollInput';
 import { DragTable } from '@components/DragTable/DragTable';
 import { DragHandle, ThreeDotsDropdown } from '@/customize-components';
-import { determineVersionOfSurveyQuestion } from '../UploadExternalFile/UploadExternalFile';
 import { useTranslation } from 'react-i18next';
 import {
   DynamicSelect,
+  UpdateQuestionVersion,
   useCheckSurveyFormMode,
   useSurveyFormContext,
 } from '@pages/Survey';
-import { SuffixIcon } from '@/icons';
+import { Chat, Clock } from '@/icons';
 import { keysAction, useSelectTableRecord } from '@/hooks';
 import SimpleBar from 'simplebar-react';
+import RemarkSection from '../../RemarkSection/RemarkSection';
 
 interface IExpandableTable extends questionValueType {
   createdAt: string | Date | null;
 }
-
-const rowExpandable = (record: questionValueType) => {
-  const [newVersions] = determineVersionOfSurveyQuestion(record);
-
-  if (!newVersions) return false;
-  return newVersions.length !== 1;
-};
 
 const questionBlockIndex = 0;
 
@@ -59,7 +46,7 @@ const DisplayAnswer = () => {
   const [{ value }, , { setValue }] = useField<questionValueType[]>(fieldName);
 
   const { question } = useSurveyFormContext();
-  const { questionIdMap, newQuestions, setSearchParams } = question;
+  const { newQuestions, setSearchParams } = question;
 
   const availableQuestionOptions = useMemo<
     Array<IOptionItem & { categoryName: string }>
@@ -82,7 +69,52 @@ const DisplayAnswer = () => {
     [newQuestions, value],
   );
 
-  const { setValues, setFieldValue } = useFormikContext<IAddSurveyFormValues>();
+  const [selectedQuestion, setSelectedQuestion] = useState<{
+    index: number | null;
+    data: questionValueType | null;
+  }>({ index: null, data: null });
+
+  const { setValues, setFieldValue, values } =
+    useFormikContext<IEditSurveyFormValues>();
+
+  const handleSelectNewQuestionVersion = useCallback(
+    newQuestionVersionId => {
+      const questionId = selectedQuestion.data?.id;
+      if (!questionId) return;
+
+      setValue(
+        value.map((i, idx) => {
+          if (idx !== selectedQuestion.index) return i;
+          const chooseVersionQuestion = selectedQuestion.data?.versions?.find(
+            ver => ver.id === newQuestionVersionId,
+          );
+
+          if (!chooseVersionQuestion) return i;
+
+          const newValue: questionValueType = {
+            ...i,
+            type: chooseVersionQuestion?.type as string,
+            questionTitle: chooseVersionQuestion?.title as string,
+            id: questionId,
+            questionVersionId: newQuestionVersionId,
+            createdAt: chooseVersionQuestion.createdAt,
+          };
+
+          return newValue;
+        }),
+      );
+    },
+    [
+      selectedQuestion.data?.id,
+      selectedQuestion.data?.versions,
+      selectedQuestion.index,
+      setValue,
+      value,
+    ],
+  );
+
+  const [openUpdateVersionQuestionModal, toggleUpdateVersionQuestionModal] =
+    useToggle();
 
   useEffect(() => {
     setSearchParams({ q: debounceSearchText });
@@ -97,23 +129,11 @@ const DisplayAnswer = () => {
 
   const handleChange = useCallback(
     (record: questionValueType, index) => {
-      const [newVersions] = determineVersionOfSurveyQuestion(record);
-      if (!newVersions) return;
-
-      setValue(
-        value.map((q, idx) => {
-          if (idx !== index) return q;
-          return {
-            ...q,
-            questionVersionId: newVersions[0].id as string,
-            questionTitle: newVersions[0].title as string,
-          };
-        }),
-      );
+      setSelectedQuestion({ index, data: record });
+      toggleUpdateVersionQuestionModal();
     },
-    [setValue, value],
+    [toggleUpdateVersionQuestionModal],
   );
-
   const tableActions = useMemo<keysAction<questionValueType>>(
     () => [
       {
@@ -132,13 +152,15 @@ const DisplayAnswer = () => {
       {
         title: t('common.parameter'),
         dataIndex: 'parameter',
-        shouldCellUpdate: (record, prevRecord) => false,
         width: 200,
         render: (value, record, index) => {
           return (
             <>
               <ControlledInput
-                className={`${isEditMode ? '' : 'view-mode'} w-full`}
+                placeholder={'paremeter'}
+                className={`${
+                  isEditMode ? '' : 'view-mode'
+                } w-full hide-helper-text`}
                 inputType={INPUT_TYPES.INPUT}
                 name={`${rootSurveyFlowElementFieldName}[0].surveyQuestions[${index}].parameter`}
               />
@@ -171,7 +193,22 @@ const DisplayAnswer = () => {
               fieldName={`${fieldName}[${index}]`}
               availableQuestionOptions={availableQuestionOptions}
               parentFieldName={rootSurveyFlowElementFieldName}
-              className={`${isEditMode ? '' : 'view-mode'} w-full`}
+              className={`${
+                isEditMode ? '' : 'view-mode'
+              } w-[300px] hide-helper-text`}
+            />
+          );
+        },
+      },
+      {
+        title: t('common.remarks'),
+        dataIndex: 'remarks',
+        width: 300,
+        render: (value, record, index) => {
+          return (
+            <DisplayQuestionColumn
+              record={record}
+              fieldName={`${rootSurveyFlowElementFieldName}[0].surveyQuestions[${index}]`}
             />
           );
         },
@@ -204,7 +241,7 @@ const DisplayAnswer = () => {
         {
           title: '',
           dataIndex: 'id',
-          width: 60,
+          width: 30,
           render: (value, _, idx) => (
             <div
               role="presentation"
@@ -225,117 +262,24 @@ const DisplayAnswer = () => {
     return base;
   }, [availableQuestionOptions, fieldName, handleSelect, isEditMode, t]);
 
-  const expandTableColumn: ColumnsType<IExpandableTable> = useMemo(() => {
-    const renderBlankKeys = ['action', 'remark', 'parameter'];
-
-    return columns.map(col => {
-      const dataIndex = col?.['dataIndex'];
-      if (dataIndex === 'order') {
-        return {
-          ...col,
-          width: 60,
-          render: () => null,
-        };
-      }
-      if (dataIndex === 'question') {
-        return {
-          ...col,
-          dataIndex: 'questionTitle',
-          render: (value, record) => (
-            <div className={'question-cell'}>
-              <Badge status={'warning'} />{' '}
-              <span style={{ fontSize: 12, fontWeight: 600 }}>
-                {moment(record.createdAt).format(
-                  MOMENT_FORMAT.FULL_DATE_FORMAT,
-                )}
-              </span>
-              <UncontrollInput
-                inputType={INPUT_TYPES.INPUT}
-                value={value}
-                disabled
-              />
-            </div>
-          ),
-        };
-      }
-      if (typeof dataIndex === 'string') {
-        if (renderBlankKeys.some(k => k === dataIndex)) {
-          return {
-            ...col,
-            render: () => '',
-          };
-        }
-      } else if (
-        col?.['dataIndex'].some(key => renderBlankKeys.some(k => k === key))
-      ) {
-        return {
-          ...col,
-          render: () => '',
-        };
-      }
-      return col;
-    }) as ColumnsType<IExpandableTable>;
-  }, [columns]);
-
-  const expandedRowRender = (record: questionValueType) => {
-    const [newVersions] = determineVersionOfSurveyQuestion(record);
-
-    const dataSource = (newVersions || []).reduce(
-      (res: IExpandableTable[], v: IQuestionVersion) => {
-        if (v.id === record.questionVersionId) return res;
-        return [
-          ...res,
-          {
-            createdAt: v.createdAt,
-            questionVersionId: v.id as string,
-            parameter: record.parameter,
-            type: record.type,
-            category: record.category,
-            questionTitle: v.title,
-          },
-        ];
-      },
-      [],
-    );
-
-    return dataSource.length > 0 ? (
-      <Table
-        dataSource={dataSource}
-        columns={expandTableColumn}
-        showHeader={false}
-        pagination={false}
-        rowClassName={() => 'padding-top'}
-      />
-    ) : (
-      <div className="empty-expanded" />
-    );
-  };
-
   const dataSource = useMemo(() => value as IExpandableTable[], [value]);
 
-  const [checked, setChecked] = useState<React.Key[]>([]);
-
   const onSelectChange = useCallback(
-    (newSelectedRowKeys: React.Key[], selectedRows: questionValueType[]) => {
-      const nextValue = selectedRows.map(x => x.questionVersionId);
-      setChecked(nextValue);
-
-      setFieldValue('selectedRowKeys', nextValue);
+    (newSelectedRowKeys: React.Key[]) => {
+      setFieldValue('selectedRowKeys', newSelectedRowKeys);
     },
     [setFieldValue],
   );
 
   const rowSelection = useMemo(
     () => ({
-      selectedRowKeys: checked.map(questionVersionId =>
-        dataSource.findIndex(i => i.questionVersionId === questionVersionId),
-      ),
+      selectedRowKeys: values.selectedRowKeys,
       onChange: onSelectChange,
       getCheckboxProps: (record: questionValueType) => ({
         disabled: !record.questionVersionId, // Column configuration not to be checked
       }),
     }),
-    [checked, dataSource, onSelectChange],
+    [values.selectedRowKeys, onSelectChange],
   );
 
   const setDataTable = (questions: questionValueType[]) => {
@@ -348,89 +292,43 @@ const DisplayAnswer = () => {
     }));
   };
 
-  const renderRowClassName = useCallback(
-    record => {
-      if (!record) return '';
-      const isNewQuestion = !Object.keys(questionIdMap).some(
-        questionVersionId =>
-          !!questionIdMap?.[record.questionVersionId] ||
-          questionIdMap?.[questionVersionId].question?.versions.some(
-            ver => ver?.id === record.questionVersionId,
-          ), // check if the value was existed in survey
-      );
-
-      return !isNewQuestion ? 'padding-top' : '';
-    },
-    [questionIdMap],
-  );
-
-  // const handleDecline = useCallback(
-  //   (record: questionValueType) => {
-  //     setValue(
-  //       !questionIdMap
-  //         ? value
-  //         : value.map(q => {
-  //             if (
-  //               q.questionVersionId !== //only care about the current value
-  //               questionValue.questionVersionId
-  //             )
-  //               return q;
-  //
-  //             if (questionIdMap[q.questionVersionId])
-  //               //if true => nothing change here
-  //               return q;
-  //
-  //             const key = Object.keys(questionIdMap).find(questionVersionId => {
-  //               return questionIdMap[questionVersionId].question?.versions.some(
-  //                 v => record.questionVersionId === v.id,
-  //               );
-  //             });
-  //
-  //             if (key) {
-  //               return {
-  //                 ...q,
-  //                 questionVersionId: key as string,
-  //                 questionTitle: questionIdMap[key].title,
-  //               };
-  //             }
-  //             return q;
-  //           }),
-  //     );
-  //   },
-  //   [questionIdMap, setValue, value],
-  // );
-
   return (
-    <div className={'w-full h-full flex flex-col over-hidden'}>
-      <SimpleBar className={'flex-1 overflow-y-scroll'}>
-        <div className={''}>
-          <DragTable
-            scroll={{ x: size.large }}
-            rowSelection={isEditMode ? rowSelection : undefined}
-            columns={columns}
-            dataSource={dataSource}
-            pagination={false}
-            renderRowClassName={renderRowClassName}
-            expandable={{
-              expandedRowRender,
-              rowExpandable,
-              expandRowByClick: false,
-              expandIconColumnIndex: -1,
-              defaultExpandAllRows: true,
-            }}
-            setDataTable={setDataTable}
-          />
-        </div>
-      </SimpleBar>
+    <>
+      <div className={'w-full h-full flex flex-col over-hidden'}>
+        <SimpleBar className={'flex-1 overflow-y-scroll'}>
+          <div className={''}>
+            <DragTable
+              scroll={{ x: size.large }}
+              rowSelection={isEditMode ? rowSelection : undefined}
+              columns={columns}
+              dataSource={dataSource}
+              pagination={false}
+              setDataTable={setDataTable}
+              rowKey={(record: questionValueType) => record.questionVersionId}
+            />
+          </div>
+        </SimpleBar>
 
-      {isEditMode && (
-        <div className={'w-full pt-8'}>
-          <Button className={'w-full'} type={'primary'} onClick={handleAddRow}>
-            {t('common.addRow')}
-          </Button>
-        </div>
-      )}
-    </div>
+        {isEditMode && (
+          <div className={'w-full pt-8'}>
+            <Button
+              className={'w-full'}
+              type={'primary'}
+              onClick={handleAddRow}
+            >
+              {t('common.addRow')}
+            </Button>
+          </div>
+        )}
+      </div>
+      <UpdateQuestionVersion
+        currentVersionId={selectedQuestion.data?.questionVersionId}
+        open={openUpdateVersionQuestionModal}
+        toggleOpen={toggleUpdateVersionQuestionModal}
+        questionVersion={selectedQuestion?.data}
+        handleSelectNewQuestionVersion={handleSelectNewQuestionVersion}
+      />
+    </>
   );
 };
 
@@ -438,7 +336,6 @@ export default DisplayAnswer;
 
 enum ACTION {
   CHANGE = 'CHANGE',
-  DECLINE = 'DECLINE',
 }
 const ActionThreeDropDown: FC<
   ActionThreeDropDownType<questionValueType> & {
@@ -448,46 +345,81 @@ const ActionThreeDropDown: FC<
   const { record, handleSelect, index } = props;
   const { t } = useTranslation();
   const { canUpdate } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.SURVEY);
-  const hasNewVersion = rowExpandable(record);
-
-  // const isDirty = useMemo(
-  //   () =>
-  //     Object.keys(questionIdMap).some(
-  //       questionVersionId =>
-  //         !questionIdMap?.[questionValue.questionVersionId] &&
-  //         questionIdMap?.[questionVersionId].versions.some(
-  //           ver => ver?.id === questionValue.questionVersionId,
-  //         ), // check if the value was existed in survey
-  //     ),
-  //   [questionIdMap],
-  // );
 
   const items = useMemo<IMenuItem[]>(() => {
     if (!canUpdate) return [];
 
+    const questionVersions = record?.versions;
+
     const baseMenu: IMenuItem[] = [];
-    if (hasNewVersion) {
+
+    if (questionVersions && questionVersions?.length !== 0) {
       baseMenu.push({
-        icon: <SuffixIcon className={'text-primary'} />,
-        label: <label> {t('common.change')}</label>,
+        icon: <Clock className={'text-primary'} />,
+        label: <label> {t('common.questionChangeLog')}</label>,
         key: ACTION.CHANGE,
       });
     }
-
-    // if (isDirty) {
-    //   baseMenu.push({
-    //     icon: <Refresh className={'text-primary'} />,
-    //     label: <label> {t('common.declineChange')}</label>,
-    //     key: ACTION.DECLINE,
-    //   });
-    // }
     return baseMenu;
-  }, [canUpdate, hasNewVersion, t]);
+  }, [canUpdate, record?.versions, t]);
 
   return (
     <ThreeDotsDropdown
       onChooseItem={key => handleSelect({ key, record, index })}
       items={items}
     />
+  );
+};
+
+const DisplayQuestionColumn: FC<{
+  record: questionValueType;
+  fieldName: string;
+}> = props => {
+  const { record, fieldName } = props;
+  const { t } = useTranslation();
+  const [expanded, toggleExpanded] = useToggle();
+
+  return (
+    <Popover
+      placement={'bottomRight'}
+      open={expanded}
+      content={
+        <div
+          className={'w-[630px] overflow-hidden transition-[height]'}
+          style={{ height: expanded ? '100%' : 0 }}
+        >
+          <SimpleBar className={'max-h-[260px] h-full overflow-scroll pr-1'}>
+            <div className={'p-3'}>
+              <RemarkSection
+                remarks={record?.remarks || []}
+                fieldName={fieldName}
+              />
+            </div>
+          </SimpleBar>
+        </div>
+      }
+    >
+      <Button
+        shape={'round'}
+        type={expanded ? 'primary' : 'text'}
+        className={'info-btn'}
+        icon={<Chat />}
+        onClick={toggleExpanded}
+      >
+        <span className={'font-semibold text-[12px]'}>
+          {t('common.remark')}
+        </span>
+        <span
+          className={
+            'font-semibold text-[12px] rounded-[32px] px-3 py-[3px] text-[#007AE7]'
+          }
+          style={{
+            background: expanded ? '#fff' : '#cae3ff',
+          }}
+        >
+          {record?.remarks?.length || '0'}
+        </span>
+      </Button>
+    </Popover>
   );
 };

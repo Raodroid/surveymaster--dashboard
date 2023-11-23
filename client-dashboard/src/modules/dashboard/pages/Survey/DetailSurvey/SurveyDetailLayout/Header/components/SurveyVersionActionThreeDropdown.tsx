@@ -11,7 +11,7 @@ import { useParams } from 'react-router';
 import { useGetProjectByIdQuery } from '@pages/Project';
 import { useCheckScopeEntityDefault } from '@/modules/common';
 import { SCOPE_CONFIG } from '@/enums';
-import { PenFilled, TrashOutlined } from '@/icons';
+import { DownloadIcon, LightingIcon, PenFilled, TrashOutlined } from '@/icons';
 import { ExportOutlined } from '@ant-design/icons';
 import { ThreeDotsDropdown } from '@/customize-components';
 
@@ -43,7 +43,7 @@ const ActionThreeDropDown: FC<
 
     if (canUpdate && isDraftVersion) {
       baseMenu.push({
-        icon: <PenFilled className={'text-primary'} />,
+        icon: <LightingIcon className={'text-primary'} />,
         label: t('direction.markAsCompleted'),
         key: ACTION.COMPLETE,
       });
@@ -51,7 +51,7 @@ const ActionThreeDropDown: FC<
     if (canRead) {
       if (!isDraftVersion && !isExternalProject) {
         baseMenu.push({
-          icon: <ExportOutlined className={'text-primary'} />,
+          icon: <DownloadIcon className={'text-primary'} />,
           label: t('common.exportQualtricsJSON'),
           key: ACTION.EXPORT,
         });

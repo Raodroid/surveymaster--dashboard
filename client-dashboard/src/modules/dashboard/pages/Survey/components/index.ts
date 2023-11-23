@@ -1,4 +1,5 @@
 export { default as AddNewBlockElement } from './AddNewBlockElement/AddNewBlockElement';
+export { default as InsertBlockButton } from './AddNewBlockElement/InsertBlockButton';
 export { default as AddQuestionFormCategoryModal } from './AddQuestionFormCategoryModal/index';
 export { default as DynamicSelect } from './DynamicSelect/DynamicSelect';
 export { default as GroupSurveyButton } from './GroupSurveyButton/GroupSurveyButton';
@@ -9,4 +10,8 @@ export { default as SurveyDetailDrawer } from './SurveyDetailDrawer/SurveyDetail
 export { default as SurveyBriefDetail } from './SurveyBriefDetail/SurveyBriefDetail';
 export { default as UpdateQuestionVersion } from './UpdateQuestionVersion/UpdateQuestionVersion';
 export { default as ExternalSurvey } from './ExternalSurvey/ExternalSurvey';
+export { default as RemarkSection } from './RemarkSection/RemarkSection';
+export { default as SurveyVersionRemarkButton } from './SurveyVersionRemarkModal/SurveyVersionRemarkButton';
+export { default as SurveyVersionSelect } from './SurveyVersionSelect/SurveyVersionSelect';
+export { default as DisplayRemarkItem } from './RemarkSection/DisplayRemarkItem';
 export * from './SurveyFormContext';

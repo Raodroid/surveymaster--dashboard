@@ -1,5 +1,9 @@
 import { Button, Divider, Select } from 'antd';
-import { SurveyDetailDrawer, useSurveyFormContext } from '@pages/Survey';
+import {
+  IEditSurveyFormValues,
+  SurveyDetailDrawer,
+  useSurveyFormContext,
+} from '@pages/Survey';
 import { IOptionItem } from '@/type';
 import { PlayIcon, SaveIcon } from '@/icons';
 import { useTranslation } from 'react-i18next';
@@ -8,14 +12,17 @@ import { ROUTE_PATH } from '@/enums';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { Link } from 'react-router-dom';
 import RoundedSelect from '../../../../../../../../customize-components/RoundedSelect';
+import SurveyVersionSelect from '../../../../components/SurveyVersionSelect/SurveyVersionSelect';
+import { useFormikContext } from 'formik';
 
-const CreateEditSurveyHeader = () => {
+const EditSurveyHeader = () => {
   const { t } = useTranslation();
   const params = useParams<projectSurveyParams>();
   const { survey } = useSurveyFormContext();
+  const { resetForm } = useFormikContext<IEditSurveyFormValues>();
   const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
     ver => ({
-      label: `Version ${ver.displayId}`.toUpperCase(),
+      label: ver.displayId,
       value: ver?.id || '',
     }),
   );
@@ -27,10 +34,9 @@ const CreateEditSurveyHeader = () => {
           {survey.currentSurveyVersion?.name}
         </h3>
 
-        <RoundedSelect
+        <SurveyVersionSelect
           value={survey.currentSurveyVersion?.id}
           options={versions}
-          className={'w-[200px]'}
         />
 
         <SurveyDetailDrawer />
@@ -38,6 +44,9 @@ const CreateEditSurveyHeader = () => {
 
         <Link
           className={'flex items-center gap-2'}
+          onClick={() => {
+            resetForm();
+          }}
           to={`${generatePath(
             ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
             {
@@ -60,4 +69,4 @@ const CreateEditSurveyHeader = () => {
   );
 };
 
-export default CreateEditSurveyHeader;
+export default EditSurveyHeader;

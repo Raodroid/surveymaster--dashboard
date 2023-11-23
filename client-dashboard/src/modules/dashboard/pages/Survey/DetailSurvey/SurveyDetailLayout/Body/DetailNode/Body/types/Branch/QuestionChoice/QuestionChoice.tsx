@@ -25,7 +25,7 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
   const { fieldName, index, options } = props;
   const { t } = useTranslation();
   const { question } = useSurveyFormContext();
-  const { questionIdMap } = question;
+  const { questionVersionIdMap } = question;
   const { isViewMode } = useCheckSurveyFormMode();
 
   const [{ value }, , { setValue }] = useField<ExtraSubBranchLogicDto>(
@@ -39,7 +39,7 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
       const qId = spitedValue[1];
       // const optionSort = Number(spitedValue[2]);
 
-      const selectedQuestion = questionIdMap[qId];
+      const selectedQuestion = questionVersionIdMap[qId];
       if (!selectedQuestion) return;
       setValue({
         ...value,
@@ -59,16 +59,16 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
           : LogicOperator.EQUAL_TO,
       });
     },
-    [questionIdMap, setValue, value],
+    [questionVersionIdMap, setValue, value],
   );
 
   const QuestionComponent = useMemo(() => {
     if (!value.questionVersionId) {
       return () => null;
     }
-    const questionType = questionIdMap[value.questionVersionId]?.type;
+    const questionType = questionVersionIdMap[value.questionVersionId]?.type;
     return questionType ? questionChoiceMap[questionType] : () => null;
-  }, [questionIdMap, value.questionVersionId]);
+  }, [questionVersionIdMap, value.questionVersionId]);
 
   return (
     <>
@@ -89,7 +89,7 @@ const QuestionChoice: FC<IQuestionChoice> = props => {
         fieldName={`${fieldName}[${index}]`}
         questionData={
           value?.questionVersionId
-            ? questionIdMap[value?.questionVersionId]
+            ? questionVersionIdMap[value?.questionVersionId]
             : undefined
         }
       />

@@ -17,7 +17,7 @@ import { SimpleBarCustom } from '@/customize-components';
 import { AddNewQuestionModalWrapper } from '@pages/Survey/components/AddNewQuestionModal/style';
 
 const initNewRowValue: questionValueType = {
-  remark: '',
+  remarks: [],
   parameter: '',
   sort: Math.random(),
   questionVersionId: '',
@@ -43,7 +43,7 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
   const { question } = useSurveyFormContext();
   const {
     newQuestions,
-    questionIdMap,
+    questionVersionIdMap,
     setSearchParams,
     hasNextQuestionPage,
     fetchNextQuestionPage,
@@ -81,7 +81,7 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
 
   const handleSelectQuestion = useCallback(
     questionId => {
-      const chooseQuestion = questionIdMap[questionId];
+      const chooseQuestion = questionVersionIdMap[questionId];
 
       if (chooseQuestion) {
         const newQuestion: questionValueType = {
@@ -104,7 +104,7 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
       }
       toggleOpen();
     },
-    [questionIdMap, toggleOpen, value, setValue],
+    [questionVersionIdMap, toggleOpen, value, setValue],
   );
 
   useEffect(() => {

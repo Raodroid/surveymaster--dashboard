@@ -9,7 +9,7 @@ import _get from 'lodash/get';
 import InfiniteScroll from 'react-infinite-scroller';
 import { SurveyService } from 'services';
 import { useParams } from 'react-router';
-import { IAddSurveyFormValues, SurveyTemplateEnum } from './type';
+import { IEditSurveyFormValues, SurveyTemplateEnum } from './type';
 import { onError, useDebounce } from 'utils';
 import { TemplateOptionWrapper } from './style';
 import { ControlledInput } from '@/modules/common';
@@ -36,7 +36,7 @@ export const TemplateOption = () => {
   const { t } = useTranslation();
   const [searchTxt, setSearchTxt] = useState<string>('');
   const { values, setFieldValue, errors, touched } =
-    useFormikContext<IAddSurveyFormValues>();
+    useFormikContext<IEditSurveyFormValues>();
 
   const params = useParams<{ projectId?: string }>();
 
