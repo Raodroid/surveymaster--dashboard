@@ -35,7 +35,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import { useGetProjectByIdQuery } from '@pages/Project/util';
 import {
-  IAddSurveyFormValues,
+  IEditSurveyFormValues,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
 import {
@@ -77,8 +77,8 @@ interface ISurveyFormContext {
   };
 
   form: {
-    initialValues: IAddSurveyFormValues;
-    onSubmit: (value: IAddSurveyFormValues) => void;
+    initialValues: IEditSurveyFormValues;
+    onSubmit: (value: IEditSurveyFormValues) => void;
   };
   tree: {
     focusBlock?: SurveyDataTreeNode;
@@ -122,8 +122,8 @@ const intValue: ISurveyFormContext = {
     },
   },
   form: {
-    onSubmit(value: IAddSurveyFormValues): void {},
-    initialValues: {} as IAddSurveyFormValues,
+    onSubmit(value: IEditSurveyFormValues): void {},
+    initialValues: {} as IEditSurveyFormValues,
   },
   tree: {
     expendKeys: [],
@@ -236,14 +236,23 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   );
   const wrapperRef = useRef<any>();
 
-  const initialValues = useMemo<IAddSurveyFormValues>(() => {
+  const initialValues = useMemo<IEditSurveyFormValues>(() => {
     return {
       ...transformInitSurveyFormData(currentSurveyVersion),
       projectId,
       surveyId: surveyData.displayId || '',
-      selectedRowKeys: [],
+      selectedRowKeys: !isExternalProject
+        ? []
+        : (
+            currentSurveyVersion?.surveyFlowElements?.[0]?.surveyQuestions || []
+          ).map(q => q.questionVersionId),
     };
-  }, [currentSurveyVersion, projectId, surveyData?.displayId]);
+  }, [
+    currentSurveyVersion,
+    isExternalProject,
+    projectId,
+    surveyData.displayId,
+  ]);
 
   const onSuccess = useCallback(async () => {
     await queryClient.invalidateQueries('getProjects');
@@ -332,7 +341,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     addSurveyVersionMutation.isLoading;
 
   const onSubmit = useCallback(
-    async (values: IAddSurveyFormValues) => {
+    async (values: IEditSurveyFormValues) => {
       const { version, selectedRowKeys } = values;
 
       const { initialValues } = context.form;
@@ -355,7 +364,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
             }
             const newItem: ISurveyQuestionDto = {
               sort: res.length + 1,
-              remark: q.remark,
+              remarks: q.remarks,
               questionVersionId: q.questionVersionId,
               parameter: q.parameter,
             };
@@ -373,8 +382,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
                 surveyQuestions: transformSurveyQuestions,
               },
             ],
-            name: values.version?.remark as string,
-            remark: values.version?.remark,
+            name: values.version?.name as string,
           };
 
           const initQuestions =
@@ -443,7 +451,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           surveyVersionId: currentSurveyVersion?.id as string,
           name: transformValue.version?.name || '',
           status: transformValue.version?.status || SurveyVersionStatus.DRAFT,
-          remark: transformValue.version?.remark || null,
         });
       } finally {
         toggleLoading();

@@ -42,6 +42,7 @@ const ThreeDotsDropdown: React.FC<IThreeDotsDropdown> = props => {
             ))}
           </Menu>
         }
+        placement={'bottomRight'}
         trigger={['click']}
         open={state}
         onOpenChange={toggleOpen}

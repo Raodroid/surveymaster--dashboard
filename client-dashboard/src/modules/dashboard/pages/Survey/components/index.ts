@@ -1,4 +1,5 @@
 export { default as AddNewBlockElement } from './AddNewBlockElement/AddNewBlockElement';
+export { default as InsertBlockButton } from './AddNewBlockElement/InsertBlockButton';
 export { default as AddQuestionFormCategoryModal } from './AddQuestionFormCategoryModal/index';
 export { default as DynamicSelect } from './DynamicSelect/DynamicSelect';
 export { default as GroupSurveyButton } from './GroupSurveyButton/GroupSurveyButton';

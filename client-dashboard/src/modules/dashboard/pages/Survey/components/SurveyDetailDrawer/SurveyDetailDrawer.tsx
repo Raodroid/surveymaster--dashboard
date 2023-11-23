@@ -67,12 +67,6 @@ const SurveyDetailDrawer = () => {
                   label={t('common.surveyId')}
                 />
 
-                <ControlledInput
-                  inputType={INPUT_TYPES.TEXTAREA}
-                  name="version.remark"
-                  label={t(`common.remark`)}
-                />
-
                 <div className={'flex-1'}></div>
                 <Button
                   type={'primary'}

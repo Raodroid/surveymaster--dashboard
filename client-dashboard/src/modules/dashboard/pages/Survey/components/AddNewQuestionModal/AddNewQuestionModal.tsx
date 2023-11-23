@@ -17,7 +17,7 @@ import { SimpleBarCustom } from '@/customize-components';
 import { AddNewQuestionModalWrapper } from '@pages/Survey/components/AddNewQuestionModal/style';
 
 const initNewRowValue: questionValueType = {
-  remark: '',
+  remarks: [],
   parameter: '',
   sort: Math.random(),
   questionVersionId: '',

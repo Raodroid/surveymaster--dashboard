@@ -11,7 +11,7 @@ import {
 } from '@pages/Survey';
 
 export const initNewRowValue: questionValueType = {
-  remark: '',
+  remarks: [],
   parameter: '',
   sort: Math.random(),
   questionVersionId: '',

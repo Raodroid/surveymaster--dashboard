@@ -1,9 +1,9 @@
 import React from 'react';
-import { Chat } from '@/icons';
+import { DuplicateChatIcon } from '@/icons';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useToggle } from '@/utils';
-import SurveyVersionRemarkModal from '@pages/Survey/components/SurveyVersionRemarkModal/SurveyVersionRemarkModal';
+import SurveyVersionRemarkModal from './SurveyVersionRemarkModal';
 
 const SurveyVersionRemarkButton = () => {
   const [openForm, toggleForm] = useToggle();
@@ -12,7 +12,7 @@ const SurveyVersionRemarkButton = () => {
     <>
       <Button
         type={'text'}
-        icon={<Chat />}
+        icon={<DuplicateChatIcon />}
         className={'px-1'}
         onClick={toggleForm}
       >

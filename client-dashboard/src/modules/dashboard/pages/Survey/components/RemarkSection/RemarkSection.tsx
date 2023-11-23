@@ -1,23 +1,30 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { IQuestionRemark } from '@/type';
-import { Avatar, Button, List } from 'antd';
+import { Avatar, Button, Empty, List } from 'antd';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
 import { INPUT_TYPES } from '@input/type';
-import { ControlledInput } from '@/modules/common';
+import { UncontrolledInput } from '@/modules/common';
 import { useCheckSurveyFormMode } from '@pages/Survey';
 import { useTranslation } from 'react-i18next';
 import DisplayRemarkItem from './DisplayRemarkItem';
+import { useField } from 'formik';
 
 interface IRemarkSection {
   remarks: IQuestionRemark[];
+  fieldName: string;
 }
 
 const RemarkSection: FC<IRemarkSection> = props => {
-  const { remarks } = props;
+  const { remarks, fieldName } = props;
   const profile = useSelector(AuthSelectors.getProfile);
   const { isEditMode } = useCheckSurveyFormMode();
   const { t } = useTranslation();
+  const [newRemark, setNewRemark] = useState('');
+  const [{ value }, , { setValue }] = useField<IQuestionRemark[]>(
+    `${fieldName}.remarks`,
+  );
+
   return (
     <List itemLayout="horizontal">
       {isEditMode && (
@@ -32,22 +39,45 @@ const RemarkSection: FC<IRemarkSection> = props => {
                 </span>
               </div>
               <div className={`font-[500] flex justify-start gap-3`}>
-                <ControlledInput
+                <UncontrolledInput
                   inputType={INPUT_TYPES.INPUT}
                   type={'text'}
-                  name="remark"
-                  disabled
                   className={'w-full'}
+                  value={newRemark}
+                  onChange={e => {
+                    setNewRemark(e);
+                  }}
                 />
-                <Button className={'info-btn'}>{t('common.add')}</Button>
+                <Button
+                  className={'info-btn'}
+                  onClick={() => {
+                    const newItem: IQuestionRemark = {
+                      remark: newRemark,
+                      owner: {
+                        avatar: profile?.avatar,
+                        firstName: profile?.firstName || '',
+                        lastName: profile?.lastName || '',
+                      },
+                      createdAt: Date().toString(),
+                    };
+                    setValue([newItem, ...(value || [])]);
+                    setNewRemark('');
+                  }}
+                >
+                  {t('common.add')}
+                </Button>
               </div>
             </div>
           </div>
         </List.Item>
       )}
-      {remarks.map(item => (
-        <DisplayRemarkItem key={item.id} record={item} />
-      ))}
+      {remarks.length === 0 ? (
+        <Empty />
+      ) : (
+        remarks.map(item => (
+          <DisplayRemarkItem key={item.createdAt} record={item} />
+        ))
+      )}
     </List>
   );
 };

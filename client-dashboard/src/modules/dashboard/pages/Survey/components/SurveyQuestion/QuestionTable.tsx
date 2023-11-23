@@ -1,11 +1,11 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useField } from 'formik';
 import { Button, Divider } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { CopyButton } from '@/modules/common';
-import { IQuestionRemark, SubSurveyFlowElementDto } from '@/type';
+import { SubSurveyFlowElementDto } from '@/type';
 import { DragTable, RoundedTag } from '@/modules/dashboard';
 import {
   GroupSurveyButton,
@@ -92,6 +92,7 @@ const QuestionTable: FC<{
             record={record}
             index={index}
             blockSort={blockData.blockSort as number}
+            fieldName={`${fieldName}.surveyQuestions[${index}]`}
           />
         ),
       },
@@ -157,7 +158,8 @@ const QuestionTable: FC<{
     return base;
   }, [
     isEditMode,
-    blockData?.blockSort,
+    blockData.blockSort,
+    fieldName,
     t,
     removeQuestion,
     toggleUpdateVersionQuestionModal,
@@ -189,35 +191,13 @@ const QuestionTable: FC<{
 
 export default QuestionTable;
 
-const mockRemarks: IQuestionRemark[] = [
-  {
-    id: Math.random().toString(),
-    owner: {
-      firstName: 'Me',
-      lastName: 'Not',
-    },
-    questionId: '',
-    remark:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  },
-  {
-    id: Math.random().toString(),
-    owner: {
-      firstName: 'ALice',
-      lastName: 'Windidner',
-    },
-    questionId: '',
-    remark:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  },
-];
-
 const DisplayQuestionColumn: FC<{
   record: questionValueType;
   index: number;
   blockSort: number;
+  fieldName: string;
 }> = props => {
-  const { record, index, blockSort } = props;
+  const { record, index, blockSort, fieldName } = props;
   const { t } = useTranslation();
   const [expanded, toggleExpanded] = useToggle();
 
@@ -265,7 +245,7 @@ const DisplayQuestionColumn: FC<{
                 background: expanded ? '#fff' : '#cae3ff',
               }}
             >
-              {mockRemarks.length}
+              {record?.remarks?.length || '0'}
             </span>
           </Button>
         </div>
@@ -276,7 +256,10 @@ const DisplayQuestionColumn: FC<{
       >
         <SimpleBar className={'max-h-[260px] h-full overflow-scroll pr-1'}>
           <div className={'p-3'}>
-            <RemarkSection remarks={mockRemarks} />
+            <RemarkSection
+              remarks={record?.remarks || []}
+              fieldName={fieldName}
+            />
           </div>
         </SimpleBar>
       </div>

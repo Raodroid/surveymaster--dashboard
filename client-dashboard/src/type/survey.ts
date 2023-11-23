@@ -158,13 +158,13 @@ export enum SurveyVersionStatus {
 export interface ISurveyQuestionDto {
   questionVersionId: string;
   sort?: number;
-  remark?: string;
+  remarks?: IQuestionRemark[];
   parameter?: string;
 }
 
 export interface ISurveyVersionBaseDto {
   name?: string;
-  remark?: string | null;
+  remarks?: string[] | null;
   status?: SurveyVersionStatus;
   surveyFlowElements?: SubSurveyFlowElementDto[];
 }
@@ -219,8 +219,8 @@ export interface IQuestionRemark {
   createdBy?: string;
   updatedAt?: string;
   deletedAt?: string;
-  id: string;
-  questionId: string;
-  owner: UserPayload;
+  id?: string;
+  questionId?: string;
+  owner?: UserPayload;
   remark: string;
 }

@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "post": "Post",
     "questionChangeLog": "Question Change Log",
     "previewSurvey": "Preview Survey",
     "surveyChangeLog": "Survey Change Log",
@@ -546,11 +547,11 @@
     "SURVEY_CREATED": "Survey Created",
     "SURVEY_ACTIVATE": "Survey Activated",
     "SURVEY_CLOSE": "Survey Closed",
-    "ADD_QUESTION": "Added New Question of \"{{params.questionVersion.title}}\"",
-    "UPDATE_QUESTION": "Updated Question of \"{{params.questionVersion.title}}\"",
-    "REMOVE_QUESTION": "Removed Question of \"{{params.questionVersion.title}}\"",
-    "CHANGE_SURVEY_NAME": "Changed Survey Name of from \"{{params.oldSurvey.name}}\" to \"{{params.newSurvey.name}}\"",
-    "CHANGE_SURVEY_REMARK": "Changed Survey Remark of from \"{{params.oldSurvey.remark}}\" to \"{{params.newSurvey.remark}}\"",
+    "ADD_QUESTION": "Added New Question to version \"{{params.newSurveyVersion.displayId}}\" - \"{{params.newSurveyVersion.name}}\"",
+    "UPDATE_QUESTION": "Updated Question in \"{{params.newSurveyVersion.name}}\"",
+    "REMOVE_QUESTION": "Removed Question in \"{{params.newSurveyVersion.name}}\"",
+    "CHANGE_SURVEY_NAME": "Changed Survey Name from \"{{params.oldSurvey.name}}\" to \"{{params.newSurvey.name}}\"",
+    "CHANGE_SURVEY_REMARK": "Changed Survey Remark from \"{{params.oldSurvey.remark}}\" to \"{{params.newSurvey.remark}}\"",
     "CHANGE_ORDER_QUESTION": "Changed Question Order",
 
     "noActionsYet": "No actions yet",

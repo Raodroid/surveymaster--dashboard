@@ -18,7 +18,7 @@ import QuestionChoice, {
 import { QuestionBlockProps } from '../type';
 import {
   ExtraSubBranchLogicDto,
-  IAddSurveyFormValues,
+  IEditSurveyFormValues,
 } from '@pages/Survey/SurveyForm/type';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { PlusOutLinedIcon, TrashOutlined } from '@/icons';
@@ -51,7 +51,7 @@ const componentMap: Record<BranchLogicType, FC<IQuestionChoice>> = {
 const Branch: FC<QuestionBlockProps> = props => {
   const { t } = useTranslation();
   const { fieldName: parentFieldName } = props;
-  const { values } = useFormikContext<IAddSurveyFormValues>();
+  const { values } = useFormikContext<IEditSurveyFormValues>();
   const { isViewMode } = useCheckSurveyFormMode();
   const fieldName = `${parentFieldName}.branchLogics`;
   const [{ value: branchLogics }] =

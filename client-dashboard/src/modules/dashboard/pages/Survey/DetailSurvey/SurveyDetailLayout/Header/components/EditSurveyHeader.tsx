@@ -1,5 +1,9 @@
 import { Button, Divider, Select } from 'antd';
-import { SurveyDetailDrawer, useSurveyFormContext } from '@pages/Survey';
+import {
+  IEditSurveyFormValues,
+  SurveyDetailDrawer,
+  useSurveyFormContext,
+} from '@pages/Survey';
 import { IOptionItem } from '@/type';
 import { PlayIcon, SaveIcon } from '@/icons';
 import { useTranslation } from 'react-i18next';
@@ -9,11 +13,13 @@ import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { Link } from 'react-router-dom';
 import RoundedSelect from '../../../../../../../../customize-components/RoundedSelect';
 import SurveyVersionSelect from '../../../../components/SurveyVersionSelect/SurveyVersionSelect';
+import { useFormikContext } from 'formik';
 
 const EditSurveyHeader = () => {
   const { t } = useTranslation();
   const params = useParams<projectSurveyParams>();
   const { survey } = useSurveyFormContext();
+  const { resetForm } = useFormikContext<IEditSurveyFormValues>();
   const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
     ver => ({
       label: ver.displayId,
@@ -38,6 +44,9 @@ const EditSurveyHeader = () => {
 
         <Link
           className={'flex items-center gap-2'}
+          onClick={() => {
+            resetForm();
+          }}
           to={`${generatePath(
             ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
             {

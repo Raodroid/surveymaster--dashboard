@@ -5,6 +5,7 @@ import {
   IPostSurveyVersionBodyDto,
   IPutSurveyVersionBodyDtoExtendId,
   ISurvey,
+  ISurveyRemark,
 } from 'type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
@@ -138,5 +139,12 @@ export default class SurveyService {
       `/${EntityEnum.SURVEY}/survey_version_remark`,
       params,
     );
+  }
+  static getSurveyRemarks(
+    params: IGetParams & { surveyVersionId: string },
+  ): Promise<AxiosResponse<ISurveyRemark[]>> {
+    return APIService.get(`/${EntityEnum.SURVEY}/survey_version_remark`, {
+      params,
+    });
   }
 }

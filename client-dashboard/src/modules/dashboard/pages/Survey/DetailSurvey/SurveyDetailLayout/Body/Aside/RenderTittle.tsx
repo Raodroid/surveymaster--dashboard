@@ -3,13 +3,15 @@ import React, { FC, memo, useMemo } from 'react';
 import { SubSurveyFlowElement } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { useField } from 'formik';
-import AddNewBlockElement from '@pages/Survey/components/AddNewBlockElement/AddNewBlockElement';
 import { DEFAULT_THEME_COLOR } from '@/enums';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { SurveyDataTreeNode } from '@pages/Survey/SurveyForm/type';
-import QuestionBranchIcon from '@pages/Survey/components/QuestionBranchIcon/QuestionBranchIcon';
 import styled from 'styled-components/macro';
-import InsertBlockButton from '@pages/Survey/components/AddNewBlockElement/InsertBlockButton';
+import {
+  AddNewBlockElement,
+  InsertBlockButton,
+  QuestionBranchIcon,
+} from '@pages/Survey';
 
 const bgColor: Record<SubSurveyFlowElement, string> = {
   [SubSurveyFlowElement.END_SURVEY]: '#1CA62D20',
@@ -48,7 +50,7 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   return (
     <>
       <Wrapper
-        className={`group rounded-[6px] border p-2 w-fit ${
+        className={`rounded-[6px] border p-2 w-fit ${
           record.type === SubSurveyFlowElement.BRANCH ? 'hannah' : ''
         }`}
         style={{
@@ -85,9 +87,13 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
           </div>
         )}
 
-        <span className={'group-hover:visible invisible add-icon p-0'}>
-          <InsertBlockButton fieldName={fieldName} />
-        </span>
+        {isEditMode && (
+          <span className={'group add-icon p-0'}>
+            <span className={'invisible group-hover:visible'}>
+              <InsertBlockButton fieldName={fieldName} />
+            </span>
+          </span>
+        )}
       </Wrapper>
     </>
   );

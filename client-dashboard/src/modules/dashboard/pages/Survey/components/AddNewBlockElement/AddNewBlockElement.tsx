@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { objectKeys } from '@/utils';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import {
-  IAddSurveyFormValues,
+  IEditSurveyFormValues,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
@@ -47,7 +47,7 @@ const AddNewBlockElement: FC<{
 
   const { isEditMode } = useCheckSurveyFormMode();
 
-  const { values } = useFormikContext<IAddSurveyFormValues>();
+  const { values } = useFormikContext<IEditSurveyFormValues>();
 
   const [{ value }, , { setValue }] = useField<
     Array<EmptyString<SurveyDataTreeNode>> | SurveyDataTreeNode
@@ -135,39 +135,72 @@ const AddNewBlockElement: FC<{
 
   if (type === 'button')
     return (
-      <MenuWrapper
-        className={'rounded !bg-[#007AE7] text-white m-0 w-[175px]'}
-        theme={'dark'}
-        onSelect={e => {
-          e.domEvent.stopPropagation();
-          handleAddElement(e.key as SubSurveyFlowElement);
-        }}
-        selectedKeys={[]}
-      >
-        <Menu.SubMenu
-          className={'m-0'}
-          key="mail"
-          theme={'light'}
-          title={
-            <span className={'text-white font-semibold'}>
-              {t('common.addBlock')}
-            </span>
-          }
-          icon={<PlusOutLinedIcon className={'text-white'} />}
-        >
-          {objectKeys(SubSurveyFlowElement).map(key => {
+      // <MenuWrapper
+      //   className={'rounded !bg-[#007AE7] text-white m-0 w-[175px]'}
+      //   theme={'dark'}
+      //   onSelect={e => {
+      //     e.domEvent.stopPropagation();
+      //     handleAddElement(e.key as SubSurveyFlowElement);
+      //   }}
+      //   selectedKeys={[]}
+      // >
+      //   <Menu.SubMenu
+      //     className={'m-0'}
+      //     key="mail"
+      //     theme={'light'}
+      //     title={
+      //       <span className={'text-white font-semibold'}>
+      //         {t('common.addBlock')}
+      //       </span>
+      //     }
+      //     icon={<PlusOutLinedIcon className={'text-white'} />}
+      //   >
+      //     {objectKeys(SubSurveyFlowElement).map(key => {
+      //       const val = SubSurveyFlowElement[key];
+      //       return (
+      //         <Menu.Item key={val}>
+      //           <div className={'pb-2 flex gap-3 items-center'}>
+      //             <QuestionBranchIcon type={val} />
+      //             <span className={'font-semibold'}>{t(`common.${val}`)}</span>
+      //           </div>
+      //         </Menu.Item>
+      //       );
+      //     })}
+      //   </Menu.SubMenu>
+      // </MenuWrapper>
+
+      <Dropdown
+        placement={'bottomRight'}
+        trigger={['hover']}
+        menu={{
+          items: objectKeys(SubSurveyFlowElement).map(key => {
             const val = SubSurveyFlowElement[key];
-            return (
-              <Menu.Item key={val}>
+            return {
+              label: (
                 <div className={'pb-2 flex gap-3 items-center'}>
                   <QuestionBranchIcon type={val} />
                   <span className={'font-semibold'}>{t(`common.${val}`)}</span>
                 </div>
-              </Menu.Item>
-            );
-          })}
-        </Menu.SubMenu>
-      </MenuWrapper>
+              ),
+              key: val,
+            };
+          }),
+          onClick: e => {
+            e.domEvent.stopPropagation();
+            handleAddElement(e.key as SubSurveyFlowElement);
+          },
+        }}
+      >
+        <Button
+          type={'primary'}
+          className={'info-btn'}
+          icon={<PlusOutLinedIcon />}
+        >
+          <span className={'text-white font-semibold'}>
+            {t('common.addBlock')}
+          </span>
+        </Button>
+      </Dropdown>
     );
 
   return (
