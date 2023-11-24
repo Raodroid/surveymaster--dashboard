@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "env-cmd -f .env.dev vite --host 0.0.0.0",
-    "build:development": "env-cmd -f .env.development tsc && vite build",
+    "build:development": "vite build --mode development",
     "build:dev-server": "env-cmd -f .env.dev-server tsc && vite build",
     "build:stg": "env-cmd -f .env.stg tsc && vite build",
     "deploy:dev-server": "aws s3 sync build/ s3://eg-dev-server-survey-master-admin-origin --cache-control no-cache",

@@ -201,9 +201,9 @@ const DisplayAnswer = () => {
         },
       },
       {
-        title: t('common.remarks'),
+        title: '',
         dataIndex: 'remarks',
-        width: 300,
+        width: 100,
         render: (value, record, index) => {
           return (
             <DisplayQuestionColumn

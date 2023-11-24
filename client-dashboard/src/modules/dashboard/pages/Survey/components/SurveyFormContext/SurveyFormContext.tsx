@@ -351,6 +351,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
         return;
       }
+      if (values.version?.surveyFlowElements?.length === 0) {
+        notification.error({ message: t('direction.emptyElementError') });
+        return;
+      }
       try {
         toggleLoading();
         if (isExternalProject) {

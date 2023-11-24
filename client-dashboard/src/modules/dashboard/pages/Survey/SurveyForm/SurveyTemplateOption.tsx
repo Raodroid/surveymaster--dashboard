@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useFormikContext } from 'formik';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { ISurvey } from 'type';
-import { Input, Radio, Space, Table } from 'antd';
+import { Input, Table } from 'antd';
 import { useInfiniteQuery } from 'react-query';
 import _get from 'lodash/get';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -60,8 +60,10 @@ export const TemplateOption = () => {
     },
     {
       getNextPageParam: lastPage => {
-        if (!lastPage?.data?.meta) return false;
-        const { page, hasNextPage } = lastPage?.data?.meta;
+        const meta = lastPage?.data?.meta;
+        if (!meta) return false;
+
+        const { page, hasNextPage } = meta;
 
         if (hasNextPage && page) {
           return { ...queryParams, page: page + 1 };

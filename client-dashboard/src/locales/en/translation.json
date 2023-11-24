@@ -507,6 +507,7 @@
     }
   },
   "direction": {
+    "emptyElementError": "Survey element can not be empty!",
     "continueWithGoogle": "Continue with Google",
     "markAsCompleted": "Mark as Completed",
     "addOneQuestion": "Select single question from the Question Bank",

@@ -9,7 +9,7 @@ import {
   EmptyString,
   IOptionGroupItem,
 } from '@/type';
-import { Button } from 'antd';
+import { Button, Empty } from 'antd';
 import { objectKeys, transformEnumToOption } from '@/utils';
 import EmbeddedBlockChoice from './EmbeddedBlockChoice/EmbeddedBlockChoice';
 import QuestionChoice, {
@@ -69,58 +69,64 @@ const Branch: FC<QuestionBlockProps> = props => {
       render={({ push, remove }) => (
         <>
           <SimpleBarCustom>
-            <div className={'min-w-[770px]'}>
-              {(branchLogics || []).map((list, index) => {
-                const { logicType } = list;
+            {!branchLogics || branchLogics.length === 0 ? (
+              <Empty />
+            ) : (
+              <div className={'min-w-[770px]'}>
+                {(branchLogics || []).map((list, index) => {
+                  const { logicType } = list;
 
-                const LogicComponent = componentMap[logicType];
-                return (
-                  <div className={'flex gap-3'} key={index}>
-                    {index === 0 ? (
-                      <UncontrolledInput
-                        className={`w-[70px] view-mode`}
-                        inputType={INPUT_TYPES.INPUT}
-                        value={'If'}
-                      />
-                    ) : (
-                      <ControlledInput
-                        className={`w-[70px] ${isViewMode ? 'view-mode' : ''}`}
-                        inputType={INPUT_TYPES.SELECT}
-                        name={`${fieldName}[${index}].conjunction`}
-                        options={objectKeys(Conjunction).map(key => ({
-                          value: Conjunction[key],
-                          label: Conjunction[key],
-                        }))}
-                      />
-                    )}
-                    <ControlledInput
-                      className={`w-[120px] ${isViewMode ? 'view-mode' : ''}`}
-                      inputType={INPUT_TYPES.SELECT}
-                      name={`${fieldName}[${index}].logicType`}
-                      options={transformEnumToOption(BranchLogicType, i =>
-                        t(`common.${i}`),
+                  const LogicComponent = componentMap[logicType];
+                  return (
+                    <div className={'flex gap-3'} key={index}>
+                      {index === 0 ? (
+                        <UncontrolledInput
+                          className={`w-[70px] view-mode`}
+                          inputType={INPUT_TYPES.INPUT}
+                          value={'If'}
+                        />
+                      ) : (
+                        <ControlledInput
+                          className={`w-[70px] ${
+                            isViewMode ? 'view-mode' : ''
+                          }`}
+                          inputType={INPUT_TYPES.SELECT}
+                          name={`${fieldName}[${index}].conjunction`}
+                          options={objectKeys(Conjunction).map(key => ({
+                            value: Conjunction[key],
+                            label: Conjunction[key],
+                          }))}
+                        />
                       )}
-                    />
-
-                    <LogicComponent
-                      fieldName={fieldName}
-                      index={index}
-                      options={options}
-                    />
-
-                    {!isViewMode && (
-                      <Button
-                        size={'small'}
-                        className={'px-2'}
-                        type={'text'}
-                        onClick={() => remove(index)}
-                        icon={<TrashOutlined />}
+                      <ControlledInput
+                        className={`w-[120px] ${isViewMode ? 'view-mode' : ''}`}
+                        inputType={INPUT_TYPES.SELECT}
+                        name={`${fieldName}[${index}].logicType`}
+                        options={transformEnumToOption(BranchLogicType, i =>
+                          t(`common.${i}`),
+                        )}
                       />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+
+                      <LogicComponent
+                        fieldName={fieldName}
+                        index={index}
+                        options={options}
+                      />
+
+                      {!isViewMode && (
+                        <Button
+                          size={'small'}
+                          className={'px-2'}
+                          type={'text'}
+                          onClick={() => remove(index)}
+                          icon={<TrashOutlined />}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </SimpleBarCustom>
           <div>
             {!isViewMode && (

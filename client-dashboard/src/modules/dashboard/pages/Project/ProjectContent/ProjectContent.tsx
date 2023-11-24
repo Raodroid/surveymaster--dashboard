@@ -4,10 +4,7 @@ import { useParseQueryString } from '@/hooks';
 import { ProjectTypes } from '@/type';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router';
-import {
-  useCheckScopeEntity,
-  useCheckScopeEntityDefault,
-} from '@/modules/common';
+import { useCheckScopeEntityDefault } from '@/modules/common';
 import { EntityEnum } from '@/enums';
 
 const options = [

@@ -56,4 +56,32 @@ const StyledPaginationWrapper = styled.div`
       display: flex;
     }
   }
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    height: 32px;
+  }
+  .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    border-radius: 16px;
+  }
+  .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    border-color: #007ae7;
+  }
+  .ant-select .ant-select-selector .ant-select-selection-item {
+    color: #007ae7;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .ant-select-arrow {
+    > span {
+      display: none;
+    }
+
+    &:after {
+      content: '';
+      width: 11px;
+      height: 6px;
+      background-color: #007ae7;
+      -webkit-mask-image: url(/src/assets/Icons/Arrow-pink.svg);
+      mask-image: url(/src/assets/Icons/Arrow-pink.svg);
+    }
+  }
 `;

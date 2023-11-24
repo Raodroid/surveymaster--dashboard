@@ -181,7 +181,10 @@ const WrapperTree = styled(Tree)`
     transform: translateX(0px);
   }
   .ant-tree-indent-unit {
-    transform: translateX(6px);
+    transform: translateX(7px);
+    &:before {
+      border-width: 1.5px;
+    }
   }
   .ant-tree-switcher {
     width: 40px;

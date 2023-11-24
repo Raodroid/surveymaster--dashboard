@@ -1,31 +1,61 @@
-import { Button, Divider, Select } from 'antd';
+import { Button, Divider, Modal } from 'antd';
 import {
   IEditSurveyFormValues,
   SurveyDetailDrawer,
+  SurveyVersionSelect,
   useSurveyFormContext,
 } from '@pages/Survey';
 import { IOptionItem } from '@/type';
 import { PlayIcon, SaveIcon } from '@/icons';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/enums';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
-import { Link } from 'react-router-dom';
-import RoundedSelect from '../../../../../../../../customize-components/RoundedSelect';
-import SurveyVersionSelect from '../../../../components/SurveyVersionSelect/SurveyVersionSelect';
 import { useFormikContext } from 'formik';
+import { useCallback } from 'react';
 
+const { confirm } = Modal;
 const EditSurveyHeader = () => {
   const { t } = useTranslation();
   const params = useParams<projectSurveyParams>();
   const { survey } = useSurveyFormContext();
-  const { resetForm } = useFormikContext<IEditSurveyFormValues>();
+  const { resetForm, dirty } = useFormikContext<IEditSurveyFormValues>();
   const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
     ver => ({
       label: ver.displayId,
       value: ver?.id || '',
     }),
   );
+
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => {
+    confirm({
+      icon: null,
+      content: 'Are you sure discard the change?',
+      onOk() {
+        navigate(
+          `${generatePath(
+            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
+            {
+              projectId: params?.projectId,
+              surveyId: params?.surveyId,
+            },
+          )}?version=${survey.currentSurveyVersion?.displayId}`,
+        );
+        resetForm();
+        return;
+      },
+      onCancel() {
+        return;
+      },
+    });
+  }, [
+    navigate,
+    params?.projectId,
+    params?.surveyId,
+    survey.currentSurveyVersion?.displayId,
+    t,
+  ]);
 
   return (
     <>
@@ -41,25 +71,14 @@ const EditSurveyHeader = () => {
 
         <SurveyDetailDrawer />
         <div className={'flex-1'} />
+        {dirty && (
+          <Button icon={<PlayIcon />} type={'text'} onClick={handleCancel}>
+            <span className={'!text-[1rem] font-semibold'}>
+              {t('common.cancel')}
+            </span>
+          </Button>
+        )}
 
-        <Link
-          className={'flex items-center gap-2'}
-          onClick={() => {
-            resetForm();
-          }}
-          to={`${generatePath(
-            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
-            {
-              projectId: params?.projectId,
-              surveyId: params?.surveyId,
-            },
-          )}?version=${survey.currentSurveyVersion?.displayId}`}
-        >
-          <PlayIcon />
-          <span className={'!text-[1rem] font-semibold'}>
-            {t('common.previewSurvey')}
-          </span>
-        </Link>
         <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
         <Button type={'primary'} htmlType={'submit'} icon={<SaveIcon />}>
           {t('common.completed')}

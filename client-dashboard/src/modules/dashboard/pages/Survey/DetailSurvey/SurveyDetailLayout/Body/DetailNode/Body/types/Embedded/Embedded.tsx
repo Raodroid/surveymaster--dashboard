@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { INPUT_TYPES } from '@input/type';
 import { FieldArray, useField } from 'formik';
 import { SubEmbeddedDataDto } from '@/type';
-import { Button, Divider } from 'antd';
+import { Button, Divider, Empty } from 'antd';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { PlusOutLinedIcon, TrashOutlined } from '@/icons';
 import SimpleBar from 'simplebar-react';
@@ -32,48 +32,52 @@ const Embedded: FC<QuestionBlockProps> = props => {
         <>
           <SimpleBar className={'h-full overflow-scroll flex-1'}>
             <div className={'min-w-[500px]'}>
-              {(listEmbeddedData || []).map((list, index) => (
-                <Fragment key={index}>
-                  <span className={'font-semibold text-[16px]'}>
-                    {t('common.embeddedData')} №{index + 1}:
-                  </span>
-                  <div className={'flex items-center gap-3'}>
-                    <ControlledInputHasTopLabel
-                      className={`flex-1 min-w-150px] ${
-                        isViewMode ? 'view-mode' : ''
-                      }`}
-                      label={t('common.field')}
-                      inputType={INPUT_TYPES.INPUT}
-                      name={`${fieldName}[${index}].field`}
-                    />
-                    <span>=</span>
-                    <ControlledInputHasTopLabel
-                      className={`flex-1 min-w-200px] ${
-                        isViewMode ? 'view-mode' : ''
-                      }`}
-                      label={t('common.value')}
-                      inputType={INPUT_TYPES.INPUT}
-                      name={`${fieldName}[${index}].value`}
-                    />
-                    {!isViewMode && (
-                      <>
-                        <Divider
-                          type="vertical"
-                          style={{ height: 8, width: 1 }}
-                        />
-                        <Button
-                          size={'small'}
-                          className={'px-2'}
-                          type={'text'}
-                          icon={<TrashOutlined />}
-                          onClick={() => remove(index)}
-                        />
-                      </>
-                    )}
-                  </div>
-                  <Divider />
-                </Fragment>
-              ))}
+              {!listEmbeddedData || listEmbeddedData.length === 0 ? (
+                <Empty />
+              ) : (
+                (listEmbeddedData || []).map((list, index) => (
+                  <Fragment key={index}>
+                    <span className={'font-semibold text-[16px]'}>
+                      {t('common.embeddedData')} №{index + 1}:
+                    </span>
+                    <div className={'flex items-center gap-3'}>
+                      <ControlledInputHasTopLabel
+                        className={`flex-1 min-w-150px] ${
+                          isViewMode ? 'view-mode' : ''
+                        }`}
+                        label={t('common.field')}
+                        inputType={INPUT_TYPES.INPUT}
+                        name={`${fieldName}[${index}].field`}
+                      />
+                      <span>=</span>
+                      <ControlledInputHasTopLabel
+                        className={`flex-1 min-w-200px] ${
+                          isViewMode ? 'view-mode' : ''
+                        }`}
+                        label={t('common.value')}
+                        inputType={INPUT_TYPES.INPUT}
+                        name={`${fieldName}[${index}].value`}
+                      />
+                      {!isViewMode && (
+                        <>
+                          <Divider
+                            type="vertical"
+                            style={{ height: 8, width: 1 }}
+                          />
+                          <Button
+                            size={'small'}
+                            className={'px-2'}
+                            type={'text'}
+                            icon={<TrashOutlined />}
+                            onClick={() => remove(index)}
+                          />
+                        </>
+                      )}
+                    </div>
+                    <Divider />
+                  </Fragment>
+                ))
+              )}
             </div>
           </SimpleBar>
           <div>
