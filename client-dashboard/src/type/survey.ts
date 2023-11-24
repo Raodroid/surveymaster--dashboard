@@ -2,6 +2,7 @@ import { IProject } from './project';
 import { IQuestionVersion } from '@/type/question-bank';
 import { UserPayload } from '@/redux/user';
 import { SurveyTemplateEnum } from '@pages/Survey';
+import { version } from 'antd';
 
 export enum SubSurveyFlowElement {
   BLOCK = 'Block',
@@ -109,7 +110,7 @@ export interface ISurveyVersion {
   displayId: string;
 
   name: string;
-  remark?: string;
+  remarks?: ISurveyRemark[];
   status?: SurveyVersionStatus;
   surveyFlowElements?: SurveyFlowElementResponseDto[];
 
@@ -164,18 +165,34 @@ export interface ISurveyQuestionDto {
 
 export interface ISurveyVersionBaseDto {
   name?: string;
-  remarks?: string[] | null;
+  remarks?: ISurveyRemark[] | null;
   status?: SurveyVersionStatus;
   surveyFlowElements?: SubSurveyFlowElementDto[];
 }
 
-export interface CreateSurveyBodyDto {
+export interface EditSurveyBodyDto {
   projectId: string;
   version?: ISurveyVersionBaseDto;
   template?: SurveyTemplateEnum | string;
   duplicateSurveyId?: string;
 }
 
+export interface CreateSurveyBodyDto {
+  projectId: string;
+  version?: Omit<ISurveyVersionBaseDto, 'remarks'> & {
+    remark: string;
+  };
+  template?: SurveyTemplateEnum | string;
+  duplicateSurveyId?: string;
+}
+
+export type DuplicateSurveyVersionDto = {
+  version: {
+    name: string;
+    remark: string;
+  };
+  surveyId: string;
+};
 export interface IPostSurveyVersionBodyDto extends ISurveyVersionBaseDto {
   surveyId: string;
 }

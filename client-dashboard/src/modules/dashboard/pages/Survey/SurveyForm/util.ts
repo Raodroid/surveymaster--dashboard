@@ -1,13 +1,8 @@
-import {
-  ISurveyVersion,
-  SubSurveyFlowElementDto,
-  SurveyFlowElementResponseDto,
-} from '@/type';
+import { ISurveyVersion, SurveyFlowElementResponseDto } from '@/type';
 
 import {
   ExtraSubBranchLogicDto,
   IEditSurveyFormValues,
-  questionValueType,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
   SurveyTemplateEnum,
@@ -16,9 +11,9 @@ import { isEqual } from 'lodash';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
 import {
-  block_qId_template,
+  block_qVersionId_template,
   gen_row_column_BranchChoiceType,
-} from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/Body/types/Branch';
+} from '../DetailSurvey/SurveyDetailLayout/Body/DetailNode/Body/types/Branch';
 
 const transSurveyFlowElements = (
   input: SurveyFlowElementResponseDto[] = [],
@@ -46,7 +41,7 @@ const transSurveyFlowElements = (
         const resultBranchLogicItem: ExtraSubBranchLogicDto = {
           ...logic,
           sort: logicIndex + 1,
-          blockSort_qId: block_qId_template({
+          blockSort_qId: block_qVersionId_template({
             blockSort: logic.blockSort,
             questionVersionId: logic.questionVersionId,
           }),
@@ -91,7 +86,7 @@ export const transformInitSurveyFormData = (
     createdAt: input?.survey?.createdAt,
     version: {
       name: input?.name || '',
-      remark: input?.remark || '',
+      remarks: input?.remarks || [],
       status: input?.status,
       surveyFlowElements: transSurveyFlowElements(input?.surveyFlowElements),
     },

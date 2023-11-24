@@ -36,7 +36,13 @@ const SurveyFormContent = () => {
       enableReinitialize={true}
     >
       {({ handleSubmit }) => (
-        <Form onFinish={handleSubmit} className={'h-full'}>
+        <Form
+          onFinish={handleSubmit}
+          className={'h-full'}
+          onKeyDown={e => {
+            if (e.code === 'Enter') e.preventDefault();
+          }}
+        >
           <div className={'flex flex-col h-full'}>
             <Header />
             <Divider className={'m-0'} />

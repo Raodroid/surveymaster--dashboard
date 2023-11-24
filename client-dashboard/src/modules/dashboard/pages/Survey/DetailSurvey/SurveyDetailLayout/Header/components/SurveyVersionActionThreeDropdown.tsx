@@ -11,14 +11,19 @@ import { useParams } from 'react-router';
 import { useGetProjectByIdQuery } from '@pages/Project';
 import { useCheckScopeEntityDefault } from '@/modules/common';
 import { SCOPE_CONFIG } from '@/enums';
-import { DownloadIcon, LightingIcon, PenFilled, TrashOutlined } from '@/icons';
-import { ExportOutlined } from '@ant-design/icons';
+import {
+  DownloadIcon,
+  DuplicateIcon,
+  LightingIcon,
+  TrashOutlined,
+} from '@/icons';
 import { ThreeDotsDropdown } from '@/customize-components';
 
 const ACTION = {
   COMPLETE: 'COMPLETE',
   EXPORT: 'EXPORT',
   DELETE: 'DELETE',
+  CLONE: 'CLONE',
 } as const;
 
 const ActionThreeDropDown: FC<
@@ -39,7 +44,13 @@ const ActionThreeDropDown: FC<
   );
 
   const items = useMemo(() => {
-    const baseMenu: IMenuItem[] = [];
+    const baseMenu: IMenuItem[] = [
+      {
+        icon: <DuplicateIcon className={'text-primary'} />,
+        label: t('common.duplicateSurvey'),
+        key: ACTION.CLONE,
+      },
+    ];
 
     if (canUpdate && isDraftVersion) {
       baseMenu.push({

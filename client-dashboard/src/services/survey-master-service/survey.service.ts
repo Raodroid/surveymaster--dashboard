@@ -6,6 +6,7 @@ import {
   IPutSurveyVersionBodyDtoExtendId,
   ISurvey,
   ISurveyRemark,
+  DuplicateSurveyVersionDto,
 } from 'type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
@@ -58,13 +59,10 @@ export default class SurveyService {
     return APIService.post(`/${EntityEnum.SURVEY}/version`, props);
   }
   static duplicateSurvey(
-    props: CreateSurveyBodyDto & { surveyId: string },
+    props: DuplicateSurveyVersionDto,
   ): Promise<AxiosResponse> {
-    const { surveyId } = props;
-    return APIService.post(
-      `/${EntityEnum.SURVEY}/${surveyId}/duplicate`,
-      props,
-    );
+    const { surveyId, ...rest } = props;
+    return APIService.post(`/${EntityEnum.SURVEY}/${surveyId}/duplicate`, rest);
   }
   static updateSurvey(
     props: IPutSurveyVersionBodyDtoExtendId,

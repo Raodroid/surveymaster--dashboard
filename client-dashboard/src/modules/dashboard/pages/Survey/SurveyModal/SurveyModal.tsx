@@ -1,5 +1,10 @@
 import React, { FC, useCallback } from 'react';
-import { CreateSurveyBodyDto, IModal, SurveyVersionStatus } from '@/type';
+import {
+  CreateSurveyBodyDto,
+  DuplicateSurveyVersionDto,
+  IModal,
+  SurveyVersionStatus,
+} from '@/type';
 import { Button, Form, Modal, notification, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { ControlledInput, SURVEY_INTERNAL_FORM_SCHEMA } from '@/modules/common';
@@ -41,7 +46,7 @@ const SurveyModal: FC<IModal> = props => {
   }, [queryClient, t]);
 
   const duplicateSurveyMutation = useMutation(
-    (data: CreateSurveyBodyDto & { surveyId: string }) => {
+    (data: DuplicateSurveyVersionDto & { surveyId: string }) => {
       return SurveyService.duplicateSurvey(data);
     },
     {
@@ -100,11 +105,9 @@ const SurveyModal: FC<IModal> = props => {
       if (values.template === SurveyTemplateEnum.DUPLICATE) {
         await duplicateSurveyMutation.mutateAsync({
           version: {
-            name: values.version?.name,
-            remark: values.version?.remark,
+            name: values.version?.name as string,
+            remark: values.version?.remark as string,
           },
-          template: values.template,
-          projectId: params.projectId as string,
           surveyId: values.duplicateSurveyId as string,
         });
         return;

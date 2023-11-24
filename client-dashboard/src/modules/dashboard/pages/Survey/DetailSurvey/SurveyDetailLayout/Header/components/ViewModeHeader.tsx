@@ -1,13 +1,19 @@
 import React, { Fragment, ReactNode, useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
+  createDuplicateSurveyVersionName,
   SurveyBriefDetail,
   SurveyVersionRemarkButton,
   SurveyVersionSelect,
   useSurveyFormContext,
 } from '@pages/Survey';
 import { Divider, Modal, notification, Spin } from 'antd';
-import { IGetParams, IOptionItem, ISurveyVersion } from '@/type';
+import {
+  IGetParams,
+  IOptionItem,
+  ISurveyVersion,
+  SurveyVersionStatus,
+} from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { EntityEnum, MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
@@ -106,12 +112,10 @@ const genLink = (
 
 const RightMenu = () => {
   const { t } = useTranslation();
-  const { canUpdate, canDelete } = useCheckScopeEntityDefault(
-    EntityEnum.SURVEY,
-  );
+  const { canUpdate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
   const qsParams = useParseQueryString<IGetParams & { version?: string }>();
   const params = useParams<projectSurveyParams>();
-  const { survey } = useSurveyFormContext();
+  const { survey, handleCloneSurveyVersion } = useSurveyFormContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
@@ -211,6 +215,19 @@ const RightMenu = () => {
     },
     [completeMutation, t],
   );
+  const handleCLone = useCallback(
+    (record: ISurveyVersion) => {
+      if (!record?.id) return;
+      handleCloneSurveyVersion({
+        version: {
+          name: createDuplicateSurveyVersionName(record.name),
+          remark: '',
+        },
+        surveyId: record?.id,
+      });
+    },
+    [handleCloneSurveyVersion],
+  );
 
   const tableActions = useMemo<keysAction<ISurveyVersion>>(
     () => [
@@ -227,8 +244,12 @@ const RightMenu = () => {
         key: ACTION.COMPLETE,
         action: handleComplete,
       },
+      {
+        key: ACTION.CLONE,
+        action: handleCLone,
+      },
     ],
-    [handleComplete, handleDelete, handleExport],
+    [handleCLone, handleComplete, handleDelete, handleExport],
   );
 
   const { handleSelect, selectedRecord } =
@@ -248,7 +269,10 @@ const RightMenu = () => {
         ),
       },
     ];
-    if (canUpdate) {
+    if (
+      canUpdate &&
+      survey.currentSurveyVersion?.status !== SurveyVersionStatus.COMPLETED
+    ) {
       base = [
         {
           label: t('common.editSurvey'),
@@ -263,7 +287,13 @@ const RightMenu = () => {
       ];
     }
     return base;
-  }, [canUpdate, params, qsParams?.version, t]);
+  }, [
+    canUpdate,
+    params,
+    qsParams?.version,
+    survey.currentSurveyVersion?.status,
+    t,
+  ]);
 
   return (
     <div className={'flex items-center'}>

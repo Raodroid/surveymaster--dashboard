@@ -22,7 +22,7 @@ import {
 import { SurveyDataTreeNode } from '@pages/Survey/SurveyForm/type';
 import { IQuestionChoiceComponent } from './type';
 
-export const block_qId_template = (input: {
+export const block_qVersionId_template = (input: {
   blockSort: number | undefined;
   questionVersionId: string | undefined;
   // optionSort: number | undefined;
@@ -71,7 +71,7 @@ export const getQuestionFromAllBlocks = (
                 QuestionType.TEXT_GRAPHIC,
                 QuestionType.SIGNATURE,
               ].includes(i.type as QuestionType),
-          value: block_qId_template({
+          value: block_qVersionId_template({
             blockSort,
             questionVersionId: i.questionVersionId,
             // optionSort: [

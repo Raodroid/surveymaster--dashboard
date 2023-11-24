@@ -20,6 +20,9 @@
     "foods": "Foods"
   },
   "common": {
+    "saveAndPublish": "Save And Publish",
+    "saveAsDraft": "Save As Draft",
+    "cloneThisVersion": "Clone This Version",
     "post": "Post",
     "questionChangeLog": "Question Change Log",
     "previewSurvey": "Preview Survey",
@@ -507,6 +510,7 @@
     }
   },
   "direction": {
+    "confirmDiscardChange": "Are you sure discard the change?",
     "emptyElementError": "Survey element can not be empty!",
     "continueWithGoogle": "Continue with Google",
     "markAsCompleted": "Mark as Completed",

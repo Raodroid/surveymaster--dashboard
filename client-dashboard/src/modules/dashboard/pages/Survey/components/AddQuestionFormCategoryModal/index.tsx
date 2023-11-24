@@ -4,7 +4,7 @@ import type { DataNode } from 'antd/es/tree';
 import { IGetParams, IQuestion, IQuestionCategory } from '@/type';
 import { useQuery } from 'react-query';
 import { QuestionBankService } from '@/services';
-import { useDebounce, onError } from '@/utils';
+import { onError, useDebounce } from '@/utils';
 import { AddQuestionFormCategoryModalWrapper } from './style';
 import { DisplayQuestionList } from './DisplayQuestionList/DisplayQuestionList';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,7 @@ import _get from 'lodash/get';
 import SimpleBar from 'simplebar-react';
 import { questionValueType } from '@pages/Survey/SurveyForm/type';
 import { PlusOutLinedIcon } from '@/icons';
+import { useSurveyFormContext } from '@pages/Survey';
 
 interface IAddQuestionFormCategoryModal {
   open: boolean;
@@ -27,6 +28,7 @@ const AddQuestionFormCategoryModal: FC<
   const { open, onCancel, fieldName } = props;
   const [searchTxt, setSearchTxt] = useState<string>('');
   const [searchQuestionTxt, setSearchQuestionTxt] = useState<string>('');
+  const { setSurveyFormContext } = useSurveyFormContext();
 
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [selectedQuestionIdList, setSelectedQuestionIdList] = useState<
@@ -88,7 +90,7 @@ const AddQuestionFormCategoryModal: FC<
 
   const getQuestionByCategoryIdListQuery = useQuery(
     [
-      'getQuestionByCategoryIdList',
+      'getAllQuestionByCategoryIdList',
       selectedCategoryIds,
       debounceSearchTextQuestion,
     ],
@@ -101,7 +103,11 @@ const AddQuestionFormCategoryModal: FC<
         selectAll: true,
       });
     },
-    { onError, enabled: !!selectedCategoryIds, refetchOnWindowFocus: false },
+    {
+      onError,
+      enabled: !!selectedCategoryIds && open,
+      refetchOnWindowFocus: false,
+    },
   );
 
   const questions = useMemo<IQuestion[]>(
@@ -124,8 +130,15 @@ const AddQuestionFormCategoryModal: FC<
 
   const handleAddQuestions = useCallback(async () => {
     let sort = value.length + 1;
-    const newValues: questionValueType[] = selectedQuestionIdList.reduce(
-      (result: questionValueType[], chosenQuestionVersionId) => {
+
+    let newValues: questionValueType[] = [];
+
+    setSurveyFormContext(oldState => {
+      const questionVersionIdMap = {
+        ...oldState.question.questionVersionIdMap,
+      };
+
+      selectedQuestionIdList.forEach(chosenQuestionVersionId => {
         const question = questions.find(
           (q: IQuestion) =>
             q.latestCompletedVersion.id === chosenQuestionVersionId,
@@ -136,27 +149,49 @@ const AddQuestionFormCategoryModal: FC<
             q => q?.questionVersionId === chosenQuestionVersionId, // check if chosen version is in the same question but different version
           )
         ) {
-          return result;
+          return;
         }
 
-        const transformData = {
+        //collect selected questions to survey context
+        if (!questionVersionIdMap[chosenQuestionVersionId]) {
+          questionVersionIdMap[chosenQuestionVersionId] = {
+            ...question.latestCompletedVersion,
+            masterCategory: question.masterCategory,
+          };
+        }
+
+        const transformData: questionValueType = {
           type: question.latestCompletedVersion.type,
           questionVersionId: chosenQuestionVersionId,
           category: question.masterCategory?.name as string,
-          remark: '',
+          remarks: [],
           sort,
           id: question.id,
           questionTitle: question.latestCompletedVersion.title,
         };
         sort += 1;
 
-        return [...result, transformData];
-      },
-      [],
-    );
+        newValues = [...newValues, transformData];
+      });
+      return {
+        ...oldState,
+        question: {
+          ...oldState.question,
+          questionVersionIdMap,
+        },
+      };
+    });
+
     setValue([...value, ...newValues]);
     onCancel();
-  }, [onCancel, questions, selectedQuestionIdList, setValue, value]);
+  }, [
+    onCancel,
+    questions,
+    selectedQuestionIdList,
+    setSurveyFormContext,
+    setValue,
+    value,
+  ]);
 
   return (
     <AddQuestionFormCategoryModalWrapper

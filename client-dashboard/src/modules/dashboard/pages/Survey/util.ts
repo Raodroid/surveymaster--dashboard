@@ -52,6 +52,9 @@ const transformToSurveyDataTreeNode = (
   });
 };
 
+const createDuplicateSurveyVersionName = (currentName?: string): string =>
+  `${currentName || ''} (Copy)`;
+
 export {
   calcLevelNodeByFieldName,
   getParentChildrenFieldName,
@@ -59,4 +62,5 @@ export {
   getParentBlockSort,
   getBranchLevel,
   transformToSurveyDataTreeNode,
+  createDuplicateSurveyVersionName,
 };

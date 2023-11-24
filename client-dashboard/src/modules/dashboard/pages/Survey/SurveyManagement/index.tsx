@@ -20,29 +20,19 @@ import SimpleBar from 'simplebar-react';
 import {
   ActionThreeDropDownType,
   CreateSurveyBodyDto,
+  DuplicateSurveyVersionDto,
   IGetParams,
   IMenuItem,
   ISurvey,
-  ProjectTypes,
   QsParams,
   SurveyVersionStatus,
 } from '@/type';
-import {
-  ProjectBriefDetail,
-  ProjectHeader,
-  useGetProjectByIdQuery,
-} from '@pages/Project';
+import { ProjectBriefDetail, ProjectHeader } from '@pages/Project';
 import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
-import {
-  DownloadIcon,
-  FileIconOutlined,
-  PenFilled,
-  RollbackOutlined,
-  TrashOutlined,
-} from '@/icons';
-import { onError, saveBlob } from '@/utils';
-import { ExportOutlined } from '@ant-design/icons';
+import { DuplicateIcon, RollbackOutlined, TrashOutlined } from '@/icons';
+import { onError } from '@/utils';
 import { ThreeDotsDropdown } from '@/customize-components';
+import { createDuplicateSurveyVersionName } from '@pages/Survey';
 
 const { confirm } = Modal;
 
@@ -79,7 +69,7 @@ function SurveyTable() {
     ProjectService.getProjectById(params.projectId),
   );
   const duplicateMutation = useMutation(
-    (data: CreateSurveyBodyDto & { surveyId: string }) => {
+    (data: DuplicateSurveyVersionDto) => {
       return SurveyService.duplicateSurvey(data as any);
     },
     {
@@ -122,50 +112,15 @@ function SurveyTable() {
     (record: ISurvey) => {
       duplicateMutation.mutateAsync({
         version: {
-          name: `${record?.latestVersion?.name} (Copy)`,
+          name: createDuplicateSurveyVersionName(record?.latestVersion?.name),
+          remark: '',
         },
-        projectId: params.projectId as string,
+        // projectId: params.projectId as string,
         surveyId: record.id as string,
       });
     },
-    [duplicateMutation, params.projectId],
+    [duplicateMutation],
   );
-
-  const handleEdit = useCallback(
-    (record: ISurvey) => {
-      navigate(
-        generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
-          projectId: params?.projectId,
-          surveyId: record.id,
-        }) + `?version=${record?.latestVersion?.displayId}`,
-      );
-    },
-    [navigate, params?.projectId],
-  );
-  const handleExport = useCallback(async (record: ISurvey) => {
-    try {
-      const response = await SurveyService.getSurveyFile(
-        record.latestVersion?.id as string,
-      );
-
-      const data: {
-        SurveyElements: any[];
-        SurveyEntry: { SurveyName: string };
-      } = _get(response, 'data', {});
-
-      const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: 'application/octet-stream',
-      });
-      saveBlob(
-        blob,
-        `${data.SurveyEntry.SurveyName}-${moment().format(
-          MOMENT_FORMAT.EXPORT,
-        )}.qsf`,
-      );
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
 
   const handleDelete = useCallback(
     (record: ISurvey) => {
@@ -199,14 +154,6 @@ function SurveyTable() {
         action: handleDuplicateSurvey,
       },
       {
-        key: ACTION.EDIT,
-        action: handleEdit,
-      },
-      {
-        key: ACTION.EXPORT,
-        action: handleExport,
-      },
-      {
         key: ACTION.DELETE,
         action: handleDelete,
       },
@@ -215,13 +162,7 @@ function SurveyTable() {
         action: handleRestore,
       },
     ],
-    [
-      handleDelete,
-      handleDuplicateSurvey,
-      handleEdit,
-      handleExport,
-      handleRestore,
-    ],
+    [handleDelete, handleDuplicateSurvey, handleRestore],
   );
 
   const { handleSelect, selectedRecord } =
@@ -377,32 +318,22 @@ export default SurveyTable;
 const ACTION = {
   DUPLICATE_SURVEY: 'DUPLICATE_SURVEY',
   RESTORE: 'RESTORE',
-  EDIT: 'EDIT',
-  EXPORT: 'EXPORT',
   DELETE: 'DELETE',
 } as const;
 
 const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
   const { record, handleSelect } = props;
   const { t } = useTranslation();
-  const params = useParams<{ projectId?: string }>();
 
-  const { project } = useGetProjectByIdQuery(params?.projectId);
-  const isExternalProject = project.type === ProjectTypes.EXTERNAL;
-
-  const { canDelete, canRestore, canUpdate, canRead } =
-    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.QUESTION);
+  const { canDelete, canRestore, canUpdate } = useCheckScopeEntityDefault(
+    SCOPE_CONFIG.ENTITY.QUESTION,
+  );
 
   const items = useMemo<IMenuItem[]>(() => {
     const baseMenu: IMenuItem[] = [];
     if (canUpdate) {
       baseMenu.push({
-        icon: <PenFilled className={'text-primary'} />,
-        label: t('common.editSurvey'),
-        key: ACTION.EDIT,
-      });
-      baseMenu.push({
-        icon: <FileIconOutlined className={'text-primary'} />,
+        icon: <DuplicateIcon className={'text-primary'} />,
         label: <label>{t('common.duplicateSurvey')}</label>,
         key: ACTION.DUPLICATE_SURVEY,
       });
@@ -414,14 +345,6 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
         });
       }
     }
-
-    if (!isExternalProject && canRead) {
-      baseMenu.push({
-        icon: <DownloadIcon className={'text-primary'} />,
-        label: t('common.exportQualtricsJSON'),
-        key: ACTION.EXPORT,
-      });
-    }
     if (canDelete && !record.deletedAt) {
       baseMenu.push({
         icon: <TrashOutlined className={'text-primary'} />,
@@ -430,15 +353,7 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
       });
     }
     return baseMenu;
-  }, [
-    canDelete,
-    canRead,
-    canRestore,
-    canUpdate,
-    isExternalProject,
-    record.deletedAt,
-    t,
-  ]);
+  }, [canDelete, canRestore, canUpdate, record.deletedAt, t]);
 
   return (
     <ThreeDotsDropdown

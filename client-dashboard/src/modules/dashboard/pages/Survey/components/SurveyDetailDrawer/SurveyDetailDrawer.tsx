@@ -48,7 +48,7 @@ const SurveyDetailDrawer = () => {
             version: Yup.object().shape(SURVEY_FORM_SCHEMA),
           })}
         >
-          {({ handleSubmit, values }) => (
+          {({ handleSubmit }) => (
             <>
               <Form
                 layout={'vertical'}

@@ -2,6 +2,8 @@ import { Button, Divider, Modal } from 'antd';
 import {
   IEditSurveyFormValues,
   SurveyDetailDrawer,
+  SurveyFormSubmitButton,
+  SurveyVersionRemarkButton,
   SurveyVersionSelect,
   useSurveyFormContext,
 } from '@pages/Survey';
@@ -12,7 +14,7 @@ import { generatePath, useNavigate, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/enums';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { useFormikContext } from 'formik';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 const { confirm } = Modal;
 const EditSurveyHeader = () => {
@@ -31,7 +33,7 @@ const EditSurveyHeader = () => {
   const handleCancel = useCallback(() => {
     confirm({
       icon: null,
-      content: 'Are you sure discard the change?',
+      content: t('direction.confirmDiscardChange'),
       onOk() {
         navigate(
           `${generatePath(
@@ -53,6 +55,7 @@ const EditSurveyHeader = () => {
     navigate,
     params?.projectId,
     params?.surveyId,
+    resetForm,
     survey.currentSurveyVersion?.displayId,
     t,
   ]);
@@ -78,11 +81,9 @@ const EditSurveyHeader = () => {
             </span>
           </Button>
         )}
-
+        <SurveyVersionRemarkButton />
         <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
-        <Button type={'primary'} htmlType={'submit'} icon={<SaveIcon />}>
-          {t('common.completed')}
-        </Button>
+        <SurveyFormSubmitButton />
       </div>
     </>
   );

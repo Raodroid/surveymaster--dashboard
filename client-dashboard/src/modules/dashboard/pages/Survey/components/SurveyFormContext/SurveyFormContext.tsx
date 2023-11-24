@@ -13,7 +13,8 @@ import { onError, useToggle } from '@/utils';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService, SurveyService } from '@/services';
 import {
-  CreateSurveyBodyDto,
+  DuplicateSurveyVersionDto,
+  EditSurveyBodyDto,
   GetListQuestionDto,
   IPaginationResponse,
   IPostSurveyVersionBodyDto,
@@ -39,7 +40,6 @@ import {
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
 import {
-  isSurveyFlowChange,
   transformInitSurveyFormData,
   useCheckSurveyFormMode,
 } from '@pages/Survey/SurveyForm/util';
@@ -97,6 +97,8 @@ interface ISurveyFormContext {
 
   handleFocusBlock: (value: SurveyDataTreeNode | undefined) => void;
   handleExpendTree: (expendKeys: React.Key[]) => void;
+
+  handleCloneSurveyVersion: (value: DuplicateSurveyVersionDto) => void;
 }
 
 const intValue: ISurveyFormContext = {
@@ -138,6 +140,8 @@ const intValue: ISurveyFormContext = {
   ): void {
     throw new Error('Function not implemented.');
   },
+
+  handleCloneSurveyVersion: () => {},
 };
 
 export const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
@@ -313,7 +317,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   );
 
   const duplicateSurveyMutation = useMutation(
-    (data: CreateSurveyBodyDto & { surveyId: string }) => {
+    (data: DuplicateSurveyVersionDto & { surveyId: string }) => {
       return SurveyService.duplicateSurvey(data);
     },
     {
@@ -322,7 +326,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         await onSuccess();
 
         navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
             projectId: params.projectId,
             surveyId: newVersion.surveyId,
           }) + `?version=${newVersion.displayId}`,
@@ -334,6 +338,26 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
 
   const [loading, toggleLoading] = useToggle();
 
+  const handleCloneSurveyVersion = useCallback(
+    (value: DuplicateSurveyVersionDto) => {
+      confirm({
+        icon: null,
+        content: t('common.confirmCreateNewExternalSurveyVersion'),
+        onOk() {
+          duplicateSurveyMutation.mutateAsync({
+            ...value,
+            surveyId: params.surveyId as string,
+          });
+          return;
+        },
+        onCancel() {
+          return;
+        },
+      });
+    },
+    [duplicateSurveyMutation, params.surveyId, t],
+  );
+
   const actionLoading =
     mutationUploadExcelFile.isLoading ||
     duplicateSurveyMutation.isLoading ||
@@ -344,8 +368,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     async (values: IEditSurveyFormValues) => {
       const { version, selectedRowKeys } = values;
 
-      const { initialValues } = context.form;
-
       if (!values.projectId) {
         console.error('ProjectId is null');
         navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT);
@@ -353,6 +375,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
       }
       if (values.version?.surveyFlowElements?.length === 0) {
         notification.error({ message: t('direction.emptyElementError') });
+        return;
+      }
+      if (currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED) {
+        console.error('can not update completed version');
         return;
       }
       try {
@@ -387,35 +413,11 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
               },
             ],
             name: values.version?.name as string,
+            remarks:
+              values.version?.remarks?.length === 0
+                ? undefined
+                : values.version?.remarks,
           };
-
-          const initQuestions =
-            initialValues.version?.surveyFlowElements?.[0].surveyQuestions;
-          const newQuestions =
-            values.version?.surveyFlowElements?.[0].surveyQuestions;
-
-          if (
-            currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
-            isSurveyFlowChange(initQuestions, newQuestions)
-          ) {
-            confirm({
-              icon: null,
-              content: t('common.confirmCreateNewExternalSurveyVersion'),
-              onOk() {
-                addSurveyVersionMutation.mutateAsync({
-                  ...transformValues,
-                  surveyId: params.surveyId as string,
-                  status: SurveyVersionStatus.DRAFT,
-                });
-                return;
-              },
-              onCancel() {
-                return;
-              },
-            });
-
-            return;
-          }
 
           await updateSurveyMutation.mutateAsync({
             ...transformValues,
@@ -425,30 +427,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           return;
         }
 
-        const transformValue: CreateSurveyBodyDto = {
+        const transformValue: EditSurveyBodyDto = {
           version: transformSurveyVersion(values),
           projectId: values.projectId,
         };
-
-        if (
-          currentSurveyVersion?.status === SurveyVersionStatus.COMPLETED &&
-          isSurveyFlowChange(
-            version?.surveyFlowElements,
-            initialValues.version?.surveyFlowElements,
-          )
-        ) {
-          confirm({
-            icon: null,
-            content: t('common.confirmCreateNewSurveyVersion'),
-            onOk() {
-              addSurveyVersionMutation.mutateAsync({
-                surveyId: params.surveyId as string,
-                ...transformValue.version,
-              });
-            },
-          });
-          return;
-        }
 
         await updateSurveyMutation.mutateAsync({
           ...transformValue.version,
@@ -461,15 +443,12 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
       }
     },
     [
-      context.form,
       navigate,
       toggleLoading,
       isExternalProject,
       currentSurveyVersion?.status,
       currentSurveyVersion?.id,
       t,
-      addSurveyVersionMutation,
-      params.surveyId,
       updateSurveyMutation,
     ],
   );
@@ -532,6 +511,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         actionLoading,
         handleFocusBlock,
         handleExpendTree,
+        handleCloneSurveyVersion,
         form: {
           ...context.form,
           initialValues,
