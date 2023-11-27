@@ -1,8 +1,9 @@
-import { NotificationType } from 'aws-sdk/clients/budgets';
+// import { NotificationType } from 'aws-sdk/clients/budgets';
 import { UserUpdatedDto } from 'interfaces';
 import APIService from './base.service';
 import { AxiosResponse } from 'axios';
 import { EntityEnum } from '@/enums';
+import { NotificationType } from '@pages/Profile/content/modals/SetUpPreferencesModal';
 
 export default class UserService {
   static getProfile(): Promise<any> {
