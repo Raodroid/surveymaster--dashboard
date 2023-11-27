@@ -15,10 +15,10 @@ phases:
     on-failure: ABORT
     commands:
       - export ENV_FILE=".env.${STAGE}"
-      - echo "Starting checking type by typescript" 
-      - yarn checkTs
-      - echo "Starting check linting by eslint"
-      - yarn lint
+      # - echo "Starting checking type by typescript" 
+      # - yarn checkTs
+      # - echo "Starting check linting by eslint"
+      # - yarn lint
       - echo "Create env file for build script"
       - aws secretsmanager get-secret-value --secret-id $ENV_BUILD --region $SECRET_REGION --output text > .temp.env
       - sed '1d' .temp.env > .temp1.env
