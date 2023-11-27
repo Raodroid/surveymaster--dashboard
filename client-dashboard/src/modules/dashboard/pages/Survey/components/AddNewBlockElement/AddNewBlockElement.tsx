@@ -1,5 +1,5 @@
 import React, { FC, memo, useCallback } from 'react';
-import { Button, Dropdown, Menu } from 'antd';
+import { Button, Dropdown } from 'antd';
 import { useField, useFormikContext } from 'formik';
 import { EmptyString, SubSurveyFlowElement } from '@/type';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,6 @@ import {
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
-import styled from 'styled-components/macro';
 import { PlusOutLinedIcon } from '@/icons';
 import { calcLevelNodeByFieldName, useSurveyFormContext } from '@pages/Survey';
 import _uniq from 'lodash/uniq';
@@ -135,40 +134,6 @@ const AddNewBlockElement: FC<{
 
   if (type === 'button')
     return (
-      // <MenuWrapper
-      //   className={'rounded !bg-[#007AE7] text-white m-0 w-[175px]'}
-      //   theme={'dark'}
-      //   onSelect={e => {
-      //     e.domEvent.stopPropagation();
-      //     handleAddElement(e.key as SubSurveyFlowElement);
-      //   }}
-      //   selectedKeys={[]}
-      // >
-      //   <Menu.SubMenu
-      //     className={'m-0'}
-      //     key="mail"
-      //     theme={'light'}
-      //     title={
-      //       <span className={'text-white font-semibold'}>
-      //         {t('common.addBlock')}
-      //       </span>
-      //     }
-      //     icon={<PlusOutLinedIcon className={'text-white'} />}
-      //   >
-      //     {objectKeys(SubSurveyFlowElement).map(key => {
-      //       const val = SubSurveyFlowElement[key];
-      //       return (
-      //         <Menu.Item key={val}>
-      //           <div className={'pb-2 flex gap-3 items-center'}>
-      //             <QuestionBranchIcon type={val} />
-      //             <span className={'font-semibold'}>{t(`common.${val}`)}</span>
-      //           </div>
-      //         </Menu.Item>
-      //       );
-      //     })}
-      //   </Menu.SubMenu>
-      // </MenuWrapper>
-
       <Dropdown
         placement={'bottomRight'}
         trigger={['hover']}
@@ -239,9 +204,3 @@ const AddNewBlockElement: FC<{
 export default memo(AddNewBlockElement);
 
 export { defaultNode, isRootPath };
-
-const MenuWrapper = styled(Menu)`
-  .ant-menu-submenu-title {
-    margin: 0;
-  }
-`;

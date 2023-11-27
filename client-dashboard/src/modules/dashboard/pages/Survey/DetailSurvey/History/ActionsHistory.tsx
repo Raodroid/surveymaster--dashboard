@@ -1,8 +1,14 @@
 import React from 'react';
-import ActionsHistoryCalendar from './ActionsHistoryCalendar';
+import CalendarList from './ActionsHistoryCalendar/CalendarList';
+import CalendarScrollbar from './ActionsHistoryCalendar/CalendarScrollbar';
 
 function ActionsHistory() {
-  return <ActionsHistoryCalendar />;
+  return (
+    <div className={'h-full flex gap-[3rem] p-8'}>
+      <CalendarScrollbar />
+      <CalendarList />
+    </div>
+  );
 }
 
 export default ActionsHistory;

@@ -74,7 +74,7 @@ const Embedded: FC<QuestionBlockProps> = props => {
                         </>
                       )}
                     </div>
-                    <Divider />
+                    <Divider className={'mt-0'} />
                   </Fragment>
                 ))
               )}

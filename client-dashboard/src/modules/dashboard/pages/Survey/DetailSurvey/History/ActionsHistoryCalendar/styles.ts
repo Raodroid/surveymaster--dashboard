@@ -1,10 +1,5 @@
 import styled from 'styled-components/macro';
 
-export const ActionsHistoryCalendarContentWrapper = styled.div`
-  gap: 24px;
-  min-height: 478px;
-`;
-
 export const MonthWrapper = styled.div<{ height: number }>`
   font-size: 12px;
   font-weight: 600;

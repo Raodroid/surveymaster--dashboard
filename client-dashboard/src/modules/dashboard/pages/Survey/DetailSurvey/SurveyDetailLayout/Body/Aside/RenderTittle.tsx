@@ -13,6 +13,16 @@ import {
   QuestionBranchIcon,
 } from '@pages/Survey';
 
+const Wrapper = styled.div`
+  .add-icon {
+    position: absolute;
+    top: -20px;
+    left: -30px;
+    z-index: 1;
+    height: 20px;
+  }
+`;
+
 const bgColor: Record<SubSurveyFlowElement, string> = {
   [SubSurveyFlowElement.END_SURVEY]: '#1CA62D20',
   [SubSurveyFlowElement.BRANCH]: '#C820FF20',
@@ -50,16 +60,14 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   return (
     <>
       <Wrapper
-        className={`rounded-[6px] border p-2 w-fit ${
-          record.type === SubSurveyFlowElement.BRANCH ? 'hannah' : ''
-        }`}
+        className={`rounded-[6px] border p-2 w-fit`}
         style={{
           background: bgColor[record.type],
           borderColor:
             !!error && touched ? DEFAULT_THEME_COLOR.ERROR : 'inherit',
         }}
       >
-        <div className={'flex gap-3 items-center'}>
+        <div className={'group/block flex gap-3 items-center'}>
           <QuestionBranchIcon type={record?.type} />
           <span className={'font-semibold'}>
             {record?.type === SubSurveyFlowElement.BLOCK
@@ -77,7 +85,13 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
             </span>
           )}
           {isEditMode && record.type === SubSurveyFlowElement.BRANCH && (
-            <AddNewBlockElement fieldName={fieldName} type={'icon'} />
+            <div
+              className={
+                'ease-in-out transition invisible w-0 opacity-0 group-hover/block:w-auto group-hover/block:opacity-100 group-hover/block:visible'
+              }
+            >
+              <AddNewBlockElement fieldName={fieldName} type={'icon'} />
+            </div>
           )}
         </div>
 
@@ -88,8 +102,8 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
         )}
 
         {isEditMode && (
-          <span className={'group add-icon p-0'}>
-            <span className={'invisible group-hover:visible'}>
+          <span className={'group/node add-icon p-0'}>
+            <span className={'invisible group-hover/node:visible'}>
               <InsertBlockButton fieldName={fieldName} />
             </span>
           </span>
@@ -101,12 +115,55 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
 
 export default memo(QuestionBlock);
 
-const Wrapper = styled.div`
-  .add-icon {
-    position: absolute;
-    top: -20px;
-    left: -30px;
-    z-index: 1;
-    height: 20px;
-  }
-`;
+// const ACTION = {
+//   ADD_SUB_BLOCK: 'ADD_SUB_BLOCK',
+//   // RENAME: 'RENAME',
+//   DUPLICATE: 'DUPLICATE',
+//   DELETE: 'DELETE',
+// } as const;
+//
+// const ActionThreeDropDown: FC<
+//   ActionThreeDropDownType<{ type: SubSurveyFlowElement }>
+// > = props => {
+//   const { record, handleSelect } = props;
+//   const { t } = useTranslation();
+//
+//   const items = useMemo<IMenuItem[]>(() => {
+//     let base: IMenuItem[] = [
+//       // {
+//       //   key: ACTION.RENAME,
+//       //   icon: <PenFilled className={'text-primary'} />,
+//       //   label: <label className={''}> {t('common.rename')}</label>,
+//       // },
+//       {
+//         key: ACTION.DUPLICATE,
+//         icon: <DuplicateIcon className={'text-primary'} />,
+//         label: <label className={''}> {t('common.duplicate')}</label>,
+//       },
+//       {
+//         key: ACTION.DELETE,
+//         icon: <TrashOutlined className={'text-primary'} />,
+//         label: <label className={''}> {t('common.delete')}</label>,
+//       },
+//     ];
+//     if (record.type === SubSurveyFlowElement.BRANCH) {
+//       base = [
+//         {
+//           key: ACTION.ADD_SUB_BLOCK,
+//           icon: <PlusIcon className={'text-primary'} />,
+//           label: <label className={''}> {t('common.addBlock')}</label>,
+//         },
+//         ...base,
+//       ];
+//     }
+//
+//     return base;
+//   }, [record.type, t]);
+//
+//   return (
+//     <ThreeDotsDropdown
+//       onChooseItem={key => handleSelect({ key, record })}
+//       items={items}
+//     />
+//   );
+// };

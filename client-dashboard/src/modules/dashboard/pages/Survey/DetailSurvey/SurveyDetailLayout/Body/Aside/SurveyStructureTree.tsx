@@ -1,6 +1,6 @@
 import { Tree } from 'antd';
 import type { DataNode, TreeProps } from 'antd/es/tree';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useField } from 'formik';
 import {
   questionValueType,
@@ -10,12 +10,14 @@ import {
   useSurveyFormContext,
   getParentChildrenFieldName,
   transformToSurveyDataTreeNode,
+  useSurveyBlockAction,
 } from '@pages/Survey';
 import _get from 'lodash/get';
-import { SubSurveyFlowElement } from '@/type';
+import { IProject, SubSurveyFlowElement } from '@/type';
 import { DragHandle } from '@/customize-components';
 import QuestionBlock from './RenderTittle';
 import styled from 'styled-components/macro';
+import { keysAction, useSelectTableRecord } from '@/hooks';
 
 const loop = (
   data: SurveyDataTreeNode[],

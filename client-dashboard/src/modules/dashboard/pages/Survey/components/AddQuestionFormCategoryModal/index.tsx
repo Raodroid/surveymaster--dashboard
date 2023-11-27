@@ -1,11 +1,11 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
-import { Button, Input, Tree } from 'antd';
+import { Button, Input } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import { IGetParams, IQuestion, IQuestionCategory } from '@/type';
 import { useQuery } from 'react-query';
 import { QuestionBankService } from '@/services';
 import { onError, useDebounce } from '@/utils';
-import { AddQuestionFormCategoryModalWrapper } from './style';
+import { AddQuestionFormCategoryModalWrapper, TreeWrapper } from './style';
 import { DisplayQuestionList } from './DisplayQuestionList/DisplayQuestionList';
 import { useTranslation } from 'react-i18next';
 import HannahCustomSpin from '@components/HannahCustomSpin';
@@ -239,7 +239,7 @@ const AddQuestionFormCategoryModal: FC<
               onChange={handleTyping}
             />
             {/* <CategoryMenuWrapper items={categoryData} onSelect={handleSelect} /> */}
-            <Tree
+            <TreeWrapper
               checkable
               onCheck={onCheck as any}
               checkedKeys={selectedCategoryIds}

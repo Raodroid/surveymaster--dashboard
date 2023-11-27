@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro';
-import { Modal } from 'antd';
+import { Modal, Tree } from 'antd';
 
 export const AddQuestionFormCategoryModalWrapper = styled(Modal)`
   height: 95vh;
@@ -40,5 +40,12 @@ export const AddQuestionFormCategoryModalWrapper = styled(Modal)`
   .label-input {
     display: block;
     margin-bottom: 1rem;
+  }
+`;
+
+export const TreeWrapper = styled(Tree)`
+  color: var(--text-color);
+  .ant-tree-title {
+    font-size: 12px;
   }
 `;

@@ -6,13 +6,13 @@ import {
   SurveyVersionRemarkButton,
   SurveyVersionSelect,
   useSurveyFormContext,
+  projectSurveyParams,
 } from '@pages/Survey';
 import { IOptionItem } from '@/type';
-import { PlayIcon, SaveIcon } from '@/icons';
+import { PlayIcon } from '@/icons';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/enums';
-import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { useFormikContext } from 'formik';
 import React, { useCallback } from 'react';
 
@@ -74,15 +74,18 @@ const EditSurveyHeader = () => {
 
         <SurveyDetailDrawer />
         <div className={'flex-1'} />
-        {dirty && (
-          <Button icon={<PlayIcon />} type={'text'} onClick={handleCancel}>
-            <span className={'!text-[1rem] font-semibold'}>
-              {t('common.cancel')}
-            </span>
-          </Button>
-        )}
         <SurveyVersionRemarkButton />
-        <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+        <Divider type="vertical" style={{ margin: '0', height: 8 }} />
+        {dirty && (
+          <>
+            <Button type={'default'} onClick={handleCancel}>
+              <span className={'!text-[1rem] font-semibold'}>
+                {t('common.cancel')}
+              </span>
+            </Button>
+            <Divider type="vertical" style={{ margin: '0', height: 8 }} />
+          </>
+        )}
         <SurveyFormSubmitButton />
       </div>
     </>

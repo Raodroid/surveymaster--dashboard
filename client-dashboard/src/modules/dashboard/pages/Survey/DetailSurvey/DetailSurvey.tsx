@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router';
 import ActionHistory from './History';
-import Remarks from './Remarks';
 import { ROUTE_PATH } from '@/enums';
 import { SurveyForm } from '@pages/Survey';
 
@@ -25,12 +24,6 @@ function DetailSurvey() {
           ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.HISTORY,
         )}
         element={<ActionHistory />}
-      />
-      <Route
-        path={subRoute(
-          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.REMARKS,
-        )}
-        element={<Remarks />}
       />
     </Routes>
   );

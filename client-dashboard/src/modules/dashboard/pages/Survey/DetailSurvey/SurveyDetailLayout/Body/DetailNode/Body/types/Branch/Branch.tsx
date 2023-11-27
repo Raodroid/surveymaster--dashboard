@@ -1,4 +1,4 @@
-import React, { FC, memo, useEffect, useMemo } from 'react';
+import React, { FC, Fragment, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ControlledInput, UncontrolledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
@@ -9,7 +9,7 @@ import {
   EmptyString,
   IOptionGroupItem,
 } from '@/type';
-import { Button, Empty } from 'antd';
+import { Button, Divider, Empty } from 'antd';
 import { objectKeys, transformEnumToOption } from '@/utils';
 import EmbeddedBlockChoice from './EmbeddedBlockChoice/EmbeddedBlockChoice';
 import QuestionChoice, {
@@ -78,51 +78,59 @@ const Branch: FC<QuestionBlockProps> = props => {
 
                   const LogicComponent = componentMap[logicType];
                   return (
-                    <div className={'flex gap-3'} key={index}>
-                      {index === 0 ? (
-                        <UncontrolledInput
-                          className={`w-[70px] view-mode`}
-                          inputType={INPUT_TYPES.INPUT}
-                          value={'If'}
-                        />
-                      ) : (
+                    <Fragment key={index}>
+                      <div className={'font-semibold text-[16px] mb-3'}>
+                        {t('common.condition')} №{index + 1}:
+                      </div>
+                      <div className={'flex gap-3'} key={index}>
+                        {index === 0 ? (
+                          <UncontrolledInput
+                            className={`w-[70px] view-mode`}
+                            inputType={INPUT_TYPES.INPUT}
+                            value={'If'}
+                          />
+                        ) : (
+                          <ControlledInput
+                            className={`w-[70px] ${
+                              isViewMode ? 'view-mode' : ''
+                            }`}
+                            inputType={INPUT_TYPES.SELECT}
+                            name={`${fieldName}[${index}].conjunction`}
+                            options={objectKeys(Conjunction).map(key => ({
+                              value: Conjunction[key],
+                              label: Conjunction[key],
+                            }))}
+                          />
+                        )}
                         <ControlledInput
-                          className={`w-[70px] ${
+                          className={`w-[150px] ${
                             isViewMode ? 'view-mode' : ''
                           }`}
                           inputType={INPUT_TYPES.SELECT}
-                          name={`${fieldName}[${index}].conjunction`}
-                          options={objectKeys(Conjunction).map(key => ({
-                            value: Conjunction[key],
-                            label: Conjunction[key],
-                          }))}
+                          name={`${fieldName}[${index}].logicType`}
+                          options={transformEnumToOption(BranchLogicType, i =>
+                            t(`common.${i}`),
+                          )}
                         />
-                      )}
-                      <ControlledInput
-                        className={`w-[120px] ${isViewMode ? 'view-mode' : ''}`}
-                        inputType={INPUT_TYPES.SELECT}
-                        name={`${fieldName}[${index}].logicType`}
-                        options={transformEnumToOption(BranchLogicType, i =>
-                          t(`common.${i}`),
+
+                        <LogicComponent
+                          fieldName={fieldName}
+                          index={index}
+                          options={options}
+                        />
+
+                        {!isViewMode && (
+                          <Button
+                            size={'small'}
+                            className={'px-2'}
+                            type={'text'}
+                            onClick={() => remove(index)}
+                            icon={<TrashOutlined />}
+                          />
                         )}
-                      />
-
-                      <LogicComponent
-                        fieldName={fieldName}
-                        index={index}
-                        options={options}
-                      />
-
-                      {!isViewMode && (
-                        <Button
-                          size={'small'}
-                          className={'px-2'}
-                          type={'text'}
-                          onClick={() => remove(index)}
-                          icon={<TrashOutlined />}
-                        />
-                      )}
-                    </div>
+                      </div>
+                      <Divider className={'mt-0'} />
+                    </Fragment>
                   );
                 })}
               </div>

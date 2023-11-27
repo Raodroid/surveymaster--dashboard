@@ -51,6 +51,7 @@ const SurveyVersionRemarkModal: FC<ISurveyVersionRemarkModal> = props => {
         notification.success({ message: t('common.updateSuccess') });
         queryClient.invalidateQueries('getRemarks');
         setInitValue(initialValues);
+        toggleOpen();
       },
     },
   );

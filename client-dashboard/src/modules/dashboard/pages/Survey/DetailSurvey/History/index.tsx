@@ -1,24 +1,19 @@
 import { Divider, Form } from 'antd';
 import { Formik } from 'formik';
 import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
-import { CustomSpinSuspense } from '@/modules/common/styles';
 import { useGetProjectByIdQuery } from '@pages/Project/util';
 import moment from 'moment';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
-import SimpleBar from 'simplebar-react';
 import { projectSurveyParams } from '../DetailSurvey';
 import ActionsHistory from './ActionsHistory';
-import { ActionsHistoryContentWrapper, ActionsHistoryWrapper } from './styles';
-import { IOptionItem, ISurvey, ProjectTypes } from '@/type';
-import { ControlledInput } from '../../../../../common';
-import { INPUT_TYPES } from '@/modules/common/input/type';
+import { ActionsHistoryWrapper } from './styles';
+import { IOptionItem, ISurvey } from '@/type';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import ProjectHeader from '@pages/Project/ProjectContent/components/Header/Header';
 import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
 import { SurveyBriefDetail } from '@pages/Survey';
-import { SimpleBarCustom } from '@/customize-components';
 
 interface IActionHistory extends ISurvey {
   displaySurveyId: string; // init value for Inputs component

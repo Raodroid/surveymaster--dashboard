@@ -36,37 +36,3 @@ export const ActionsHistoryContentWrapper = styled.div`
     grid-area: actionsHistory;
   }
 `;
-
-export const QuestionListWrapper = styled.div`
-  border-top: 1px solid #f3eef3;
-  padding-top: 28px;
-
-  .title ~ div {
-    margin: 0 -8px;
-  }
-  .ant-table {
-    padding-right: 12px;
-  }
-  .ant-table-cell {
-    padding: 8px;
-  }
-`;
-
-export const QuestionWrapper = styled.div`
-  .ant-input-affix-wrapper-disabled {
-    border: none;
-  }
-  .ant-input {
-    font-weight: 600;
-  }
-  .ant-input-affix-wrapper-disabled {
-    background: rgba(37, 33, 106, 0.04);
-  }
-  .ant-form-item-control-input ~ div {
-    display: none !important;
-  }
-  textarea.ant-input {
-    height: 32px;
-    background: transparent;
-  }
-`;

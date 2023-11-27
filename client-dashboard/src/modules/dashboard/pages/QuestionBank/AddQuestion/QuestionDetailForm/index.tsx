@@ -6,18 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { QuestionDetailFormWrapper } from './style';
 import { transformEnumToOption } from '@/utils';
 import { useFormikContext } from 'formik';
-import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '@/enums';
 import TextGraphic from '../DisplayAnswerList/RenderQuestionType/TextGraphic';
 import { IAddQuestionFormValue } from '@pages/QuestionBank/AddQuestion/util';
+import { useCheckSurveyFormMode } from '@pages/Survey';
 
 const AddQuestionDetailForm = () => {
-  const isViewMode = useMatch({
-    path: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION,
-    end: true,
-    caseSensitive: true,
-  });
-  const className = !!isViewMode ? 'view-mode' : undefined;
+  const { isViewMode } = useCheckSurveyFormMode();
+  const className = isViewMode ? 'view-mode' : undefined;
 
   const { t } = useTranslation();
 

@@ -20,6 +20,9 @@
     "foods": "Foods"
   },
   "common": {
+    "duplicateBlock": "Duplicate Block",
+    "deleteBlock": "Delete Block",
+    "condition": "Condition",
     "saveAndPublish": "Save And Publish",
     "saveAsDraft": "Save As Draft",
     "cloneThisVersion": "Clone This Version",
@@ -510,6 +513,7 @@
     }
   },
   "direction": {
+    "warningLostData": "Your changes could not be saved when you switch version of survey! <br/> Are you sure to leave the current page?",
     "confirmDiscardChange": "Are you sure discard the change?",
     "emptyElementError": "Survey element can not be empty!",
     "continueWithGoogle": "Continue with Google",
