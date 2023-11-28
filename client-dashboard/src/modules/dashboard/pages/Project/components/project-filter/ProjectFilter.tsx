@@ -1,6 +1,6 @@
 import { Dropdown } from 'antd';
-import { useParseQueryString } from 'hooks/useParseQueryString';
-import { ArrowDown, FilterOutlined } from 'icons';
+import { useParseQueryString } from '@/hooks/useParseQueryString';
+import { ArrowDown, FilterOutlined } from '@/icons';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectFilterBtn } from './styles';

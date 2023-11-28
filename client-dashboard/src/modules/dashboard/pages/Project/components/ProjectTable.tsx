@@ -1,10 +1,17 @@
 import { Divider, Modal, notification, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { ExternalIcon, InternalIcon, PenFilled, TrashOutlined } from 'icons';
-import { Refresh } from 'icons/Refresh';
+import { ExternalIcon, InternalIcon, PenFilled, TrashOutlined } from '@/icons';
+import { Refresh } from '@/icons/Refresh';
 import _get from 'lodash/get';
 import moment from 'moment';
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath } from 'react-router';
@@ -17,17 +24,18 @@ import {
   ProjectQueryParam,
   ProjectTypes,
   QsParams,
-} from 'type';
+} from '@/type';
 import { useHandleNavigate, useParseQueryString } from '@/hooks';
-import { objectKeys, onError } from '@/utils';
+import { objectKeys, onError, useToggle } from '@/utils';
 import { HannahCustomSpin, StyledPagination } from '@/modules/dashboard';
-import { ProjectTableWrapper } from '../styles';
+import { ProjectTableWrapper } from '../ProjectContent/styles';
 import SimpleBar from 'simplebar-react';
-import { useCheckScopeEntityDefault } from 'modules/common/hoc';
-import { EntityEnum, ROUTE_PATH, SCOPE_CONFIG } from 'enums';
+import { useCheckScopeEntityDefault } from '@hoc/index';
+import { EntityEnum, ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
 import { ProjectService } from '@/services';
 import { keysAction, useSelectTableRecord } from '@/hooks/useSelectTableRecord';
 import ThreeDotsDropdown from '@/customize-components/ThreeDotsDropdown';
+import { ProjectModal } from '@pages/Project';
 
 const { confirm } = Modal;
 
@@ -58,6 +66,7 @@ function ProjectTable() {
     QsParams & { type: ProjectTypes | 'All' }
   >();
   const queryClient = useQueryClient();
+  const [openProjectModal, toggleProjectModal] = useToggle();
 
   const [projectId, setProjectId] = useState('');
 
@@ -134,15 +143,9 @@ function ProjectTable() {
     },
   );
 
-  const handleEdit = useCallback(
-    (record: IProject) =>
-      navigate(
-        generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT, {
-          projectId: record?.id,
-        }),
-      ),
-    [navigate],
-  );
+  const handleEdit = useCallback(() => {
+    toggleProjectModal();
+  }, [toggleProjectModal]);
 
   const handleDelete = useCallback(() => {
     confirm({
@@ -308,6 +311,12 @@ function ProjectTable() {
           )}
         />
       </ProjectTableWrapper>
+      <ProjectModal
+        mode={'edit'}
+        open={openProjectModal}
+        toggleOpen={toggleProjectModal}
+        projectId={selectedRecord?.id}
+      />
     </>
   );
 }
@@ -341,23 +350,30 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<IProject>> = props => {
         label: <label className={''}> {t('common.editProject')}</label>,
       });
     }
-    if (canDelete) {
+    if (canDelete && !record?.deletedAt) {
       baseMenu.push({
         key: ACTION.DELETE,
         icon: <TrashOutlined className={'text-primary'} />,
         label: <label className={''}> {t('common.deleteProject')}</label>,
       });
     }
-    if (canRestore) {
+    if (canRestore && record?.deletedAt) {
       baseMenu.push({
-        key: ACTION.DELETE,
+        key: ACTION.RESTORE,
         icon: <Refresh />,
         label: <label className={''}> {t('common.restoreProject')}</label>,
       });
     }
 
     return baseMenu;
-  }, [canDelete, canRestore, canUpdate, qsParams?.isDeleted, t]);
+  }, [
+    canDelete,
+    canRestore,
+    canUpdate,
+    qsParams.isDeleted,
+    record?.deletedAt,
+    t,
+  ]);
 
   return (
     <ThreeDotsDropdown

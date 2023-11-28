@@ -1,7 +1,7 @@
 import React from 'react';
 import { PlusIcon } from '@/icons';
 import { Button } from 'antd';
-import SurveyModal from '../../../../Survey/SurveyModal/SurveyModal';
+import SurveyModal from '../../../Survey/SurveyModal/SurveyModal';
 import { useToggle } from '@/utils';
 import { useTranslation } from 'react-i18next';
 
@@ -15,10 +15,11 @@ const AddSurveyButton = () => {
         icon={<PlusIcon />}
         size={'large'}
         onClick={toggleForm}
+        className={'font-semibold'}
       >
         {t('common.addSurvey')}
       </Button>
-      <SurveyModal open={openForm} toggleOpen={toggleForm} />
+      <SurveyModal open={openForm} toggleOpen={toggleForm} mode={'create'} />
     </>
   );
 };

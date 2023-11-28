@@ -1,7 +1,6 @@
-import { Button, Divider, Form, Input, InputRef } from 'antd';
-import { useParseQueryString } from 'hooks/useParseQueryString';
-import { PenFilled, PlusIcon } from 'icons';
-import { SearchIcon } from 'icons/SearchIcon';
+import { Divider, Form, Input, InputRef } from 'antd';
+import { useParseQueryString } from '@/hooks/useParseQueryString';
+import { SearchIcon } from '@/icons/SearchIcon';
 import qs from 'qs';
 import React, {
   FC,
@@ -12,15 +11,20 @@ import React, {
   useState,
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IGetParams } from 'type';
+import { IGetParams } from '@/type';
 
-import { IBreadcrumbItem, StyledBreadcrumb } from '@/modules/common';
-import { ROUTE_PATH } from '@/enums';
-import { ProjectFilter } from '../project-filter/ProjectFilter';
-import { useTranslation } from 'react-i18next';
-import { generatePath, useParams } from 'react-router';
-import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
+import {
+  IBreadcrumbItem,
+  StyledBreadcrumb,
+  useCheckScopeEntityDefault,
+} from '@/modules/common';
+import { EntityEnum, ROUTE_PATH } from '@/enums';
 import AddSurveyButton from './AddSurveyButton';
+import ViewProjectDetailButton from '../ProjectModal/ViewProjectDetailButton';
+import EditProjectButton from '../ProjectModal/EditProjectButton';
+import AddProjectButton from '../ProjectModal/AddProjectButton';
+import { ProjectFilter } from '@pages/Project/components/project-filter/ProjectFilter';
+import ViewSurveyButton from '@pages/Survey/SurveyModal/ViewSurveyButton';
 
 interface IProjectHeader {
   routes?: IBreadcrumbItem[];
@@ -29,7 +33,10 @@ interface IProjectHeader {
   showAddProjectBtn?: boolean;
   showEditProjectBtn?: boolean;
   showAddSurveyBtn?: boolean;
+  showDetailProjectBtn?: boolean;
+  showDetailSurveyBtn?: boolean;
 }
+
 const ProjectHeader: FC<IProjectHeader> = props => {
   const {
     routes,
@@ -38,17 +45,23 @@ const ProjectHeader: FC<IProjectHeader> = props => {
     showAddProjectBtn,
     showAddSurveyBtn,
     showEditProjectBtn,
+    showDetailProjectBtn,
+    showDetailSurveyBtn,
   } = props;
 
-  const { t } = useTranslation();
+  const { canUpdate, canCreate } = useCheckScopeEntityDefault(
+    EntityEnum.PROJECT,
+  );
+  const { canCreate: canCreateSurvey } = useCheckScopeEntityDefault(
+    EntityEnum.SURVEY,
+  );
+
   const searchRef = useRef<InputRef>(null);
   const [searchInput, setSearchInput] = useState('');
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const qsParams = useParseQueryString<IGetParams>();
-
-  const params = useParams<projectSurveyParams>();
 
   const base = [
     {
@@ -81,41 +94,22 @@ const ProjectHeader: FC<IProjectHeader> = props => {
       <div>
         <div className="flex items-center justify-center h-[76px] px-[30px]">
           <StyledBreadcrumb routes={base} />
-          <div className={'flex-1 flex items-center'}>
-            {showAddProjectBtn && (
-              <Button
-                type={'text'}
-                icon={<PlusIcon />}
-                size={'large'}
-                onClick={() => {
-                  navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.ADD);
-                }}
-              >
-                {t('common.addNewProject')}
-              </Button>
-            )}
-            {showAddSurveyBtn && <AddSurveyButton />}
-          </div>
-          {showEditProjectBtn && (
-            <Button
-              type={'text'}
-              icon={<PenFilled />}
-              size={'large'}
-              onClick={() =>
-                navigate(
-                  generatePath(
-                    ROUTE_PATH.DASHBOARD_PATHS.PROJECT.PROJECT.EDIT,
-                    {
-                      projectId: params?.projectId,
-                    },
-                  ),
-                )
-              }
-            >
-              {t('common.editProject')}
-            </Button>
+          {showDetailProjectBtn && (
+            <>
+              <Divider type="vertical" className={'h-[8px]'} />
+              <ViewProjectDetailButton />
+              <Divider type="vertical" className={'h-[8px]'} />
+            </>
           )}
-          <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+          <div className={'flex-1 flex items-center'}>
+            {showAddProjectBtn && canCreate && <AddProjectButton />}
+            {showAddSurveyBtn && canCreateSurvey && <AddSurveyButton />}
+          </div>
+
+          {showDetailSurveyBtn && <ViewSurveyButton />}
+          {showEditProjectBtn && canUpdate && <EditProjectButton />}
+
+          <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
 
           {showSearch && (
             <>
@@ -132,10 +126,7 @@ const ProjectHeader: FC<IProjectHeader> = props => {
                 />
               </Form>
 
-              <Divider
-                type="vertical"
-                style={{ margin: '0 16px', height: 8 }}
-              />
+              <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
 
               <ProjectFilter />
             </>

@@ -1,7 +1,6 @@
 import { Button, Divider, Modal } from 'antd';
 import {
   IEditSurveyFormValues,
-  SurveyDetailDrawer,
   SurveyFormSubmitButton,
   SurveyVersionRemarkButton,
   SurveyVersionSelect,
@@ -15,6 +14,7 @@ import { generatePath, useNavigate, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/enums';
 import { useFormikContext } from 'formik';
 import React, { useCallback } from 'react';
+import ViewSurveyButton from '@pages/Survey/SurveyModal/ViewSurveyButton';
 
 const { confirm } = Modal;
 const EditSurveyHeader = () => {
@@ -62,7 +62,7 @@ const EditSurveyHeader = () => {
 
   return (
     <>
-      <div className={'w-full flex gap-3 p-8 items-center'}>
+      <div className={'w-full flex gap-3 h-[76px] px-[30px] items-center'}>
         <h3 className={'text-[16px] font-semibold m-0'}>
           {survey.currentSurveyVersion?.name}
         </h3>
@@ -72,7 +72,7 @@ const EditSurveyHeader = () => {
           options={versions}
         />
 
-        <SurveyDetailDrawer />
+        <ViewSurveyButton />
         <div className={'flex-1'} />
         <SurveyVersionRemarkButton />
         <Divider type="vertical" style={{ margin: '0', height: 8 }} />

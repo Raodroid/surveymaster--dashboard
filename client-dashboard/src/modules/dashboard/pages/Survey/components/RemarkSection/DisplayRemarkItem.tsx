@@ -19,7 +19,7 @@ const DisplayRemarkItem: FC<{ record: IQuestionRemark }> = props => {
               }`}
             </span>
 
-            <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+            <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
 
             <span className="opacity-40">
               {moment(record.createdAt).fromNow()}

@@ -9,11 +9,10 @@ import { generatePath, useParams } from 'react-router';
 import { projectSurveyParams } from '../DetailSurvey';
 import ActionsHistory from './ActionsHistory';
 import { ActionsHistoryWrapper } from './styles';
-import { IOptionItem, ISurvey } from '@/type';
+import { ISurvey } from '@/type';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
-import ProjectHeader from '@pages/Project/ProjectContent/components/Header/Header';
-import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
-import { SurveyBriefDetail } from '@pages/Survey';
+import ProjectHeader from '@pages/Project/components/Header/Header';
+import { ROUTE_PATH } from '@/enums';
 
 interface IActionHistory extends ISurvey {
   displaySurveyId: string; // init value for Inputs component
@@ -68,26 +67,11 @@ function ActionHistory() {
     };
   }, [surveyData]);
 
-  const surveyRoutes = useMemo<IOptionItem[]>(
-    () => [
-      {
-        label: t('common.surveyId'),
-        value: surveyData?.displayId || '',
-      },
-      {
-        label: t('common.creationDate'),
-        value: moment(surveyData?.createdAt).format(MOMENT_FORMAT.DOB),
-      },
-    ],
-    [surveyData?.createdAt, surveyData?.displayId, t],
-  );
-
   const handleSubmit = () => {};
 
   return (
     <>
       <ProjectHeader routes={routes} />
-      <SurveyBriefDetail routes={surveyRoutes} />
       <Divider className={'m-0'} />
 
       <ActionsHistoryWrapper>

@@ -105,7 +105,7 @@ const ChangeEmailForm: React.FC<Props> = props => {
   return (
     <Modal
       title={t('common.changeYourEmail')}
-      visible={isShowModal}
+      open={isShowModal}
       onCancel={closeModal}
       width={400}
       footer={

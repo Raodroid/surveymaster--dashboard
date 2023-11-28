@@ -1,18 +1,15 @@
-import {
-  ProjectService,
-  SurveyService,
-} from '../../../../../../../../services';
+import { ProjectService, SurveyService } from '../../../../../../../services';
 import { ProjectTypes } from '@/type';
 import * as router from 'react-router';
-import * as hoc from '../../../../../../../common/hoc/useCheckScopeEntityDefault';
+import * as hoc from '@hoc/useCheckScopeEntityDefault';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
   baseAxiosResponse,
   JestGeneralProviderHoc,
-} from '../../../../../../../../get-mock-data-jest-test';
+} from '../../../../../../../get-mock-data-jest-test';
 import clearAllMocks = jest.clearAllMocks;
 import userEvent from '@testing-library/user-event';
-import SurveyTable from '@pages/Survey/SurveyManagement';
+import SurveyManagement from '@pages/Survey/SurveyManagement/SurveyManagement';
 
 const mockedUseNavigate = jest.fn();
 
@@ -164,7 +161,7 @@ test('Survey: base render', async () => {
   const { getSurveysAPIRequest } = createMock();
   render(
     <JestGeneralProviderHoc>
-      <SurveyTable />
+      <SurveyManagement />
     </JestGeneralProviderHoc>,
   );
 

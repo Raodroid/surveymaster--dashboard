@@ -39,7 +39,7 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
         )}
         {!isViewMode && (
           <>
-            <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
+            <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
             <Tooltip title={t('common.duplicateBlock')}>
               <Button
                 type={'text'}

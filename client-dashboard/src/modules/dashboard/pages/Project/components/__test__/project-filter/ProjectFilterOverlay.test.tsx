@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import restoreAllMocks = jest.restoreAllMocks;
-import { JestGeneralProviderHoc } from '../../../../../../../../get-mock-data-jest-test';
+import { JestGeneralProviderHoc } from '../../../../../../../get-mock-data-jest-test';
 import { ProjectFilterOverlay } from '../../project-filter/ProjectFilterOverlay';
 import * as router from 'react-router';
 

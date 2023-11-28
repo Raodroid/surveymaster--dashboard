@@ -15,11 +15,10 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { ProjectService, SurveyService } from 'services';
+import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
 import {
   ActionThreeDropDownType,
-  CreateSurveyBodyDto,
   DuplicateSurveyVersionDto,
   IGetParams,
   IMenuItem,
@@ -27,12 +26,19 @@ import {
   QsParams,
   SurveyVersionStatus,
 } from '@/type';
-import { ProjectBriefDetail, ProjectHeader } from '@pages/Project';
-import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
-import { DuplicateIcon, RollbackOutlined, TrashOutlined } from '@/icons';
-import { onError } from '@/utils';
+import { useCheckScopeEntityDefault } from '@/modules/common';
+import {
+  DuplicateIcon,
+  PenFilled,
+  RollbackOutlined,
+  TrashOutlined,
+} from '@/icons';
+import { onError, useToggle } from '@/utils';
 import { ThreeDotsDropdown } from '@/customize-components';
-import { createDuplicateSurveyVersionName } from '@pages/Survey';
+import {
+  createDuplicateSurveyVersionName,
+  SurveyRenameModal,
+} from '@pages/Survey';
 
 const { confirm } = Modal;
 
@@ -65,9 +71,6 @@ function SurveyTable() {
     return formatQs;
   }, [qsParams]);
 
-  const { data: project } = useQuery(['project', params.projectId], () =>
-    ProjectService.getProjectById(params.projectId),
-  );
   const duplicateMutation = useMutation(
     (data: DuplicateSurveyVersionDto) => {
       return SurveyService.duplicateSurvey(data as any);
@@ -146,9 +149,14 @@ function SurveyTable() {
     },
     [restoreSurvey, t],
   );
+  const [openRenameModal, toggleOpenRenameModal] = useToggle();
 
   const tableActions = useMemo<keysAction<ISurvey>>(
     () => [
+      {
+        key: ACTION.RENAME,
+        action: toggleOpenRenameModal,
+      },
       {
         key: ACTION.DUPLICATE_SURVEY,
         action: handleDuplicateSurvey,
@@ -162,7 +170,7 @@ function SurveyTable() {
         action: handleRestore,
       },
     ],
-    [handleDelete, handleDuplicateSurvey, handleRestore],
+    [toggleOpenRenameModal, handleDuplicateSurvey, handleDelete, handleRestore],
   );
 
   const { handleSelect, selectedRecord } =
@@ -185,16 +193,6 @@ function SurveyTable() {
   const surveys = useMemo<ISurvey[]>(
     () => _get(getSurveyListQuery.data, 'data.data'),
     [getSurveyListQuery.data],
-  );
-
-  const routes: IBreadcrumbItem[] = useMemo(
-    () => [
-      {
-        name: project?.data.name || '...',
-        href: ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY,
-      },
-    ],
-    [project],
   );
 
   const columns: ColumnsType<ISurvey> = useMemo(
@@ -223,12 +221,23 @@ function SurveyTable() {
         title: t('common.status'),
         dataIndex: ['latestVersion', 'status'],
         key: 'status',
-        render: (value: SurveyVersionStatus) => (
-          <RoundedTag
-            title={t(`status.${value}`)}
-            color={value === SurveyVersionStatus.DRAFT ? '#232567' : '#00AB00'}
-          />
-        ),
+        render: (value: SurveyVersionStatus, record) => {
+          const versionCount = record.versions?.length;
+          return (
+            <div className={'flex gap-3'}>
+              <RoundedTag
+                title={t(`status.${value}`)}
+                color={
+                  value === SurveyVersionStatus.DRAFT ? '#232567' : '#00AB00'
+                }
+              />
+              <RoundedTag
+                title={t('common.countMore', { count: versionCount })}
+                color={'#232567'}
+              />
+            </div>
+          );
+        },
       },
       {
         title: t('common.actions'),
@@ -271,22 +280,10 @@ function SurveyTable() {
   );
 
   return (
-    <div className="h-full flex flex-col">
-      <ProjectHeader
-        showAddSurveyBtn
-        showEditProjectBtn
-        routes={routes}
-        showSearch
-      />
-      <ProjectBriefDetail />
-
+    <>
       <div className="h-full w-full p-2 relative overflow-hidden">
         <SimpleBar className={'h-full overflow-scroll'}>
-          <Spin
-            spinning={
-              getSurveyListQuery.isLoading || getSurveyListQuery.isFetching
-            }
-          >
+          <Spin spinning={getSurveyListQuery.isLoading}>
             <Table
               rowClassName={'pointer'}
               dataSource={surveys}
@@ -309,13 +306,19 @@ function SurveyTable() {
         total={total}
         current={formatQsParams.page}
       />
-    </div>
+      <SurveyRenameModal
+        open={openRenameModal}
+        toggleOpen={toggleOpenRenameModal}
+        surveyId={selectedRecord?.id}
+      />
+    </>
   );
 }
 
 export default SurveyTable;
 
 const ACTION = {
+  RENAME: 'RENAME',
   DUPLICATE_SURVEY: 'DUPLICATE_SURVEY',
   RESTORE: 'RESTORE',
   DELETE: 'DELETE',
@@ -332,6 +335,11 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
   const items = useMemo<IMenuItem[]>(() => {
     const baseMenu: IMenuItem[] = [];
     if (canUpdate) {
+      baseMenu.push({
+        icon: <PenFilled className={'text-primary'} />,
+        label: <label>{t('common.rename')}</label>,
+        key: ACTION.RENAME,
+      });
       baseMenu.push({
         icon: <DuplicateIcon className={'text-primary'} />,
         label: <label>{t('common.duplicateSurvey')}</label>,

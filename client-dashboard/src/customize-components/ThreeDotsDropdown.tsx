@@ -1,9 +1,10 @@
-import { Button, Dropdown, Menu } from 'antd';
+import { Button, Dropdown } from 'antd';
 import { ThreeDotsIcon } from '@/icons';
 import React from 'react';
 import { IMenuItem } from '@/type';
 import { DropdownProps } from 'antd/lib/dropdown/dropdown';
 import { useToggle } from '@/utils';
+import styled from 'styled-components/macro';
 
 interface IThreeDotsDropdown extends Omit<DropdownProps, 'overlay'> {
   items: Array<IMenuItem>;
@@ -19,29 +20,19 @@ const ThreeDotsDropdown: React.FC<IThreeDotsDropdown> = props => {
 
   return (
     <>
-      <Dropdown
-        overlay={
-          <Menu>
-            {items.map(i => (
-              <Menu.Item
-                key={i.key}
-                onClick={() => {
-                  onChooseItem(i.key);
-                  toggleOpen();
-                }}
-              >
-                {i.icon ? (
-                  <span className={'flex gap-5 items-center'}>
-                    {i.icon}
-                    {i.label}
-                  </span>
-                ) : (
-                  <p>{i.label}</p>
-                )}
-              </Menu.Item>
-            ))}
-          </Menu>
-        }
+      <DropdownWrapper
+        overlayClassName={'[&>ul>li]:!my-[10px]'}
+        menu={{
+          onClick: e => {
+            onChooseItem(e.key);
+            toggleOpen();
+          },
+          items: items.map(i => ({
+            icon: i.icon,
+            label: i.label,
+            key: i.key,
+          })),
+        }}
         placement={'bottomRight'}
         trigger={['click']}
         open={state}
@@ -51,9 +42,19 @@ const ThreeDotsDropdown: React.FC<IThreeDotsDropdown> = props => {
         <Button type={'text'} ghost aria-label={'three drop down'}>
           <ThreeDotsIcon />
         </Button>
-      </Dropdown>
+      </DropdownWrapper>
     </>
   );
 };
 
 export default ThreeDotsDropdown;
+
+const DropdownWrapper = styled(Dropdown)`
+  .ant-dropdown {
+    .ant-dropdown-menu {
+      .ant-dropdown-menu-item {
+        margin: 17px 10px;
+      }
+    }
+  }
+`;

@@ -2,8 +2,8 @@ import { renderHook, waitFor } from '@testing-library/react';
 import {
   baseAxiosResponse,
   wrapperQuery,
-} from '../../../../../../../../get-mock-data-jest-test';
-import { SurveyService } from '../../../../../../../../services';
+} from '../../../../../../../get-mock-data-jest-test';
+import { SurveyService } from '../../../../../../../services';
 import * as router from 'react-router';
 import restoreAllMocks = jest.restoreAllMocks;
 import { surveyMock, surveyVersionMock } from '../survey-mock-data';

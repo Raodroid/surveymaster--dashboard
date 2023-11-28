@@ -41,7 +41,10 @@ export const createQuestionMap = (
 };
 
 export const transSurveyFLowElement = (
-  input: SurveyDataTreeNode[] | SurveyFlowElementResponseDto[],
+  input:
+    | SurveyDataTreeNode[]
+    | SurveyFlowElementResponseDto[]
+    | SubSurveyFlowElementDto[],
   blockSortCounting: number,
 ): SubSurveyFlowElementDto[] => {
   let newBlockSortCounting = blockSortCounting;
