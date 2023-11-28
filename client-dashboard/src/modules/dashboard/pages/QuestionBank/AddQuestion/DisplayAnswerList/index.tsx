@@ -81,7 +81,40 @@ const DisplayAnswerList = () => {
       return <TextGraphic />;
     case QuestionType.DATA_MATRIX:
       return <Datamatrix />;
-
+    case QuestionType.TEXT_NUMBER:
+      return (
+        <DisplayAnswerListWrapper className={'DisplayAnswerListWrapper'}>
+          <InputWrapper>
+            <ControlledInput
+              inputType={INPUT_TYPES.NUMBER}
+              name="numberMax"
+              label={t('common.maxValue')}
+              aria-label={'numberMax'}
+              className={className}
+            />
+          </InputWrapper>
+          <InputWrapper>
+            <ControlledInput
+              inputType={INPUT_TYPES.NUMBER}
+              name="numberMin"
+              label={t('common.minValue')}
+              aria-label={'numberMin'}
+              className={className}
+            />
+          </InputWrapper>
+          <InputWrapper>
+            <ControlledInput
+              inputType={INPUT_TYPES.NUMBER}
+              name="maxDecimal"
+              label={t('common.maxDecimal')}
+              aria-label={'maxDecimal'}
+              className={className}
+            />
+          </InputWrapper>
+        </DisplayAnswerListWrapper>
+      );
+    case QuestionType.RANK_ORDER:
+      return <MultipleChoice isKeyPath={false} />;
     default:
       return null;
   }

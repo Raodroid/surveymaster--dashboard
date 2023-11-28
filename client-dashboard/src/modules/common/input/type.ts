@@ -12,6 +12,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 export enum INPUT_TYPES {
   INPUT = 'INPUT',
+  INPUT_DEBOUNCE = 'INPUT_DEBOUNCE',
   SELECT = 'SELECT',
   TEXTAREA = 'TEXTAREA',
   PASSWORD = 'PASSWORD',

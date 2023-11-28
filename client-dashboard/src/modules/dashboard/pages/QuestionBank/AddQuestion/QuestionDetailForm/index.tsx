@@ -35,9 +35,20 @@ const AddQuestionDetailForm = () => {
 
         break;
       }
+      case QuestionType.TEXT_NUMBER: {
+        setValues(oldValues => ({
+          ...oldValues,
+          numberMax: oldValues.numberMax || '10',
+          numberMin: oldValues.numberMin || '1',
+          maxDecimal: oldValues.maxDecimal || '',
+        }));
+
+        break;
+      }
       case QuestionType.MULTIPLE_CHOICE:
       case QuestionType.FORM_FIELD:
-      case QuestionType.RADIO_BUTTONS: {
+      case QuestionType.RADIO_BUTTONS:
+      case QuestionType.RANK_ORDER: {
         setFieldValue('options', [
           {
             id: generateRandom(),

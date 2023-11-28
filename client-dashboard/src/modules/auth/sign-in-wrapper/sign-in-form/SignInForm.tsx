@@ -135,11 +135,11 @@ const SignInForm = () => {
           )}
         />
       </div>
-      <div className={'sign-in-form__row sign-in-form__footer'}>
+      {/* <div className={'sign-in-form__row sign-in-form__footer'}>
         <Button type={'primary'} className={'info-btn'}>
           {t('direction.continueWithGoogle')}
         </Button>
-      </div>
+      </div> */}
     </SignInUpFormWrapper>
   );
 };

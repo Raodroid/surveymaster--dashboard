@@ -29,6 +29,7 @@ const initValue: IAddQuestionFormValue = {
   numberMinLabel: '',
   numberMax: undefined,
   numberMaxLabel: '',
+  maxDecimal: undefined,
   options: undefined,
   matrixType: MatrixType.RADIO_BUTTON,
   dataMatrix: {

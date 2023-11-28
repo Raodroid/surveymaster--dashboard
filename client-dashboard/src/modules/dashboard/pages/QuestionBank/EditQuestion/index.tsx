@@ -29,6 +29,7 @@ import DisplayTitle from '../AddQuestion/DisplayTitle';
 import { generateRandom } from 'modules/common/funcs';
 import { transformQuestionData } from '../AddQuestion/util';
 import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
+import isNumber from 'lodash/isNumber';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;
@@ -114,6 +115,9 @@ const EditQuestion = () => {
       numberStep: currentVersionQuestionData?.numberStep || 1,
       numberMax: currentVersionQuestionData?.numberMax || 10,
       numberMin: currentVersionQuestionData?.numberMin || 1,
+      maxDecimal: isNumber(currentVersionQuestionData?.maxDecimal)
+        ? currentVersionQuestionData?.maxDecimal
+        : undefined,
       dataMatrix: currentVersionQuestionData?.dataMatrix || {
         rows: [{ name: '', keyPath: '' }],
         columns: [{ name: '' }],
@@ -128,6 +132,7 @@ const EditQuestion = () => {
     ) {
       value.status = QuestionVersionStatus.DRAFT;
     }
+
     return value;
   }, [currentVersionQuestionData, questionData]);
 

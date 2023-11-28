@@ -46,6 +46,7 @@ export interface IQuestionVersion {
   numberStep?: number;
   numberMin?: number;
   numberMax?: number;
+  maxDecimal?: number;
   matrixType?: MatrixType;
   dataMatrix?: IDataMatrixInfo;
   timeFormat?: TimeFormat;
@@ -89,6 +90,8 @@ export enum QuestionType {
   DATA_MATRIX = 'DATA_MATRIX',
   FORM_FIELD = 'FORM_FIELD',
   TEXT_GRAPHIC = 'TEXT_GRAPHIC',
+  TEXT_NUMBER = 'TEXT_NUMBER',
+  RANK_ORDER = 'RANK_ORDER',
 }
 
 export enum TimeFormat {
@@ -291,6 +294,7 @@ export interface BaseQuestionVersionDto {
   numberMinLabel?: string;
   numberMax?: number;
   numberMaxLabel?: string;
+  maxDecimal?: number | null;
   options?: IBaseQuestionOptionsVersionDto[];
   dateFormat?: DateFormat;
   timeFormat?: TimeFormat;

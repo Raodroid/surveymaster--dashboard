@@ -495,6 +495,7 @@ const DisplayAnswer = props => {
         title: t('common.order'),
         dataIndex: 'order',
         width: 100,
+        shouldCellUpdate: (record, prevRecord) => false,
         render: (value, record, index) => {
           return (
             <span
@@ -514,10 +515,12 @@ const DisplayAnswer = props => {
         title: t('common.parameter'),
         dataIndex: 'parameter',
         width: 200,
+        shouldCellUpdate: (record, prevRecord) => false,
         render: (value, record, index) => {
           return (
             <>
               <ControlledInput
+                isFastField
                 style={{ width: '100%' }}
                 inputType={INPUT_TYPES.INPUT}
                 name={`version.questions[${index}].parameter`}
@@ -535,6 +538,7 @@ const DisplayAnswer = props => {
         title: t('common.type'),
         dataIndex: 'type',
         width: 150,
+        shouldCellUpdate: (record, prevRecord) => false,
         render: value => {
           return value ? t(`questionType.${value}`) : '';
         },
@@ -543,6 +547,7 @@ const DisplayAnswer = props => {
         title: t('common.question'),
         dataIndex: 'question',
         width: 300,
+        shouldCellUpdate: (record, prevRecord) => false,
         render: (value, record, index) => {
           return (
             <DynamicSelect
@@ -560,10 +565,11 @@ const DisplayAnswer = props => {
       {
         title: t('common.remark'),
         dataIndex: 'remark',
+        shouldCellUpdate: (record, prevRecord) => false,
         render: (value, record, index) => (
           <ControlledInput
             style={{ width: '100%' }}
-            inputType={INPUT_TYPES.INPUT}
+            inputType={INPUT_TYPES.INPUT_DEBOUNCE}
             name={`version.questions[${index}].remark`}
           />
         ),
@@ -572,6 +578,7 @@ const DisplayAnswer = props => {
         title: '',
         dataIndex: 'action',
         width: 60,
+        shouldCellUpdate: (record, prevRecord) => false,
         render: (value, record, index) => (
           <ActionDropDown
             record={record}
