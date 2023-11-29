@@ -11,10 +11,7 @@ import {
 import { useQuery } from 'react-query';
 import { QuestionBankService } from 'services';
 import { useDebounce, onError } from 'utils';
-import {
-  AddQuestionFormCategoryModalWrapper,
-  // CategoryMenuWrapper,
-} from './style';
+import { AddQuestionFormCategoryModalWrapper } from './style';
 import { DisplayQuestionList } from './DisplayQuestionList/DisplayQuestionList';
 import { useTranslation } from 'react-i18next';
 import HannahCustomSpin from '../../../../../../../components/HannahCustomSpin';
@@ -22,6 +19,12 @@ import { useFormikContext } from 'formik';
 import { IAddSurveyFormValues } from '../SurveyForm';
 import _get from 'lodash/get';
 import SimpleBar from 'simplebar-react';
+
+export interface questionListState {
+  selectedVersionIds: string[];
+  displayVersionIds: string[];
+  questions: IQuestion[];
+}
 
 interface IAddQuestionFormCategoryModal {
   open: boolean;
@@ -33,12 +36,15 @@ const AddQuestionFormCategoryModal: FC<
 > = props => {
   const { open, onCancel } = props;
   const [searchTxt, setSearchTxt] = useState<string>('');
-  const [searchQuestionTxt, setSearchQuestionTxt] = useState<string>('');
 
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
-  const [selectedQuestionIdList, setSelectedQuestionIdList] = useState<
-    string[]
-  >([]);
+  const [questionListState, setQuestionListState] = useState<questionListState>(
+    {
+      selectedVersionIds: [],
+      displayVersionIds: [],
+      questions: [],
+    },
+  );
   const { setFieldValue, values } = useFormikContext<IAddSurveyFormValues>();
 
   const wrapperRef = useRef<any>();
@@ -55,11 +61,49 @@ const AddQuestionFormCategoryModal: FC<
     [debounceSearchText],
   );
 
-  const onCheck = (checkedKeys: string[]) => {
-    setSelectedCategoryIds(checkedKeys);
-    if (!checkedKeys.length) setSelectedQuestionIdList([]);
-  };
+  const onCheck = useCallback(
+    (
+      checkedKeys: string[],
+      info: {
+        checked: boolean;
+        node: {
+          key: string;
+          pos: string;
+          children?: { key: string }[];
+        };
+      },
+    ) => {
+      const { checked, node } = info;
+      const { key, children } = node;
 
+      if (checked) {
+        setSelectedCategoryIds(s => [...new Set([...s, ...checkedKeys])]);
+      } else {
+        const keyEntities: Record<
+          string,
+          {
+            key: string;
+            pos: string;
+            parent: { key: string; children: { key: string }[] };
+          }
+        > = _get(info, 'node.props.context.keyEntities');
+        const currentNode = keyEntities[node.key];
+        const parent = currentNode.parent;
+        const initValue: string[] = [key];
+        if (parent) {
+          initValue.push(parent.key);
+        }
+        const allFilterKey = (children || []).reduce((res, child) => {
+          return [...res, child.key];
+        }, initValue);
+
+        setSelectedCategoryIds(s => s.filter(i => !allFilterKey.includes(i)));
+      }
+      if (!checkedKeys.length)
+        setQuestionListState(s => ({ ...s, selectedVersionIds: [] }));
+    },
+    [],
+  );
   const { data, isLoading, isFetching } = useQuery(
     ['getCategoryList', currentParam],
     () => {
@@ -91,36 +135,42 @@ const AddQuestionFormCategoryModal: FC<
   }, [data]);
   // console.log('\n ==> categoryTreeData', categoryTreeData);
 
-  const debounceSearchTextQuestion = useDebounce(searchQuestionTxt);
-
   const getQuestionByCategoryIdListQuery = useQuery(
-    [
-      'getQuestionByCategoryIdList',
-      selectedCategoryIds,
-      debounceSearchTextQuestion,
-    ],
+    ['getAllQuestionByCategoryIdList', selectedCategoryIds],
     () => {
       return QuestionBankService.getQuestions({
         body: { subCategoryIds: selectedCategoryIds },
-        q: debounceSearchTextQuestion,
         hasLatestCompletedVersion: true,
         isDeleted: false,
         selectAll: true,
       });
     },
-    { onError, enabled: !!selectedCategoryIds, refetchOnWindowFocus: false },
+    {
+      onSuccess: res => {
+        const questions: IQuestion[] = res.data.data;
+        setQuestionListState(s => ({
+          ...s,
+          questions,
+          selectedVersionIds: s.selectedVersionIds.reduce(
+            (res: string[], id) => {
+              if (questions.some(i => i.latestCompletedVersion.id === id)) {
+                return [...res, id];
+              }
+              return res;
+            },
+            [],
+          ),
+        }));
+      },
+      onError,
+      enabled: selectedCategoryIds.length !== 0 && open,
+      refetchOnWindowFocus: false,
+    },
   );
-
-  const questions = useMemo<IQuestion[]>(
-    () => _get(getQuestionByCategoryIdListQuery.data, 'data.data', []),
-    [getQuestionByCategoryIdListQuery.data],
-  );
-  // console.log('\n ==> questions', questions);
 
   const handleTyping = useCallback(
     e => {
       setSearchTxt(e.target.value);
-      setSelectedCategoryIds([]);
     },
     [setSearchTxt],
   );
@@ -132,7 +182,7 @@ const AddQuestionFormCategoryModal: FC<
 
   const handleAddQuestions = useCallback(async () => {
     let sort = values.version.questions.length + 1;
-    const newValues = selectedQuestionIdList.reduce(
+    const newValues = questionListState.selectedVersionIds.reduce(
       (
         result: Array<
           ISurveyQuestionDto & {
@@ -143,7 +193,7 @@ const AddQuestionFormCategoryModal: FC<
         >,
         chosenQuestionVersionId,
       ) => {
-        const question = questions.find(
+        const question = questionListState.questions.find(
           (q: IQuestion) =>
             q.latestCompletedVersion.id === chosenQuestionVersionId,
         ) as IQuestion;
@@ -178,8 +228,8 @@ const AddQuestionFormCategoryModal: FC<
     onCancel();
   }, [
     onCancel,
-    questions,
-    selectedQuestionIdList,
+    questionListState.questions,
+    questionListState.selectedVersionIds,
     setFieldValue,
     values.version.questions,
   ]);
@@ -192,14 +242,16 @@ const AddQuestionFormCategoryModal: FC<
       footer={
         <Button
           type={'primary'}
-          disabled={!selectedQuestionIdList.length}
+          disabled={!questionListState.selectedVersionIds.length}
           onClick={handleAddQuestions}
           loading={getQuestionByCategoryIdListQuery.isLoading}
         >
-          {t('common.add')} {selectedQuestionIdList.length}{' '}
+          {t('common.add')} {questionListState.selectedVersionIds.length}{' '}
           {t(
             `common.${
-              selectedQuestionIdList.length === 1 ? 'question' : 'questions'
+              questionListState.selectedVersionIds.length === 1
+                ? 'question'
+                : 'questions'
             }`,
           )}
         </Button>
@@ -238,12 +290,9 @@ const AddQuestionFormCategoryModal: FC<
             <span className={'border'} style={{ borderRight: 0 }} />
             <SimpleBar>
               <DisplayQuestionList
-                selectedQuestionIdList={selectedQuestionIdList}
-                setSelectedQuestionIdList={setSelectedQuestionIdList}
-                questions={questions}
-                searchQuestionTxt={searchQuestionTxt}
-                setSearchQuestionTxt={setSearchQuestionTxt}
-              />{' '}
+                questionListState={questionListState}
+                setQuestionListState={setQuestionListState}
+              />
             </SimpleBar>
           </>
         ) : null}
