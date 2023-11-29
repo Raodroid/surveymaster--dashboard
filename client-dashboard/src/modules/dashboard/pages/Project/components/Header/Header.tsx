@@ -11,7 +11,7 @@ import React, {
   useState,
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IGetParams } from '@/type';
+import { IGetParams, IOptionItem } from '@/type';
 
 import {
   IBreadcrumbItem,
@@ -25,6 +25,9 @@ import EditProjectButton from '../ProjectModal/EditProjectButton';
 import AddProjectButton from '../ProjectModal/AddProjectButton';
 import { ProjectFilter } from '@pages/Project/components/project-filter/ProjectFilter';
 import ViewSurveyButton from '@pages/Survey/SurveyModal/ViewSurveyButton';
+import { SurveyVersionSelect, useGetSurveyById } from '@pages/Survey';
+import { useParams } from 'react-router';
+import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 
 interface IProjectHeader {
   routes?: IBreadcrumbItem[];
@@ -35,6 +38,7 @@ interface IProjectHeader {
   showAddSurveyBtn?: boolean;
   showDetailProjectBtn?: boolean;
   showDetailSurveyBtn?: boolean;
+  showSurveyVersions?: boolean;
 }
 
 const ProjectHeader: FC<IProjectHeader> = props => {
@@ -47,6 +51,7 @@ const ProjectHeader: FC<IProjectHeader> = props => {
     showEditProjectBtn,
     showDetailProjectBtn,
     showDetailSurveyBtn,
+    showSurveyVersions,
   } = props;
 
   const { canUpdate, canCreate } = useCheckScopeEntityDefault(
@@ -55,6 +60,16 @@ const ProjectHeader: FC<IProjectHeader> = props => {
   const { canCreate: canCreateSurvey } = useCheckScopeEntityDefault(
     EntityEnum.SURVEY,
   );
+  const params = useParams<projectSurveyParams>();
+
+  const { surveyData, currentSurveyVersion } = useGetSurveyById(
+    params.surveyId,
+  );
+
+  const versions: IOptionItem[] = (surveyData?.versions || [])?.map(ver => ({
+    label: ver.displayId,
+    value: ver?.id || '',
+  }));
 
   const searchRef = useRef<InputRef>(null);
   const [searchInput, setSearchInput] = useState('');
@@ -94,6 +109,12 @@ const ProjectHeader: FC<IProjectHeader> = props => {
       <div>
         <div className="flex items-center justify-center h-[76px] px-[30px]">
           <StyledBreadcrumb routes={base} />
+          {showSurveyVersions && (
+            <SurveyVersionSelect
+              value={currentSurveyVersion?.id}
+              options={versions}
+            />
+          )}
           {showDetailProjectBtn && (
             <>
               <Divider type="vertical" className={'h-[8px]'} />

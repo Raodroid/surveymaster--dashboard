@@ -1,48 +1,89 @@
-import React, { FC, useCallback, useMemo } from 'react';
-import { IOptionItem, IQuestion } from '@/type';
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
+import { IOptionItem } from '@/type';
 import { Input } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
 import { DisplayQuestionListWrapper } from './style';
 import { useTranslation } from 'react-i18next';
+import { useDebounce } from '@/utils';
+import { questionListState } from '..';
 
 interface IDisplayQuestionList {
-  selectedQuestionIdList: string[];
-  setSelectedQuestionIdList: (e?: any) => void;
-  questions: IQuestion[];
-  searchQuestionTxt: string;
-  setSearchQuestionTxt: (value: string) => void;
+  setQuestionListState: Dispatch<SetStateAction<questionListState>>;
+  questionListState: questionListState;
 }
 
 export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
-  const {
-    selectedQuestionIdList,
-    setSelectedQuestionIdList,
-    questions,
-    searchQuestionTxt,
-    setSearchQuestionTxt,
-  } = props;
+  const { setQuestionListState, questionListState } = props;
   const { t } = useTranslation();
-  const isSelectAll = selectedQuestionIdList.length === questions.length;
 
-  const options = useMemo<IOptionItem[]>(() => {
+  const isSelectAll = (() => {
+    if (
+      questionListState.selectedVersionIds.length === 0 ||
+      questionListState.displayVersionIds.length === 0
+    )
+      return false;
+    if (
+      questionListState.displayVersionIds.length >
+      questionListState.selectedVersionIds.length
+    )
+      return false;
+
+    return !questionListState.displayVersionIds.some(
+      i => !questionListState.selectedVersionIds.includes(i),
+    );
+  })();
+
+  const [searchQuestionTxt, setSearchQuestionTxt] = useState<string>('');
+
+  const searchDebounce = useDebounce(searchQuestionTxt.toLowerCase());
+  const allOptions = useMemo<IOptionItem[]>(() => {
     const result: IOptionItem[] = [];
-    const questionIds: string[] = [];
-    questions.forEach(q => {
-      questionIds.push(q.latestCompletedVersion.id as string);
+    questionListState.questions.forEach(q => {
       result.push({
         label: q.latestCompletedVersion.title as string,
         value: q.latestCompletedVersion.id as string,
       });
     });
-    setSelectedQuestionIdList(questionIds);
     return result;
-  }, [questions, setSelectedQuestionIdList]);
+  }, [questionListState.questions]);
+
+  const options = useMemo(() => {
+    const displayVersionIds: string[] = [];
+    const displayOptions = allOptions.reduce(
+      (result: IOptionItem[], option) => {
+        if (option.label.toLowerCase().includes(searchDebounce)) {
+          displayVersionIds.push(option.value);
+          return [...result, option];
+        }
+        return result;
+      },
+      [],
+    );
+    setQuestionListState(s => ({ ...s, displayVersionIds }));
+    return displayOptions;
+  }, [allOptions, searchDebounce, setQuestionListState]);
 
   const onChange = useCallback(
-    values => {
-      setSelectedQuestionIdList(values);
+    newSelectedValues => {
+      setQuestionListState(s => ({
+        ...s,
+        selectedVersionIds: s.selectedVersionIds.reduce(
+          (res: string[], item) => {
+            if (s.displayVersionIds.includes(item)) return res;
+            return [...res, item];
+          },
+          newSelectedValues,
+        ),
+      }));
     },
-    [setSelectedQuestionIdList],
+    [setQuestionListState],
   );
 
   const handleTyping = useCallback(
@@ -52,16 +93,26 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
     [setSearchQuestionTxt],
   );
 
-  const selectAll = useCallback(() => {
-    const listQuestionIds = questions.map(
-      item => item.latestCompletedVersion.id,
-    );
-    const newSelectedQuestionIds =
-      selectedQuestionIdList.length === listQuestionIds.length
-        ? []
-        : listQuestionIds;
-    setSelectedQuestionIdList(newSelectedQuestionIds);
-  }, [questions, selectedQuestionIdList, setSelectedQuestionIdList]);
+  const handleSelectAll = useCallback(
+    e => {
+      if (e.target.checked) {
+        setQuestionListState(s => ({
+          ...s,
+          selectedVersionIds: [
+            ...new Set([...s.selectedVersionIds, ...s.displayVersionIds]),
+          ],
+        }));
+      } else {
+        setQuestionListState(s => ({
+          ...s,
+          selectedVersionIds: s.selectedVersionIds.filter(
+            i => !s.displayVersionIds.includes(i),
+          ),
+        }));
+      }
+    },
+    [setQuestionListState],
+  );
 
   return (
     <DisplayQuestionListWrapper>
@@ -73,12 +124,12 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
         value={searchQuestionTxt}
         onChange={handleTyping}
       />
-      <Checkbox checked={isSelectAll} onChange={selectAll}>
+      <Checkbox checked={isSelectAll} onChange={handleSelectAll}>
         {t('common.selectAll')}
       </Checkbox>
       <div className="line" />
       <Checkbox.Group
-        value={selectedQuestionIdList}
+        value={questionListState.selectedVersionIds}
         options={options}
         onChange={onChange}
       />

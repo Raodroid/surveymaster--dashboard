@@ -1,21 +1,15 @@
-import React, { Fragment, ReactNode, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,
   SurveyVersionRemarkButton,
-  SurveyVersionSelect,
   useSurveyFormContext,
 } from '@pages/Survey';
-import { Divider, Modal, notification, Spin } from 'antd';
-import {
-  IGetParams,
-  IOptionItem,
-  ISurveyVersion,
-  SurveyVersionStatus,
-} from '@/type';
+import { Modal, notification, Spin } from 'antd';
+import { IGetParams, ISurveyVersion } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { EntityEnum, MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
+import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
 import { onError, saveBlob, useToggle } from '@/utils';
@@ -26,10 +20,8 @@ import {
   ACTION,
   ActionThreeDropDown,
 } from './SurveyVersionActionThreeDropdown';
-import { Link } from 'react-router-dom';
-import { PenFilled } from '@/icons';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
-import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
+import { IBreadcrumbItem } from '@/modules/common';
 
 const { confirm } = Modal;
 
@@ -72,6 +64,7 @@ const ViewModeHeader = () => {
         RightMenu={<RightMenu />}
         routes={routes}
         showDetailSurveyBtn
+        showSurveyVersions
       />
     </>
   );
@@ -79,31 +72,13 @@ const ViewModeHeader = () => {
 
 export default ViewModeHeader;
 
-const genLink = (
-  input: string,
-  version?: string,
-  params?: Readonly<Partial<projectSurveyParams>>,
-) => {
-  return `${generatePath(input, {
-    projectId: params?.projectId,
-    surveyId: params?.surveyId,
-  })}?version=${version}`;
-};
-
 const RightMenu = () => {
   const { t } = useTranslation();
-  const { canUpdate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
   const qsParams = useParseQueryString<IGetParams & { version?: string }>();
   const params = useParams<projectSurveyParams>();
   const { survey, handleCloneSurveyVersion } = useSurveyFormContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
-    ver => ({
-      label: ver.displayId,
-      value: ver?.id || '',
-    }),
-  );
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -220,12 +195,12 @@ const RightMenu = () => {
 
   const handleEdit = useCallback(() => {
     navigate(
-      generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
+      `${generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
         projectId: params.projectId,
         surveyId: params.surveyId,
-      }),
+      })}?version=${qsParams.version}`,
     );
-  }, [navigate, params.projectId, params.surveyId]);
+  }, [navigate, params.projectId, params.surveyId, qsParams.version]);
 
   const tableActions = useMemo<keysAction<ISurveyVersion>>(
     () => [
@@ -251,7 +226,7 @@ const RightMenu = () => {
         action: handleShowChangeLog,
       },
       {
-        key: ACTION.SHOW_CHANGE_LOG,
+        key: ACTION.EDIT,
         action: handleEdit,
       },
     ],

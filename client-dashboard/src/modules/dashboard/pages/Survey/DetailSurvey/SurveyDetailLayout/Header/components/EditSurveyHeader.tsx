@@ -75,7 +75,7 @@ const EditSurveyHeader = () => {
         <ViewSurveyButton />
         <div className={'flex-1'} />
         <SurveyVersionRemarkButton />
-        <Divider type="vertical" style={{ margin: '0', height: 8 }} />
+        <Divider type="vertical" className={'m-0 h-[8px]'} />
         {dirty && (
           <>
             <Button type={'default'} onClick={handleCancel}>
@@ -83,7 +83,7 @@ const EditSurveyHeader = () => {
                 {t('common.cancel')}
               </span>
             </Button>
-            <Divider type="vertical" style={{ margin: '0', height: 8 }} />
+            <Divider type="vertical" className={'m-0 h-[8px]'} />
           </>
         )}
         <SurveyFormSubmitButton />
