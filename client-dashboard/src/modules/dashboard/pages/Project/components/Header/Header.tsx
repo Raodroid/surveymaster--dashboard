@@ -110,16 +110,12 @@ const ProjectHeader: FC<IProjectHeader> = props => {
         <div className="flex items-center justify-center h-[76px] px-[30px]">
           <StyledBreadcrumb routes={base} />
           {showSurveyVersions && (
-            <SurveyVersionSelect
-              value={currentSurveyVersion?.id}
-              options={versions}
-            />
-          )}
-          {showDetailProjectBtn && (
             <>
               <Divider type="vertical" className={'h-[8px]'} />
-              <ViewProjectDetailButton />
-              <Divider type="vertical" className={'h-[8px]'} />
+              <SurveyVersionSelect
+                value={currentSurveyVersion?.id}
+                options={versions}
+              />
             </>
           )}
           <div className={'flex-1 flex items-center'}>
@@ -128,6 +124,13 @@ const ProjectHeader: FC<IProjectHeader> = props => {
           </div>
 
           {showDetailSurveyBtn && <ViewSurveyButton />}
+          {showDetailProjectBtn && (
+            <>
+              <Divider type="vertical" className={'h-[8px]'} />
+              <ViewProjectDetailButton />
+              <Divider type="vertical" className={'h-[8px]'} />
+            </>
+          )}
           {showEditProjectBtn && canUpdate && <EditProjectButton />}
 
           <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />

@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import { Button, Divider, Form, Modal, Spin } from 'antd';
+import { Button, Divider, Form, Modal, notification, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { Formik } from 'formik';
 import { ControlledInput, INVALID_FIELDS } from '@/modules/common';
@@ -16,17 +16,22 @@ import { SurveyService } from '@/services';
 import { onError } from '@/utils';
 import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
 
-const SurveyRenameModal: FC<IModal & { surveyId?: string }> = props => {
-  const { toggleOpen, open, surveyId } = props;
+const SurveyRenameModal: FC<
+  IModal & { surveyId?: string; versionId?: string }
+> = props => {
+  const { toggleOpen, open, surveyId, versionId } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+
   const updateSurveyMutation = useMutation(
     (data: IPutSurveyVersionBodyDtoExtendId) => {
-      return SurveyService.updateSurvey(data);
+      return SurveyService.updateSurveyVersion(data);
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries('getSurveys');
+        queryClient.invalidateQueries('getSurveyById');
+        notification.success({ message: t('common.updateSuccess') });
         toggleOpen();
       },
       onError,
@@ -36,17 +41,17 @@ const SurveyRenameModal: FC<IModal & { surveyId?: string }> = props => {
   const { surveyData, isLoading } = useGetSurveyById(surveyId);
 
   const initValue = useMemo<IPutSurveyVersionBodyDtoExtendId>(() => {
-    const latestSurveyData = surveyData.versions?.find(
-      ver => ver.id === surveyData.latestVersion?.id,
+    const surveyVersion = surveyData.versions?.find(
+      ver => ver.id === versionId,
     );
 
     return {
-      surveyVersionId: latestSurveyData?.id,
-      name: latestSurveyData?.name,
-      remarks: latestSurveyData?.remarks,
-      surveyFlowElements: latestSurveyData?.surveyFlowElements,
+      surveyVersionId: surveyVersion?.id,
+      name: surveyVersion?.name,
+      remarks: surveyVersion?.remarks,
+      surveyFlowElements: surveyVersion?.surveyFlowElements,
     };
-  }, [surveyData]);
+  }, [surveyData, versionId]);
 
   const onSubmit = useCallback(
     (values: IPutSurveyVersionBodyDtoExtendId) => {

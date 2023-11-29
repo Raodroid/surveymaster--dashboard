@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import {
   CreateSurveyBodyDto,
   DuplicateSurveyVersionDto,
@@ -16,9 +16,9 @@ import { SurveyService } from '@/services';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/enums';
 import { onError } from '@/utils';
-import { SurveyTemplateEnum } from '@pages/Survey';
+import { SurveyTemplateEnum, useSurveyFormContext } from '@pages/Survey';
 
-const initValue: CreateSurveyBodyDto = {
+const defaultInitValue: CreateSurveyBodyDto = {
   projectId: '',
   template: '',
   duplicateSurveyId: '',
@@ -35,6 +35,22 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
   const params = useParams<{ projectId?: string; surveyId?: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { survey } = useSurveyFormContext();
+
+  const initValue = useMemo<
+    CreateSurveyBodyDto & { displayId?: string }
+  >(() => {
+    if (mode === 'create') return defaultInitValue;
+    return {
+      ...defaultInitValue,
+      version: {
+        remark: '',
+        name: survey.currentSurveyVersion?.name,
+        status: survey.currentSurveyVersion?.status,
+      },
+      displayId: survey.currentSurveyVersion?.displayId,
+    };
+  }, [mode, survey.currentSurveyVersion]);
 
   const onSuccess = useCallback(async () => {
     await queryClient.invalidateQueries('getProjects');
@@ -127,10 +143,13 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
       width={488}
       footer={false}
       centered
-      title={t('common.addNewSurvey')}
+      title={
+        mode === 'create' ? t('common.addNewSurvey') : t('common.surveyInfo')
+      }
     >
       <Spin spinning={addSurveyMutation.isLoading}>
         <Formik
+          enableReinitialize
           onSubmit={onFinish}
           initialValues={initValue}
           validationSchema={SURVEY_INTERNAL_FORM_SCHEMA}
@@ -138,7 +157,7 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
           {({ handleSubmit }) => (
             <>
               <Form layout={'vertical'} onFinish={handleSubmit}>
-                <TemplateOption />
+                {mode === 'create' && <TemplateOption />}
                 <ControlledInput
                   inputType={INPUT_TYPES.INPUT}
                   name="version.name"
@@ -147,16 +166,17 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
                 />
                 <ControlledInput
                   inputType={INPUT_TYPES.INPUT}
-                  name="version.displayId"
+                  name="displayId"
                   label={t(`common.displayId`)}
                   className={mode === 'view' ? 'view-mode' : undefined}
                 />
-                <ControlledInput
-                  inputType={INPUT_TYPES.TEXTAREA}
-                  name="version.remark"
-                  label={t(`common.remark`)}
-                  className={mode === 'view' ? 'view-mode' : undefined}
-                />
+                {mode === 'create' && (
+                  <ControlledInput
+                    inputType={INPUT_TYPES.TEXTAREA}
+                    name="version.remark"
+                    label={t(`common.remark`)}
+                  />
+                )}
                 {mode === 'create' && (
                   <Button
                     size={'large'}

@@ -26,7 +26,7 @@ import { onError, useDebounce } from '@/utils';
 import { QuestionBankService } from '@/services';
 import _get from 'lodash/get';
 import { ROUTE_PATH, SCOPE_CONFIG, size } from '@/enums';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { StyledPagination } from '@/modules/dashboard';
 import qs from 'qs';
 import HannahCustomSpin from '@components/HannahCustomSpin';
@@ -228,6 +228,28 @@ const CategoryDetail = () => {
         title: 'ID',
         width: 50,
         dataIndex: ['latestVersion', 'id'],
+        render: (value, record) => {
+          const newQueryString = qs.stringify({
+            ...queryString,
+            version: record?.latestVersion?.displayId,
+          });
+
+          if (record.deletedAt) {
+            return <span>{value}</span>;
+          }
+
+          return (
+            <Link
+              className={'font-semibold'}
+              to={`${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION.replace(
+                ':questionId',
+                record?.id as string,
+              )}?${newQueryString}`}
+            >
+              {value}
+            </Link>
+          );
+        },
       },
       {
         title: t('common.question'),
@@ -303,26 +325,6 @@ const CategoryDetail = () => {
     [handleSelect, t],
   );
 
-  const handleClickRow = useCallback(
-    (record: IQuestion) => {
-      return {
-        onClick: () => {
-          const newQueryString = qs.stringify({
-            ...queryString,
-            version: record?.latestVersion?.displayId,
-          });
-          navigate(
-            `${ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION.replace(
-              ':questionId',
-              record?.id as string,
-            )}?${newQueryString}`,
-          );
-        },
-      };
-    },
-    [navigate, queryString],
-  );
-
   const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
     (current, pageSize) => {
       setParams(s => ({ ...s, take: pageSize }));
@@ -360,7 +362,6 @@ const CategoryDetail = () => {
             rowKey={record => record?.id as string}
             dataSource={questionList}
             columns={columns}
-            onRow={handleClickRow}
             pagination={false}
             scroll={{ x: size.medium }}
           />

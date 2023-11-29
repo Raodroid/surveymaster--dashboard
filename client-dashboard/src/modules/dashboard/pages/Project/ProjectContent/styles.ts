@@ -67,7 +67,6 @@ export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
     text-align: end;
   }
   .ant-table-row {
-    cursor: pointer;
     height: 48px;
   }
 `;

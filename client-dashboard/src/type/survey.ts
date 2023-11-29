@@ -115,6 +115,7 @@ export interface ISurveyVersion {
   surveyFlowElements?: SurveyFlowElementResponseDto[];
 
   survey?: ISurvey;
+  surveyId?: string;
 
   createdBy?: UserPayload;
   updatedBy?: UserPayload;

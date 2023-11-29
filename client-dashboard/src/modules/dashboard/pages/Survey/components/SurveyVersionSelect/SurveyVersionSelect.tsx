@@ -8,7 +8,7 @@ import { IGetParams } from '@/type';
 import { useCheckSurveyFormMode } from '@pages/Survey';
 import { useFormikContext } from 'formik';
 import { Modal } from 'antd';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 const { confirm } = Modal;
 
 const SurveyVersionSelect: FC<{
@@ -20,7 +20,6 @@ const SurveyVersionSelect: FC<{
   const navigate = useNavigate();
   const { isEditMode } = useCheckSurveyFormMode();
   const { dirty } = useFormikContext(); //only use the component inside formik component
-  const { t } = useTranslation();
 
   const handleDirect = useCallback(
     options => {
@@ -49,7 +48,7 @@ const SurveyVersionSelect: FC<{
         });
         return;
       }
-      handleDirect(handleDirect);
+      handleDirect(options);
     },
     [dirty, handleDirect, isEditMode],
   );

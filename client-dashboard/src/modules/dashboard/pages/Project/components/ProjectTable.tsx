@@ -4,18 +4,11 @@ import { ExternalIcon, InternalIcon, PenFilled, TrashOutlined } from '@/icons';
 import { Refresh } from '@/icons/Refresh';
 import _get from 'lodash/get';
 import moment from 'moment';
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath } from 'react-router';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ActionThreeDropDownType,
   IGetParams,
@@ -36,6 +29,7 @@ import { ProjectService } from '@/services';
 import { keysAction, useSelectTableRecord } from '@/hooks/useSelectTableRecord';
 import ThreeDotsDropdown from '@/customize-components/ThreeDotsDropdown';
 import { ProjectModal } from '@pages/Project';
+import qs from 'qs';
 
 const { confirm } = Modal;
 
@@ -194,6 +188,24 @@ function ProjectTable() {
         title: 'ID',
         dataIndex: 'displayId',
         key: 'id',
+        render: (value, record) => {
+          if (record.deletedAt) {
+            return <span>{value}</span>;
+          }
+          const queryParams = qs.stringify({
+            isDeleted: false,
+          });
+          return (
+            <Link
+              className={'font-semibold'}
+              to={`${generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
+                projectId: record.id,
+              })}?${queryParams}`}
+            >
+              {value}
+            </Link>
+          );
+        },
       },
       {
         title: 'Type',
@@ -263,21 +275,6 @@ function ProjectTable() {
     [t, handleSelect],
   );
 
-  const onRow = useCallback(
-    (record: IProject) => {
-      return {
-        onClick: () =>
-          !qsParams?.isDeleted &&
-          navigate(
-            generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
-              projectId: record.id,
-            }),
-          ),
-      };
-    },
-    [navigate, qsParams?.isDeleted],
-  );
-
   return (
     <>
       <ProjectTableWrapper ref={wrapperRef} centerLastChild>
@@ -289,7 +286,6 @@ function ProjectTable() {
           <Table
             dataSource={projects}
             columns={columns}
-            onRow={onRow}
             pagination={false}
             rowKey={record => record.id as string}
             scroll={{ x: 800 }}
@@ -304,11 +300,6 @@ function ProjectTable() {
           pageSize={formatQsParams.take}
           total={total}
           current={formatQsParams.page}
-          showTotal={total => (
-            <span>
-              Total: <span className={'font-semibold'}>{total}</span>
-            </span>
-          )}
         />
       </ProjectTableWrapper>
       <ProjectModal

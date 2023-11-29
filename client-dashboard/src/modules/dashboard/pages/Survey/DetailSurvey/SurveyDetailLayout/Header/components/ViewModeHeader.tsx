@@ -2,11 +2,17 @@ import React, { useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,
+  SurveyRenameModal,
   SurveyVersionRemarkButton,
   useSurveyFormContext,
 } from '@pages/Survey';
 import { Modal, notification, Spin } from 'antd';
-import { IGetParams, ISurveyVersion } from '@/type';
+import {
+  IGetParams,
+  ISurveyVersion,
+  SubSurveyFlowElementDto,
+  SurveyVersionStatus,
+} from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
@@ -22,6 +28,7 @@ import {
 } from './SurveyVersionActionThreeDropdown';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { IBreadcrumbItem } from '@/modules/common';
+import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
 
 const { confirm } = Modal;
 
@@ -79,6 +86,8 @@ const RightMenu = () => {
   const { survey, handleCloneSurveyVersion } = useSurveyFormContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const [openRenameModal, toggleRenameModal] = useToggle();
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -173,11 +182,19 @@ const RightMenu = () => {
   const handleCLone = useCallback(
     (record: ISurveyVersion) => {
       if (!record?.id) return;
+
+      const blockSortCounting = 0;
+
+      const surveyFlowElements: SubSurveyFlowElementDto[] =
+        transSurveyFLowElement(
+          record.surveyFlowElements || [],
+          blockSortCounting,
+        );
+
       handleCloneSurveyVersion({
-        version: {
-          name: createDuplicateSurveyVersionName(record.name),
-          remark: '',
-        },
+        name: createDuplicateSurveyVersionName(record.name),
+        surveyFlowElements,
+        status: SurveyVersionStatus.DRAFT,
         surveyId: record?.id,
       });
     },
@@ -229,6 +246,10 @@ const RightMenu = () => {
         key: ACTION.EDIT,
         action: handleEdit,
       },
+      {
+        key: ACTION.RENAME,
+        action: toggleRenameModal,
+      },
     ],
     [
       handleEdit,
@@ -237,6 +258,7 @@ const RightMenu = () => {
       handleDelete,
       handleExport,
       handleShowChangeLog,
+      toggleRenameModal,
     ],
   );
 
@@ -260,6 +282,12 @@ const RightMenu = () => {
           />
         </Spin>
       )}
+      <SurveyRenameModal
+        open={openRenameModal}
+        toggleOpen={toggleRenameModal}
+        surveyId={params?.surveyId}
+        versionId={selectedRecord?.id}
+      />
     </div>
   );
 };

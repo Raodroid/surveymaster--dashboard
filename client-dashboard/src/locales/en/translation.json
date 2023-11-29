@@ -20,6 +20,8 @@
     "foods": "Foods"
   },
   "common": {
+    "surveyInfo": "Survey Info",
+    "displayId": "Display ID",
     "rename": "Rename",
     "confirm": "Confirm",
     "info": "Info",
@@ -340,8 +342,7 @@
     "confirmRestoreSurvey": "Are you sure to restore the survey?",
     "confirmCompleteSurveyVersion": "Are you sure to complete the survey version?",
     "confirmCompleteSurvey": "Are you sure to complete the survey?",
-    "confirmCreateNewSurveyVersion": "You are changing questions of completed survey, if you press OK, this survey will be created as a new version!",
-    "confirmCreateNewExternalSurveyVersion": "You are changing questions of completed survey, if you press OK, this survey will be created as a new external version",
+    "confirmCloneSurveyVersion": "Are you sure to duplicate this version?",
     "createNew": "Create New",
     "manageAddress": "Manage Address",
     "changePasswordDefault": "Change password default",

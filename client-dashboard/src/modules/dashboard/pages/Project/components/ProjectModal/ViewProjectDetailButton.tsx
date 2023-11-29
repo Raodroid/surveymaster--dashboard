@@ -19,7 +19,9 @@ const ViewProjectDetailButton = () => {
           icon={<DetailIcon />}
           onClick={toggleModal}
           className={'font-semibold'}
-        />
+        >
+          {t('common.info')}
+        </Button>
       </Tooltip>
       <ProjectModal
         open={openModal}

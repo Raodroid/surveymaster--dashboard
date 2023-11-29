@@ -24,6 +24,7 @@ import { ThreeDotsDropdown } from '@/customize-components';
 const ACTION = {
   EDIT: 'EDIT',
   COMPLETE: 'COMPLETE',
+  RENAME: 'RENAME',
   EXPORT: 'EXPORT',
   DELETE: 'DELETE',
   CLONE: 'CLONE',
@@ -48,26 +49,35 @@ const ActionThreeDropDown: FC<
   );
 
   const items = useMemo(() => {
-    const baseMenu: IMenuItem[] = [
-      {
-        icon: <DuplicateIcon className={'text-primary'} />,
-        label: t('common.duplicateSurvey'),
-        key: ACTION.CLONE,
-      },
-    ];
+    const baseMenu: IMenuItem[] = [];
 
     if (canUpdate && isDraftVersion) {
-      baseMenu.push({
-        icon: <LightingIcon className={'text-primary'} />,
-        label: t('direction.markAsCompleted'),
-        key: ACTION.COMPLETE,
-      });
       baseMenu.push({
         icon: <PenFilled className={'text-primary'} />,
         label: t('common.editSurvey'),
         key: ACTION.EDIT,
       });
     }
+    baseMenu.push({
+      icon: <DuplicateIcon className={'text-primary'} />,
+      label: t('common.duplicateSurvey'),
+      key: ACTION.CLONE,
+    });
+    if (canUpdate) {
+      baseMenu.push({
+        icon: <PenFilled className={'text-primary'} />,
+        label: t('common.rename'),
+        key: ACTION.RENAME,
+      });
+    }
+    if (canUpdate && isDraftVersion) {
+      baseMenu.push({
+        icon: <LightingIcon className={'text-primary'} />,
+        label: t('direction.markAsCompleted'),
+        key: ACTION.COMPLETE,
+      });
+    }
+
     if (canRead) {
       if (!isDraftVersion && !isExternalProject) {
         baseMenu.push({

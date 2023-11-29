@@ -13,7 +13,6 @@ import { onError, useToggle } from '@/utils';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService, SurveyService } from '@/services';
 import {
-  DuplicateSurveyVersionDto,
   EditSurveyBodyDto,
   GetListQuestionDto,
   IPaginationResponse,
@@ -98,7 +97,7 @@ interface ISurveyFormContext {
   handleFocusBlock: (value: SurveyDataTreeNode | undefined) => void;
   handleExpendTree: (expendKeys: React.Key[]) => void;
 
-  handleCloneSurveyVersion: (value: DuplicateSurveyVersionDto) => void;
+  handleCloneSurveyVersion: (value: IPostSurveyVersionBodyDto) => void;
 }
 
 const intValue: ISurveyFormContext = {
@@ -300,7 +299,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
 
   const updateSurveyMutation = useMutation(
     (data: IPutSurveyVersionBodyDtoExtendId) => {
-      return SurveyService.updateSurvey(data);
+      return SurveyService.updateSurveyVersion(data);
     },
     {
       onSuccess: async res => {
@@ -316,14 +315,16 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     },
   );
 
-  const duplicateSurveyMutation = useMutation(
-    (data: DuplicateSurveyVersionDto & { surveyId: string }) => {
-      return SurveyService.duplicateSurvey(data);
+  const duplicateSurveyVersionMutation = useMutation(
+    (data: IPostSurveyVersionBodyDto & { surveyId: string }) => {
+      return SurveyService.createSurveyVersion(data);
     },
     {
       onSuccess: async res => {
-        const newVersion = res.data.versions[0];
-        await onSuccess();
+        notification.success({
+          message: t('common.createSuccess'),
+        });
+        const newVersion = res.data;
 
         navigate(
           generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
@@ -339,12 +340,12 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   const [loading, toggleLoading] = useToggle();
 
   const handleCloneSurveyVersion = useCallback(
-    (value: DuplicateSurveyVersionDto) => {
+    (value: IPostSurveyVersionBodyDto) => {
       confirm({
         icon: null,
-        content: t('common.confirmCreateNewExternalSurveyVersion'),
+        content: t('common.confirmCloneSurveyVersion'),
         onOk() {
-          duplicateSurveyMutation.mutateAsync({
+          duplicateSurveyVersionMutation.mutateAsync({
             ...value,
             surveyId: params.surveyId as string,
           });
@@ -355,12 +356,12 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         },
       });
     },
-    [duplicateSurveyMutation, params.surveyId, t],
+    [duplicateSurveyVersionMutation, params.surveyId, t],
   );
 
   const actionLoading =
     mutationUploadExcelFile.isLoading ||
-    duplicateSurveyMutation.isLoading ||
+    duplicateSurveyVersionMutation.isLoading ||
     updateSurveyMutation.isLoading ||
     addSurveyVersionMutation.isLoading;
 
