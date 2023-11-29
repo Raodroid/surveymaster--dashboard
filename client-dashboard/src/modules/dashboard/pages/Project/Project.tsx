@@ -4,9 +4,9 @@ import { Navigate, Outlet, Route, Routes } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { ProjectContentWrapper } from './styles';
 import { DetailSurvey, SurveyManagement } from '@pages/Survey';
-import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
+import { useCheckScopeEntityDefault } from '@/modules/common';
 
-import { ProjectContent, AddProject, EditProject } from '@pages/Project';
+import { ProjectContent } from '@pages/Project';
 import { Layout } from 'antd';
 
 const { Content } = Layout;
@@ -44,14 +44,6 @@ const Project = () => {
               element={<SurveyManagement />}
             />
           )}
-          <Route
-            path={subRoute(PROJECT.PROJECT.ADD)}
-            element={<AddProject />}
-          />
-          <Route
-            path={subRoute(PROJECT.PROJECT.EDIT)}
-            element={<EditProject />}
-          />
           <Route
             path={subRoute(PROJECT.DETAIL_SURVEY.ROOT + '/*')}
             element={<DetailSurvey />}

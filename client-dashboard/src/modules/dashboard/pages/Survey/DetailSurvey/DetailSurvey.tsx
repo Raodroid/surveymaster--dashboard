@@ -7,11 +7,10 @@ export type projectSurveyParams = {
   projectId: string;
   surveyId: string;
 };
+const subRoute = (route: string) =>
+  route.replace(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, '');
 
 function DetailSurvey() {
-  const subRoute = (route: string) =>
-    route.replace(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, '');
-
   return (
     <Routes>
       <Route path="/" element={<SurveyForm />} />

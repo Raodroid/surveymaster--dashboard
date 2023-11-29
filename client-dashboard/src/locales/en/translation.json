@@ -20,6 +20,13 @@
     "foods": "Foods"
   },
   "common": {
+    "rename": "Rename",
+    "confirm": "Confirm",
+    "info": "Info",
+    "countMore": "+ {{count}} More",
+    "projectInfo": "Project Information",
+    "createProject": "Create Project",
+    "addProject": "Add Project",
     "duplicateBlock": "Duplicate Block",
     "deleteBlock": "Delete Block",
     "condition": "Condition",

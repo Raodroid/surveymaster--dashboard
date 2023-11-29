@@ -13,15 +13,11 @@ export const ROUTE_PATH = {
       ROOT: '/app/project',
       SURVEY: '/app/project/:projectId',
       // ADD_NEW_SURVEY: '/app/project/:projectId/add-survey',
-      PROJECT: {
-        ADD: '/app/project/add-project',
-        EDIT: '/app/project/:projectId/edit-project',
-      },
+
       DETAIL_SURVEY: {
         ROOT: '/app/project/:projectId/:surveyId',
         EDIT: '/app/project/:projectId/:surveyId/edit',
         HISTORY: '/app/project/:projectId/:surveyId/action-history',
-        REMARKS: '/app/project/:projectId/:surveyId/remarks',
       },
     },
     QUESTION_BANK: {

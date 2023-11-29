@@ -29,8 +29,8 @@ const initValue: CreateSurveyBodyDto = {
     status: SurveyVersionStatus.DRAFT,
   },
 };
-const SurveyModal: FC<IModal> = props => {
-  const { open, toggleOpen } = props;
+const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
+  const { open, toggleOpen, mode } = props;
   const { t } = useTranslation();
   const params = useParams<{ projectId?: string; surveyId?: string }>();
   const navigate = useNavigate();
@@ -143,20 +143,30 @@ const SurveyModal: FC<IModal> = props => {
                   inputType={INPUT_TYPES.INPUT}
                   name="version.name"
                   label={t('common.title')}
+                  className={mode === 'view' ? 'view-mode' : undefined}
                 />
-
+                <ControlledInput
+                  inputType={INPUT_TYPES.INPUT}
+                  name="version.displayId"
+                  label={t(`common.displayId`)}
+                  className={mode === 'view' ? 'view-mode' : undefined}
+                />
                 <ControlledInput
                   inputType={INPUT_TYPES.TEXTAREA}
                   name="version.remark"
                   label={t(`common.remark`)}
+                  className={mode === 'view' ? 'view-mode' : undefined}
                 />
-                <Button
-                  type={'primary'}
-                  className="secondary-btn w-full"
-                  htmlType="submit"
-                >
-                  {t('common.createSurvey')}
-                </Button>
+                {mode === 'create' && (
+                  <Button
+                    size={'large'}
+                    type={'primary'}
+                    className="secondary-btn w-full"
+                    htmlType="submit"
+                  >
+                    {t('common.createSurvey')}
+                  </Button>
+                )}
               </Form>
             </>
           )}

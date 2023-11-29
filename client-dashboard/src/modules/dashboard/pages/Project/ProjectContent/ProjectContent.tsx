@@ -1,11 +1,12 @@
 import { ProjectHeader, ProjectTable } from '@pages/Project';
-import { Radio } from 'antd';
 import { useParseQueryString } from '@/hooks';
 import { ProjectTypes } from '@/type';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { useCheckScopeEntityDefault } from '@/modules/common';
 import { EntityEnum } from '@/enums';
+import { useCallback } from 'react';
+import { CustomTab } from '@/customize-components';
 
 const options = [
   { label: 'All', value: 'All' },
@@ -19,41 +20,24 @@ const ProjectContent = () => {
   const location = useLocation();
   const { canCreate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
 
+  const handleChangeTab = useCallback(
+    e => navigate(`${location.pathname}?type=${e.target.value}`),
+    [location.pathname, navigate],
+  );
+
   return (
     <div className="w-full h-full flex flex-col">
       <ProjectHeader showSearch showAddProjectBtn={canCreate} />
-      <Radio.Group
-        onChange={e =>
-          navigate(`${location.pathname}?type=${e.target.value}`, {
-            replace: true,
-          })
-        }
+      <CustomTab
+        onChange={handleChangeTab}
         value={
           !queryParams.type || queryParams.type === 'All'
             ? 'All'
             : ProjectTypes[queryParams.type]
         }
         size={'large'}
-        optionType="button"
-        buttonStyle="solid"
-        className={'w-full flex'}
-      >
-        {options.map((i, idx) => (
-          <Radio.Button
-            key={i.value}
-            value={i.value}
-            className={`flex-1 text-center ${
-              idx === 0
-                ? '!border-l-0'
-                : idx === options.length - 1
-                ? 'border-r-0'
-                : ''
-            }`}
-          >
-            {i.label}
-          </Radio.Button>
-        ))}
-      </Radio.Group>
+        options={options}
+      />
       <ProjectTable />
     </div>
   );

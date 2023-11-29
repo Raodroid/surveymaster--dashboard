@@ -16,21 +16,24 @@ const RoundedSelectWrapper: React.FunctionComponent<IRoundedSelect> = styled(
     border-color: ${p => (p.color ? p.color : templateVariable.primary_color)};
     color: ${p => (p.color ? p.color : templateVariable.primary_color)};
   }
+
   &.ant-select .ant-select-selector .ant-select-selection-item {
     color: inherit;
     font-weight: 600;
   }
+
   .ant-select-arrow .anticon > svg {
     display: none;
   }
+
   .ant-select-arrow .anticon:after {
     content: '';
     width: 11px;
     height: 6px;
     background-color: ${p =>
       p.color ? p.color : templateVariable.primary_color};
-    -webkit-mask-image: url(/src/assets/Icons/Arrow-pink.svg);
-    mask-image: url(/src/assets/Icons/Arrow-pink.svg);
+    -webkit-mask-image: url(/assets/icons/Arrow-pink.svg);
+    mask-image: url(/assets/icons/Arrow-pink.svg);
   }
 `;
 

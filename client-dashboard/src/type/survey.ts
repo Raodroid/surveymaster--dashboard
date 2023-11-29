@@ -222,10 +222,10 @@ export enum surveyActionType {
 }
 
 export interface ISurveyRemark {
-  createdAt: string;
-  createdBy: string;
-  updatedAt: string;
-  deletedAt: string;
+  createdAt?: string;
+  createdBy?: string;
+  updatedAt?: string;
+  deletedAt?: string;
   id: string;
   questionId: string;
   owner: UserPayload;

@@ -1,22 +1,15 @@
-import React, { Fragment, ReactNode, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,
-  SurveyBriefDetail,
   SurveyVersionRemarkButton,
-  SurveyVersionSelect,
   useSurveyFormContext,
 } from '@pages/Survey';
-import { Divider, Modal, notification, Spin } from 'antd';
-import {
-  IGetParams,
-  IOptionItem,
-  ISurveyVersion,
-  SurveyVersionStatus,
-} from '@/type';
+import { Modal, notification, Spin } from 'antd';
+import { IGetParams, ISurveyVersion } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { EntityEnum, MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
+import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
 import { onError, saveBlob, useToggle } from '@/utils';
@@ -27,10 +20,8 @@ import {
   ACTION,
   ActionThreeDropDown,
 } from './SurveyVersionActionThreeDropdown';
-import { Link } from 'react-router-dom';
-import { Clock, PenFilled } from '@/icons';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
-import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
+import { IBreadcrumbItem } from '@/modules/common';
 
 const { confirm } = Modal;
 
@@ -67,63 +58,27 @@ const ViewModeHeader = () => {
     ],
   );
 
-  const { t } = useTranslation();
-
-  const surveyRoutes = useMemo<IOptionItem[]>(
-    () => [
-      {
-        label: t('common.surveyId'),
-        value: survey.currentSurveyVersion?.displayId || '',
-      },
-      {
-        label: t('common.creationDate'),
-        value: moment(survey.currentSurveyVersion?.createdAt).format(
-          MOMENT_FORMAT.DOB,
-        ),
-      },
-    ],
-    [
-      survey.currentSurveyVersion?.createdAt,
-      survey.currentSurveyVersion?.displayId,
-      t,
-    ],
-  );
-
   return (
     <>
-      <ProjectHeader RightMenu={<RightMenu />} routes={routes} />
-      <SurveyBriefDetail routes={surveyRoutes} />
+      <ProjectHeader
+        RightMenu={<RightMenu />}
+        routes={routes}
+        showDetailSurveyBtn
+        showSurveyVersions
+      />
     </>
   );
 };
 
 export default ViewModeHeader;
 
-const genLink = (
-  input: string,
-  version?: string,
-  params?: Readonly<Partial<projectSurveyParams>>,
-) => {
-  return `${generatePath(input, {
-    projectId: params?.projectId,
-    surveyId: params?.surveyId,
-  })}?version=${version}`;
-};
-
 const RightMenu = () => {
   const { t } = useTranslation();
-  const { canUpdate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
   const qsParams = useParseQueryString<IGetParams & { version?: string }>();
   const params = useParams<projectSurveyParams>();
   const { survey, handleCloneSurveyVersion } = useSurveyFormContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
-    ver => ({
-      label: ver.displayId,
-      value: ver?.id || '',
-    }),
-  );
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -229,6 +184,24 @@ const RightMenu = () => {
     [handleCloneSurveyVersion],
   );
 
+  const handleShowChangeLog = useCallback(() => {
+    navigate(
+      generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.HISTORY, {
+        projectId: params.projectId,
+        surveyId: params.surveyId,
+      }),
+    );
+  }, [navigate, params.projectId, params.surveyId]);
+
+  const handleEdit = useCallback(() => {
+    navigate(
+      `${generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
+        projectId: params.projectId,
+        surveyId: params.surveyId,
+      })}?version=${qsParams.version}`,
+    );
+  }, [navigate, params.projectId, params.surveyId, qsParams.version]);
+
   const tableActions = useMemo<keysAction<ISurveyVersion>>(
     () => [
       {
@@ -248,71 +221,30 @@ const RightMenu = () => {
         key: ACTION.CLONE,
         action: handleCLone,
       },
+      {
+        key: ACTION.SHOW_CHANGE_LOG,
+        action: handleShowChangeLog,
+      },
+      {
+        key: ACTION.EDIT,
+        action: handleEdit,
+      },
     ],
-    [handleCLone, handleComplete, handleDelete, handleExport],
+    [
+      handleEdit,
+      handleCLone,
+      handleComplete,
+      handleDelete,
+      handleExport,
+      handleShowChangeLog,
+    ],
   );
 
   const { handleSelect, selectedRecord } =
     useSelectTableRecord<ISurveyVersion>(tableActions);
 
-  const items = useMemo<
-    { icon: ReactNode; label: string; href: string }[]
-  >(() => {
-    let base = [
-      {
-        label: t('common.surveyChangeLog'),
-        icon: <Clock />,
-        href: genLink(
-          ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.HISTORY,
-          qsParams?.version,
-          params,
-        ),
-      },
-    ];
-    if (
-      canUpdate &&
-      survey.currentSurveyVersion?.status !== SurveyVersionStatus.COMPLETED
-    ) {
-      base = [
-        {
-          label: t('common.editSurvey'),
-          icon: <PenFilled />,
-          href: genLink(
-            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
-            qsParams?.version,
-            params,
-          ),
-        },
-        ...base,
-      ];
-    }
-    return base;
-  }, [
-    canUpdate,
-    params,
-    qsParams?.version,
-    survey.currentSurveyVersion?.status,
-    t,
-  ]);
-
   return (
     <div className={'flex items-center'}>
-      <SurveyVersionSelect
-        value={survey.currentSurveyVersion?.id}
-        options={versions}
-      />
-      <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
-      {items.map(i => {
-        return (
-          <Fragment key={i.href}>
-            <Link to={i.href} className={'flex items-center gap-2'}>
-              {i.icon}
-              <span className={'text-[1rem] font-semibold'}> {i.label}</span>
-            </Link>
-            <Divider type="vertical" style={{ margin: '0 16px', height: 8 }} />
-          </Fragment>
-        );
-      })}
       <SurveyVersionRemarkButton />
       {survey.currentSurveyVersion && (
         <Spin

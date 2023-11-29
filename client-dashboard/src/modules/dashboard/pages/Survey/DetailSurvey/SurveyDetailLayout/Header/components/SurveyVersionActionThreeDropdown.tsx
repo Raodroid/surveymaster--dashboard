@@ -12,18 +12,22 @@ import { useGetProjectByIdQuery } from '@pages/Project';
 import { useCheckScopeEntityDefault } from '@/modules/common';
 import { SCOPE_CONFIG } from '@/enums';
 import {
+  Clock,
   DownloadIcon,
   DuplicateIcon,
   LightingIcon,
+  PenFilled,
   TrashOutlined,
 } from '@/icons';
 import { ThreeDotsDropdown } from '@/customize-components';
 
 const ACTION = {
+  EDIT: 'EDIT',
   COMPLETE: 'COMPLETE',
   EXPORT: 'EXPORT',
   DELETE: 'DELETE',
   CLONE: 'CLONE',
+  SHOW_CHANGE_LOG: 'SHOW_CHANGE_LOG',
 } as const;
 
 const ActionThreeDropDown: FC<
@@ -58,6 +62,11 @@ const ActionThreeDropDown: FC<
         label: t('direction.markAsCompleted'),
         key: ACTION.COMPLETE,
       });
+      baseMenu.push({
+        icon: <PenFilled className={'text-primary'} />,
+        label: t('common.editSurvey'),
+        key: ACTION.EDIT,
+      });
     }
     if (canRead) {
       if (!isDraftVersion && !isExternalProject) {
@@ -74,6 +83,11 @@ const ActionThreeDropDown: FC<
         key: ACTION.DELETE,
       });
     }
+    baseMenu.push({
+      icon: <Clock className={'text-primary'} />,
+      label: t('common.showChangeLog'),
+      key: ACTION.SHOW_CHANGE_LOG,
+    });
     return baseMenu;
   }, [canRead, canUpdate, isDraftVersion, isExternalProject, t]);
 
