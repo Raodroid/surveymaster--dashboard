@@ -164,12 +164,14 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
                   label={t('common.title')}
                   className={mode === 'view' ? 'view-mode' : undefined}
                 />
-                <ControlledInput
-                  inputType={INPUT_TYPES.INPUT}
-                  name="displayId"
-                  label={t(`common.displayId`)}
-                  className={mode === 'view' ? 'view-mode' : undefined}
-                />
+                {mode === 'view' && (
+                  <ControlledInput
+                    inputType={INPUT_TYPES.INPUT}
+                    name="displayId"
+                    label={t(`common.displayId`)}
+                    className={'view-mode'}
+                  />
+                )}
                 {mode === 'create' && (
                   <ControlledInput
                     inputType={INPUT_TYPES.TEXTAREA}
