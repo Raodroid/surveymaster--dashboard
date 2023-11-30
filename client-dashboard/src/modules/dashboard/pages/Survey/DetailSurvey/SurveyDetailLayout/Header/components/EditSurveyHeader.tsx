@@ -1,14 +1,12 @@
 import { Button, Divider, Modal } from 'antd';
 import {
   IEditSurveyFormValues,
+  projectSurveyParams,
   SurveyFormSubmitButton,
   SurveyVersionRemarkButton,
   SurveyVersionSelect,
   useSurveyFormContext,
-  projectSurveyParams,
 } from '@pages/Survey';
-import { IOptionItem } from '@/type';
-import { PlayIcon } from '@/icons';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/enums';
@@ -22,12 +20,6 @@ const EditSurveyHeader = () => {
   const params = useParams<projectSurveyParams>();
   const { survey } = useSurveyFormContext();
   const { resetForm, dirty } = useFormikContext<IEditSurveyFormValues>();
-  const versions: IOptionItem[] = (survey.surveyData?.versions || [])?.map(
-    ver => ({
-      label: ver.displayId,
-      value: ver?.id || '',
-    }),
-  );
 
   const navigate = useNavigate();
   const handleCancel = useCallback(() => {
@@ -69,7 +61,7 @@ const EditSurveyHeader = () => {
 
         <SurveyVersionSelect
           value={survey.currentSurveyVersion?.id}
-          options={versions}
+          versions={survey.surveyData?.versions}
         />
 
         <ViewSurveyButton />

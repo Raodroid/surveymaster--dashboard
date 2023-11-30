@@ -8,7 +8,7 @@ import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath } from 'react-router';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   ActionThreeDropDownType,
   IGetParams,
@@ -54,7 +54,6 @@ const getProjects = (params: ProjectQueryParam) => {
 
 function ProjectTable() {
   const wrapperRef = useRef<any>();
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const qsParams = useParseQueryString<
     QsParams & { type: ProjectTypes | 'All' }
@@ -188,16 +187,17 @@ function ProjectTable() {
         title: 'ID',
         dataIndex: 'displayId',
         key: 'id',
+        width: 150,
         render: (value, record) => {
           if (record.deletedAt) {
-            return <span>{value}</span>;
+            return value;
           }
           const queryParams = qs.stringify({
             isDeleted: false,
           });
           return (
             <Link
-              className={'font-semibold'}
+              className={'font-semibold text-[12px]'}
               to={`${generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
                 projectId: record.id,
               })}?${queryParams}`}
@@ -211,6 +211,7 @@ function ProjectTable() {
         title: 'Type',
         dataIndex: 'type',
         key: 'id',
+        width: 60,
         render: value =>
           value === ProjectTypes.INTERNAL ? (
             <InternalIcon className={'text-primary'} />
@@ -222,13 +223,13 @@ function ProjectTable() {
         title: t('common.projectTitle'),
         dataIndex: 'name',
         key: 'name',
-        render: (_, record) => (
+        render: (value, record) => (
           <Tooltip
-            title={record.description}
+            title={`${t('common.description')}: ${record.description}`}
             placement={'right'}
-            color={'pink'}
+            className={'cursor-pointer'}
           >
-            {_}
+            <span className={'text-[12px]'}>{value}</span>
           </Tooltip>
         ),
       },
@@ -236,6 +237,7 @@ function ProjectTable() {
         title: t('common.numberOfSurveys'),
         dataIndex: 'numberOfSurveys',
         key: 'numberOfSurveys',
+        width: 150,
       },
       {
         title: t('common.personInCharge'),
@@ -248,6 +250,7 @@ function ProjectTable() {
         title: t('common.dateOfCreation'),
         dataIndex: 'createdAt',
         key: 'createdAt',
+        width: 150,
         render: (text: string) => {
           const str = text.toString();
           return <div>{str.slice(0, 10)}</div>;

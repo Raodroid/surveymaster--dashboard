@@ -1,21 +1,34 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { RoundedSelect } from '@/customize-components';
 import { SelectProps } from 'antd/lib/select';
 import { useNavigate } from 'react-router';
 import qs from 'qs';
 import { useParseQueryString } from '@/hooks';
-import { IGetParams } from '@/type';
+import {
+  ActionThreeDropDownType,
+  IGetParams,
+  IMenuItem,
+  IProject,
+  ISurveyVersion,
+  QsParams,
+  SurveyVersionStatus,
+} from '@/type';
 import { useCheckSurveyFormMode } from '@pages/Survey';
 import { useFormikContext } from 'formik';
 import { Modal } from 'antd';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { useCheckScopeEntityDefault } from '@/modules/common';
+import { EntityEnum } from '@/enums';
+import { PenFilled, Refresh, TrashOutlined } from '@/icons';
+import ThreeDotsDropdown from '../../../../../../customize-components/ThreeDotsDropdown';
+
 const { confirm } = Modal;
 
 const SurveyVersionSelect: FC<{
-  options: SelectProps['options'];
+  versions?: ISurveyVersion[];
   value: SelectProps['value'];
 }> = props => {
-  const { options, value } = props;
+  const { versions = [], value } = props;
   const qsParams = useParseQueryString<IGetParams & { version?: string }>();
   const navigate = useNavigate();
   const { isEditMode } = useCheckSurveyFormMode();
@@ -52,6 +65,22 @@ const SurveyVersionSelect: FC<{
     },
     [dirty, handleDirect, isEditMode],
   );
+  const options: SelectProps['options'] = (versions || [])?.map(ver => {
+    const color =
+      ver.status === SurveyVersionStatus.COMPLETED ? '#00AB00' : '#007AE7';
+    return {
+      label: (
+        <div className={'flex gap-3 it items-center'}>
+          <span
+            className={'w-[8px] h-[8px] rounded-full'}
+            style={{ background: color }}
+          />
+          {ver.displayId}
+        </div>
+      ),
+      value: ver?.id || '',
+    };
+  });
 
   return (
     <RoundedSelect
@@ -64,3 +93,65 @@ const SurveyVersionSelect: FC<{
 };
 
 export default SurveyVersionSelect;
+//
+// const ACTION = {
+//   MARK_AS_COMPLETE: 'MARK_AS_COMPLETE',
+//   EDIT_VERSION: 'EDIT_VERSION',
+//   DUPLICATE: 'DUPLICATE',
+//   DELETE: 'DELETE',
+//   EXPORT: 'EXPORT',
+// } as const;
+//
+// const ActionThreeDropDown: FC<ActionThreeDropDownType<IProject>> = props => {
+//   const { record, handleSelect } = props;
+//   const { t } = useTranslation();
+//   const qsParams = useParseQueryString<QsParams>();
+//
+//   const { canDelete, canRestore, canUpdate } = useCheckScopeEntityDefault(
+//     EntityEnum.PROJECT,
+//   );
+//
+//   const items = useMemo<IMenuItem[]>(() => {
+//     const baseMenu: IMenuItem[] = [];
+//
+//     if (qsParams.isDeleted) return baseMenu;
+//
+//     if (canUpdate) {
+//       baseMenu.push({
+//         key: ACTION.EDIT,
+//         icon: <PenFilled className={'text-primary'} />,
+//         label: <label className={''}> {t('common.editProject')}</label>,
+//       });
+//     }
+//     if (canDelete && !record?.deletedAt) {
+//       baseMenu.push({
+//         key: ACTION.DELETE,
+//         icon: <TrashOutlined className={'text-primary'} />,
+//         label: <label className={''}> {t('common.deleteProject')}</label>,
+//       });
+//     }
+//     if (canRestore && record?.deletedAt) {
+//       baseMenu.push({
+//         key: ACTION.RESTORE,
+//         icon: <Refresh />,
+//         label: <label className={''}> {t('common.restoreProject')}</label>,
+//       });
+//     }
+//
+//     return baseMenu;
+//   }, [
+//     canDelete,
+//     canRestore,
+//     canUpdate,
+//     qsParams.isDeleted,
+//     record?.deletedAt,
+//     t,
+//   ]);
+//
+//   return (
+//     <ThreeDotsDropdown
+//       onChooseItem={key => handleSelect({ key, record })}
+//       items={items}
+//     />
+//   );
+// };

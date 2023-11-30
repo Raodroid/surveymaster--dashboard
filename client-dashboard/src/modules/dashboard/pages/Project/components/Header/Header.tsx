@@ -11,7 +11,7 @@ import React, {
   useState,
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IGetParams, IOptionItem } from '@/type';
+import { IGetParams } from '@/type';
 
 import {
   IBreadcrumbItem,
@@ -19,7 +19,7 @@ import {
   useCheckScopeEntityDefault,
 } from '@/modules/common';
 import { EntityEnum, ROUTE_PATH } from '@/enums';
-import AddSurveyButton from './AddSurveyButton';
+import AddSurveyButton from '../../../Survey/SurveyModal/AddSurveyButton';
 import ViewProjectDetailButton from '../ProjectModal/ViewProjectDetailButton';
 import EditProjectButton from '../ProjectModal/EditProjectButton';
 import AddProjectButton from '../ProjectModal/AddProjectButton';
@@ -60,23 +60,6 @@ const ProjectHeader: FC<IProjectHeader> = props => {
   const { canCreate: canCreateSurvey } = useCheckScopeEntityDefault(
     EntityEnum.SURVEY,
   );
-  const params = useParams<projectSurveyParams>();
-
-  const { surveyData, currentSurveyVersion } = useGetSurveyById(
-    params.surveyId,
-  );
-
-  const versions: IOptionItem[] = (surveyData?.versions || [])?.map(ver => ({
-    label: ver.displayId,
-    value: ver?.id || '',
-  }));
-
-  const searchRef = useRef<InputRef>(null);
-  const [searchInput, setSearchInput] = useState('');
-
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const qsParams = useParseQueryString<IGetParams>();
 
   const base = [
     {
@@ -87,23 +70,6 @@ const ProjectHeader: FC<IProjectHeader> = props => {
 
   if (routes) base.push(...routes);
 
-  useEffect(() => {
-    if (qsParams.q) setSearchInput(qsParams.q);
-  }, [qsParams]);
-
-  const handleSearch = useCallback(() => {
-    navigate(
-      pathname +
-        '?' +
-        qs.stringify({
-          ...qsParams,
-          q: searchRef.current?.input?.value,
-          page: 1,
-        }),
-      { replace: true },
-    );
-  }, [navigate, pathname, qsParams]);
-
   return (
     <>
       <div>
@@ -112,10 +78,7 @@ const ProjectHeader: FC<IProjectHeader> = props => {
           {showSurveyVersions && (
             <>
               <Divider type="vertical" className={'h-[8px]'} />
-              <SurveyVersionSelect
-                value={currentSurveyVersion?.id}
-                options={versions}
-              />
+              <VersionSelect />
             </>
           )}
           <div className={'flex-1 flex items-center'}>
@@ -137,18 +100,7 @@ const ProjectHeader: FC<IProjectHeader> = props => {
 
           {showSearch && (
             <>
-              <Form className="flex w-[200px]" onFinish={handleSearch}>
-                <Input
-                  placeholder={'Search...'}
-                  ref={searchRef}
-                  value={searchInput}
-                  onChange={e => setSearchInput(e.target.value)}
-                  allowClear
-                  aria-label={'search survey'}
-                  prefix={<SearchIcon />}
-                  size={'large'}
-                />
-              </Form>
+              <SearchInput />
 
               <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
 
@@ -164,3 +116,60 @@ const ProjectHeader: FC<IProjectHeader> = props => {
 };
 
 export default ProjectHeader;
+
+const VersionSelect = () => {
+  const params = useParams<projectSurveyParams>();
+
+  const { surveyData, currentSurveyVersion } = useGetSurveyById(
+    params.surveyId,
+  );
+
+  return (
+    <SurveyVersionSelect
+      value={currentSurveyVersion?.id}
+      versions={surveyData?.versions}
+    />
+  );
+};
+
+const SearchInput = () => {
+  const searchRef = useRef<InputRef>(null);
+  const [searchInput, setSearchInput] = useState('');
+
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const qsParams = useParseQueryString<IGetParams>();
+
+  const handleSearch = useCallback(() => {
+    navigate(
+      pathname +
+        '?' +
+        qs.stringify({
+          ...qsParams,
+          q: searchRef.current?.input?.value,
+          page: 1,
+        }),
+      { replace: true },
+    );
+  }, [navigate, pathname, qsParams]);
+
+  useEffect(() => {
+    if (qsParams.q) setSearchInput(qsParams.q);
+  }, [qsParams]);
+
+  return (
+    <Form className="flex w-[200px]" onFinish={handleSearch}>
+      <Input
+        placeholder={'Search...'}
+        ref={searchRef}
+        value={searchInput}
+        onChange={e => setSearchInput(e.target.value)}
+        allowClear
+        aria-label={'search survey'}
+        prefix={<SearchIcon />}
+        size={'large'}
+      />
+    </Form>
+  );
+};

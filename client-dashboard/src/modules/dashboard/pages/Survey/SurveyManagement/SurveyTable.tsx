@@ -14,7 +14,7 @@ import moment from 'moment';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { generatePath, useNavigate, useParams } from 'react-router';
+import { generatePath, useParams } from 'react-router';
 import { SurveyService } from 'services';
 import SimpleBar from 'simplebar-react';
 import {
@@ -39,6 +39,7 @@ import {
   createDuplicateSurveyVersionName,
   SurveyRenameModal,
 } from '@pages/Survey';
+import { Link } from 'react-router-dom';
 
 const { confirm } = Modal;
 
@@ -51,7 +52,6 @@ const initParams: IGetParams = {
 
 function SurveyTable() {
   const params = useParams<{ projectId: string }>();
-  const navigate = useNavigate();
   const qsParams = useParseQueryString<QsParams>();
   const { t } = useTranslation();
   const handleNavigate = useHandleNavigate(initParams);
@@ -201,6 +201,28 @@ function SurveyTable() {
         title: 'ID',
         dataIndex: 'displayId',
         key: 'displayId',
+        width: 150,
+        render: (value, record) => {
+          if (record.deletedAt) {
+            return value;
+          }
+          return (
+            <Link
+              className={'font-semibold text-[12px]'}
+              to={
+                generatePath(
+                  ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
+                  {
+                    projectId: params?.projectId,
+                    surveyId: record.id,
+                  },
+                ) + `?version=${record.latestVersion?.displayId}`
+              }
+            >
+              {value}
+            </Link>
+          );
+        },
       },
       {
         title: t('common.surveyTitle'),
@@ -211,6 +233,7 @@ function SurveyTable() {
         title: t('common.creationDate'),
         dataIndex: 'createdAt',
         key: 'createdAt',
+        width: 150,
         render: (text: Date) => {
           return text
             ? moment(text).format(MOMENT_FORMAT.FULL_DATE_FORMAT)
@@ -258,27 +281,6 @@ function SurveyTable() {
     [handleSelect, t],
   );
 
-  const onRow = useMemo(
-    () =>
-      qsParams.isDeleted === 'true'
-        ? undefined
-        : record => {
-            return {
-              onClick: () =>
-                navigate(
-                  generatePath(
-                    ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
-                    {
-                      projectId: params?.projectId,
-                      surveyId: record.id,
-                    },
-                  ) + `?version=${record.latestVersion.displayId}`,
-                ),
-            };
-          },
-    [navigate, params?.projectId, qsParams.isDeleted],
-  );
-
   return (
     <>
       <div className="h-full w-full p-2 relative overflow-hidden">
@@ -288,7 +290,6 @@ function SurveyTable() {
               rowClassName={'pointer'}
               dataSource={surveys}
               columns={columns}
-              onRow={onRow}
               pagination={false}
               rowKey={record => record.id as string}
               scroll={{ x: 800 }}

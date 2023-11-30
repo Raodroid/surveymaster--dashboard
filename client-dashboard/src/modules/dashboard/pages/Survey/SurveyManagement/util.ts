@@ -17,7 +17,7 @@ export const useGetSurveyById = (
   const qsParams = useParseQueryString<{ version?: string }>();
 
   const { data, isLoading } = useQuery(
-    ['getSurveyById', id],
+    ['getSurveyById', id, qsParams.version],
     () => SurveyService.getSurveyById(id),
     {
       onError,

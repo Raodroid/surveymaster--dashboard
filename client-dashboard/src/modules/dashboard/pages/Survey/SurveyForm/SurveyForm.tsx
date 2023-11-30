@@ -33,7 +33,7 @@ const SurveyFormContent = () => {
           ? SURVEY_EXTERNAL_FORM_SCHEMA
           : SURVEY_INTERNAL_FORM_SCHEMA
       }
-      enableReinitialize={true}
+      enableReinitialize
     >
       {({ handleSubmit }) => (
         <Form

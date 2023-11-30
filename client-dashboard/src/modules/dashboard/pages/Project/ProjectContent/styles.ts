@@ -16,23 +16,6 @@ export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
     }
   }
 
-  .ant-table {
-    .ant-table-cell {
-      padding: 6px 10px;
-      a,
-      span,
-      div {
-        font-size: 12px;
-        color: var(--text-color);
-      }
-      .dots-container {
-        color: var(--ant-primary-color);
-      }
-    }
-    table {
-      border-spacing: 0;
-    }
-  }
   .ant-table-header {
     overflow: unset !important;
   }
