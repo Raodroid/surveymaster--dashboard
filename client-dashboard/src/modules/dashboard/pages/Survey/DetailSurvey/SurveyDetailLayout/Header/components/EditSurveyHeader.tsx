@@ -60,7 +60,7 @@ const EditSurveyHeader = () => {
         </h3>
 
         <SurveyVersionSelect
-          value={survey.currentSurveyVersion?.id}
+          value={survey.currentSurveyVersion?.displayId}
           versions={survey.surveyData?.versions}
         />
 

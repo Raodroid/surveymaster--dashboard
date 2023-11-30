@@ -71,7 +71,7 @@ export interface PaginationResponse<T> {
 }
 
 export interface IOptionItem {
-  label: string;
+  label: string | ReactNode;
   value: string;
 }
 

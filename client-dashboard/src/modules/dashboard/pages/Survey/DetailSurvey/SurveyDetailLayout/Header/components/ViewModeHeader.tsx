@@ -113,7 +113,6 @@ const RightMenu = () => {
     },
     {
       onSuccess: async () => {
-        await queryClient.invalidateQueries('getSurveys');
         await queryClient.invalidateQueries('getSurveyById');
         notification.success({ message: t('common.updateSuccess') });
         navigate(
@@ -179,6 +178,7 @@ const RightMenu = () => {
     },
     [completeMutation, t],
   );
+
   const handleCLone = useCallback(
     (record: ISurveyVersion) => {
       if (!record?.id) return;

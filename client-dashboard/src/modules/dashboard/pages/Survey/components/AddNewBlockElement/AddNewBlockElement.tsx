@@ -59,6 +59,7 @@ const AddNewBlockElement: FC<{
       blockSort: number;
       fieldName: string;
       key: string;
+      blockDescription: string;
     } => {
       if (isRootPath(currentFieldName, value)) {
         const blockIndex = values?.version?.surveyFlowElements?.length || 0;
@@ -67,6 +68,7 @@ const AddNewBlockElement: FC<{
           blockSort: blockIndex + 1,
           fieldName,
           key: fieldName,
+          blockDescription: `Block ${blockIndex + 1}`,
         };
       }
       const x = calcLevelNodeByFieldName(currentFieldName);
@@ -76,6 +78,7 @@ const AddNewBlockElement: FC<{
           blockSort: 1,
           fieldName: `${rootSurveyFlowElementFieldName}.children[0]`,
           key: `${rootSurveyFlowElementFieldName}.children[0]`,
+          blockDescription: `Block 1`,
         };
 
       const preFix = x?.map(i => Number(i.match(/[0-9]/g)?.[0]) + 1).join('');
@@ -83,10 +86,20 @@ const AddNewBlockElement: FC<{
       const blockIndex = Number(preFix + (value?.children || []).length);
       const fieldName =
         currentFieldName + `.children[${(value?.children || []).length}]`;
+
+      const blockDescription = fieldName
+        .match(/([0-9]+)/gm)
+        ?.reduce(
+          (res, i, idx, arr) =>
+            `${res} ${i} ${idx === arr.length - 1 ? '' : '/'}`,
+          'Block ',
+        );
+
       return {
         blockSort: blockIndex + 1,
         fieldName,
         key: fieldName,
+        blockDescription: blockDescription || '',
       };
     },
     [value, values?.version?.surveyFlowElements?.length],
@@ -162,7 +175,7 @@ const AddNewBlockElement: FC<{
           icon={<PlusOutLinedIcon />}
         >
           <span className={'text-white font-semibold'}>
-            {t('common.addBlock')}
+            {t('common.addNewElement')}
           </span>
         </Button>
       </Dropdown>

@@ -42,3 +42,4 @@ export * from './DownloadIcon';
 export * from './PlayIcon';
 export * from './LightingIcon';
 export * from './DuplicateChatIcon';
+export * from './NewVersionIcon';

@@ -20,6 +20,11 @@
     "foods": "Foods"
   },
   "common": {
+    "addNewElement": "Add New Element",
+    "deleteDraft": "Delete Draft",
+    "deleteVersion": "Delete Version",
+    "editVersion": "Edit Version",
+    "duplicateAndStartNewVersion": "Duplicate And Start New Version",
     "surveyInfo": "Survey Info",
     "displayId": "Display ID",
     "rename": "Rename",
@@ -521,6 +526,7 @@
     }
   },
   "direction": {
+    "removeConditionRow": "Remove current condition row",
     "warningLostData": "Your changes could not be saved when you switch version of survey! <br/> Are you sure to leave the current page?",
     "confirmDiscardChange": "Are you sure discard the change?",
     "emptyElementError": "Survey element can not be empty!",

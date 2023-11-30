@@ -9,7 +9,7 @@ import {
   EmptyString,
   IOptionGroupItem,
 } from '@/type';
-import { Button, Divider, Empty } from 'antd';
+import { Button, Divider, Empty, Tooltip } from 'antd';
 import { objectKeys, transformEnumToOption } from '@/utils';
 import EmbeddedBlockChoice from './EmbeddedBlockChoice/EmbeddedBlockChoice';
 import QuestionChoice, {
@@ -120,13 +120,18 @@ const Branch: FC<QuestionBlockProps> = props => {
                         />
 
                         {!isViewMode && (
-                          <Button
-                            size={'small'}
-                            className={'px-2'}
-                            type={'text'}
-                            onClick={() => remove(index)}
-                            icon={<TrashOutlined />}
-                          />
+                          <Tooltip
+                            title={t('direction.removeConditionRow')}
+                            placement={'bottom'}
+                          >
+                            <Button
+                              size={'small'}
+                              className={'px-2'}
+                              type={'text'}
+                              onClick={() => remove(index)}
+                              icon={<TrashOutlined />}
+                            />
+                          </Tooltip>
                         )}
                       </div>
                       <Divider className={'mt-0'} />

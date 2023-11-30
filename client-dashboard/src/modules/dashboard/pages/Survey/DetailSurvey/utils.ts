@@ -67,6 +67,7 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
 
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
+
   const { setSurveyFormContext } = useSurveyFormContext();
 
   const [{ value }] = useField<SurveyDataTreeNode>(fieldName);

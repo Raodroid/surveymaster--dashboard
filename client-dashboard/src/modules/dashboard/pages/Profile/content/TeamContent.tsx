@@ -248,66 +248,6 @@ function TeamContent() {
             handleSelect={handleSelect}
             profile={profile}
           />
-          // <ThreeDotsDropdown
-          //   overlay={
-          //     <DropDownMenuStyled>
-          //       {!record.deletedAt && canUpdate ? (
-          //         <Menu.Item
-          //           key="editPreferences"
-          //           disabled={!isAdminRole}
-          //           onClick={() => {
-          //             handleEditPreferences(record.key);
-          //           }}
-          //         >
-          //           <SettingOutlined className="dropdown-icon" />{' '}
-          //           {t('common.editPreferences')}
-          //         </Menu.Item>
-          //       ) : null}
-          //       {profile &&
-          //       canUpdate &&
-          //       !record.deletedAt &&
-          //       record.key !== profile.id ? (
-          //         <Menu.Item
-          //           key="resetUserPassword"
-          //           disabled={!isAdminRole}
-          //           onClick={() => {
-          //             handleResetPassword(record.key);
-          //           }}
-          //         >
-          //           <EyeOutlined className="dropdown-icon" />{' '}
-          //           {t('common.resetPassword')}
-          //         </Menu.Item>
-          //       ) : null}
-          //       {profile &&
-          //       canDelete &&
-          //       !record.deletedAt &&
-          //       profile.id !== record.key ? (
-          //         <Menu.Item
-          //           key="deactivateUser"
-          //           disabled={!isAdminRole}
-          //           onClick={() => setShowConfirmDeactivateModal(true)}
-          //         >
-          //           <UserDeleteOutlined className="dropdown-icon" />{' '}
-          //           {t('common.removeFromTeam')}
-          //         </Menu.Item>
-          //       ) : null}
-          //       {record.deletedAt && canRestore ? (
-          //         <Menu.Item
-          //           key="restore"
-          //           disabled={!isAdminRole}
-          //           onClick={() => setShowConfirmRestoreModal(true)}
-          //         >
-          //           <DeleteOutlined className="dropdown-icon" />{' '}
-          //           {t('common.restore')}
-          //         </Menu.Item>
-          //       ) : null}
-          //     </DropDownMenuStyled>
-          //   }
-          //   trigger={['click']}
-          //   onOpenChange={() => {
-          //     setUserId(record.key);
-          //   }}
-          // />
         ),
       },
     ],
@@ -454,7 +394,7 @@ const ActionThreeDropDown: FC<
     if (record.deletedAt && canRestore) {
       baseMenu.push({
         key: ACTION.RESTORE,
-        icon: <UserDeleteOutlined className="dropdown-icon" />,
+        icon: <UserDeleteOutlined className="text-primary" />,
         label: <label className={''}> {t('common.restore')}</label>,
       });
       return baseMenu;
@@ -464,7 +404,7 @@ const ActionThreeDropDown: FC<
       baseMenu.push({
         disabled: !isAdminRole,
         key: ACTION.EDIT_PREFERENCE,
-        icon: <SettingOutlined className="dropdown-icon" />,
+        icon: <SettingOutlined className="text-primary" />,
         label: <label className={''}> {t('common.editPreferences')}</label>,
       });
     }
@@ -472,14 +412,14 @@ const ActionThreeDropDown: FC<
       if (canUpdate) {
         baseMenu.push({
           key: ACTION.RESET_PASSWORD,
-          icon: <EyeOutlined className="dropdown-icon" />,
+          icon: <EyeOutlined className="text-primary" />,
           label: <label className={''}> {t('common.resetPassword')}</label>,
         });
       }
       if (canDelete) {
         baseMenu.push({
           key: ACTION.DELETE,
-          icon: <UserDeleteOutlined className="dropdown-icon" />,
+          icon: <UserDeleteOutlined className="text-primary" />,
           label: <label className={''}> {t('common.removeFromTeam')}</label>,
         });
       }

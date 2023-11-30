@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useField } from 'formik';
-import { Button, Divider } from 'antd';
+import { Button, Divider, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { CopyButton } from '@/modules/common';
@@ -133,23 +133,27 @@ const QuestionTable: FC<{
           width: 60,
           render: (value, record: questionValueType, index) => (
             <div className={'h-full mt-[50px] flex justify-center gap-2'}>
-              <Button
-                type={'text'}
-                size={'small'}
-                icon={<TrashOutlined />}
-                onClick={() => removeQuestion(index)}
-              />
-              <Button
-                type={'text'}
-                size={'small'}
-                icon={<Clock />}
-                onClick={() => {
-                  const questionVersion = record?.questionVersion;
-                  if (!questionVersion) return;
-                  setSelectedQuestion({ index, data: record });
-                  toggleUpdateVersionQuestionModal();
-                }}
-              />
+              <Tooltip title={t('common.delete')} placement={'bottom'}>
+                <Button
+                  type={'text'}
+                  size={'small'}
+                  icon={<TrashOutlined />}
+                  onClick={() => removeQuestion(index)}
+                />
+              </Tooltip>
+              <Tooltip title={t('common.showChangeLog')} placement={'bottom'}>
+                <Button
+                  type={'text'}
+                  size={'small'}
+                  icon={<Clock />}
+                  onClick={() => {
+                    const questionVersion = record?.questionVersion;
+                    if (!questionVersion) return;
+                    setSelectedQuestion({ index, data: record });
+                    toggleUpdateVersionQuestionModal();
+                  }}
+                />
+              </Tooltip>
             </div>
           ),
         },

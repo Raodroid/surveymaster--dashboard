@@ -105,6 +105,9 @@ const ActionThreeDropDown: FC<
     <ThreeDotsDropdown
       onChooseItem={key => handleSelect({ key, record })}
       items={items}
+      title={
+        <div className={'font-semibold text-[14px]'}>{t('common.actions')}</div>
+      }
     />
   );
 };

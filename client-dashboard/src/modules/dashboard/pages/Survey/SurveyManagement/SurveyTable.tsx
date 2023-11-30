@@ -245,7 +245,7 @@ function SurveyTable() {
         dataIndex: ['latestVersion', 'status'],
         key: 'status',
         render: (value: SurveyVersionStatus, record) => {
-          const versionCount = record.versions?.length;
+          const versionCount = (record.versions?.length || 0) - 1;
           return (
             <div className={'flex gap-3'}>
               <RoundedTag
@@ -254,10 +254,12 @@ function SurveyTable() {
                   value === SurveyVersionStatus.DRAFT ? '#232567' : '#00AB00'
                 }
               />
-              <RoundedTag
-                title={t('common.countMore', { count: versionCount })}
-                color={'#232567'}
-              />
+              {versionCount > 0 && (
+                <RoundedTag
+                  title={t('common.countMore', { count: versionCount })}
+                  color={'#232567'}
+                />
+              )}
             </div>
           );
         },
@@ -278,7 +280,7 @@ function SurveyTable() {
         ),
       },
     ],
-    [handleSelect, t],
+    [handleSelect, params?.projectId, t],
   );
 
   return (

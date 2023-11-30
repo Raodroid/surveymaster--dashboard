@@ -1,9 +1,17 @@
-import React, { FC, memo, useMemo } from 'react';
+import React, { FC, memo, useCallback, useMemo } from 'react';
 
-import { SubSurveyFlowElement } from '@/type';
+import {
+  ActionThreeDropDownType,
+  IMenuItem,
+  SubSurveyFlowElement,
+} from '@/type';
 import { useTranslation } from 'react-i18next';
 import { useField } from 'formik';
-import { DEFAULT_THEME_COLOR } from '@/enums';
+import {
+  DEFAULT_THEME_COLOR,
+  SCOPE_CONFIG,
+  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
+} from '@/enums';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { SurveyDataTreeNode } from '@pages/Survey/SurveyForm/type';
 import styled from 'styled-components/macro';
@@ -11,7 +19,20 @@ import {
   AddNewBlockElement,
   InsertBlockButton,
   QuestionBranchIcon,
+  useSurveyBlockAction,
+  useSurveyFormContext,
 } from '@pages/Survey';
+import { useSelector } from 'react-redux';
+import { useCheckScopeEntityDefault } from '@/modules/common';
+import {
+  EyeOutlined,
+  SettingOutlined,
+  UserDeleteOutlined,
+} from '@ant-design/icons';
+import { ThreeDotsDropdown } from '@/customize-components';
+import { DuplicateIcon, PenFilled, TrashOutlined } from '@/icons';
+import { keysAction, useSelectTableRecord } from '@/hooks';
+import _uniq from 'lodash/uniq';
 
 const Wrapper = styled.div`
   .add-icon {
@@ -35,6 +56,10 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   const { record } = props;
   const fieldName = record.fieldName;
   const { isEditMode } = useCheckSurveyFormMode();
+  const { setSurveyFormContext } = useSurveyFormContext();
+
+  const { handleDuplicateBlock, handleRemoveBlock } =
+    useSurveyBlockAction(record);
 
   const [{ value }, { error, touched }] =
     useField<SurveyDataTreeNode>(fieldName);
@@ -52,10 +77,44 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
     }
   }, [record]);
 
-  const blockError = (() => {
+  const blockError = useMemo(() => {
     const errorChildren = (error as unknown as { children: string })?.children;
     return typeof errorChildren === 'string' ? errorChildren : '';
-  })();
+  }, [error]);
+
+  const handleRename = useCallback(
+    (record: SurveyDataTreeNode) => {
+      setSurveyFormContext(oldState => ({
+        ...oldState,
+        tree: {
+          ...oldState.tree,
+          focusBlock: record,
+        },
+      }));
+    },
+    [setSurveyFormContext],
+  );
+
+  const tableActions = useMemo<keysAction<SurveyDataTreeNode>>(
+    () => [
+      {
+        key: ACTION.RENAME,
+        action: handleRename,
+      },
+      {
+        key: ACTION.DUPLICATE,
+        action: handleDuplicateBlock,
+      },
+      {
+        key: ACTION.DELETE,
+        action: handleRemoveBlock,
+      },
+    ],
+    [handleDuplicateBlock, handleRemoveBlock, handleRename],
+  );
+
+  const { handleSelect } =
+    useSelectTableRecord<SurveyDataTreeNode>(tableActions);
 
   return (
     <>
@@ -93,6 +152,9 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
               <AddNewBlockElement fieldName={fieldName} type={'icon'} />
             </div>
           )}
+          {isEditMode && (
+            <ActionThreeDropDown record={record} handleSelect={handleSelect} />
+          )}
         </div>
 
         {touched && blockError && (
@@ -114,3 +176,46 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
 };
 
 export default memo(QuestionBlock);
+
+const ACTION = {
+  DELETE: 'DELETE',
+  RENAME: 'RENAME',
+  DUPLICATE: 'DUPLICATE',
+} as const;
+
+const ActionThreeDropDown: FC<
+  ActionThreeDropDownType<SurveyDataTreeNode>
+> = props => {
+  const { record, handleSelect } = props;
+  const { t } = useTranslation();
+
+  const items = useMemo<IMenuItem[]>(
+    () => [
+      {
+        key: ACTION.RENAME,
+        icon: <PenFilled className="text-primary" />,
+        label: <label className={''}> {t('common.rename')}</label>,
+      },
+      {
+        key: ACTION.DUPLICATE,
+        icon: <DuplicateIcon className="text-primary" />,
+        label: <label className={''}> {t('common.duplicate')}</label>,
+      },
+      {
+        key: ACTION.DELETE,
+        icon: <TrashOutlined className="text-primary" />,
+        label: <label className={''}> {t('common.delete')}</label>,
+      },
+    ],
+    [t],
+  );
+
+  return (
+    <ThreeDotsDropdown
+      onChooseItem={key => handleSelect({ key, record })}
+      items={items}
+      className={'px-3'}
+      size={'small'}
+    />
+  );
+};

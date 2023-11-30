@@ -8,13 +8,14 @@ import React, {
   useState,
 } from 'react';
 import { IModal, IOptionItem, QuestionType } from '@/type';
-import { Input, List, Spin } from 'antd';
+import { Input, List, Spin, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { questionValueType, useSurveyFormContext } from '@pages/Survey';
 import { useField } from 'formik';
 import { useDebounce } from '@/utils';
 import { SimpleBarCustom } from '@/customize-components';
 import { AddNewQuestionModalWrapper } from '@pages/Survey/components/AddNewQuestionModal/style';
+import { RoundedTag } from '@components/index';
 
 const initNewRowValue: questionValueType = {
   remarks: [],
@@ -31,6 +32,8 @@ const initNewRowValue: questionValueType = {
 interface IAddNewQuestionModal extends IModal {
   fieldName: string;
 }
+
+type QuestionItem = IOptionItem & { categoryName: string; type: QuestionType };
 
 const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
   const { open, toggleOpen, fieldName } = props;
@@ -52,24 +55,20 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
 
   const debounceSearchText = useDebounce(searchTxt);
 
-  const availableQuestionOptions = useMemo<
-    Array<IOptionItem & { categoryName: string }>
-  >(
+  const availableQuestionOptions = useMemo<Array<QuestionItem>>(
     () =>
-      (newQuestions || []).reduce(
-        (res: Array<IOptionItem & { categoryName: string }>, item) => {
-          if (value?.some(i => i.questionVersionId === item?.id)) return res;
-          return [
-            ...res,
-            {
-              label: item.title,
-              value: item.id as string,
-              categoryName: item?.masterCategory?.name || '',
-            },
-          ];
-        },
-        [],
-      ),
+      (newQuestions || []).reduce((res: Array<QuestionItem>, item) => {
+        if (value?.some(i => i.questionVersionId === item?.id)) return res;
+        return [
+          ...res,
+          {
+            label: item.title,
+            value: item.id as string,
+            categoryName: item?.masterCategory?.name || '',
+            type: item.type,
+          },
+        ];
+      }, []),
     [newQuestions, value],
   );
 
@@ -117,7 +116,6 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
     () =>
       new IntersectionObserver(() => {
         if (hasNextQuestionPage) {
-          console.log('called');
           fetchNextQuestionPage();
         }
       }),
@@ -161,7 +159,22 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
                 }
               >
                 <div className={'font-semibold mb-2'}>{item.label}</div>
-                <div className={'text-[12px]'}>{item.categoryName}</div>
+                <div className={'flex items-center gap-3'}>
+                  <span
+                    className={
+                      'rounded-md border border-solid px-1.5 py-1 text-[12px] bg-[#0000000d]'
+                    }
+                  >
+                    {item.categoryName}
+                  </span>
+                  <span
+                    className={
+                      'rounded-md border border-solid px-1.5 py-1 text-[12px] bg-[#0000000d]'
+                    }
+                  >
+                    {t(`questionType.${item.type}`)}
+                  </span>
+                </div>
               </List.Item>
             )}
           />

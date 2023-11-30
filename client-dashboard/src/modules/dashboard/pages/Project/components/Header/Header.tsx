@@ -82,21 +82,38 @@ const ProjectHeader: FC<IProjectHeader> = props => {
             </>
           )}
           <div className={'flex-1 flex items-center'}>
-            {showAddProjectBtn && canCreate && <AddProjectButton />}
-            {showAddSurveyBtn && canCreateSurvey && <AddSurveyButton />}
+            {showAddProjectBtn && canCreate && (
+              <>
+                <Divider type="vertical" className={'h-[8px]'} />
+                <AddProjectButton />
+              </>
+            )}
+            {showAddSurveyBtn && canCreateSurvey && (
+              <>
+                <AddSurveyButton />
+                <Divider type="vertical" className={'h-[8px]'} />
+              </>
+            )}
           </div>
 
-          {showDetailSurveyBtn && <ViewSurveyButton />}
+          {showDetailSurveyBtn && (
+            <>
+              <ViewSurveyButton />
+              <Divider type="vertical" className={'h-[8px]'} />
+            </>
+          )}
           {showDetailProjectBtn && (
             <>
-              <Divider type="vertical" className={'h-[8px]'} />
               <ViewProjectDetailButton />
               <Divider type="vertical" className={'h-[8px]'} />
             </>
           )}
-          {showEditProjectBtn && canUpdate && <EditProjectButton />}
-
-          <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
+          {showEditProjectBtn && canUpdate && (
+            <>
+              <EditProjectButton />
+              <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
+            </>
+          )}
 
           {showSearch && (
             <>
@@ -105,6 +122,7 @@ const ProjectHeader: FC<IProjectHeader> = props => {
               <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
 
               <ProjectFilter />
+              <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
             </>
           )}
 
@@ -126,7 +144,7 @@ const VersionSelect = () => {
 
   return (
     <SurveyVersionSelect
-      value={currentSurveyVersion?.id}
+      value={currentSurveyVersion?.displayId}
       versions={surveyData?.versions}
     />
   );

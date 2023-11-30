@@ -246,7 +246,7 @@ const AddQuestionFormCategoryModal: FC<
     <AddQuestionFormCategoryModalWrapper
       open={open}
       onCancel={onCloseModal}
-      width={650}
+      width={800}
       footer={
         <Button
           icon={<PlusOutLinedIcon />}

@@ -49,6 +49,11 @@ import {
   createQuestionMap,
   transformSurveyVersion,
 } from '@pages/Survey/components/SurveyFormContext/util';
+import {
+  getParentBlockSort,
+  getParentFieldName,
+  transformToSurveyDataTreeNode,
+} from '@pages/Survey';
 
 const { confirm } = Modal;
 

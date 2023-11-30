@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { IOptionItem } from '@/type';
+import { IOptionItem, IQuestionVersion } from '@/type';
 import { Input } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
 import { DisplayQuestionListWrapper } from './style';
@@ -43,22 +43,51 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
   const [searchQuestionTxt, setSearchQuestionTxt] = useState<string>('');
 
   const searchDebounce = useDebounce(searchQuestionTxt.toLowerCase());
-  const allOptions = useMemo<IOptionItem[]>(() => {
-    const result: IOptionItem[] = [];
+
+  const allOptions = useMemo<
+    Array<IOptionItem & { questionVersion: IQuestionVersion }>
+  >(() => {
+    const result: Array<IOptionItem & { questionVersion: IQuestionVersion }> =
+      [];
     questionListState.questions.forEach(q => {
       result.push({
-        label: q.latestCompletedVersion.title as string,
+        label: (
+          <div>
+            <span className={'text-textColor text-[12px]'}>
+              {q.latestCompletedVersion.title as string}
+            </span>
+            <div className={'flex items-center gap-3 mt-1 mb-2'}>
+              <span
+                className={
+                  'rounded-md border border-solid px-1.5 py-1 text-[12px] bg-[#0000000d]'
+                }
+              >
+                {q.masterCategory?.name}
+              </span>
+              <span
+                className={
+                  'rounded-md border border-solid px-1.5 py-1 text-[12px] bg-[#0000000d]'
+                }
+              >
+                {t(`questionType.${q.latestCompletedVersion.type}`)}
+              </span>
+            </div>
+          </div>
+        ),
         value: q.latestCompletedVersion.id as string,
+        questionVersion: q.latestCompletedVersion,
       });
     });
     return result;
-  }, [questionListState.questions]);
+  }, [questionListState.questions, t]);
 
   const options = useMemo(() => {
     const displayVersionIds: string[] = [];
     const displayOptions = allOptions.reduce(
       (result: IOptionItem[], option) => {
-        if (option.label.toLowerCase().includes(searchDebounce)) {
+        if (
+          option.questionVersion.title.toLowerCase().includes(searchDebounce)
+        ) {
           displayVersionIds.push(option.value);
           return [...result, option];
         }

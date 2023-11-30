@@ -1,18 +1,21 @@
 import { Button, Dropdown } from 'antd';
 import { ThreeDotsIcon } from '@/icons';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { IMenuItem } from '@/type';
 import { DropdownProps } from 'antd/lib/dropdown/dropdown';
 import { useToggle } from '@/utils';
 import styled from 'styled-components/macro';
+import { ButtonProps } from 'antd/lib/button';
 
 interface IThreeDotsDropdown extends Omit<DropdownProps, 'overlay'> {
   items: Array<IMenuItem>;
   onChooseItem: (key: any) => void;
+  size?: ButtonProps['size'];
+  title?: string | ReactNode;
 }
 
 const ThreeDotsDropdown: React.FC<IThreeDotsDropdown> = props => {
-  const { items, onChooseItem, ...res } = props;
+  const { items, onChooseItem, size, title, ...res } = props;
 
   const [state, toggleOpen] = useToggle();
 
@@ -21,7 +24,7 @@ const ThreeDotsDropdown: React.FC<IThreeDotsDropdown> = props => {
   return (
     <>
       <DropdownWrapper
-        overlayClassName={'[&>ul>li]:!my-[10px]'}
+        overlayClassName={'[&>ul>li]:!my-[10px] [&>ul>li>svg]:w-[25px]'}
         menu={{
           onClick: e => {
             onChooseItem(e.key);
@@ -39,8 +42,19 @@ const ThreeDotsDropdown: React.FC<IThreeDotsDropdown> = props => {
         onOpenChange={toggleOpen}
         {...res}
       >
-        <Button type={'text'} ghost aria-label={'three drop down'}>
-          <ThreeDotsIcon />
+        <Button
+          type={'text'}
+          ghost
+          aria-label={'three drop down'}
+          size={size}
+          onClick={e => {
+            e.stopPropagation();
+          }}
+        >
+          <div className={'flex items-center gap-3'}>
+            <ThreeDotsIcon />
+            {title}
+          </div>
         </Button>
       </DropdownWrapper>
     </>

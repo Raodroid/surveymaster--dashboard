@@ -76,7 +76,7 @@ export default class SurveyService {
   }
   static updateStatusSurvey(props: {
     surveyVersionId: string;
-  }): Promise<AxiosResponse> {
+  }): Promise<AxiosResponse<ISurveyVersion>> {
     const { surveyVersionId } = props;
     return APIService.put(
       `/${EntityEnum.SURVEY}/version/${surveyVersionId}/completed`,
