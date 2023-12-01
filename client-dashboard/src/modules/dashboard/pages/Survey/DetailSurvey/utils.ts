@@ -1,8 +1,8 @@
 import { IAction } from '@/interfaces';
-import { useQuery } from 'react-query';
+import { useQueries, useQuery } from 'react-query';
 import { useParams } from 'react-router';
 import { SurveyService } from '@/services';
-import { surveyActionType } from '@/type';
+import { QsParams, surveyActionType } from '@/type';
 import _get from 'lodash/get';
 import {
   getParentBlockSort,
@@ -13,7 +13,9 @@ import {
   useSurveyFormContext,
 } from '@pages/Survey';
 import { useField } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useParseQueryString } from '@/hooks';
+import moment from 'moment';
 
 export type projectSurveyParams = {
   projectId: string;
@@ -27,7 +29,7 @@ export const useGetAllActionsHistory = (): {
   const params = useParams<projectSurveyParams>();
 
   const { data, isLoading } = useQuery(
-    ['getActionsHistory', params],
+    ['getAllActionsHistory', params],
     () =>
       SurveyService.getAllSurveyHistories({
         selectAll: true,
@@ -35,12 +37,99 @@ export const useGetAllActionsHistory = (): {
       }),
     {
       refetchOnWindowFocus: false,
+      enabled: !!params.surveyId,
     },
   );
 
   return {
     histories: _get(data, 'data.data', []),
     isGetHistoryLoading: isLoading,
+  };
+};
+
+export const useGetActionsHistory = (
+  surveyId: string,
+): {
+  histories: IAction[];
+  isGetHistoryLoading: boolean;
+} => {
+  const qsParams = useParseQueryString<QsParams>();
+
+  const { data, isLoading } = useQuery(
+    ['getActionsHistory', surveyId],
+    () =>
+      SurveyService.getAllSurveyHistories({
+        surveyId,
+        createdFrom: qsParams.createdFrom,
+        createdTo: qsParams.createdTo,
+      }),
+    {
+      refetchOnWindowFocus: false,
+      enabled: !!surveyId,
+    },
+  );
+
+  return {
+    histories: _get(data, 'data.data', []),
+    isGetHistoryLoading: isLoading,
+  };
+};
+
+type IMonthQuery = {
+  createFrom: string;
+  createdTo: string;
+  monthName: string;
+  monthNumber: number;
+};
+
+export const useGetTimelineActionsHistory = (
+  surveyId?: string | undefined,
+  createdDate?: string | undefined,
+): {
+  data: Array<IAction[]>;
+  months: IMonthQuery[];
+} => {
+  const months = useMemo<IMonthQuery[]>(() => {
+    if (!createdDate) return [];
+
+    const monthGap = moment().month() - moment(createdDate).month();
+
+    let dateStart = moment();
+
+    return [...Array(monthGap + 1).keys()].map(() => {
+      const newItem: IMonthQuery = {
+        createFrom: dateStart.startOf('month').format(),
+        createdTo: dateStart.endOf('month').format(),
+        monthName: dateStart.format('MMM'),
+        monthNumber: dateStart.month(),
+      };
+      dateStart = dateStart.subtract(1, 'month').startOf('months');
+
+      return newItem;
+    });
+  }, [createdDate]);
+
+  const userQueries = useQueries(
+    months.map(month => {
+      return {
+        refetchOnWindowFocus: false,
+        enabled: !!surveyId,
+        queryKey: ['getActionsHistory', { ...month }],
+        queryFn: () =>
+          SurveyService.getAllSurveyHistories({
+            surveyId,
+            createdFrom: month.createFrom,
+            createdTo: month.createdTo,
+            take: 1,
+            page: 1,
+          }),
+      };
+    }),
+  );
+
+  return {
+    data: userQueries.map(query => _get(query.data, 'data.data', [])),
+    months,
   };
 };
 

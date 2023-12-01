@@ -24,6 +24,15 @@ const calcLevelNodeByFieldName = (fieldName: string): string[] | null => {
 const getBranchLevel = (fieldName: string) =>
   fieldName.match(/([0-9]+)\]$/)?.[1];
 
+const genDefaultBlockDescription = (fieldName: string) =>
+  fieldName
+    .match(/([0-9]+)/gm)
+    ?.reduce(
+      (res, i, idx, arr) =>
+        `${res} ${idx === arr.length - 1 ? Number(i) + 1 : `${i}/`}`,
+      'Block ',
+    );
+
 const transformToSurveyDataTreeNode = (
   data: SurveyDataTreeNode[],
   parentBlockSort?: number,
@@ -63,4 +72,5 @@ export {
   getBranchLevel,
   transformToSurveyDataTreeNode,
   createDuplicateSurveyVersionName,
+  genDefaultBlockDescription,
 };

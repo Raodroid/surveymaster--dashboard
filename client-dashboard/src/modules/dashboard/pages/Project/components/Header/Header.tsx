@@ -122,10 +122,12 @@ const ProjectHeader: FC<IProjectHeader> = props => {
               <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
 
               <ProjectFilter />
-              <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
             </>
           )}
 
+          {RightMenu && (
+            <Divider type="vertical" className={'h-[8px] mx-[16px] my-0'} />
+          )}
           {RightMenu}
         </div>
       </div>

@@ -27,7 +27,7 @@ export const ThumbWrapper = styled.div`
   &::before {
     content: '';
     width: 100%;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgb(249 249 249 / 80%);
     height: max(90vh, 500px);
     position: absolute;
   }

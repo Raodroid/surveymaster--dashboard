@@ -11,6 +11,7 @@ import {
 } from 'type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
+import { IAction } from '@/interfaces';
 
 interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
   projectId?: string;
@@ -44,7 +45,7 @@ export default class SurveyService {
 
   static getAllSurveyHistories(
     params: IGetParams & { surveyId?: string },
-  ): Promise<AxiosResponse> {
+  ): Promise<AxiosResponse<IAction>> {
     const { surveyId } = params;
     return APIService.get(`/${EntityEnum.SURVEY}/${surveyId}/histories`, {
       params,

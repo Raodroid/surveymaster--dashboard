@@ -1,6 +1,6 @@
 import React, { FC, useCallback } from 'react';
 
-import { defaultNode } from './AddNewBlockElement';
+import { defaultNode, isRootPath } from './AddNewBlockElement';
 import { objectKeys } from '@/utils';
 import { SubSurveyFlowElement } from '@/type';
 import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
@@ -14,6 +14,9 @@ import {
   SurveyDataTreeNode,
   useSurveyFormContext,
   transformToSurveyDataTreeNode,
+  rootSurveyFlowElementFieldName,
+  calcLevelNodeByFieldName,
+  genDefaultBlockDescription,
 } from '@pages/Survey';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +45,7 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
       const newBlockValue: SurveyDataTreeNode = {
         ...defaultNode,
         type,
+        blockDescription: genDefaultBlockDescription(fieldName),
       };
 
       const parentBlockSort = getParentBlockSort(parentLayerFieldName);

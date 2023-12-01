@@ -11,7 +11,11 @@ import {
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
 import { PlusOutLinedIcon } from '@/icons';
-import { calcLevelNodeByFieldName, useSurveyFormContext } from '@pages/Survey';
+import {
+  calcLevelNodeByFieldName,
+  genDefaultBlockDescription,
+  useSurveyFormContext,
+} from '@pages/Survey';
 import _uniq from 'lodash/uniq';
 import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
 
@@ -87,13 +91,7 @@ const AddNewBlockElement: FC<{
       const fieldName =
         currentFieldName + `.children[${(value?.children || []).length}]`;
 
-      const blockDescription = fieldName
-        .match(/([0-9]+)/gm)
-        ?.reduce(
-          (res, i, idx, arr) =>
-            `${res} ${i} ${idx === arr.length - 1 ? '' : '/'}`,
-          'Block ',
-        );
+      const blockDescription = genDefaultBlockDescription(fieldName);
 
       return {
         blockSort: blockIndex + 1,
@@ -112,7 +110,6 @@ const AddNewBlockElement: FC<{
         type,
         ...genKey(fieldName),
       };
-
       if (isRootPath(fieldName, value)) {
         setValue([...value, newBlockValue]);
 
