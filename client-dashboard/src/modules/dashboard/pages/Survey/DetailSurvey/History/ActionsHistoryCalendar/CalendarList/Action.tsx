@@ -9,9 +9,10 @@ function Action(props: { action?: IAction; today?: boolean }) {
   const { action, today = false } = props;
   const { t } = useTranslation();
 
-  if (!action) return null;
-  if (!action.actionType)
-    return <div className={`font-[500]`}>{t('actionType.noActionsYet')}</div>;
+  if (!action)
+    return (
+      <div className={'font-semibold'}>{t('actionType.noActionsYet')}</div>
+    );
 
   return (
     <div className="w-full overflow-hidden flex gap-4 text-textColor">

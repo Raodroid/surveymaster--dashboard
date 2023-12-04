@@ -69,7 +69,6 @@ function Thumb() {
 
   const setDayAndThumbPosition = useCallback(
     (top: number) => {
-      console.log('chang TOp s');
       if (!thumbRef.current || !monthsRef.current) return;
 
       let newPosition: number = top;
@@ -255,8 +254,6 @@ function Thumb() {
     if (Object.keys(monthData).length !== months.length) return;
     const pos = monthData[qsParams.createdFrom]?.index;
 
-    console.log(pos, monthData, qsParams.createdFrom);
-
     if (typeof pos !== 'number') return;
 
     monthsRef.current?.scrollTo({ top: pos * 124, behavior: 'smooth' });
@@ -294,9 +291,7 @@ function Thumb() {
           onWheel={handleWheel}
           ref={monthsRef as unknown as RefObject<HTMLDivElement>}
         >
-          <div
-          // className={'h-[200vh]'}
-          >
+          <div>
             {months.map((month, index: number) => {
               return (
                 <Month

@@ -1,7 +1,7 @@
 import React, { createContext, ReactElement, useRef, useState } from 'react';
 import { HannahCustomSpin } from '@/modules/dashboard';
 import { useParseQueryString } from '@/hooks';
-import { ISurvey, QsParams } from '@/type';
+import { IPaginationResponse, ISurvey, QsParams } from '@/type';
 import { useParams } from 'react-router';
 import { projectSurveyParams } from '@pages/Survey';
 import { useQueries, useQuery } from 'react-query';
@@ -10,7 +10,7 @@ import moment from 'moment';
 import { IAction } from '@/interfaces';
 import _get from 'lodash/get';
 import { onError } from '@/utils';
-import { Axios, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
 type IMonthQuery = {
   createdFrom: string;
@@ -84,11 +84,11 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
     },
   );
 
-  const userQueries = useQueries(
+  const getMonthTimelineQueries = useQueries(
     context.months.map((month, index, arr) => {
       return {
         queryFn: () =>
-          SurveyService.getAllSurveyHistories({
+          SurveyService.getSurveyHistories({
             surveyId: params.surveyId,
             createdFrom: month.createdFrom,
             createdTo: month.createdTo,
@@ -99,7 +99,7 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
         refetchOnWindowFocus: false,
         enabled: !!params.surveyId,
         queryKey: ['getActionsHistory', { ...month }],
-        onSuccess: (res: AxiosResponse<{ data: IAction }>) => {
+        onSuccess: (res: AxiosResponse<IPaginationResponse<IAction>>) => {
           const record = res.data.data?.[0];
 
           const newItem: IActionHistortContext['monthData'] = {
@@ -115,7 +115,6 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
               ...s.monthData,
               ...newItem,
             },
-            todayAction: index === 0 ? record : s.todayAction,
             createAction: index === arr.length - 1 ? record : s.createAction,
           }));
         },
@@ -123,10 +122,38 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
     }),
   );
 
+  const loading = getMonthTimelineQueries.reduce(
+    (res: boolean, i) => i.isLoading || res,
+    false,
+  );
+
+  const getTodayActions = useQuery(
+    ['getTodayActionsHistories', params],
+    () =>
+      SurveyService.getSurveyHistories({
+        surveyId: params.surveyId,
+        take: 1,
+        page: 1,
+        createdFrom: moment().startOf('date').format(),
+        createdTo: moment().endOf('date').format(),
+      }),
+    {
+      refetchOnWindowFocus: false,
+      enabled: !!params.surveyId,
+      onSuccess: (res: AxiosResponse<IPaginationResponse<IAction>>) => {
+        const record = res.data.data?.[0];
+        setContext(oldState => ({
+          ...oldState,
+          todayAction: record,
+        }));
+      },
+    },
+  );
+
   const getActionsHistories = useQuery(
     ['getActionsHistories', params, qsParams],
     () =>
-      SurveyService.getAllSurveyHistories({
+      SurveyService.getSurveyHistories({
         surveyId: params.surveyId,
         selectAll: true,
         createdFrom: qsParams.createdFrom || moment().startOf('month').format(),
@@ -153,7 +180,12 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
       <div ref={wrapperRef} className={'h-full'}>
         <HannahCustomSpin
           parentRef={wrapperRef}
-          spinning={getActionsHistories.isLoading || surveyDataQuery.isLoading}
+          spinning={
+            getActionsHistories.isLoading ||
+            surveyDataQuery.isLoading ||
+            loading ||
+            getTodayActions.isLoading
+          }
         />
         {props.children}
       </div>
