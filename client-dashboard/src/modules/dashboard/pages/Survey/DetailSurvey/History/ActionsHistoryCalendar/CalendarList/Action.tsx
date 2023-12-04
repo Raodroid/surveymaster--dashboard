@@ -5,7 +5,7 @@ import { genHandleActionType } from '@pages/Survey';
 import { Avatar, Divider } from 'antd';
 import React from 'react';
 
-function Action(props: { action: IAction; today?: boolean }) {
+function Action(props: { action?: IAction; today?: boolean }) {
   const { action, today = false } = props;
   const { t } = useTranslation();
 

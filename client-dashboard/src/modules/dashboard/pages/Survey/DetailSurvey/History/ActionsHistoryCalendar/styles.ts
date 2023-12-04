@@ -22,21 +22,8 @@ export const ThumbWrapper = styled.div`
   z-index: 10;
   background-color: rgb(0, 122, 231, 0.08);
   border-radius: 4px;
-
-  &::after,
-  &::before {
-    content: '';
-    width: 100%;
-    background: rgb(249 249 249 / 80%);
-    height: max(90vh, 500px);
-    position: absolute;
-  }
-
-  &::before {
-    bottom: 124px;
-  }
-
-  &::after {
-    top: 124px;
+  top: 0;
+  &:focus {
+    outline: 1px solid;
   }
 `;

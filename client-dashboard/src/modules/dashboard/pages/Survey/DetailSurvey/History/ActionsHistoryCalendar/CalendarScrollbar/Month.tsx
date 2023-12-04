@@ -29,7 +29,7 @@ function Month(props: { month: string; renderLines?: boolean }) {
   }, []);
 
   return (
-    <MonthWrapper height={MONTH_HEIGHT}>
+    <MonthWrapper height={MONTH_HEIGHT} className={'bg-[#F9F9F9CC] '}>
       {month}
       {renderLines
         ? Array(getRandomInRange(5, 8))
