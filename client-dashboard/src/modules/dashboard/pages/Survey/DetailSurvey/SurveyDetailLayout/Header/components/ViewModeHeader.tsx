@@ -203,12 +203,15 @@ const RightMenu = () => {
 
   const handleShowChangeLog = useCallback(() => {
     navigate(
-      generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.HISTORY, {
-        projectId: params.projectId,
-        surveyId: params.surveyId,
-      }),
+      `${generatePath(
+        ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.HISTORY,
+        {
+          projectId: params.projectId,
+          surveyId: params.surveyId,
+        },
+      )}?version=${qsParams.version}`,
     );
-  }, [navigate, params.projectId, params.surveyId]);
+  }, [navigate, params.projectId, params.surveyId, qsParams.version]);
 
   const handleEdit = useCallback(() => {
     navigate(
