@@ -7,14 +7,16 @@ import {
   useRef,
   useState,
 } from 'react';
-import { MONTH_HEIGHT } from '@pages/Survey';
+import { MONTH_HEIGHT, projectSurveyParams } from '@pages/Survey';
 import { ThumbWrapper } from '../styles';
-import { IGetParams } from '@/type';
+import { IGetParams, QsParams } from '@/type';
 import Month from '@pages/Survey/DetailSurvey/History/ActionsHistoryCalendar/CalendarScrollbar/Month';
 import { useNavigate } from 'react-router-dom';
 import { useParseQueryString } from '@/hooks';
 import qs from 'qs';
 import { useActionHistoryContext } from '@pages/Survey/DetailSurvey/History/ActionsHistoryCalendar/ActionHistoryContext/useActionHistoryContext';
+import { usePrevious } from '@/utils';
+import { useParams } from 'react-router';
 
 const INPUTS_HEIGHT = 56;
 const MIN_ACTIONS_HISTORY_HEIGHT = 478;
@@ -176,8 +178,8 @@ function Thumb() {
 
       const newQes = qs.stringify({
         ...qsParams,
-        createdFrom: focusMonthBlock.createFrom,
-        createdTo: focusMonthBlock.createdTo,
+        createdFrom: focusMonthBlock.createdFrom,
+        createdTo: undefined,
       });
       navigate(`${window.location.pathname}?${newQes}`);
     },
@@ -242,6 +244,32 @@ function Thumb() {
   //     );
   // }, [monthsHeight]);
 
+  const params = useParams<projectSurveyParams>();
+
+  const previousQueryParam = usePrevious(
+    `${qsParams.createdFrom}${params.surveyId}`,
+  );
+
+  useEffect(() => {
+    if (!monthsRef.current || !qsParams?.createdFrom) return;
+    if (Object.keys(monthData).length !== months.length) return;
+    const pos = monthData[qsParams.createdFrom]?.index;
+
+    console.log(pos, monthData, qsParams.createdFrom);
+
+    if (typeof pos !== 'number') return;
+
+    monthsRef.current?.scrollTo({ top: pos * 124, behavior: 'smooth' });
+    // setDayAndThumbPosition(monthData[qsParams.createdFrom].index + 1);
+  }, [
+    monthData,
+    months.length,
+    params.surveyId,
+    previousQueryParam,
+    qsParams.createdFrom,
+    setDayAndThumbPosition,
+  ]);
+
   return (
     <>
       <div
@@ -261,18 +289,21 @@ function Thumb() {
           ref={thumbRef as unknown as RefObject<HTMLDivElement>}
         />
 
-        <div className="relative h-full overflow-scroll" onWheel={handleWheel}>
+        <div
+          className="relative h-full overflow-scroll"
+          onWheel={handleWheel}
+          ref={monthsRef as unknown as RefObject<HTMLDivElement>}
+        >
           <div
-            // className={'h-[200vh]'}
-            ref={monthsRef as unknown as RefObject<HTMLDivElement>}
+          // className={'h-[200vh]'}
           >
             {months.map((month, index: number) => {
               return (
                 <Month
                   key={index}
                   renderLines={
-                    monthData?.[month.createFrom] &&
-                    monthData?.[month.createFrom]?.length !== 0
+                    monthData?.[month.createdFrom] &&
+                    monthData?.[month.createdFrom].data?.length !== 0
                   }
                   month={month.monthName}
                 />

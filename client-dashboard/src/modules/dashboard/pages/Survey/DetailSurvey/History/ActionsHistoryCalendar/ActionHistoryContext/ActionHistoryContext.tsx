@@ -10,9 +10,10 @@ import moment from 'moment';
 import { IAction } from '@/interfaces';
 import _get from 'lodash/get';
 import { onError } from '@/utils';
+import { Axios, AxiosResponse } from 'axios';
 
 type IMonthQuery = {
-  createFrom: string;
+  createdFrom: string;
   createdTo: string;
   monthName: string;
   monthNumber: number;
@@ -24,7 +25,7 @@ interface IActionHistortContext {
   createAction: IAction | undefined;
   surveyData: ISurvey | undefined;
   months: IMonthQuery[];
-  monthData: Record<string, IAction[]>;
+  monthData: Record<string, { data?: IAction[]; index: number }>;
 }
 
 const initValueContext: IActionHistortContext = {
@@ -63,7 +64,7 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
 
           return [...Array(monthGap + 1).keys()].map(() => {
             const newItem: IMonthQuery = {
-              createFrom: dateStart.startOf('month').format(),
+              createdFrom: dateStart.startOf('month').format(),
               createdTo: dateStart.endOf('month').format(),
               monthName: dateStart.format('MMM'),
               monthNumber: dateStart.month(),
@@ -89,7 +90,7 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
         queryFn: () =>
           SurveyService.getAllSurveyHistories({
             surveyId: params.surveyId,
-            createdFrom: month.createFrom,
+            createdFrom: month.createdFrom,
             createdTo: month.createdTo,
             take: 1,
             page: 1,
@@ -98,24 +99,22 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
         refetchOnWindowFocus: false,
         enabled: !!params.surveyId,
         queryKey: ['getActionsHistory', { ...month }],
-        onSuccess: res => {
+        onSuccess: (res: AxiosResponse<{ data: IAction }>) => {
           const record = res.data.data?.[0];
-          console.log({ index, record: res.data });
 
-          const createdDate = res.data.data?.[0].createdAt;
-
-          const newItem = createdDate
-            ? { [moment(createdDate).startOf('month').format()]: res.data.data }
-            : undefined;
+          const newItem: IActionHistortContext['monthData'] = {
+            [moment(month?.createdFrom).startOf('month').format()]: {
+              data: res.data.data,
+              index,
+            },
+          };
 
           setContext(s => ({
             ...s,
-            monthData: newItem
-              ? {
-                  ...s.monthData,
-                  ...newItem,
-                }
-              : s.monthData,
+            monthData: {
+              ...s.monthData,
+              ...newItem,
+            },
             todayAction: index === 0 ? record : s.todayAction,
             createAction: index === arr.length - 1 ? record : s.createAction,
           }));
@@ -130,8 +129,8 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
       SurveyService.getAllSurveyHistories({
         surveyId: params.surveyId,
         selectAll: true,
-        createdTo: qsParams.createdTo || moment().startOf('month').format(),
-        createdFrom: qsParams.createdFrom || moment().format(),
+        createdFrom: qsParams.createdFrom || moment().startOf('month').format(),
+        createdTo: moment(qsParams.createdFrom).endOf('month').format(),
       }),
     {
       refetchOnWindowFocus: false,
