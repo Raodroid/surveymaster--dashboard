@@ -7,11 +7,7 @@ import {
 } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { useField } from 'formik';
-import {
-  DEFAULT_THEME_COLOR,
-  SCOPE_CONFIG,
-  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
-} from '@/enums';
+import { DEFAULT_THEME_COLOR } from '@/enums';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { SurveyDataTreeNode } from '@pages/Survey/SurveyForm/type';
 import styled from 'styled-components/macro';
@@ -22,17 +18,9 @@ import {
   useSurveyBlockAction,
   useSurveyFormContext,
 } from '@pages/Survey';
-import { useSelector } from 'react-redux';
-import { useCheckScopeEntityDefault } from '@/modules/common';
-import {
-  EyeOutlined,
-  SettingOutlined,
-  UserDeleteOutlined,
-} from '@ant-design/icons';
 import { ThreeDotsDropdown } from '@/customize-components';
 import { DuplicateIcon, PenFilled, TrashOutlined } from '@/icons';
 import { keysAction, useSelectTableRecord } from '@/hooks';
-import _uniq from 'lodash/uniq';
 
 const Wrapper = styled.div`
   .add-icon {

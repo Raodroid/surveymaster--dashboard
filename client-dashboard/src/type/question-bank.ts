@@ -344,6 +344,7 @@ export interface IGetParams {
   createdTo?: string;
   isDeleted?: boolean;
   selectAll?: boolean;
+  order?: 'DESC' | 'ASC';
 }
 
 export type GetListQuestionDto = IGetParams & {
