@@ -29,6 +29,7 @@ const ACTION = {
   DELETE: 'DELETE',
   CLONE: 'CLONE',
   SHOW_CHANGE_LOG: 'SHOW_CHANGE_LOG',
+  REQUEST_COMPLETE: 'REQUEST_COMPLETE',
 } as const;
 
 const ActionThreeDropDown: FC<
@@ -75,6 +76,11 @@ const ActionThreeDropDown: FC<
         icon: <LightingIcon className={'text-primary'} />,
         label: t('direction.markAsCompleted'),
         key: ACTION.COMPLETE,
+      });
+      baseMenu.push({
+        icon: <LightingIcon className={'text-primary'} />,
+        label: t('direction.requestCompletedVersion'),
+        key: ACTION.REQUEST_COMPLETE,
       });
     }
 

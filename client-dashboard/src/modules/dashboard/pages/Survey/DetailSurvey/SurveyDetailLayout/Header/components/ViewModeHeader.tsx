@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,
+  RequestApproveCompleteSurveyModal,
   SurveyRenameModal,
   SurveyVersionRemarkButton,
   useSurveyFormContext,
@@ -15,7 +16,7 @@ import {
 } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
+import { EntityEnum, MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
 import { onError, saveBlob, useToggle } from '@/utils';
@@ -27,7 +28,7 @@ import {
   ActionThreeDropDown,
 } from './SurveyVersionActionThreeDropdown';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
-import { IBreadcrumbItem } from '@/modules/common';
+import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
 import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
 
 const { confirm } = Modal;
@@ -86,8 +87,9 @@ const RightMenu = () => {
   const { survey, handleCloneSurveyVersion } = useSurveyFormContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
+  const { canUpdate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
   const [openRenameModal, toggleRenameModal] = useToggle();
+  const [openApproveSurveyModal, toggleOpenApproveSurveyModal] = useToggle();
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -253,15 +255,20 @@ const RightMenu = () => {
         key: ACTION.RENAME,
         action: toggleRenameModal,
       },
+      {
+        key: ACTION.REQUEST_COMPLETE,
+        action: toggleOpenApproveSurveyModal,
+      },
     ],
     [
-      handleEdit,
-      handleCLone,
-      handleComplete,
       handleDelete,
       handleExport,
+      handleComplete,
+      handleCLone,
       handleShowChangeLog,
+      handleEdit,
       toggleRenameModal,
+      toggleOpenApproveSurveyModal,
     ],
   );
 
@@ -291,6 +298,12 @@ const RightMenu = () => {
         surveyId={params?.surveyId}
         versionId={selectedRecord?.id}
       />
+      {canUpdate && (
+        <RequestApproveCompleteSurveyModal
+          open={openApproveSurveyModal}
+          toggleOpen={toggleOpenApproveSurveyModal}
+        />
+      )}
     </div>
   );
 };

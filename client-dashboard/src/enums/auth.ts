@@ -7,35 +7,9 @@ export enum RoleEnum {
   STAFF_SUPER_ADMIN = 1,
   STAFF_NORMAL_USER = 2,
   STAFF_VIEWER = 3,
-  // STAFF_RESEARCHER = 4,
-  // TENANT_ADMIN = 5,
-  // TENANT_NORMAL_USER = 6,
-  // STAFF_LAB_USER = 7,
-  // TENANT_SUPER_ADMIN = 8,
 }
 
 export const STAFF_ADMIN_DASHBOARD_ROLE_LIMIT = [RoleEnum.STAFF_SUPER_ADMIN];
-
-export const STAFF_DASHBOARD_ROLE_LIMIT = [
-  RoleEnum.STAFF_SUPER_ADMIN,
-  // RoleEnum.STAFF_NORMAL_USER,
-  // RoleEnum.STAFF_VIEWER,
-  // RoleEnum.STAFF_RESEARCHER,
-  // RoleEnum.STAFF_LAB_USER,
-];
-
-export const TENANT_DASHBOARD_ROLE_LIMIT = [
-  // RoleEnum.TENANT_ADMIN,
-  // RoleEnum.TENANT_NORMAL_USER,
-  // RoleEnum.TENANT_SUPER_ADMIN,
-];
-
-export const TENANT_ADMIN_DASHBOARD_ROLE_LIMIT = [
-  // RoleEnum.TENANT_ADMIN,
-  // RoleEnum.TENANT_SUPER_ADMIN,
-];
-
-// export const TENANT_NORMAL_DASHBOARD_ROLE_LIMIT = [RoleEnum.TENANT_NORMAL_USER];
 
 export const AUTH_CHALLENGE = {
   SMS_MFA: 'SMS_MFA',

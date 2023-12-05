@@ -1,5 +1,7 @@
 import { UserPayload } from '../redux/user';
 import { ProjectTypes } from '@/type/project';
+import { RoleEnum } from '@/enums';
+
 export interface UserUpdatedDto {
   // roles: number[]; Don't allow user update their role by this api
   firstName: string;
@@ -345,6 +347,7 @@ export interface IGetParams {
   isDeleted?: boolean;
   selectAll?: boolean;
   order?: 'DESC' | 'ASC';
+  roles?: RoleEnum[];
 }
 
 export type GetListQuestionDto = IGetParams & {
