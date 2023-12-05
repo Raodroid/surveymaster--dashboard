@@ -15,7 +15,6 @@ export type projectSurveyParams = {
   projectId: string;
   surveyId: string;
 };
-export const MONTH_HEIGHT = 124;
 
 export const genHandleActionType = (action: IAction, t) => {
   if (!action) return '';

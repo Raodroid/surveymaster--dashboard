@@ -1,7 +1,7 @@
 import { generateRandom } from '@/modules/common/funcs';
 import { memo, useCallback } from 'react';
-import { MONTH_HEIGHT } from '@pages/Survey';
 import { MonthWrapper } from '../styles';
+import { MONTH_HEIGHT } from '@pages/Survey/DetailSurvey/History/ActionsHistoryCalendar/CalendarScrollbar/Thumb';
 
 // %
 const MAX_WIDTH = 100;
