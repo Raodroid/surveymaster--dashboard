@@ -12,7 +12,9 @@ import { useGetProjectByIdQuery } from '@pages/Project';
 import { useCheckScopeEntityDefault } from '@/modules/common';
 import { SCOPE_CONFIG } from '@/enums';
 import {
+  CheckIcon,
   Clock,
+  CloseIcon,
   DownloadIcon,
   DuplicateIcon,
   LightingIcon,
@@ -23,7 +25,8 @@ import { ThreeDotsDropdown } from '@/customize-components';
 
 const ACTION = {
   EDIT: 'EDIT',
-  COMPLETE: 'COMPLETE',
+  APPROVE_REQUEST: 'APPROVE_REQUEST',
+  DENY_REQUEST: 'DENY_REQUEST',
   RENAME: 'RENAME',
   EXPORT: 'EXPORT',
   DELETE: 'DELETE',
@@ -73,9 +76,14 @@ const ActionThreeDropDown: FC<
     }
     if (canUpdate && isDraftVersion) {
       baseMenu.push({
-        icon: <LightingIcon className={'text-primary'} />,
-        label: t('direction.markAsCompleted'),
-        key: ACTION.COMPLETE,
+        icon: <CheckIcon className={'text-primary'} />,
+        label: t('common.approveRequest'),
+        key: ACTION.APPROVE_REQUEST,
+      });
+      baseMenu.push({
+        icon: <CloseIcon className={'text-primary'} />,
+        label: t('common.denyRequest'),
+        key: ACTION.DENY_REQUEST,
       });
       baseMenu.push({
         icon: <LightingIcon className={'text-primary'} />,

@@ -11,6 +11,7 @@ import { Modal, notification, Spin } from 'antd';
 import {
   IGetParams,
   ISurveyVersion,
+  IUpdateSurveyVersionStatusDto,
   SubSurveyFlowElementDto,
   SurveyVersionStatus,
 } from '@/type';
@@ -30,6 +31,8 @@ import {
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
 import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '@/redux/auth';
 
 const { confirm } = Modal;
 
@@ -90,6 +93,7 @@ const RightMenu = () => {
   const { canUpdate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
   const [openRenameModal, toggleRenameModal] = useToggle();
   const [openApproveSurveyModal, toggleOpenApproveSurveyModal] = useToggle();
+  const profile = useSelector(AuthSelectors.getProfile);
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -109,24 +113,18 @@ const RightMenu = () => {
       onError,
     },
   );
-  const completeMutation = useMutation(
-    (data: { surveyVersionId: string }) => {
-      return SurveyService.updateStatusSurvey(data);
+  const changeSurveyVersionStatusMutation = useMutation(
+    (data: IUpdateSurveyVersionStatusDto & { surveyVersionId: string }) => {
+      return SurveyService.updateStatusSurveyVersion(data);
     },
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveyById');
         notification.success({ message: t('common.updateSuccess') });
-        navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
-            projectId: params.projectId,
-          }),
-        );
       },
       onError,
     },
   );
-
   const handleDelete = useCallback(
     (record: ISurveyVersion) => {
       confirm({
@@ -166,19 +164,24 @@ const RightMenu = () => {
     },
     [toggleExporting],
   );
-  const handleComplete = useCallback(
-    (record: ISurveyVersion) => {
+  const handleAcceptDenyRequest = useCallback(
+    (type: 'APPROVE' | 'DENY', record: ISurveyVersion) => {
       confirm({
         icon: null,
         content: t('common.confirmCompleteSurveyVersion'),
         onOk() {
-          completeMutation.mutateAsync({
+          changeSurveyVersionStatusMutation.mutateAsync({
+            status:
+              type === 'APPROVE'
+                ? SurveyVersionStatus.COMPLETED
+                : SurveyVersionStatus.DRAFT,
+            approveUserId: profile?.id as string,
             surveyVersionId: record.id as string,
           });
         },
       });
     },
-    [completeMutation, t],
+    [changeSurveyVersionStatusMutation, profile?.id, t],
   );
 
   const handleCLone = useCallback(
@@ -236,8 +239,16 @@ const RightMenu = () => {
       },
 
       {
-        key: ACTION.COMPLETE,
-        action: handleComplete,
+        key: ACTION.APPROVE_REQUEST,
+        action: record => {
+          handleAcceptDenyRequest('APPROVE', record);
+        },
+      },
+      {
+        key: ACTION.DENY_REQUEST,
+        action: record => {
+          handleAcceptDenyRequest('DENY', record);
+        },
       },
       {
         key: ACTION.CLONE,
@@ -263,7 +274,7 @@ const RightMenu = () => {
     [
       handleDelete,
       handleExport,
-      handleComplete,
+      handleAcceptDenyRequest,
       handleCLone,
       handleShowChangeLog,
       handleEdit,
@@ -283,7 +294,7 @@ const RightMenu = () => {
           spinning={
             isExporting ||
             deleteMutation.isLoading ||
-            completeMutation.isLoading
+            changeSurveyVersionStatusMutation.isLoading
           }
         >
           <ActionThreeDropDown

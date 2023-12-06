@@ -1,18 +1,24 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { Button, Divider, Form, Modal, Spin } from 'antd';
+import { Button, Divider, Form, Modal, notification, Spin } from 'antd';
 import { Formik } from 'formik';
 import { ControlledInput, INVALID_FIELDS } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
-import { IGetParams, IModal, IOptionItem } from '@/type';
+import {
+  IGetParams,
+  IModal,
+  IOptionItem,
+  IUpdateSurveyVersionStatusDto,
+  SurveyVersionStatus,
+} from '@/type';
 import { useTranslation } from 'react-i18next';
-import { useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
-import { AdminService } from '@/services';
+import { AdminService, SurveyService } from '@/services';
 import { onError, useDebounce } from '@/utils';
-import { RoleEnum } from '@/enums';
+import { RoleEnum, ROUTE_PATH } from '@/enums';
 import _get from 'lodash/get';
 
-const initValue = {
+const initValue: { userId: string } = {
   userId: '',
 };
 
@@ -37,6 +43,23 @@ const RequestApproveCompleteSurveyModal: FC<
   }, []);
 
   const searchDebounce = useDebounce(search);
+
+  const changeSurveyVersionStatusMutation = useMutation(
+    (data: IUpdateSurveyVersionStatusDto) => {
+      return SurveyService.updateStatusSurveyVersion({
+        ...data,
+        surveyVersionId: versionId as string,
+      });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getSurveyById');
+        notification.success({ message: t('common.updateSuccess') });
+        toggleOpen();
+      },
+      onError,
+    },
+  );
 
   const { data, isLoading } = useQuery(
     ['getAdmins', baseParams],
@@ -70,9 +93,15 @@ const RequestApproveCompleteSurveyModal: FC<
     [optionsList, searchDebounce],
   );
 
-  const onSubmit = useCallback(values => {
-    console.log(values);
-  }, []);
+  const onSubmit = useCallback(
+    (values: typeof initValue) => {
+      changeSurveyVersionStatusMutation.mutateAsync({
+        status: SurveyVersionStatus.APPROVE_PENDING,
+        approveUserId: values.userId,
+      });
+    },
+    [changeSurveyVersionStatusMutation],
+  );
 
   return (
     <>
@@ -83,7 +112,9 @@ const RequestApproveCompleteSurveyModal: FC<
         open={open}
         footer={false}
       >
-        <Spin spinning={isLoading}>
+        <Spin
+          spinning={isLoading || changeSurveyVersionStatusMutation.isLoading}
+        >
           <Formik
             enableReinitialize={true}
             onSubmit={onSubmit}

@@ -156,6 +156,7 @@ export interface ISurvey {
 export enum SurveyVersionStatus {
   DRAFT = 'DRAFT',
   COMPLETED = 'COMPLETED',
+  APPROVE_PENDING = 'APPROVE_PENDING',
 }
 export interface ISurveyQuestionDto {
   questionVersionId: string;
@@ -241,4 +242,9 @@ export interface IQuestionRemark {
   questionId?: string;
   owner?: UserPayload;
   remark: string;
+}
+
+export interface IUpdateSurveyVersionStatusDto {
+  status: SurveyVersionStatus;
+  approveUserId: string;
 }
