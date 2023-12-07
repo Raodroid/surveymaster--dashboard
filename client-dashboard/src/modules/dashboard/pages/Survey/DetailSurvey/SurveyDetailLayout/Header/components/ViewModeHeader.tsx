@@ -313,6 +313,7 @@ const RightMenu = () => {
         <RequestApproveCompleteSurveyModal
           open={openApproveSurveyModal}
           toggleOpen={toggleOpenApproveSurveyModal}
+          versionId={selectedRecord?.id}
         />
       )}
     </div>
