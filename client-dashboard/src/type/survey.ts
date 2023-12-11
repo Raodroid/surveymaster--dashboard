@@ -2,7 +2,6 @@ import { IProject } from './project';
 import { IQuestionVersion } from '@/type/question-bank';
 import { UserPayload } from '@/redux/user';
 import { SurveyTemplateEnum } from '@pages/Survey';
-import { version } from 'antd';
 
 export enum SubSurveyFlowElement {
   BLOCK = 'Block',
@@ -108,6 +107,7 @@ export interface SurveyFlowElementResponseDto {
 export interface ISurveyVersion {
   id?: string;
   displayId: string;
+  approvalUserId?: string;
 
   name: string;
   remarks?: ISurveyRemark[];
@@ -156,7 +156,7 @@ export interface ISurvey {
 export enum SurveyVersionStatus {
   DRAFT = 'DRAFT',
   COMPLETED = 'COMPLETED',
-  APPROVE_PENDING = 'APPROVE_PENDING',
+  AWAIT_APPROVAL = 'AWAIT_APPROVAL',
 }
 export interface ISurveyQuestionDto {
   questionVersionId: string;
@@ -246,5 +246,5 @@ export interface IQuestionRemark {
 
 export interface IUpdateSurveyVersionStatusDto {
   status: SurveyVersionStatus;
-  approveUserId: string;
+  approvalUserId: string;
 }

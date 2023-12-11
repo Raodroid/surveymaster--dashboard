@@ -15,7 +15,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import { AdminService, SurveyService } from '@/services';
 import { onError, useDebounce } from '@/utils';
-import { RoleEnum, ROUTE_PATH } from '@/enums';
+import { RoleEnum } from '@/enums';
 import _get from 'lodash/get';
 
 const initValue: { userId: string } = {
@@ -26,13 +26,13 @@ const baseParams: IGetParams = {
   // q: searchDebounce,
   selectAll: true,
   isDeleted: false,
-  roles: [RoleEnum.STAFF_SUPER_ADMIN],
+  roleIds: [RoleEnum.STAFF_SUPER_ADMIN],
 };
 
 const RequestApproveCompleteSurveyModal: FC<
   IModal & { surveyId?: string; versionId?: string }
 > = props => {
-  const { toggleOpen, open, surveyId, versionId } = props;
+  const { toggleOpen, open, versionId } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -96,8 +96,8 @@ const RequestApproveCompleteSurveyModal: FC<
   const onSubmit = useCallback(
     (values: typeof initValue) => {
       changeSurveyVersionStatusMutation.mutateAsync({
-        status: SurveyVersionStatus.APPROVE_PENDING,
-        approveUserId: values.userId,
+        status: SurveyVersionStatus.AWAIT_APPROVAL,
+        approvalUserId: values.userId,
       });
     },
     [changeSurveyVersionStatusMutation],

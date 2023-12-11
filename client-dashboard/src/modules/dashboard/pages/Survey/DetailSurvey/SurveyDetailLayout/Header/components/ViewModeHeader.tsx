@@ -175,7 +175,7 @@ const RightMenu = () => {
               type === 'APPROVE'
                 ? SurveyVersionStatus.COMPLETED
                 : SurveyVersionStatus.DRAFT,
-            approveUserId: profile?.id as string,
+            approvalUserId: profile?.id as string,
             surveyVersionId: record.id as string,
           });
         },

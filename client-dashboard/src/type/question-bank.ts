@@ -347,7 +347,7 @@ export interface IGetParams {
   isDeleted?: boolean;
   selectAll?: boolean;
   order?: 'DESC' | 'ASC';
-  roles?: RoleEnum[];
+  roleIds?: RoleEnum[];
 }
 
 export type GetListQuestionDto = IGetParams & {

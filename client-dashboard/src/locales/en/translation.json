@@ -608,6 +608,7 @@
   },
   "status": {
     "DRAFT": "Draft",
-    "COMPLETED" : "Completed"
+    "COMPLETED": "Completed",
+    "AWAIT_APPROVAL": "Await Approval"
   }
 }

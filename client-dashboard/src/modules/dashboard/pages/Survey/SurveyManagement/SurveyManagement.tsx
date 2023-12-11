@@ -9,6 +9,7 @@ import SurveyTable from '@pages/Survey/SurveyManagement/SurveyTable';
 import { QsParams } from '@/type';
 import { CustomTab } from '@/customize-components';
 import { useParseQueryString } from '@/hooks';
+import { onError } from '@/utils';
 
 const options = [
   { label: 'Active', value: 'false' },
@@ -25,8 +26,14 @@ function SurveyManagement() {
     [navigate],
   );
 
-  const { data: project } = useQuery(['project', params.projectId], () =>
-    ProjectService.getProjectById(params.projectId),
+  const { data: project } = useQuery(
+    ['project', params.projectId],
+    () => ProjectService.getProjectById(params.projectId),
+    {
+      onError,
+      refetchOnWindowFocus: false,
+      enabled: !!params.projectId,
+    },
   );
 
   const routes: IBreadcrumbItem[] = useMemo(

@@ -22,6 +22,8 @@ import {
   TrashOutlined,
 } from '@/icons';
 import { ThreeDotsDropdown } from '@/customize-components';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '@/redux/auth';
 
 const ACTION = {
   EDIT: 'EDIT',
@@ -41,6 +43,7 @@ const ActionThreeDropDown: FC<
   const { record, handleSelect } = props;
   const { t } = useTranslation();
   const params = useParams<{ surveyId?: string; projectId?: string }>();
+  const profile = useSelector(AuthSelectors.getProfile);
 
   const { project } = useGetProjectByIdQuery(params?.projectId);
 
@@ -74,7 +77,22 @@ const ActionThreeDropDown: FC<
         key: ACTION.RENAME,
       });
     }
-    if (canUpdate && isDraftVersion) {
+    if (
+      canUpdate &&
+      isDraftVersion &&
+      record.surveyFlowElements?.length !== 0
+    ) {
+      baseMenu.push({
+        icon: <LightingIcon className={'text-primary'} />,
+        label: t('direction.requestCompletedVersion'),
+        key: ACTION.REQUEST_COMPLETE,
+      });
+    }
+    if (
+      canUpdate &&
+      record.status === SurveyVersionStatus.AWAIT_APPROVAL &&
+      profile?.id === record?.approvalUserId
+    ) {
       baseMenu.push({
         icon: <CheckIcon className={'text-primary'} />,
         label: t('common.approveRequest'),
@@ -85,10 +103,16 @@ const ActionThreeDropDown: FC<
         label: t('common.denyRequest'),
         key: ACTION.DENY_REQUEST,
       });
+    }
+    if (
+      canUpdate &&
+      record.status === SurveyVersionStatus.AWAIT_APPROVAL &&
+      profile?.id === record?.createdBy
+    ) {
       baseMenu.push({
-        icon: <LightingIcon className={'text-primary'} />,
-        label: t('direction.requestCompletedVersion'),
-        key: ACTION.REQUEST_COMPLETE,
+        icon: <CloseIcon className={'text-primary'} />,
+        label: t('common.denyRequest'),
+        key: ACTION.DENY_REQUEST,
       });
     }
 
@@ -113,7 +137,18 @@ const ActionThreeDropDown: FC<
       key: ACTION.SHOW_CHANGE_LOG,
     });
     return baseMenu;
-  }, [canRead, canUpdate, isDraftVersion, isExternalProject, t]);
+  }, [
+    canRead,
+    canUpdate,
+    isDraftVersion,
+    isExternalProject,
+    profile?.id,
+    record?.approvalUserId,
+    record?.createdBy,
+    record.status,
+    record.surveyFlowElements?.length,
+    t,
+  ]);
 
   return (
     <ThreeDotsDropdown
