@@ -9,6 +9,8 @@ import {
   DuplicateSurveyVersionDto,
   ISurveyVersion,
   IPaginationResponse,
+  SurveyVersionStatus,
+  IUpdateSurveyVersionStatusDto,
 } from 'type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
@@ -74,6 +76,18 @@ export default class SurveyService {
     const { surveyVersionId } = props;
     return APIService.put(
       `/${EntityEnum.SURVEY}/version/${surveyVersionId}/completed`,
+    );
+  }
+
+  static updateStatusSurveyVersion(
+    props: IUpdateSurveyVersionStatusDto & {
+      surveyVersionId: string;
+    },
+  ): Promise<AxiosResponse<IPaginationResponse<ISurveyVersion>>> {
+    const { surveyVersionId, ...rest } = props;
+    return APIService.patch(
+      `/${EntityEnum.SURVEY}/version/${surveyVersionId}/status`,
+      rest,
     );
   }
 

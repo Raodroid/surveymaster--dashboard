@@ -115,12 +115,9 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
     [setQuestionListState],
   );
 
-  const handleTyping = useCallback(
-    e => {
-      setSearchQuestionTxt(e.target.value);
-    },
-    [setSearchQuestionTxt],
-  );
+  const handleTyping = useCallback(e => {
+    setSearchQuestionTxt(e.target.value);
+  }, []);
 
   const handleSelectAll = useCallback(
     e => {

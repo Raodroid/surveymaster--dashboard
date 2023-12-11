@@ -20,6 +20,10 @@
     "foods": "Foods"
   },
   "common": {
+    "denyRequest": "Deny Request",
+    "approveRequest": "Approve Request",
+    "approvalPerson": "Approval Person",
+    "requestApproveCompleteSurvey": "Request Approve Complete Survey",
     "addNewElement": "Add New Element",
     "deleteDraft": "Delete Draft",
     "deleteVersion": "Delete Version",
@@ -526,6 +530,7 @@
     }
   },
   "direction": {
+    "requestCompletedVersion": "Request Complete Version",
     "removeConditionRow": "Remove current condition row",
     "warningLostData": "Your changes could not be saved when you switch version of survey! <br/> Are you sure to leave the current page?",
     "confirmDiscardChange": "Are you sure discard the change?",
@@ -603,6 +608,7 @@
   },
   "status": {
     "DRAFT": "Draft",
-    "COMPLETED" : "Completed"
+    "COMPLETED": "Completed",
+    "AWAIT_APPROVAL": "Await Approval"
   }
 }

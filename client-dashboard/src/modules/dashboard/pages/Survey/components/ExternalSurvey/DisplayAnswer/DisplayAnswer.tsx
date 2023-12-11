@@ -122,7 +122,7 @@ const DisplayAnswer = () => {
 
   const handleAddRow = useCallback(() => {
     setValue([
-      ...value,
+      ...(value || []),
       { ...initNewRowValue, id: generateRandom().toString() },
     ]);
   }, [setValue, value]);

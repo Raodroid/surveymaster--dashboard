@@ -1,6 +1,5 @@
 import React, { FC, ReactNode, useCallback, useMemo } from 'react';
 import { useGetProjectByIdQuery } from '@pages/Project';
-import { useParams } from 'react-router';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Button, Divider, Form, Modal, notification, Spin } from 'antd';
 import { IModal, ProjectTypes } from '@/type';
@@ -52,13 +51,17 @@ const ProjectModal: FC<IProjectModal> = props => {
     {
       refetchOnWindowFocus: false,
       refetchOnMount: false,
+      onError,
     },
   );
 
   const optionsList = useMemo(
     () =>
       _get(teamMembers, 'data.data', []).map(elm => {
-        return { label: elm.firstName + ' ' + elm.lastName, value: elm.id };
+        return {
+          label: `${elm.firstName || ''} ${elm.lastName || ''}`,
+          value: elm.id,
+        };
       }),
     [teamMembers],
   );

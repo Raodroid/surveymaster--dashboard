@@ -93,7 +93,7 @@ function TeamContent() {
       page: Number(qsParams.page) || initParams.page,
       take: Number(qsParams.take) || initParams.take,
       isDeleted: qsParams.isDeleted === 'true',
-      roles: Object.values(allRoles).map(elm => elm.id),
+      roleIds: Object.values(allRoles).map(elm => elm.id),
     };
   }, [allRoles, qsParams]);
 

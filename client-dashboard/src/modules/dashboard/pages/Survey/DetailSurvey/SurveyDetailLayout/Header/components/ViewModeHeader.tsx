@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,
+  RequestApproveCompleteSurveyModal,
   SurveyRenameModal,
   SurveyVersionRemarkButton,
   useSurveyFormContext,
@@ -10,12 +11,13 @@ import { Modal, notification, Spin } from 'antd';
 import {
   IGetParams,
   ISurveyVersion,
+  IUpdateSurveyVersionStatusDto,
   SubSurveyFlowElementDto,
   SurveyVersionStatus,
 } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
+import { EntityEnum, MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
 import { onError, saveBlob, useToggle } from '@/utils';
@@ -27,8 +29,10 @@ import {
   ActionThreeDropDown,
 } from './SurveyVersionActionThreeDropdown';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
-import { IBreadcrumbItem } from '@/modules/common';
+import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
 import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '@/redux/auth';
 
 const { confirm } = Modal;
 
@@ -86,8 +90,10 @@ const RightMenu = () => {
   const { survey, handleCloneSurveyVersion } = useSurveyFormContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
+  const { canUpdate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
   const [openRenameModal, toggleRenameModal] = useToggle();
+  const [openApproveSurveyModal, toggleOpenApproveSurveyModal] = useToggle();
+  const profile = useSelector(AuthSelectors.getProfile);
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -107,24 +113,18 @@ const RightMenu = () => {
       onError,
     },
   );
-  const completeMutation = useMutation(
-    (data: { surveyVersionId: string }) => {
-      return SurveyService.updateStatusSurvey(data);
+  const changeSurveyVersionStatusMutation = useMutation(
+    (data: IUpdateSurveyVersionStatusDto & { surveyVersionId: string }) => {
+      return SurveyService.updateStatusSurveyVersion(data);
     },
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveyById');
         notification.success({ message: t('common.updateSuccess') });
-        navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.SURVEY, {
-            projectId: params.projectId,
-          }),
-        );
       },
       onError,
     },
   );
-
   const handleDelete = useCallback(
     (record: ISurveyVersion) => {
       confirm({
@@ -164,19 +164,24 @@ const RightMenu = () => {
     },
     [toggleExporting],
   );
-  const handleComplete = useCallback(
-    (record: ISurveyVersion) => {
+  const handleAcceptDenyRequest = useCallback(
+    (type: 'APPROVE' | 'DENY', record: ISurveyVersion) => {
       confirm({
         icon: null,
         content: t('common.confirmCompleteSurveyVersion'),
         onOk() {
-          completeMutation.mutateAsync({
+          changeSurveyVersionStatusMutation.mutateAsync({
+            status:
+              type === 'APPROVE'
+                ? SurveyVersionStatus.COMPLETED
+                : SurveyVersionStatus.DRAFT,
+            approvalUserId: profile?.id as string,
             surveyVersionId: record.id as string,
           });
         },
       });
     },
-    [completeMutation, t],
+    [changeSurveyVersionStatusMutation, profile?.id, t],
   );
 
   const handleCLone = useCallback(
@@ -234,8 +239,16 @@ const RightMenu = () => {
       },
 
       {
-        key: ACTION.COMPLETE,
-        action: handleComplete,
+        key: ACTION.APPROVE_REQUEST,
+        action: record => {
+          handleAcceptDenyRequest('APPROVE', record);
+        },
+      },
+      {
+        key: ACTION.DENY_REQUEST,
+        action: record => {
+          handleAcceptDenyRequest('DENY', record);
+        },
       },
       {
         key: ACTION.CLONE,
@@ -253,15 +266,20 @@ const RightMenu = () => {
         key: ACTION.RENAME,
         action: toggleRenameModal,
       },
+      {
+        key: ACTION.REQUEST_COMPLETE,
+        action: toggleOpenApproveSurveyModal,
+      },
     ],
     [
-      handleEdit,
-      handleCLone,
-      handleComplete,
       handleDelete,
       handleExport,
+      handleAcceptDenyRequest,
+      handleCLone,
       handleShowChangeLog,
+      handleEdit,
       toggleRenameModal,
+      toggleOpenApproveSurveyModal,
     ],
   );
 
@@ -276,7 +294,7 @@ const RightMenu = () => {
           spinning={
             isExporting ||
             deleteMutation.isLoading ||
-            completeMutation.isLoading
+            changeSurveyVersionStatusMutation.isLoading
           }
         >
           <ActionThreeDropDown
@@ -291,6 +309,13 @@ const RightMenu = () => {
         surveyId={params?.surveyId}
         versionId={selectedRecord?.id}
       />
+      {canUpdate && (
+        <RequestApproveCompleteSurveyModal
+          open={openApproveSurveyModal}
+          toggleOpen={toggleOpenApproveSurveyModal}
+          versionId={selectedRecord?.id}
+        />
+      )}
     </div>
   );
 };
