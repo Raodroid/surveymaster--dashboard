@@ -377,12 +377,12 @@ const DisplayQuestionColumn: FC<{
 }> = props => {
   const { record, fieldName } = props;
   const { t } = useTranslation();
-  const [expanded, toggleExpanded] = useToggle();
+
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <Popover
       placement={'bottomRight'}
-      open={expanded}
       content={
         <div
           className={'w-[630px] overflow-hidden transition-[height]'}
@@ -398,13 +398,17 @@ const DisplayQuestionColumn: FC<{
           </SimpleBar>
         </div>
       }
+      trigger="click"
+      open={expanded}
+      onOpenChange={(open: boolean) => {
+        setExpanded(open);
+      }}
     >
       <Button
         shape={'round'}
         type={expanded ? 'primary' : 'text'}
         className={'info-btn'}
         icon={<Chat />}
-        onClick={toggleExpanded}
       >
         <span className={'font-semibold text-[12px]'}>
           {t('common.remark')}

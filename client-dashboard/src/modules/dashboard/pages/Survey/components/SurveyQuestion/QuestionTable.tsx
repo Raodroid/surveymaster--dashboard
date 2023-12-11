@@ -175,7 +175,7 @@ const QuestionTable: FC<{
         <DragTable
           scroll={{ x: 500 }}
           columns={columns}
-          rowClassName={'border hannah'}
+          rowClassName={'border'}
           dataSource={value}
           pagination={false}
           setDataTable={setValue}

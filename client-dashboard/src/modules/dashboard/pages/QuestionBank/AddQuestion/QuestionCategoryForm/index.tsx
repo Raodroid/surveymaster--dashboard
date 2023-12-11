@@ -22,7 +22,7 @@ const QuestionCategoryForm = props => {
           className={className}
           inputType={INPUT_TYPES.INPUT}
           name="id"
-          label={t('common.question') + ' ID'}
+          label={t('common.questionVersionId')}
         />
       )}
       <ControlledInput

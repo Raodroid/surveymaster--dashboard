@@ -97,10 +97,11 @@ export const TemplateOption = () => {
   );
 
   const onChange = useCallback(
-    e => {
-      e.preventDefault();
-      if (e.target.value) setFieldValue('template', e.target.value);
-      setFieldValue('duplicateSurveyId', undefined);
+    async newValue => {
+      if (newValue === SurveyTemplateEnum.NEW) {
+        await setFieldValue('template', newValue);
+        await setFieldValue('duplicateSurveyId', undefined);
+      }
     },
     [setFieldValue],
   );
