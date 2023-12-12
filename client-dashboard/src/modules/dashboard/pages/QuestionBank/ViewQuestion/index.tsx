@@ -3,7 +3,7 @@ import { ViewQuestionWrapper } from './style';
 import GeneralSectionHeader from '@components/GeneralSectionHeader';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-import { ROUTE_PATH } from 'enums';
+import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { useGetQuestionByQuestionId } from '../util';
 import { Button, Form, notification } from 'antd';
 import QuestionCategoryForm from '../AddQuestion/QuestionCategoryForm';
@@ -25,12 +25,14 @@ import {
 } from 'type';
 import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from 'services';
-import { onError } from '@/utils';
+import { onError, useToggle } from '@/utils';
 import moment, { Moment } from 'moment';
 import HannahCustomSpin from '@components/HannahCustomSpin';
-import { SCOPE_CONFIG } from 'enums';
 import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '@/redux/auth';
+import RequestApproveCompleteQuestionModal from '@pages/QuestionBank/components/RequestApproveCompleteQuestionModal/RequestApproveCompleteQuestionModal';
 
 const formSchema = Yup.object();
 
@@ -48,6 +50,7 @@ const ViewQuestion = () => {
   const queryClient = useQueryClient();
   const queryString = useParseQueryString<{ version?: string }>();
   const params = useParams<{ questionId?: string }>();
+  const profile = useSelector(AuthSelectors.getProfile);
 
   const { canDelete, canUpdate } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTION,
@@ -85,12 +88,13 @@ const ViewQuestion = () => {
     ],
   );
 
-  const markAsCompleteQuestionMutation = useMutation(
-    (data: { id: string }) => {
-      return QuestionBankService.changeStatusQuestion({
-        ...data,
-        version: { status: QuestionVersionStatus.COMPLETED },
-      });
+  const updateQuestionVersionStatus = useMutation(
+    (data: {
+      id: string;
+      status: QuestionVersionStatus;
+      approvalUserId: string;
+    }) => {
+      return QuestionBankService.changeStatusQuestionVersion(data);
     },
     {
       onSuccess: async () => {
@@ -146,13 +150,23 @@ const ViewQuestion = () => {
     [navigate, params?.questionId, queryString],
   );
 
-  const handleMarkAsCompleted = useCallback(async () => {
-    if (!selectedVerQuestionData?.id) return;
+  const handleUpdateStatus = useCallback(
+    async (status: QuestionVersionStatus) => {
+      if (!selectedVerQuestionData?.id) return;
 
-    await markAsCompleteQuestionMutation.mutateAsync({
-      id: selectedVerQuestionData?.id as string,
-    });
-  }, [markAsCompleteQuestionMutation, selectedVerQuestionData]);
+      const approvalUserId =
+        status === QuestionVersionStatus.AWAIT_APPROVAL
+          ? ''
+          : (profile?.id as string);
+
+      await updateQuestionVersionStatus.mutateAsync({
+        id: selectedVerQuestionData?.id as string,
+        status,
+        approvalUserId,
+      });
+    },
+    [selectedVerQuestionData?.id, profile?.id, updateQuestionVersionStatus],
+  );
 
   const handleDeleteQuestionVersion = useCallback(async () => {
     if (!selectedVerQuestionData?.id) return;
@@ -161,6 +175,8 @@ const ViewQuestion = () => {
       id: selectedVerQuestionData?.id as string,
     });
   }, [deleteQuestionVersionMutation, selectedVerQuestionData?.id]);
+
+  const [openRequest, toggleOpenRequest] = useToggle();
 
   const onFinish = useCallback(values => {}, []);
 
@@ -173,7 +189,7 @@ const ViewQuestion = () => {
         spinning={
           isLoading ||
           deleteQuestionVersionMutation.isLoading ||
-          markAsCompleteQuestionMutation.isLoading
+          updateQuestionVersionStatus.isLoading
         }
       />
       <GeneralSectionHeader
@@ -193,27 +209,63 @@ const ViewQuestion = () => {
               <Button
                 type={'primary'}
                 className={'info-btn'}
-                onClick={handleMarkAsCompleted}
-                loading={markAsCompleteQuestionMutation.isLoading}
+                onClick={toggleOpenRequest}
+                loading={updateQuestionVersionStatus.isLoading}
               >
-                {t('direction.markAsCompleted')}
+                {t('common.requestApproveCompleteQuestion')}
               </Button>
             )}
-            {canUpdate && (
-              <Button
-                onClick={handleEdit}
-                type={'text'}
-                aria-label={'direct-edit-page'}
-                ghost
-              >
-                <PenFilled
-                  style={{
-                    color: templateVariable.primary_color,
-                    cursor: 'pointer',
+            {canUpdate &&
+              selectedVerQuestionData &&
+              selectedVerQuestionData.status ===
+                QuestionVersionStatus.AWAIT_APPROVAL &&
+              profile?.id === selectedVerQuestionData?.approvalUserId && (
+                <Button
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={() => {
+                    handleUpdateStatus(QuestionVersionStatus.COMPLETED);
                   }}
-                />
-              </Button>
-            )}
+                  loading={updateQuestionVersionStatus.isLoading}
+                >
+                  {t('common.approveRequest')}
+                </Button>
+              )}
+            {canUpdate &&
+              selectedVerQuestionData &&
+              selectedVerQuestionData.status ===
+                QuestionVersionStatus.AWAIT_APPROVAL &&
+              (profile?.id === selectedVerQuestionData?.createdBy?.id ||
+                profile?.id === selectedVerQuestionData?.approvalUserId) && (
+                <Button
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={() => {
+                    handleUpdateStatus(QuestionVersionStatus.DRAFT);
+                  }}
+                  loading={updateQuestionVersionStatus.isLoading}
+                >
+                  {t('common.denyRequest')}
+                </Button>
+              )}
+
+            {canUpdate &&
+              selectedVerQuestionData?.status !==
+                QuestionVersionStatus.AWAIT_APPROVAL && (
+                <Button
+                  onClick={handleEdit}
+                  type={'text'}
+                  aria-label={'direct-edit-page'}
+                  ghost
+                >
+                  <PenFilled
+                    style={{
+                      color: templateVariable.primary_color,
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Button>
+              )}
           </div>
         }
       />
@@ -229,7 +281,6 @@ const ViewQuestion = () => {
               id={'filter-form'}
               layout={'vertical'}
               onFinish={handleSubmit}
-              disabled
               className={'QuestionContent__body'}
             >
               <div className="QuestionContent__body__content-wrapper">
@@ -242,30 +293,27 @@ const ViewQuestion = () => {
                         const { displayId } = version;
                         if (displayId === queryString?.version) {
                           return (
-                            <span
-                              role={'button'}
-                              className={'ant-btn ant-btn-primary info-btn'}
+                            <Button
+                              type={'primary'}
+                              key={displayId}
+                              className={'info-btn'}
                             >
-                              <span>
-                                {t('common.version')} {displayId}
-                              </span>
-                            </span>
+                              {t('common.version')} {displayId}
+                            </Button>
                           );
                         }
                         return (
-                          <span
-                            className={'ant-btn ant-btn-default info-btn'}
-                            role="button"
+                          <Button
+                            key={displayId}
+                            className={'info-btn'}
                             onClick={() => {
                               handleChangeViewVersion(displayId);
                             }}
                           >
-                            <span>
-                              {t('common.version')} {displayId}
-                            </span>
-                          </span>
+                            {t('common.version')} {displayId}
+                          </Button>
                         );
-                      }, [])}
+                      })}
                     </div>
                   </div>
                   <div className={'question-section__row'}>
@@ -301,6 +349,12 @@ const ViewQuestion = () => {
           )}
         </Formik>
       )}
+
+      <RequestApproveCompleteQuestionModal
+        toggleOpen={toggleOpenRequest}
+        open={openRequest}
+        versionId={selectedVerQuestionData?.id}
+      />
     </ViewQuestionWrapper>
   );
 };

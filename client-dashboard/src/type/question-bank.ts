@@ -35,6 +35,7 @@ export interface IQuestion {
 }
 
 export interface IQuestionVersion {
+  approvalUserId?: string;
   id?: string;
   displayId: string;
   questionId: string;
@@ -108,6 +109,7 @@ export enum DateFormat {
 export enum QuestionVersionStatus {
   DRAFT = 'DRAFT',
   COMPLETED = 'COMPLETED',
+  AWAIT_APPROVAL = 'AWAIT_APPROVAL',
 }
 
 export interface IQuestionCategory {
@@ -330,6 +332,7 @@ export interface IQuestionVersionPatchUpdateDto {
 export interface IQuestionVersionPatchUpdateDtoExtendId
   extends IQuestionVersionPatchUpdateDto {
   id: string;
+  approvalUserId: string;
 }
 
 export interface IQuestionVersionPutUpdateDtoExtendId
