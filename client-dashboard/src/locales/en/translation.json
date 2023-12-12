@@ -24,6 +24,7 @@
     "approveRequest": "Approve Request",
     "approvalPerson": "Approval Person",
     "requestApproveCompleteSurvey": "Request Approve Complete Survey",
+    "requestApproveCompleteQuestion": "Request Approve Complete Question",
     "addNewElement": "Add New Element",
     "deleteDraft": "Delete Draft",
     "deleteVersion": "Delete Version",

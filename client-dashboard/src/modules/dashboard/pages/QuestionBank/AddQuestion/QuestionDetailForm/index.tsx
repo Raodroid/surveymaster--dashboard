@@ -8,10 +8,15 @@ import { transformEnumToOption } from '@/utils';
 import { useFormikContext } from 'formik';
 import TextGraphic from '../DisplayAnswerList/RenderQuestionType/TextGraphic';
 import { IAddQuestionFormValue } from '@pages/QuestionBank/AddQuestion/util';
-import { useCheckSurveyFormMode } from '@pages/Survey';
+import { useMatch } from 'react-router-dom';
+import { ROUTE_PATH } from '@/enums';
 
 const AddQuestionDetailForm = () => {
-  const { isViewMode } = useCheckSurveyFormMode();
+  const isViewMode = useMatch({
+    path: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.VIEW_QUESTION,
+    end: true,
+    caseSensitive: true,
+  });
   const className = isViewMode ? 'view-mode' : undefined;
 
   const { t } = useTranslation();
@@ -48,7 +53,9 @@ const AddQuestionDetailForm = () => {
         aria-label={'title'}
         label={t('common.question')}
       />
-      {values.type !== QuestionType.TEXT_GRAPHIC && <TextGraphic />}
+      {!isViewMode && values.type !== QuestionType.TEXT_GRAPHIC && (
+        <TextGraphic />
+      )}
     </QuestionDetailFormWrapper>
   );
 };

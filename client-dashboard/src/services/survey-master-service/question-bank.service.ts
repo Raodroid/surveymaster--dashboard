@@ -6,6 +6,7 @@ import {
   IQuestionCreatePostDto,
   IQuestionVersionPatchUpdateDtoExtendId,
   IQuestionVersionPostNewDto,
+  QuestionVersionStatus,
 } from '@/type';
 import { EntityEnum } from '@/enums';
 
@@ -31,21 +32,34 @@ export default class QuestionBankService {
     const { id } = props;
     return APIService.post(`/${EntityEnum.QUESTION}/${id}/duplicate`);
   }
+
   static restoreQuestionByQuestionId(props): Promise<AxiosResponse> {
     const { id } = props;
     return APIService.post(`/${EntityEnum.QUESTION}/${id}/restore`);
   }
+
   static changeStatusQuestion(
     props: IQuestionVersionPatchUpdateDtoExtendId,
   ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
     return APIService.patch(`/${EntityEnum.QUESTION}/version/${id}`, rest);
   }
+
+  static changeStatusQuestionVersion(props: {
+    id: string;
+    approvalUserId: string;
+    status: QuestionVersionStatus;
+  }): Promise<AxiosResponse> {
+    const { id, ...rest } = props;
+    return APIService.put(`/${EntityEnum.QUESTION}/version/${id}/status`, rest);
+  }
+
   static createQuestionVersion(
     props: IQuestionVersionPostNewDto,
   ): Promise<AxiosResponse> {
     return APIService.post(`/${EntityEnum.QUESTION}/version/`, props);
   }
+
   static updateDraftQuestion(
     props: IQuestionVersionPatchUpdateDtoExtendId,
   ): Promise<AxiosResponse> {

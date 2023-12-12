@@ -3,38 +3,33 @@ import { Button, Divider, Form, Modal, notification, Spin } from 'antd';
 import { Formik } from 'formik';
 import { ControlledInput, INVALID_FIELDS } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
-import {
-  IGetParams,
-  IModal,
-  IOptionItem,
-  IUpdateSurveyVersionStatusDto,
-  SurveyVersionStatus,
-} from '@/type';
+import { IGetParams, IModal, IOptionItem, QuestionVersionStatus } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
-import { AdminService, SurveyService } from '@/services';
+import { AdminService, QuestionBankService } from '@/services';
 import { onError, useDebounce } from '@/utils';
-import { RoleEnum } from '@/enums';
+import { RoleEnum, ROUTE_PATH } from '@/enums';
 import _get from 'lodash/get';
+import { useNavigate } from 'react-router-dom';
 
 const initValue: { userId: string } = {
   userId: '',
 };
 
 const baseParams: IGetParams = {
-  // q: searchDebounce,
   selectAll: true,
   isDeleted: false,
   roleIds: [RoleEnum.STAFF_SUPER_ADMIN],
 };
 
-const RequestApproveCompleteSurveyModal: FC<
-  IModal & { surveyId?: string; versionId?: string }
+const RequestApproveCompleteQuestionModal: FC<
+  IModal & { versionId?: string }
 > = props => {
   const { toggleOpen, open, versionId } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState<string>('');
 
@@ -44,18 +39,23 @@ const RequestApproveCompleteSurveyModal: FC<
 
   const searchDebounce = useDebounce(search);
 
-  const changeSurveyVersionStatusMutation = useMutation(
-    (data: IUpdateSurveyVersionStatusDto) => {
-      return SurveyService.updateStatusSurveyVersion({
+  const updateQuestionVersionStatus = useMutation(
+    (data: {
+      status: QuestionVersionStatus;
+      approvalUserId: string;
+      id: string;
+    }) => {
+      return QuestionBankService.changeStatusQuestionVersion({
         ...data,
-        surveyVersionId: versionId as string,
+        // version: { status },
       });
     },
     {
       onSuccess: async () => {
-        await queryClient.invalidateQueries('getSurveyById');
+        await queryClient.invalidateQueries('getQuestionList');
+        await queryClient.invalidateQueries('getQuestionQuery');
         notification.success({ message: t('common.updateSuccess') });
-        toggleOpen();
+        navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
       },
       onError,
     },
@@ -95,26 +95,26 @@ const RequestApproveCompleteSurveyModal: FC<
 
   const onSubmit = useCallback(
     (values: typeof initValue) => {
-      changeSurveyVersionStatusMutation.mutateAsync({
-        status: SurveyVersionStatus.AWAIT_APPROVAL,
+      if (!versionId) return;
+      updateQuestionVersionStatus.mutateAsync({
+        status: QuestionVersionStatus.AWAIT_APPROVAL,
         approvalUserId: values.userId,
+        id: versionId,
       });
     },
-    [changeSurveyVersionStatusMutation],
+    [updateQuestionVersionStatus, versionId],
   );
 
   return (
     <>
       <Modal
         centered
-        title={t('common.requestApproveCompleteSurvey')}
+        title={t('common.requestApproveCompleteQuestion')}
         onCancel={toggleOpen}
         open={open}
         footer={false}
       >
-        <Spin
-          spinning={isLoading || changeSurveyVersionStatusMutation.isLoading}
-        >
+        <Spin spinning={isLoading || updateQuestionVersionStatus.isLoading}>
           <Formik
             enableReinitialize={true}
             onSubmit={onSubmit}
@@ -159,4 +159,4 @@ const RequestApproveCompleteSurveyModal: FC<
   );
 };
 
-export default RequestApproveCompleteSurveyModal;
+export default RequestApproveCompleteQuestionModal;
