@@ -1,6 +1,6 @@
 import React, {
   FC,
-  LegacyRef,
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -8,14 +8,13 @@ import React, {
   useState,
 } from 'react';
 import { IModal, IOptionItem, QuestionType } from '@/type';
-import { Input, List, Spin, Tag } from 'antd';
+import { Input, List, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { questionValueType, useSurveyFormContext } from '@pages/Survey';
 import { useField } from 'formik';
 import { useDebounce } from '@/utils';
 import { SimpleBarCustom } from '@/customize-components';
 import { AddNewQuestionModalWrapper } from '@pages/Survey/components/AddNewQuestionModal/style';
-import { RoundedTag } from '@components/index';
 
 const initNewRowValue: questionValueType = {
   remarks: [],
@@ -73,9 +72,9 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
   );
 
   const handleOnClose = useCallback(() => {
+    toggleOpen();
     setSearchParams({ q: '' });
     setSearchTxt('');
-    toggleOpen();
   }, [setSearchParams, toggleOpen]);
 
   const handleSelectQuestion = useCallback(
@@ -101,9 +100,9 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
 
         setSearchTxt('');
       }
-      toggleOpen();
+      handleOnClose();
     },
-    [questionVersionIdMap, toggleOpen, value, setValue],
+    [questionVersionIdMap, handleOnClose, value, setValue],
   );
 
   useEffect(() => {
@@ -195,4 +194,4 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
   );
 };
 
-export default AddNewQuestionModal;
+export default memo(AddNewQuestionModal);
