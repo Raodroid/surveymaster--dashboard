@@ -22,19 +22,18 @@ export const MONTH_HEIGHT = 124;
 
 const INPUTS_HEIGHT = 56;
 const MIN_ACTIONS_HISTORY_HEIGHT = 478;
-const MAX_ACTIONS_HISTORY_HEIGHT = 1200;
 const MIN_MONTHS_HEIGHT = MIN_ACTIONS_HISTORY_HEIGHT - INPUTS_HEIGHT;
-const MAX_WHEEL_STEP_DISTANCE = 100;
-const MAX_ARROW_KEY_STEP_DISTANCE = 4;
 
-enum DIRECTION {
-  UP = 'up',
-  DOWN = 'down',
-}
+const getPixelNumber = (input?: string): number => {
+  if (!input) return 0;
+  const transform = Number(input.replace('px', ''));
+  return isNaN(transform) ? 0 : transform;
+};
 
 function Thumb() {
   const { months, monthData } = useActionHistoryContext();
-  const mousePos = useRef({ x: 0, y: 0 });
+  const navigate = useNavigate();
+  const qsParams = useParseQueryString<IGetParams>();
 
   const monthsRef = useRef<HTMLElement>();
   const thumbRef = useRef<HTMLElement>();
@@ -44,7 +43,12 @@ function Thumb() {
 
   const directionRef = useRef<'up' | 'down' | null>(null);
 
+  const redundantSpace = Math.floor(
+    (monthsWrapperRef?.current?.offsetHeight || 0) % MONTH_HEIGHT,
+  );
+
   useEffect(() => {
+    //calc thumb's moving space
     if (!monthsWrapperRef.current) return;
     const handleResize = () => {
       setMonthHeight(
@@ -63,130 +67,92 @@ function Thumb() {
     return () => window.removeEventListener('resize', handleResize);
   }, [months.length]);
 
-  const maxDistance = useMemo<number>(() => {
-    if (!thumbRef.current || !monthsRef.current) return 0;
+  const maxThumbMovingDistance = useMemo<number>(() => {
+    const monthElement = monthsRef.current;
+
+    if (!monthElement) return 0;
 
     return (
-      (monthsHeight < monthsRef.current?.offsetHeight
+      (monthsHeight < monthElement?.offsetHeight
         ? monthsHeight
-        : monthsRef.current?.offsetHeight) - MONTH_HEIGHT
+        : monthElement?.offsetHeight) - MONTH_HEIGHT
     );
   }, [monthsHeight]);
 
-  const setMonthRefPosition = useCallback((top: number) => {
+  const maxTopForMonthRef = useMemo<number>(() => {
     const monthElement = monthsRef.current;
     const wrapperElement = monthsWrapperRef.current;
-    if (!monthElement || !wrapperElement) return;
+    if (!monthElement || !wrapperElement) return 0;
 
-    let newPosition: number = top;
+    return monthElement.offsetHeight > wrapperElement.offsetHeight
+      ? monthElement.offsetHeight - wrapperElement.offsetHeight + redundantSpace
+      : 0;
+  }, [redundantSpace]);
 
-    const maxTop: number =
-      monthElement.offsetHeight > wrapperElement.offsetHeight
-        ? monthElement.offsetHeight - wrapperElement.offsetHeight
-        : 0;
+  const setMonthRefPosition = useCallback(
+    (top: number) => {
+      const monthElement = monthsRef.current;
+      if (!monthElement) return;
 
-    if (top < 0) {
-      newPosition = 0;
-    } else if (top > maxTop) {
-      newPosition = maxTop;
-    }
-    monthElement.style.top = newPosition * -1 + 'px';
-  }, []);
+      if (top >= 0) {
+        monthElement.style.top = '0px';
+        return;
+      }
+
+      let newPosition: number = top;
+
+      if (Math.abs(top) > maxTopForMonthRef) {
+        newPosition = top < 0 ? maxTopForMonthRef * -1 : 0;
+      }
+      monthElement.style.top = newPosition + 'px';
+    },
+    [maxTopForMonthRef],
+  );
 
   const setThumbPosition = useCallback(
     (top: number) => {
       if (!thumbRef.current || !monthsRef.current) return;
 
       let newPosition: number = top;
+      directionRef.current = null;
 
       if (top < 0) {
         newPosition = 0;
-      } else if (top > maxDistance) {
-        newPosition = maxDistance;
+        directionRef.current = 'up'; //determine thumb has scroll direction is "up" or "down" or "null"
+      } else if (top > maxThumbMovingDistance) {
+        newPosition = maxThumbMovingDistance;
+        directionRef.current = 'down';
       }
       thumbRef.current.style.top = newPosition + 'px';
-
-      // if (monthsRef.current?.offsetHeight >= monthsHeight) {
-      //   monthsRef.current.style.top =
-      //     -top * (maxInnerDistance / maxScrollDistance) + 'px';
-      // }
     },
-    [maxDistance],
+    [maxThumbMovingDistance],
   );
 
-  // const handleScroll = useCallback(
-  //   (e, maxStep: number, direction: string) => {
-  //     if (!thumbRef.current || !monthsRef.current) return;
-  //
-  //     if (topThumb <= 0 && direction === DIRECTION.UP) {
-  //       setTopThumb(0);
-  //       thumbRef.current.style.top = '0px';
-  //       monthsRef.current.style.top = '0px';
-  //       return;
-  //     }
-  //     if (topThumb >= maxScrollDistance && direction === DIRECTION.DOWN) {
-  //       setTopThumb(maxScrollDistance);
-  //       thumbRef.current.style.top = maxScrollDistance + 'px';
-  //       if (monthsRef.current.offsetHeight >= monthsHeight)
-  //         monthsRef.current.style.top = -maxInnerDistance + 'px';
-  //       return;
-  //     }
-  //
-  //     e.preventDefault();
-  //
-  //     const scrollStep =
-  //       (direction === DIRECTION.UP ? -1 : 1) *
-  //       Math.min(
-  //         maxStep,
-  //         maxScrollDistance - topThumb > 0
-  //           ? Math.min(maxScrollDistance - topThumb, maxStep)
-  //           : maxStep,
-  //         topThumb > 0 ? topThumb : maxStep,
-  //       );
-  //
-  //     const top = topThumb + scrollStep;
-  //     setThumbPosition(top);
-  //   },
-  //   [
-  //     topThumb,
-  //     monthsHeight,
-  //     maxInnerDistance,
-  //     maxScrollDistance,
-  //     setThumbPosition,
-  //   ],
-  // );
-
-  const triggerRef = useRef<{ thumb: boolean; pos: number; gap: number }>({
-    thumb: false,
-    pos: 0,
+  const triggerRef = useRef<{ isPressed: boolean; gap: number }>({
+    isPressed: false,
     gap: 0,
   });
 
   const onMouseMove = useCallback(
     e => {
-      if (!monthsRef.current || !triggerRef.current.thumb) return;
+      if (!triggerRef.current.isPressed) return;
 
       const parentClientY = e.target.offsetParent.offsetTop;
 
       const topValue: number =
         e.clientY - parentClientY - triggerRef.current.gap;
 
-      directionRef.current = null;
-
       setThumbPosition(topValue);
     },
     [setThumbPosition],
   );
-  const navigate = useNavigate();
-
-  const qsParams = useParseQueryString<IGetParams>();
 
   const handleStopDrag = useCallback(
     e => {
-      if (!triggerRef.current.thumb) {
+      if (!triggerRef.current.isPressed) {
         return;
       }
-      triggerRef.current.thumb = false;
+      triggerRef.current.isPressed = false;
 
       const parentClientY = e.target.offsetParent.offsetTop;
 
@@ -194,12 +160,26 @@ function Thumb() {
         e.clientY - parentClientY - triggerRef.current.gap;
 
       const monthBlockOrder = Math.floor(
-        (topValue + MONTH_HEIGHT / 2) / MONTH_HEIGHT,
+        (topValue + MONTH_HEIGHT / 2) / MONTH_HEIGHT, // consider which month block will take the thumb by calc which block contain more part of thumb
       );
 
-      setThumbPosition(monthBlockOrder * MONTH_HEIGHT);
+      const top = monthBlockOrder * MONTH_HEIGHT;
+      let newPosition = top;
 
-      const focusMonthBlock = months[monthBlockOrder];
+      if (top < 0) {
+        newPosition = 0;
+      } else if (top > maxThumbMovingDistance) {
+        newPosition = maxThumbMovingDistance - redundantSpace;
+      }
+
+      setThumbPosition(newPosition);
+
+      const focusMonthBlock =
+        months[
+          monthBlockOrder +
+            Math.abs(getPixelNumber(monthsRef?.current?.style.top)) /
+              MONTH_HEIGHT
+        ];
 
       const newQes = qs.stringify({
         ...qsParams,
@@ -207,64 +187,16 @@ function Thumb() {
         createdTo: undefined,
       });
       navigate(`${window.location.pathname}?${newQes}`);
-
-      // if (topValue < 0) {
-      //   directionRef.current = 'up';
-      // } else if (topValue >= maxDistance) {
-      //   directionRef.current = 'down';
-      // }
     },
-    [months, navigate, qsParams, setThumbPosition],
+    [
+      redundantSpace,
+      maxThumbMovingDistance,
+      months,
+      navigate,
+      qsParams,
+      setThumbPosition,
+    ],
   );
-
-  const handleWheel = useCallback(e => {
-    // const isOver = e.path
-    //   ? e.path.some(
-    //       path => path.id === ACTIONS_HISTORY_ID.MONTHS_WRAPPER,
-    //     )
-    //   : e.target.id === ACTIONS_HISTORY_ID.THUMB;
-    // if (!isOver || !monthsRef.current || !thumbRef.current) return;
-
-    const direction = e.deltaY < 0 ? DIRECTION.UP : DIRECTION.DOWN;
-    // handleScroll(e, MAX_WHEEL_STEP_DISTANCE, direction);
-  }, []);
-
-  // useEffect(() => {
-  //   const handleScrollByArrowKey = e => {
-  //     const rects = monthsWrapperRef.current?.getBoundingClientRect();
-  //     if (!monthsRef.current || !rects || !thumbRef.current) return;
-  //     if (e.keyCode !== 38 && e.keyCode !== 40) return;
-  //     if (rects.left > mousePos.current.x || mousePos.current.x > rects.right)
-  //       return;
-  //     if (rects.top > mousePos.current.y || mousePos.current.y > rects.bottom)
-  //       return;
-  //
-  //     const direction = e.keyCode === 38 ? DIRECTION.UP : DIRECTION.DOWN;
-  //     handleScroll(e, MAX_ARROW_KEY_STEP_DISTANCE, direction);
-  //   };
-  //
-  //   window.addEventListener('keydown', handleScrollByArrowKey);
-  //   return () => {
-  //     window.removeEventListener('keydown', handleScrollByArrowKey);
-  //   };
-  // }, [handleScroll]);
-
-  // useEffect(() => {
-  //   const handleScrollByWheel = e => {
-  //     const isOver = e.path
-  //       ? e.path.some(path => path.id === ACTIONS_HISTORY_ID.MONTHS_WRAPPER)
-  //       : e.target.id === ACTIONS_HISTORY_ID.THUMB;
-  //     if (!isOver || !monthsRef.current || !thumbRef.current) return;
-  //
-  //     const direction = e.deltaY < 0 ? DIRECTION.UP : DIRECTION.DOWN;
-  //     handleScroll(e, MAX_WHEEL_STEP_DISTANCE, direction);
-  //   };
-  //
-  //   window.addEventListener('wheel', handleScrollByWheel, { passive: false });
-  //   return () => {
-  //     window.removeEventListener('keydown', handleScrollByWheel);
-  //   };
-  // }, [handleScroll]);
 
   const params = useParams<projectSurveyParams>();
 
@@ -272,60 +204,86 @@ function Thumb() {
     `${qsParams.createdFrom}${params.surveyId}`,
   );
 
-  // useEffect(() => {
-  //   if (!monthsRef.current || !qsParams?.createdFrom) return;
-  //   if (Object.keys(monthData).length !== months.length) return;
-  //   if (directionRef.current) return;
-  //   console.log('call');
-  //
-  //   const pos = monthData[qsParams.createdFrom]?.index;
-  //
-  //   if (typeof pos !== 'number') return;
-  //
-  //   setMonthRefPosition(pos * MONTH_HEIGHT);
-  //
-  //   // monthsRef.current?.scrollTo({ top: pos * 124, behavior: 'smooth' });
-  //   // setThumbPosition(monthData[qsParams.createdFrom].index + 1);
-  // }, [
-  //   monthData,
-  //   months.length,
-  //   params.surveyId,
-  //   previousQueryParam,
-  //   qsParams.createdFrom,
-  //   setMonthRefPosition,
-  //   setThumbPosition,
-  // ]);
+  useEffect(() => {
+    //init month and thumb position for the first time render
+
+    if (Object.keys(monthData).length !== months.length) return;
+    if (!qsParams.createdFrom) return;
+
+    if (thumbRef.current?.offsetTop) return; // check if thumb was use, then skip init position
+
+    const pos = monthData[qsParams.createdFrom]?.index;
+
+    if (typeof pos !== 'number') return;
+
+    setMonthRefPosition(pos * MONTH_HEIGHT * -1); //complete set month posision
+
+    const NofDisplayMonthsOnWrapper = Math.floor(
+      (monthsWrapperRef?.current?.offsetHeight || 0) / MONTH_HEIGHT,
+    );
+
+    const gapOfInitMonth = months.length - pos;
+    // Need to consider thumb position (default thumb position on top of monthsWrapperRef )
+
+    // If Gap > Number of month displays bar ==> skip set thumb position
+    if (gapOfInitMonth > NofDisplayMonthsOnWrapper) return;
+    // Else Gap < Number of month displays bar ==> update thumb position
+    setThumbPosition(
+      (NofDisplayMonthsOnWrapper - gapOfInitMonth) * MONTH_HEIGHT,
+    );
+  }, [
+    monthData,
+    months.length,
+    params.surveyId,
+    previousQueryParam,
+    qsParams.createdFrom,
+    setMonthRefPosition,
+    setThumbPosition,
+  ]);
 
   useEffect(() => {
+    // handle scroll month
     const thumbElement = thumbRef.current;
-    console.log(directionRef.current);
 
-    if (!thumbElement || !directionRef.current) return;
+    if (!thumbElement) return;
 
-    let change;
+    let currentIntervalId: NodeJS.Timeout | undefined;
 
     const start = () => {
-      change = setInterval(function () {
-        console.log('scroll');
+      if (currentIntervalId) {
+        return;
+      }
+
+      if (!triggerRef.current.isPressed || !directionRef.current) {
+        return;
+      }
+
+      currentIntervalId = setInterval(function () {
+        const currentPos = Number(
+          monthsRef.current?.style.top.replace('px', ''),
+        );
+
         setMonthRefPosition(
           directionRef.current === 'up'
-            ? MAX_WHEEL_STEP_DISTANCE
-            : MAX_WHEEL_STEP_DISTANCE * -1,
+            ? currentPos + MONTH_HEIGHT
+            : currentPos + MONTH_HEIGHT * -1,
         );
-      }, 400);
+      }, 100);
     };
 
     const stop = () => {
-      console.log('stop');
-      if (change) clearInterval(change);
+      clearInterval(currentIntervalId);
+      currentIntervalId = undefined;
     };
 
-    thumbElement.addEventListener('mousedown', start);
+    thumbElement.addEventListener('mousemove', start);
     thumbElement.addEventListener('mouseup', stop);
+    thumbElement.addEventListener('mouseleave', stop);
 
     return () => {
-      thumbElement.removeEventListener('mousedown', start);
+      thumbElement.removeEventListener('mousemove', start);
       thumbElement.removeEventListener('mouseup', stop);
+      thumbElement.addEventListener('mouseleave', stop);
     };
   }, [setMonthRefPosition]);
 
@@ -334,12 +292,21 @@ function Thumb() {
       <div
         className={'relative overflow-hidden flex-1 w-[50px]'}
         ref={monthsWrapperRef as unknown as RefObject<HTMLDivElement>}
+        style={{
+          boxShadow: `inset 0px ${
+            getPixelNumber(monthsRef.current?.style.top) >= 0 ? 0 : 20
+          }px 8px -10px rgba(0, 0, 0, 0.35), inset 0px ${
+            Math.abs(getPixelNumber(monthsRef.current?.style.top)) <
+            maxTopForMonthRef
+              ? -20
+              : 0
+          }px 8px -10px rgba(0, 0, 0, 0.35)`,
+        }}
       >
         <ThumbWrapper
           onMouseDown={e => {
             e.stopPropagation();
-            triggerRef.current.thumb = true;
-            triggerRef.current.pos = e.clientY;
+            triggerRef.current.isPressed = true;
             triggerRef.current.gap = e.nativeEvent.offsetY;
           }}
           onMouseUp={handleStopDrag}
@@ -350,7 +317,6 @@ function Thumb() {
 
         <div
           className="absolute w-full transition-[top]"
-          onWheel={handleWheel}
           ref={monthsRef as unknown as RefObject<HTMLDivElement>}
         >
           {months.map((month, index: number) => {

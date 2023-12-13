@@ -6,6 +6,7 @@ export const MonthWrapper = styled.div<{ height: number }>`
   height: ${p => p.height}px;
   padding: 10px;
   text-align: center;
+  user-select: none;
 
   .line {
     height: 3px;
