@@ -57,8 +57,13 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
       enabled: !!params.surveyId,
       onSuccess: res => {
         const months = (() => {
-          const monthGap =
-            moment().month() - moment(res.data?.createdAt).month();
+          const createdDate = res.data?.createdAt;
+          const yearGap = moment().year() - moment(createdDate).year();
+          let monthGap = moment().month() - moment(createdDate).month();
+
+          if (yearGap) {
+            monthGap = monthGap + 12 * yearGap;
+          }
 
           let dateStart = moment();
 
