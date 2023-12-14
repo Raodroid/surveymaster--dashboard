@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import restoreAllMocks = jest.restoreAllMocks;
 import { JestGeneralProviderHoc } from '../../../../../../../get-mock-data-jest-test';
-import { ProjectFilter } from '../../project-filter/ProjectFilter';
+import ProjectFilter from '../../project-filter/ProjectFilter';
+import restoreAllMocks = jest.restoreAllMocks;
 
 const mockLocation = {
   pathname: '/app/project',

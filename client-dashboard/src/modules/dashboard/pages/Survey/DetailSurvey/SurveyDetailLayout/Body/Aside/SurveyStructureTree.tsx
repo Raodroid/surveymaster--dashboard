@@ -1,27 +1,25 @@
 import { Tree } from 'antd';
 import type { DataNode, TreeProps } from 'antd/es/tree';
-import React, { useCallback, useMemo, useState } from 'react';
+import { FC, Key, useCallback } from 'react';
 import { useField } from 'formik';
 import {
+  getParentChildrenFieldName,
   questionValueType,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
+  transformToSurveyDataTreeNode,
   useCheckSurveyFormMode,
   useSurveyFormContext,
-  getParentChildrenFieldName,
-  transformToSurveyDataTreeNode,
-  useSurveyBlockAction,
 } from '@pages/Survey';
 import _get from 'lodash/get';
-import { IProject, SubSurveyFlowElement } from '@/type';
+import { SubSurveyFlowElement } from '@/type';
 import { DragHandle } from '@/customize-components';
 import QuestionBlock from './RenderTittle';
 import styled from 'styled-components/macro';
-import { keysAction, useSelectTableRecord } from '@/hooks';
 
 const loop = (
   data: SurveyDataTreeNode[],
-  key: React.Key,
+  key: Key,
   callback: (
     node: SurveyDataTreeNode,
     i: number,
@@ -38,7 +36,7 @@ const loop = (
   }
 };
 
-const SurveyStructureTree: React.FC = () => {
+const SurveyStructureTree: FC = () => {
   const [{ value }, , { setValue: setGData }] = useField<
     Array<SurveyDataTreeNode>
   >(rootSurveyFlowElementFieldName);
@@ -116,7 +114,7 @@ const SurveyStructureTree: React.FC = () => {
     [handleFocusBlock, value, setGData],
   );
   const onExpand = useCallback(
-    (expandedKeysValue: React.Key[]) => {
+    (expandedKeysValue: Key[]) => {
       // console.log('onExpand', expandedKeysValue);
       // if not set autoExpandParent to false, if children expanded, parent can not collapse.
       // or, you can remove all expanded children keys.

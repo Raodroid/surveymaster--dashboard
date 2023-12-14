@@ -1,12 +1,12 @@
-import React, {
+import {
   createContext,
   Dispatch,
+  Key,
   ReactElement,
   SetStateAction,
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import { onError, useToggle } from '@/utils';
@@ -42,9 +42,8 @@ import {
   transformInitSurveyFormData,
   useCheckSurveyFormMode,
 } from '@pages/Survey/SurveyForm/util';
-import HannahCustomSpin from '@components/HannahCustomSpin';
 import { ROUTE_PATH } from '@/enums';
-import { Modal, notification } from 'antd';
+import { Modal, notification, Spin } from 'antd';
 import {
   createQuestionMap,
   transformSurveyVersion,
@@ -81,7 +80,7 @@ interface ISurveyFormContext {
   };
   tree: {
     focusBlock?: SurveyDataTreeNode;
-    expendKeys: React.Key[];
+    expendKeys: Key[];
   };
 
   survey: {
@@ -95,7 +94,7 @@ interface ISurveyFormContext {
   };
 
   handleFocusBlock: (value: SurveyDataTreeNode | undefined) => void;
-  handleExpendTree: (expendKeys: React.Key[]) => void;
+  handleExpendTree: (expendKeys: Key[]) => void;
 
   handleCloneSurveyVersion: (value: IPostSurveyVersionBodyDto) => void;
 }
@@ -103,7 +102,7 @@ interface ISurveyFormContext {
 const intValue: ISurveyFormContext = {
   actionLoading: false,
   handleFocusBlock: (value: SurveyDataTreeNode | undefined) => {},
-  handleExpendTree: (value: React.Key[]) => {},
+  handleExpendTree: (value: Key[]) => {},
 
   question: {
     setSearchParams<T extends keyof GetListQuestionDto>(
@@ -135,7 +134,7 @@ const intValue: ISurveyFormContext = {
     setExcelUploadFile: value => {},
   },
   setSurveyFormContext: function (
-    value: React.SetStateAction<ISurveyFormContext>,
+    value: SetStateAction<ISurveyFormContext>,
   ): void {
     throw new Error('Function not implemented.');
   },
@@ -241,7 +240,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     () => project.type === ProjectTypes.EXTERNAL,
     [project.type],
   );
-  const wrapperRef = useRef<any>();
 
   const initialValues = useMemo<IEditSurveyFormValues>(() => {
     return {
@@ -328,13 +326,12 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         notification.success({
           message: t('common.createSuccess'),
         });
-        const newVersion = res.data;
-
+        const newVersion: ISurveyVersion = res.data;
         navigate(
           generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
             projectId: params.projectId,
-            surveyId: newVersion.surveyId,
-          }) + `?version=${newVersion.displayId}`,
+            surveyId: newVersion?.surveyId,
+          }) + `?version=${newVersion?.displayId}`,
         );
       },
       onError,
@@ -477,7 +474,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     },
     [],
   );
-  const handleExpendTree = useCallback((expandedKeysValue: React.Key[]) => {
+  const handleExpendTree = useCallback((expandedKeysValue: Key[]) => {
     setContext(s => ({
       ...s,
       tree: { ...s.tree, expendKeys: expandedKeysValue },
@@ -538,13 +535,12 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         },
       }}
     >
-      <div ref={wrapperRef} className={'h-full'}>
-        <HannahCustomSpin
-          parentRef={wrapperRef}
-          spinning={loading || isFetchingSurveyData || isFetchingProject}
-        />
-        {props.children}
-      </div>
+      <Spin
+        spinning={loading || isFetchingSurveyData || isFetchingProject}
+        style={{ maxHeight: 'unset' }}
+      >
+        <div className={'h-full'}>{props.children}</div>
+      </Spin>
     </SurveyFormContext.Provider>
   );
 };

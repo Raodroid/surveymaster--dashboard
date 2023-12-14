@@ -1,5 +1,4 @@
-import React from 'react';
-import { QuestionBankWrapper, QuestionBankContentWrapper } from './style';
+import { QuestionBankContentWrapper, QuestionBankWrapper } from './style';
 import QuestionBankSider from './QuestionBankSider';
 import { Outlet } from 'react-router-dom';
 

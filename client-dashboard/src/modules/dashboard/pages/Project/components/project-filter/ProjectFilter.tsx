@@ -1,7 +1,7 @@
-import { Dropdown } from 'antd';
+import { Popover } from 'antd';
 import { useParseQueryString } from '@/hooks/useParseQueryString';
 import { ArrowDown, FilterOutlined } from '@/icons';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectFilterBtn } from './styles';
 import { ProjectFilterOverlay } from './ProjectFilterOverlay';
@@ -12,7 +12,7 @@ export interface IFilter {
   setCounter?: (payload: number) => void;
 }
 
-export function ProjectFilter() {
+function ProjectFilter() {
   const [counter, setCounter] = useState(0);
   const { t } = useTranslation();
   const qsParams = useParseQueryString<QsParams>();
@@ -27,8 +27,8 @@ export function ProjectFilter() {
   }, [qsParams]);
 
   return (
-    <Dropdown
-      overlay={
+    <Popover
+      content={
         <ProjectFilterOverlay counter={counter} setCounter={setCounter} />
       }
       trigger={['click']}
@@ -46,6 +46,8 @@ export function ProjectFilter() {
           <ArrowDown />
         </div>
       </ProjectFilterBtn>
-    </Dropdown>
+    </Popover>
   );
 }
+
+export default memo(ProjectFilter);
