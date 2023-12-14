@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { IQuestionChoiceComponent } from '../type';
 import { INPUT_TYPES } from '@input/type';
 import { ControlledInput } from '@/modules/common';

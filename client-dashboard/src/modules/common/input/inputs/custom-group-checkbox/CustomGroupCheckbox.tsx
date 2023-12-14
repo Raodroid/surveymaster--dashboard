@@ -1,10 +1,10 @@
-import React, { memo, ReactText, useCallback } from 'react';
-import { Checkbox } from 'antd';
-import { RadioGroupProps } from 'antd/lib/radio';
-import { OnchangeType } from '../../type';
-import { CustomGroupCheckboxWrapper } from './style';
+import {memo, ReactNode, useCallback} from 'react';
+import {Checkbox} from 'antd';
+import {RadioGroupProps} from 'antd/lib/radio';
+import {OnchangeType} from '../../type';
+import {CustomGroupCheckboxWrapper} from './style';
 
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import {CheckboxValueType} from 'antd/lib/checkbox/Group';
 
 export interface ISurveyOption {
   id: string;
@@ -20,7 +20,7 @@ export interface ISurveyOption {
 export type CustomRadioButtonGroupProps = RadioGroupProps &
   OnchangeType & {
     customOptions?: Array<{
-      label: React.ReactNode;
+      label: ReactNode;
       value: CheckboxValueType;
       conditionCom: Element;
     }>;
@@ -36,7 +36,7 @@ const CustomGroupCheckbox = (props: CustomRadioButtonGroupProps) => {
         return;
       }
 
-      let transformValues: ReactText[] = values;
+      let transformValues: Array<string | number> = values;
 
       if (props.options) {
         for (let i = 0; i < props.options?.length; i++) {

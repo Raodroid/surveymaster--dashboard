@@ -1,16 +1,14 @@
-import React from 'react';
+import { FC, SVGAttributes } from 'react';
 
-export const SuccessIcon = props => {
-  const { style, className } = props;
+export const SuccessIcon: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (
     <svg
-      className={className}
-      style={style}
       width="40px"
       height="12px"
       viewBox="0 0 12 14"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <g
         id="Design"

@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { AddQuestionWrapper } from './style';
-import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
+import GeneralSectionHeader from '@components/GeneralSectionHeader/GeneralSectionHeader';
 import { useTranslation } from 'react-i18next';
 import { Button, Form, notification } from 'antd';
 import QuestionCategoryForm from './QuestionCategoryForm';
@@ -114,7 +114,8 @@ const AddQuestion = () => {
         onSubmit={onFinish}
         initialValues={initValue}
         validationSchema={ADD_QUESTION_FIELDS}
-        render={({ handleSubmit, isValid, dirty }) => (
+      >
+        {({ handleSubmit, isValid, dirty }) => (
           <>
             <Form
               id={'add-question-form'}
@@ -172,7 +173,7 @@ const AddQuestion = () => {
             </div>
           </>
         )}
-      />
+      </Formik>
     </AddQuestionWrapper>
   );
 };

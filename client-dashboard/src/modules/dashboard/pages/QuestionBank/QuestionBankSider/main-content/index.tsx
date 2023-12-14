@@ -1,24 +1,21 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import { Key, ReactNode, useCallback, useMemo } from 'react';
 import { QuestionBankSiderMainContentWrapper } from './style';
 import { useTranslation } from 'react-i18next';
 import { useMatch, useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
-import { Menu, MenuProps } from 'antd';
+import { Menu, MenuProps, Spin } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { useParseQueryString } from '@/hooks';
 import { ArrowDown } from '@/icons';
 import templateVariable from '@/app/template-variables.module.scss';
 import qs from 'qs';
 import { useGetAllCategories } from '../../util';
-
-import SimpleBarReact from 'simplebar-react';
-import HannahCustomSpin from '@components/HannahCustomSpin';
 import { SimpleBarCustom } from '@/customize-components';
 
 const getItem = (
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
+  label: ReactNode,
+  key: Key,
+  icon?: ReactNode,
   children?: ItemType[],
   type?: 'group',
 ): ItemType => {
@@ -92,36 +89,33 @@ const QuestionBankSiderMainContent = () => {
     [categories],
   );
 
-  const ref = useRef<any>();
-
   return (
     <QuestionBankSiderMainContentWrapper>
       <div
-        onClick={() => {
-          navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
-        }}
         className={`${
           isViewCategory && 'active-status'
-        } QuestionBankSiderMainContent__title`}
+        } mb-3 px-[1rem] py-[0.5rem] rounded-[6px]`}
       >
-        <h4>{t('common.questionBank')}</h4>
+        <h4 className={'text-[16px] font-semibold m-0'}>
+          {t('common.questionBank')}
+        </h4>
       </div>
-      <div className={'QuestionBankSiderMainContent__body'} ref={ref}>
-        <HannahCustomSpin parentRef={ref} spinning={isLoading} />
-
-        <SimpleBarCustom>
-          <Menu
-            expandIcon={() => null}
-            mode="inline"
-            openKeys={openKey}
-            style={{ width: '100%' }}
-            selectedKeys={selectedKey}
-            onOpenChange={onOpenChange}
-            items={transformedCategories}
-            onSelect={handleOnSelect}
-          />
-        </SimpleBarCustom>
-      </div>
+      <Spin spinning={isLoading} style={{ maxHeight: 'unset' }}>
+        <div className={'h-full relative'}>
+          <SimpleBarCustom>
+            <Menu
+              expandIcon={() => null}
+              mode="inline"
+              openKeys={openKey}
+              style={{ width: '100%' }}
+              selectedKeys={selectedKey}
+              onOpenChange={onOpenChange}
+              items={transformedCategories}
+              onSelect={handleOnSelect}
+            />
+          </SimpleBarCustom>
+        </div>
+      </Spin>
     </QuestionBankSiderMainContentWrapper>
   );
 };

@@ -1,9 +1,8 @@
-import React from 'react';
 import { INPUT_TYPES } from '@input/type';
-import { ControlledInput } from '../../../../../../common';
 import styled from 'styled-components/macro';
-import { formatBytes } from '../../../../../../../utils';
 import { useField } from 'formik';
+import { formatBytes } from '@/utils';
+import { ControlledInput } from '@/modules/common';
 
 const getFileNameFormURL = fileName => {
   if (!fileName) return undefined;

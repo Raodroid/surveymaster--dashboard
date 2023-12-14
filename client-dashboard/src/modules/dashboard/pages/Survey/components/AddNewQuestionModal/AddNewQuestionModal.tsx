@@ -1,20 +1,12 @@
-import React, {
-  FC,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { IModal, IOptionItem, QuestionType } from '@/type';
-import { Input, List, Spin } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { questionValueType, useSurveyFormContext } from '@pages/Survey';
-import { useField } from 'formik';
-import { useDebounce } from '@/utils';
-import { SimpleBarCustom } from '@/customize-components';
-import { AddNewQuestionModalWrapper } from '@pages/Survey/components/AddNewQuestionModal/style';
+import {FC, memo, useCallback, useEffect, useMemo, useRef, useState,} from 'react';
+import {IModal, IOptionItem, QuestionType} from '@/type';
+import {Input, List, Spin} from 'antd';
+import {useTranslation} from 'react-i18next';
+import {questionValueType, useSurveyFormContext} from '@pages/Survey';
+import {useField} from 'formik';
+import {useDebounce} from '@/utils';
+import {SimpleBarCustom} from '@/customize-components';
+import {AddNewQuestionModalWrapper} from '@pages/Survey/components/AddNewQuestionModal/style';
 
 const initNewRowValue: questionValueType = {
   remarks: [],

@@ -8,10 +8,6 @@ export const BaseSectionWrapper = styled.section`
   height: 100%;
 `;
 
-export const FormWrapper = styled.div`
-  width: 100%;
-`;
-
 export const CustomSpinSuspense = styled(Spin)`
   // height: calc(100vh - 70px);
   min-height: 100%;

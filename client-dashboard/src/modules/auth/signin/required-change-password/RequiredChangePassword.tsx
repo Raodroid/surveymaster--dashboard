@@ -1,16 +1,15 @@
-import React from 'react';
 import * as Yup from 'yup';
 import { Button, Form } from 'antd';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CHALLENGE_PASSWORD_REQUIRED } from 'modules/common/validate/validate';
 import { RequiredChangePasswordStyled } from './style';
-import { ControlledInput } from 'modules/common';
+import { ControlledInput, requireAuthentication } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useDispatch } from 'react-redux';
 import { AuthAction } from 'redux/auth';
-import requireAuthentication from 'modules/common/hoc/requireAuthentication';
 import { useQuery } from 'utils/funcs';
+import { memo } from 'react';
 
 const initialValues: {
   password: string;
@@ -27,10 +26,10 @@ const ChallengePasswordRequiredSchema = Yup.object().shape(
 const RequiredChangePasswordPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  let query = useQuery();
+  const query = useQuery();
   const onFinish = (values: { password: string }) => {
-    let id = query.get('id') as string;
-    let session = query.get('session') as string;
+    const id = query.get('id') as string;
+    const session = query.get('session') as string;
     dispatch(AuthAction.userChangePassDefault(values.password, id, session));
   };
 
@@ -42,7 +41,8 @@ const RequiredChangePasswordPage = () => {
         onSubmit={onFinish}
         initialValues={initialValues}
         validationSchema={ChallengePasswordRequiredSchema}
-        render={({ handleSubmit }) => (
+      >
+        {({ handleSubmit }) => (
           <Form layout={'vertical'} onFinish={handleSubmit}>
             <ControlledInput
               inputType={INPUT_TYPES.PASSWORD}
@@ -65,9 +65,9 @@ const RequiredChangePasswordPage = () => {
             </Button>
           </Form>
         )}
-      />
+      </Formik>
     </RequiredChangePasswordStyled>
   );
 };
 
-export default React.memo(requireAuthentication(RequiredChangePasswordPage));
+export default memo(requireAuthentication(RequiredChangePasswordPage));

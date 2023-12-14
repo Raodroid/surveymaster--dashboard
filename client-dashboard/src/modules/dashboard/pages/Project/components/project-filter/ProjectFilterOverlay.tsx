@@ -2,12 +2,12 @@ import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { matchPath } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import moment, { Moment } from 'moment';
 import qs from 'qs';
 import { Formik } from 'formik';
-import { Button, Divider, Form } from 'antd';
-import { ArrowDown, Refresh } from '@/icons';
+import { Button, Divider, Form, Tag } from 'antd';
+import { ArrowDown, RollbackOutlined } from '@/icons';
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';
 import { IFilter } from './ProjectFilter';
@@ -21,15 +21,8 @@ interface FilterParams {
   createdTo?: Moment | string;
 }
 
-const defaultInit = {
-  dateCreation: false,
-  isDeleted: false,
-  createdFrom: '',
-  createdTo: '',
-};
-
 export function ProjectFilterOverlay(props: IFilter) {
-  const { counter, setCounter } = props;
+  const { counter } = props;
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -55,7 +48,7 @@ export function ProjectFilterOverlay(props: IFilter) {
     location.pathname,
   );
 
-  const initialValues: FilterParams = useMemo(() => {
+  const initialValues = useMemo<FilterParams>(() => {
     return {
       dateCreation: !!(qsParams.createdFrom || qsParams.createdTo),
       isDeleted: qsParams.isDeleted === 'true',
@@ -64,22 +57,11 @@ export function ProjectFilterOverlay(props: IFilter) {
     };
   }, [qsParams]);
 
-  const handleReset = (
-    values,
-    setFieldValue: (
-      field: string,
-      value: any,
-      shouldValidate?: boolean | undefined,
-    ) => void,
-  ) => {
-    const valuesList = Object.keys(values);
-    valuesList.forEach(elm => setFieldValue(elm, defaultInit[elm]));
-  };
+  const handleRollback = useCallback(() => {
+    navigate(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.ROOT, { replace: true });
+  }, [navigate]);
 
   const handleSubmit = (payload: FilterParams) => {
-    const list = Object.values(payload).filter(elm => elm === true);
-    if (setCounter) setCounter(list.length);
-
     const payloadParams = {
       ...qsParams,
       q: qsParams.q || '',
@@ -97,85 +79,93 @@ export function ProjectFilterOverlay(props: IFilter) {
     navigate(pathname + '?' + qs.stringify(payloadParams));
   };
 
-  const optionName = useMemo<string>(() => {
+  const optionName: string = (() => {
     if (isShowSurveyTable) {
-      return 'Show Deleted Surveys';
+      return t('common.showDeletedSurveys');
     }
     if (isShowProjectTable) {
-      return 'Show Deleted Projects';
+      return t('common.showDeletedProjects');
     }
     return '';
-  }, [isShowProjectTable, isShowSurveyTable]);
+  })();
 
   return (
-    <div className={'bg-white p-3 shadow-md'}>
-      <Formik
-        enableReinitialize={true}
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-      >
-        {({ values, handleSubmit: handleFinish, setFieldValue }) => {
-          return (
-            <Form layout="vertical" onFinish={handleFinish}>
-              <div className="header flex-j-between">
-                <div className="left flex-center">
-                  {t('common.filters')}
-                  <div className="counter flex-center">{counter}</div>
-                </div>
-                <div className="right">
-                  <Button
-                    onClick={() => handleReset(values, setFieldValue)}
-                    aria-label={'clear filter'}
-                  >
-                    <Refresh />
-                  </Button>
-                </div>
-              </div>
-              <Divider />
-              <div className="flex flex-col filters">
+    <Formik
+      enableReinitialize={true}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+    >
+      {({ handleSubmit: handleFinish, setFieldValue }) => (
+        <div className={'w-[316px] p-1.5'}>
+          <div className={'flex items-center'}>
+            <div className={'flex-1'}>
+              <span className={'text-[16px] font-semibold mr-3'}>
+                {t('common.filter')}
+              </span>
+              <Tag className={'w-min inline py-1'}>{counter}</Tag>
+            </div>
+            <Button
+              onClick={() => {
+                handleRollback();
+              }}
+              type={'text'}
+              style={{ width: 'fit-content' }}
+              aria-label={'clear filter'}
+            >
+              <RollbackOutlined />
+            </Button>
+          </div>
+          <Divider className={'my-3'} />
+          <Form onFinish={handleFinish} className="flex flex-col gap-3">
+            <ControlledInput
+              name="isDeleted"
+              inputType={INPUT_TYPES.CHECKBOX}
+              aria-label={'isDeleted'}
+              className={'hide-helper-text'}
+            >
+              {optionName}
+            </ControlledInput>
+            <div>
+              <ControlledInput
+                name="dateCreation"
+                inputType={INPUT_TYPES.CHECKBOX}
+                onChange={e => setFieldValue('dateCreation', e)}
+                aria-label={'dateCreation'}
+                className={'hide-helper-text'}
+              >
+                {t('common.dataCreationRange')}
+              </ControlledInput>
+              <div className="flex items-center justify-center gap-3 dates ml-[1.5rem]">
                 <ControlledInput
-                  name="isDeleted"
-                  inputType={INPUT_TYPES.CHECKBOX}
-                  children={optionName}
-                  aria-label={'isDeleted'}
+                  name="createdFrom"
+                  inputType={INPUT_TYPES.DAY_PICKER}
+                  suffixIcon={<ArrowDown />}
+                  aria-label={'createdFrom'}
+                  className={'hide-helper-text'}
                 />
-                <div className="dates-filter">
-                  <ControlledInput
-                    name="dateCreation"
-                    inputType={INPUT_TYPES.CHECKBOX}
-                    children={'Data Creation Range'}
-                    onChange={e => setFieldValue('dateCreation', e)}
-                    aria-label={'dateCreation'}
-                  />
-                  <div className="flex-center dates">
-                    <ControlledInput
-                      name="createdFrom"
-                      inputType={INPUT_TYPES.DAY_PICKER}
-                      suffixIcon={<ArrowDown />}
-                      aria-label={'createdFrom'}
-                    />
-                    -
-                    <ControlledInput
-                      name="createdTo"
-                      inputType={INPUT_TYPES.DAY_PICKER}
-                      suffixIcon={<ArrowDown />}
-                      aria-label={'createdTo'}
-                    />
-                  </div>
-                </div>
 
-                <Button
-                  className="secondary-btn"
-                  type="primary"
-                  htmlType="submit"
-                >
-                  {t('common.apply')}
-                </Button>
+                <ControlledInput
+                  name="createdTo"
+                  inputType={INPUT_TYPES.DAY_PICKER}
+                  suffixIcon={<ArrowDown />}
+                  aria-label={'createdTo'}
+                  className={'hide-helper-text'}
+                />
               </div>
-            </Form>
-          );
-        }}
-      </Formik>{' '}
-    </div>
+            </div>
+
+            <div>
+              <Button
+                type={'primary'}
+                className={'secondary-btn w-full mt-3'}
+                htmlType={'submit'}
+              >
+                {t('common.apply')}
+              </Button>
+            </div>
+          </Form>
+        </div>
+      )}
+    </Formik>
   );
 }

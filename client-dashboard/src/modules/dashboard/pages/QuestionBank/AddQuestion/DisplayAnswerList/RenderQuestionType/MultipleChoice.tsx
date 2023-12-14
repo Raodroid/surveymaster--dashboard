@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { DragTable } from '@/modules/dashboard';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +31,7 @@ const MultipleChoice = () => {
     caseSensitive: true,
   });
 
-  const className = !!isViewMode ? 'view-mode' : undefined;
+  const className = isViewMode ? 'view-mode' : undefined;
 
   const handleDeleteRow = useCallback(
     (record: IQuestionVersionOption) => {
@@ -93,7 +93,6 @@ const MultipleChoice = () => {
         width: 60,
         render: (value, record, index) => (
           <Button
-            ghost
             type={'text'}
             aria-label={'trash-icon'}
             onClick={() => {

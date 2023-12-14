@@ -1,6 +1,6 @@
-import React from 'react';
+import { FC, SVGAttributes } from 'react';
 
-export const Refresh = props => {
+export const Refresh: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (
     <svg
       width="14px"

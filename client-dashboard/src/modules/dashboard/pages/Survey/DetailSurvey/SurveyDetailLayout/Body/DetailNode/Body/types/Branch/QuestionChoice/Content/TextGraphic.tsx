@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { IQuestionChoiceComponent } from '../type';
 import { TextEntry } from './index';
 

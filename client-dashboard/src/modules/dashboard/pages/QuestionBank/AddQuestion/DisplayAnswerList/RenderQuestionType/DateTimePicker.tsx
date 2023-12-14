@@ -1,10 +1,10 @@
-import { Table } from 'antd';
-import React, { FC, useMemo } from 'react';
-import { ColumnsType } from 'antd/lib/table/interface';
-import { useTranslation } from 'react-i18next';
-import { DateFormat, IOptionItem, TimeFormat } from 'type';
-import { transformEnumToOption } from 'utils';
-import { useField } from 'formik';
+import {Table} from 'antd';
+import {FC, Key, useMemo} from 'react';
+import {ColumnsType} from 'antd/lib/table/interface';
+import {useTranslation} from 'react-i18next';
+import {DateFormat, IOptionItem, TimeFormat} from 'type';
+import {transformEnumToOption} from 'utils';
+import {useField} from 'formik';
 
 const DateTimePicker: FC<{
   type: 'Time' | 'Date';
@@ -41,7 +41,7 @@ const DateTimePicker: FC<{
       <Table
         rowSelection={{
           type: 'radio',
-          onChange: (selectedRowKeys: React.Key[]) => {
+          onChange: (selectedRowKeys: Key[]) => {
             setValue(selectedRowKeys[0]);
           },
           selectedRowKeys: [value],

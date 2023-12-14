@@ -1,11 +1,10 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ViewQuestionWrapper } from './style';
-import GeneralSectionHeader from '@components/GeneralSectionHeader';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { useGetQuestionByQuestionId } from '../util';
-import { Button, Form, notification } from 'antd';
+import { Button, Form, notification, Spin } from 'antd';
 import QuestionCategoryForm from '../AddQuestion/QuestionCategoryForm';
 import { useTranslation } from 'react-i18next';
 import { Formik } from 'formik';
@@ -27,12 +26,12 @@ import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from 'services';
 import { onError, useToggle } from '@/utils';
 import moment, { Moment } from 'moment';
-import HannahCustomSpin from '@components/HannahCustomSpin';
 import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
-import RequestApproveCompleteQuestionModal from '@pages/QuestionBank/components/RequestApproveCompleteQuestionModal/RequestApproveCompleteQuestionModal';
+import { RequestApproveCompleteQuestionModal } from '../components';
+import { GeneralSectionHeader } from '@components/index';
 
 const formSchema = Yup.object();
 
@@ -180,182 +179,186 @@ const ViewQuestion = () => {
 
   const onFinish = useCallback(values => {}, []);
 
-  const wrapperRef = useRef<any>();
-
   return (
-    <ViewQuestionWrapper className={'QuestionContent'} ref={wrapperRef}>
-      <HannahCustomSpin
-        parentRef={wrapperRef}
-        spinning={
-          isLoading ||
-          deleteQuestionVersionMutation.isLoading ||
-          updateQuestionVersionStatus.isLoading
-        }
-      />
-      <GeneralSectionHeader
-        title={'View Question'}
-        endingComponent={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            {canDelete && (
-              <Button
-                type={'primary'}
-                onClick={handleDeleteQuestionVersion}
-                loading={deleteQuestionVersionMutation.isLoading}
-              >
-                {t('common.deleteThisVersion')}
-              </Button>
-            )}
-            {canUpdate && selectedVerQuestionData && isDraftVersion && (
-              <Button
-                type={'primary'}
-                className={'info-btn'}
-                onClick={toggleOpenRequest}
-                loading={updateQuestionVersionStatus.isLoading}
-              >
-                {t('common.requestApproveCompleteQuestion')}
-              </Button>
-            )}
-            {canUpdate &&
-              selectedVerQuestionData &&
-              selectedVerQuestionData.status ===
-                QuestionVersionStatus.AWAIT_APPROVAL &&
-              profile?.id === selectedVerQuestionData?.approvalUserId && (
+    <Spin
+      spinning={
+        isLoading ||
+        deleteQuestionVersionMutation.isLoading ||
+        updateQuestionVersionStatus.isLoading
+      }
+    >
+      <ViewQuestionWrapper className={'QuestionContent'}>
+        <GeneralSectionHeader
+          title={'View Question'}
+          endingComponent={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {canDelete && (
+                <Button
+                  type={'primary'}
+                  onClick={handleDeleteQuestionVersion}
+                  loading={deleteQuestionVersionMutation.isLoading}
+                >
+                  {t('common.deleteThisVersion')}
+                </Button>
+              )}
+              {canUpdate && selectedVerQuestionData && isDraftVersion && (
                 <Button
                   type={'primary'}
                   className={'info-btn'}
-                  onClick={() => {
-                    handleUpdateStatus(QuestionVersionStatus.COMPLETED);
-                  }}
+                  onClick={toggleOpenRequest}
                   loading={updateQuestionVersionStatus.isLoading}
                 >
-                  {t('common.approveRequest')}
+                  {t('common.requestApproveCompleteQuestion')}
                 </Button>
               )}
-            {canUpdate &&
-              selectedVerQuestionData &&
-              selectedVerQuestionData.status ===
-                QuestionVersionStatus.AWAIT_APPROVAL &&
-              (profile?.id === selectedVerQuestionData?.createdBy?.id ||
-                profile?.id === selectedVerQuestionData?.approvalUserId) && (
-                <Button
-                  type={'primary'}
-                  className={'info-btn'}
-                  onClick={() => {
-                    handleUpdateStatus(QuestionVersionStatus.DRAFT);
-                  }}
-                  loading={updateQuestionVersionStatus.isLoading}
-                >
-                  {t('common.denyRequest')}
-                </Button>
-              )}
-
-            {canUpdate &&
-              selectedVerQuestionData?.status !==
-                QuestionVersionStatus.AWAIT_APPROVAL && (
-                <Button
-                  onClick={handleEdit}
-                  type={'text'}
-                  aria-label={'direct-edit-page'}
-                  ghost
-                >
-                  <PenFilled
-                    style={{
-                      color: templateVariable.primary_color,
-                      cursor: 'pointer',
+              {canUpdate &&
+                selectedVerQuestionData &&
+                selectedVerQuestionData.status ===
+                  QuestionVersionStatus.AWAIT_APPROVAL &&
+                profile?.id === selectedVerQuestionData?.approvalUserId && (
+                  <Button
+                    type={'primary'}
+                    className={'info-btn'}
+                    onClick={() => {
+                      handleUpdateStatus(QuestionVersionStatus.COMPLETED);
                     }}
-                  />
-                </Button>
-              )}
-          </div>
-        }
-      />
-      {selectedVerQuestionData && (
-        <Formik
-          enableReinitialize={true}
-          onSubmit={onFinish}
-          initialValues={initValue}
-          validationSchema={formSchema}
-        >
-          {({ handleSubmit }) => (
-            <Form
-              id={'filter-form'}
-              layout={'vertical'}
-              onFinish={handleSubmit}
-              className={'QuestionContent__body'}
-            >
-              <div className="QuestionContent__body__content-wrapper">
-                <div
-                  className={'QuestionContent__body__section question-section'}
-                >
-                  <div className={'question-section__row'}>
-                    <div className={'version-wrapper'}>
-                      {versions?.map(version => {
-                        const { displayId } = version;
-                        if (displayId === queryString?.version) {
+                    loading={updateQuestionVersionStatus.isLoading}
+                  >
+                    {t('common.approveRequest')}
+                  </Button>
+                )}
+              {canUpdate &&
+                selectedVerQuestionData &&
+                selectedVerQuestionData.status ===
+                  QuestionVersionStatus.AWAIT_APPROVAL &&
+                (profile?.id === selectedVerQuestionData?.createdBy?.id ||
+                  profile?.id === selectedVerQuestionData?.approvalUserId) && (
+                  <Button
+                    type={'primary'}
+                    className={'info-btn'}
+                    onClick={() => {
+                      handleUpdateStatus(QuestionVersionStatus.DRAFT);
+                    }}
+                    loading={updateQuestionVersionStatus.isLoading}
+                  >
+                    {t('common.denyRequest')}
+                  </Button>
+                )}
+
+              {canUpdate &&
+                selectedVerQuestionData?.status !==
+                  QuestionVersionStatus.AWAIT_APPROVAL && (
+                  <Button
+                    onClick={handleEdit}
+                    type={'text'}
+                    aria-label={'direct-edit-page'}
+                  >
+                    <PenFilled
+                      style={{
+                        color: templateVariable.primary_color,
+                        cursor: 'pointer',
+                      }}
+                    />
+                  </Button>
+                )}
+            </div>
+          }
+        />
+        {selectedVerQuestionData && (
+          <Formik
+            enableReinitialize={true}
+            onSubmit={onFinish}
+            initialValues={initValue}
+            validationSchema={formSchema}
+          >
+            {({ handleSubmit }) => (
+              <Form
+                id={'filter-form'}
+                layout={'vertical'}
+                onFinish={handleSubmit}
+                className={'QuestionContent__body'}
+              >
+                <div className="QuestionContent__body__content-wrapper">
+                  <div
+                    className={
+                      'QuestionContent__body__section question-section'
+                    }
+                  >
+                    <div className={'question-section__row'}>
+                      <div className={'version-wrapper'}>
+                        {versions?.map(version => {
+                          const { displayId } = version;
+                          if (displayId === queryString?.version) {
+                            return (
+                              <Button
+                                type={'primary'}
+                                key={displayId}
+                                className={'info-btn'}
+                              >
+                                {t('common.version')} {displayId}
+                              </Button>
+                            );
+                          }
                           return (
                             <Button
-                              type={'primary'}
                               key={displayId}
                               className={'info-btn'}
+                              onClick={() => {
+                                handleChangeViewVersion(displayId);
+                              }}
                             >
                               {t('common.version')} {displayId}
                             </Button>
                           );
-                        }
-                        return (
-                          <Button
-                            key={displayId}
-                            className={'info-btn'}
-                            onClick={() => {
-                              handleChangeViewVersion(displayId);
-                            }}
-                          >
-                            {t('common.version')} {displayId}
-                          </Button>
-                        );
-                      })}
+                        })}
+                      </div>
+                    </div>
+                    <div className={'question-section__row'}>
+                      <div className={'question-detail-wrapper'}>
+                        <div className={'question-section__row__title'}>
+                          {t('common.questionDetails')}
+                        </div>
+                        <div className={'question-section__row__content'}>
+                          <AddQuestionDetailForm />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className={'border'}
+                      style={{ borderWidth: 0.5 }}
+                    ></div>
+                    <div className={'question-section__row'}>
+                      <div className={'answer-list-wrapper'}>
+                        <div className={'question-section__row__title'}>
+                          <DisplayTitle />
+                        </div>
+                        <div className={'question-section__row__content'}>
+                          <DisplayAnswerList />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className={'question-section__row'}>
-                    <div className={'question-detail-wrapper'}>
-                      <div className={'question-section__row__title'}>
-                        {t('common.questionDetails')}
-                      </div>
-                      <div className={'question-section__row__content'}>
-                        <AddQuestionDetailForm />
-                      </div>
-                    </div>
-                  </div>
-                  <div className={'border'} style={{ borderWidth: 0.5 }}></div>
-                  <div className={'question-section__row'}>
-                    <div className={'answer-list-wrapper'}>
-                      <div className={'question-section__row__title'}>
-                        <DisplayTitle />
-                      </div>
-                      <div className={'question-section__row__content'}>
-                        <DisplayAnswerList />
-                      </div>
-                    </div>
+                  <div className={'divider'} />
+                  <div
+                    className={
+                      'QuestionContent__body__section category-section'
+                    }
+                  >
+                    <QuestionCategoryForm disabled />
                   </div>
                 </div>
-                <div className={'divider'} />
-                <div
-                  className={'QuestionContent__body__section category-section'}
-                >
-                  <QuestionCategoryForm disabled />
-                </div>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      )}
+              </Form>
+            )}
+          </Formik>
+        )}
 
-      <RequestApproveCompleteQuestionModal
-        toggleOpen={toggleOpenRequest}
-        open={openRequest}
-        versionId={selectedVerQuestionData?.id}
-      />
-    </ViewQuestionWrapper>
+        <RequestApproveCompleteQuestionModal
+          toggleOpen={toggleOpenRequest}
+          open={openRequest}
+          versionId={selectedVerQuestionData?.id}
+        />
+      </ViewQuestionWrapper>
+    </Spin>
   );
 };
 

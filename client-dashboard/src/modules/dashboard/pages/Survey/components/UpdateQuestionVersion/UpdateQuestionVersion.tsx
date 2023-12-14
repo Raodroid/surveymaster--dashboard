@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Empty, List, Modal } from 'antd';
 import { IModal, IQuestionVersion } from '@/type';

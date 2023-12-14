@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { IQuestionChoiceComponent } from '../type';
 import { ControlledInput } from '@/modules/common';
 import { INPUT_TYPES } from '@input/type';

@@ -1,20 +1,13 @@
-import React from 'react';
-import { notification } from 'antd';
-import { ArgsProps } from 'antd/lib/notification';
-import {
-  SuccessIcon,
-  WarningIcon,
-  ErrorIcon,
-  InfoIcon,
-  CloseIcon,
-} from 'icons';
+import {notification} from 'antd';
+import {ArgsProps} from 'antd/lib/notification';
+import {CloseIcon, ErrorIcon, InfoIcon, SuccessIcon, WarningIcon,} from 'icons';
 
-import { Icons } from './styles';
+import {Icons} from './styles';
 
 class CustomNotification {
   static instance: any;
   constructor() {
-    if (!!CustomNotification.instance) {
+    if (CustomNotification.instance) {
       return CustomNotification.instance;
     }
 

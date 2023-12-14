@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Button, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { UploadExternalFileWrapper } from './style';

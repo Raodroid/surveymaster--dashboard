@@ -1,4 +1,4 @@
-import React, { FC, memo, useMemo } from 'react';
+import { FC, memo, useMemo } from 'react';
 import { BranchChoiceType, LogicOperator, QuestionType } from '@/type';
 import { INPUT_TYPES } from '@input/type';
 import { transformEnumToOption } from '@/utils';

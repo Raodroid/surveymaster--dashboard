@@ -1,7 +1,6 @@
-import React from 'react';
+import {ActionHistoryProvider} from './ActionsHistoryCalendar/ActionHistoryContext/ActionHistoryContext';
 import CalendarList from './ActionsHistoryCalendar/CalendarList';
 import CalendarScrollbar from './ActionsHistoryCalendar/CalendarScrollbar';
-import { ActionHistoryProvider } from '@pages/Survey/DetailSurvey/History/ActionsHistoryCalendar/ActionHistoryContext/ActionHistoryContext';
 
 function ActionsHistory() {
   return (

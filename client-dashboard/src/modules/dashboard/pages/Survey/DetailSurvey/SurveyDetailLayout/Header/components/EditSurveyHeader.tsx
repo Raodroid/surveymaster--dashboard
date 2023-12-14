@@ -1,4 +1,4 @@
-import { Button, Divider, Modal } from 'antd';
+import {Button, Divider, Modal} from 'antd';
 import {
   IEditSurveyFormValues,
   OverviewQuestionButton,
@@ -8,11 +8,11 @@ import {
   SurveyVersionSelect,
   useSurveyFormContext,
 } from '@pages/Survey';
-import { useTranslation } from 'react-i18next';
-import { generatePath, useNavigate, useParams } from 'react-router';
-import { ROUTE_PATH } from '@/enums';
-import { useFormikContext } from 'formik';
-import React, { useCallback } from 'react';
+import {useTranslation} from 'react-i18next';
+import {generatePath, useNavigate, useParams} from 'react-router';
+import {ROUTE_PATH} from '@/enums';
+import {useFormikContext} from 'formik';
+import {useCallback} from 'react';
 import ViewSurveyButton from '@pages/Survey/SurveyModal/ViewSurveyButton';
 
 const { confirm } = Modal;

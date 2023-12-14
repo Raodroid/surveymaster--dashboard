@@ -1,10 +1,10 @@
-import React from 'react';
-import { Table } from 'antd';
+import {Table} from 'antd';
 import _get from 'lodash/get';
 import styled from 'styled-components/macro';
-import { TableProps } from 'antd/lib/table';
+import {TableProps} from 'antd/lib/table';
 import useWindowSize from 'modules/common/hoc/useWindowSize';
-import { tableSizeResponsive } from 'enums/screenSize';
+import {tableSizeResponsive} from 'enums/screenSize';
+import {FC} from 'react';
 
 interface TableCustomProps {
   pointer?: boolean;
@@ -17,7 +17,7 @@ const RootStyled = styled.div`
   }
 `;
 
-const CustomTable: React.FC<TableCustomProps & TableProps<any>> = props => {
+const CustomTable: FC<TableCustomProps & TableProps<any>> = props => {
   const { pointer, rowClassName } = props;
   const { sizeType } = useWindowSize();
   const size = props.size || tableSizeResponsive[sizeType];

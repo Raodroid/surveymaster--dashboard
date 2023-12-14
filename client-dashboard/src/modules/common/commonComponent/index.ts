@@ -1,6 +1,4 @@
 export { default as CharacterAvatar } from './CharacterAvatar';
-export { default as GoBack } from './GoBack';
 export * from './StyledBreadcrumb';
 export { default as PictureAvatar } from './PictureAvatar';
 export { default as CopyButton } from './CopyButton/CopyButton';
-export { default as URLColumn } from './URLColumn';

@@ -1,11 +1,10 @@
 import styled from 'styled-components/macro';
 import { ROUTE_PATH } from '@/enums';
-import CharacterAvatar from '../../../../common/commonComponent/CharacterAvatar';
 import BaseMenu from '../BaseMenu';
 import { useSelector } from 'react-redux';
-import { AuthSelectors } from '../../../../../redux/auth';
 import { useTranslation } from 'react-i18next';
-import PictureAvatar from '../../../../common/commonComponent/PictureAvatar';
+import { CharacterAvatar, PictureAvatar } from '@/modules/common';
+import { AuthSelectors } from '@/redux/auth';
 
 const AvatarMenuWrapper = styled.div`
   display: flex;

@@ -1,7 +1,6 @@
-import React from 'react';
-import { useToggle } from '@/utils';
-import { Button, Divider, Empty } from 'antd';
-import { ArrowLeft } from '@/icons';
+import {useToggle} from '@/utils';
+import {Button, Divider, Empty} from 'antd';
+import {ArrowLeft} from '@/icons';
 import SurveyStructureTree from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/Aside/SurveyStructureTree';
 import DetailNode from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/DetailNode';
 import {
@@ -12,8 +11,8 @@ import {
   useCheckSurveyFormMode,
   useSurveyFormContext,
 } from '@pages/Survey';
-import { SimpleBarCustom } from '@/customize-components';
-import { useField } from 'formik';
+import {SimpleBarCustom} from '@/customize-components';
+import {useField} from 'formik';
 import EmptyBlock from '../EmptyBlock/EmptyBlock';
 
 const ASIDE_WIDTH = 427; //px

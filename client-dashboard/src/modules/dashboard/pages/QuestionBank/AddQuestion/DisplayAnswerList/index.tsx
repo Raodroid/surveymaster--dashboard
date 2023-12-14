@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { INPUT_TYPES } from '@input/type';
 import { BaseQuestionVersionDto, QuestionType } from '@/type';
 import { useTranslation } from 'react-i18next';

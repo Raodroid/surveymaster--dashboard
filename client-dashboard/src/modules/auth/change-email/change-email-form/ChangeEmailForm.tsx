@@ -1,17 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Form, Button, notification } from 'antd';
-import { Formik } from 'formik';
+import {FC, useCallback} from 'react';
+import {Button, Form, notification} from 'antd';
+import {Formik} from 'formik';
 import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { AuthAction, AuthSelectors } from 'redux/auth';
-import { useTranslation } from 'react-i18next';
-import { ControlledInput } from 'modules/common';
-import { INPUT_TYPES } from 'modules/common/input/type';
-import { CHANGE_EMAIL_FIELD } from 'modules/common/validate/validate';
-import { FormWrapper } from 'modules/common/styles';
+import {useDispatch, useSelector} from 'react-redux';
+import {AuthAction, AuthSelectors} from 'redux/auth';
+import {useTranslation} from 'react-i18next';
+import {ControlledInput} from 'modules/common';
+import {INPUT_TYPES} from 'modules/common/input/type';
+import {CHANGE_EMAIL_FIELD} from 'modules/common/validate/validate';
 import Modal from 'antd/lib/modal/Modal';
-import { useMutation } from 'react-query';
-import { AuthService, CognitoService } from 'services';
+import {useMutation} from 'react-query';
+import {AuthService, CognitoService} from 'services';
 
 export interface changeEmailPayload {
   oldEmail: string;
@@ -38,7 +37,7 @@ interface Props {
   setIsShowModal: Function;
 }
 
-const ChangeEmailForm: React.FC<Props> = props => {
+const ChangeEmailForm: FC<Props> = props => {
   const { isShowModal, setIsShowModal } = props;
 
   const { t } = useTranslation();
@@ -126,13 +125,14 @@ const ChangeEmailForm: React.FC<Props> = props => {
         onSubmit={onFinish}
         initialValues={initialValues}
         validationSchema={changeEmailSchema}
-        render={({ handleSubmit, values }) => (
-          <FormWrapper>
+      >
+        {({ handleSubmit }) => (
+          <div className={'w-full'}>
             <Form
               id="changeEmailForm"
               layout={'vertical'}
               onFinish={handleSubmit}
-              requiredMark={true}
+              requiredMark
             >
               <ControlledInput
                 inputType={INPUT_TYPES.INPUT}
@@ -159,9 +159,9 @@ const ChangeEmailForm: React.FC<Props> = props => {
                 customFormProps={{ required: true }}
               /> */}
             </Form>
-          </FormWrapper>
+          </div>
         )}
-      />
+      </Formik>
     </Modal>
   );
 };

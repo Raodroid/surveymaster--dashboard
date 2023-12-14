@@ -11,7 +11,7 @@ import _get from 'lodash/get';
 
 import { RoundedTag, StyledPagination } from 'modules/dashboard';
 import moment from 'moment';
-import React, { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath, useParams } from 'react-router';

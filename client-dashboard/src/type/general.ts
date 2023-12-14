@@ -1,17 +1,7 @@
-import { CSSProperties, ReactNode } from 'react';
-
-export const defaultUserAvatarSrc =
-  '/tiny-Img/Photos/Avatar/amili-user-default-avatar.svg';
-export const defaultCoachAvatarSrc =
-  '/tiny-Img/Photos/Avatar/amili-coach-default-avatar.svg';
+import {CSSProperties, ReactNode} from 'react';
 
 export interface Component {
   (props): JSX.Element;
-}
-
-export enum timeTypeTEnum {
-  repeatTime = 'repeat',
-  specialTime = 'special',
 }
 
 export enum sexEnum {
@@ -58,16 +48,6 @@ export interface FetchParamsSelect {
   id?: string | null;
   projectId?: string;
   deleted?: boolean;
-}
-
-export interface PaginationResponse<T> {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  itemCount: number;
-  pageCount: number;
-  take: number;
-  page: number;
-  data: T[];
 }
 
 export interface IOptionItem {

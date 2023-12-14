@@ -1,4 +1,3 @@
-import React from 'react';
 import SimpleBar from 'simplebar-react';
 
 const SimpleBarCustom = props => {

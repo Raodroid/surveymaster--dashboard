@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { ROUTE_PATH } from '@/enums';
 import BaseMenu from '../BaseMenu';
 import { SCOPE_CONFIG } from '@/enums';

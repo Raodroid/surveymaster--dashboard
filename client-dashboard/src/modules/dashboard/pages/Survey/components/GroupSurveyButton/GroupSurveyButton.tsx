@@ -1,14 +1,10 @@
-import { useTranslation } from 'react-i18next';
-import React from 'react';
-import { Button } from 'antd';
-import { QuestionType } from '@/type';
-import { questionValueType } from '@pages/Survey/SurveyForm/type';
-import { useToggle } from '@/utils';
-import { PlusOutLinedIcon } from '@/icons';
-import {
-  AddNewQuestionModal,
-  AddQuestionFormCategoryModal,
-} from '@pages/Survey';
+import {useTranslation} from 'react-i18next';
+import {Button} from 'antd';
+import {QuestionType} from '@/type';
+import {questionValueType} from '@pages/Survey/SurveyForm/type';
+import {useToggle} from '@/utils';
+import {PlusOutLinedIcon} from '@/icons';
+import {AddNewQuestionModal, AddQuestionFormCategoryModal,} from '@pages/Survey';
 
 export const initNewRowValue: questionValueType = {
   remarks: [],

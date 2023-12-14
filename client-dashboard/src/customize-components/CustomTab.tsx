@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
-import { IOptionItem } from '@/type';
-import { Radio } from 'antd';
+import {FC} from 'react';
+import {IOptionItem} from '@/type';
+import {Radio} from 'antd';
 import styled from 'styled-components/macro';
-import { RadioGroupProps } from 'antd/lib/radio';
+import {RadioGroupProps} from 'antd/lib/radio';
 
 const CustomTab: FC<{ options: IOptionItem[] } & RadioGroupProps> = props => {
   const { options, ...rest } = props;

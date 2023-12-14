@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
-import { Checkbox } from 'antd';
-import { CheckboxProps } from 'antd/lib/checkbox';
-import { OnchangeType } from '../../type';
+import {memo} from 'react';
+import {Checkbox} from 'antd';
+import {CheckboxProps} from 'antd/lib/checkbox';
+import {OnchangeType} from '../../type';
 
 export type CustomCheckBoxProps = CheckboxProps & OnchangeType;
 

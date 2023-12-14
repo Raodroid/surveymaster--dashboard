@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { useField } from 'formik';
 import { questionValueType } from '@pages/Survey';
 import EmptyQuestion from '@pages/Survey/components/SurveyQuestion/EmptyQuestion';

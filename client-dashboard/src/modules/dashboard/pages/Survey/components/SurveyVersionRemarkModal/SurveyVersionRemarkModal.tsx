@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { Button, Divider, Empty, Form, Modal, notification, Spin } from 'antd';
 import { IModal, ISurveyRemark } from '@/type';
 import { useTranslation } from 'react-i18next';

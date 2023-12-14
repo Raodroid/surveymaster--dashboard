@@ -1,19 +1,17 @@
-import React, { useRef, useEffect, useMemo, useCallback } from 'react';
-import { Form, Button } from 'antd';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Button, Form } from 'antd';
 import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthAction, AuthSelectors } from 'redux/auth';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { useTranslation } from 'react-i18next';
-import { ControlledInput } from 'modules/common';
+import { ControlledInput, requireAuthentication } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { emailYup, passwordYup } from 'modules/common/validate/validate';
 import { SignInUpFormWrapper } from './style';
-import requireAuthentication from 'modules/common/hoc/requireAuthentication';
-import { FormWrapper } from 'modules/common/styles';
-import { LogoIcon } from '../../../../icons';
+import { LogoIcon } from '@/icons';
 
 interface SignInPayload {
   email: string;
@@ -95,8 +93,9 @@ const SignInForm = () => {
           onSubmit={onFinish}
           initialValues={initialSignUpPayload}
           validationSchema={formSchema}
-          render={({ handleSubmit }) => (
-            <FormWrapper>
+        >
+          {({ handleSubmit }) => (
+            <div className={'w-full'}>
               <Form
                 layout={'vertical'}
                 onFinish={handleSubmit}
@@ -131,9 +130,9 @@ const SignInForm = () => {
                   {t('common.forgotPassword')}
                 </Button>
               </Form>
-            </FormWrapper>
+            </div>
           )}
-        />
+        </Formik>
       </div>
       {/* <div className={'sign-in-form__row sign-in-form__footer'}>
         <Button type={'primary'} className={'info-btn'}>

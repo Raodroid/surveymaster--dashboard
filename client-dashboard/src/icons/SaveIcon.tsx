@@ -1,4 +1,4 @@
-import React, { FC, SVGAttributes } from 'react';
+import { FC, SVGAttributes } from 'react';
 
 export const SaveIcon: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (

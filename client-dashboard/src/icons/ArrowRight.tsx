@@ -1,6 +1,6 @@
-import React from 'react';
+import {FC, SVGAttributes} from 'react';
 
-export const ArrowRight = props => {
+export const ArrowRight: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   const { style, className } = props;
   return (
     <svg

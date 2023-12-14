@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import ReactCodeInput from 'react-verification-code-input';
 import { Button, Form } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,7 +48,7 @@ const VerifyForm = () => {
     setCode(value);
   };
 
-  const handleResendCode = (event: React.MouseEvent<HTMLFormElement>) => {
+  const handleResendCode = (event: MouseEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(AuthAction.userResendCode(email));
   };

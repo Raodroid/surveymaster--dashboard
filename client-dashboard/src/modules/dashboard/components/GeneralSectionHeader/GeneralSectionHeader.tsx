@@ -1,8 +1,9 @@
-import React, { FC, ReactNode, useCallback } from 'react';
-import { GeneralSectionHeaderWrapper } from './style';
-import { ReactI18NextChild } from 'react-i18next';
-import { ArrowLeft } from '@/icons';
-import { useNavigate } from 'react-router-dom';
+import {FC, ReactNode} from 'react';
+import {GeneralSectionHeaderWrapper} from './style';
+import {ReactI18NextChild} from 'react-i18next';
+import {ArrowLeft} from '@/icons';
+import {useNavigate} from 'react-router-dom';
+import {Button} from 'antd';
 
 interface IGeneralSectionHeader {
   showArrowIcon?: boolean;
@@ -16,18 +17,20 @@ interface IGeneralSectionHeader {
 const GeneralSectionHeader: FC<IGeneralSectionHeader> = props => {
   const { title, endingComponent, showArrowIcon = true } = props;
   const navigate = useNavigate();
-  const goBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
 
   return (
     <GeneralSectionHeaderWrapper className={'GeneralSectionHeader'}>
       <div className={'GeneralSectionHeader__main-section'}>
         <div className={'GeneralSectionHeader__main-section__title'}>
           {showArrowIcon && (
-            <span className={'header-section-icon'} onClick={goBack}>
-              <ArrowLeft />
-            </span>
+            <Button
+              icon={<ArrowLeft />}
+              type={'text'}
+              className={'header-section-icon'}
+              onClick={() => {
+                navigate(-1);
+              }}
+            />
           )}
           <span className={'header-section-title'}>{title}</span>
         </div>

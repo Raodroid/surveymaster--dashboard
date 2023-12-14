@@ -1,9 +1,5 @@
-import React from 'react';
-import { useField } from 'formik';
-import {
-  questionValueType,
-  rootSurveyFlowElementFieldName,
-} from '@pages/Survey/SurveyForm/type';
+import {useField} from 'formik';
+import {questionValueType, rootSurveyFlowElementFieldName,} from '@pages/Survey/SurveyForm/type';
 import UploadExternalFile from './UploadExternalFile/UploadExternalFile';
 import DisplayAnswer from './DisplayAnswer/DisplayAnswer';
 

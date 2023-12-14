@@ -1,7 +1,7 @@
-import React, { Ref, memo, useCallback, useMemo, useRef } from 'react';
-import { Input } from 'antd';
-import { InputProps, InputRef } from 'antd/lib/input';
-import { OnchangeType } from '../../type';
+import {ChangeEvent, memo, useCallback, useMemo, useRef} from 'react';
+import {Input} from 'antd';
+import {InputProps} from 'antd/lib/input';
+import {OnchangeType} from '../../type';
 import debounce from 'lodash/debounce';
 
 export type CustomInputProps = InputProps & OnchangeType;
@@ -17,7 +17,7 @@ const CustomInputDebounce = (props: CustomInputProps) => {
     [],
   );
 
-  const customOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const customOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     debouncedOnChange(e.target.value);
   };
 
@@ -30,7 +30,7 @@ const CustomInputDebounce = (props: CustomInputProps) => {
 
     if (props.onChange) restProps.onChange = customOnChange;
     return { ...restProps };
-  }, [props.value]);
+  }, [customOnChange, props]);
 
   return (
     <Input

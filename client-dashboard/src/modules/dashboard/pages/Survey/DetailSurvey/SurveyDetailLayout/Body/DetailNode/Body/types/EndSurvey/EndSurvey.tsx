@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import { QuestionBlockProps } from '../type';
+import {FC} from 'react';
+import {useTranslation} from 'react-i18next';
+import {QuestionBlockProps} from '../type';
 
 const EndSurvey: FC<QuestionBlockProps> = () => {
   const { t } = useTranslation();

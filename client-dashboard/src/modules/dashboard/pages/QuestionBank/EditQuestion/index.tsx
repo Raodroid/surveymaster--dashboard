@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { EditQuestionWrapper } from './style';
-import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
+import GeneralSectionHeader from '@components/GeneralSectionHeader/GeneralSectionHeader';
 import { useTranslation } from 'react-i18next';
 import { Button, Form, notification } from 'antd';
 import QuestionCategoryForm from '../AddQuestion/QuestionCategoryForm';
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 import qs from 'qs';
 import { useMutation, useQueryClient } from 'react-query';
-import { QuestionBankService } from '../../../../../services';
+import { QuestionBankService } from '@/services';
 import { onError } from 'utils';
 import {
   BaseQuestionVersionDto,
@@ -22,13 +22,13 @@ import {
 import { ROUTE_PATH } from 'enums';
 import { generatePath, useParams } from 'react-router';
 import { useGetQuestionByQuestionId } from '../util';
-import { useParseQueryString } from '../../../../../hooks';
 import DisplayAnswerList from '../AddQuestion/DisplayAnswerList';
 import DisplayTitle from '../AddQuestion/DisplayTitle';
 import { generateRandom } from 'modules/common/funcs';
 import { transformQuestionData } from '../AddQuestion/util';
 import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
 import { ADD_QUESTION_FIELDS } from '@/modules/common/validate/validate';
+import { useParseQueryString } from '@/hooks';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;
@@ -199,7 +199,8 @@ const EditQuestion = () => {
         onSubmit={onFinish}
         initialValues={initValue}
         validationSchema={ADD_QUESTION_FIELDS}
-        render={({ handleSubmit, isValid, dirty }) => (
+      >
+        {({ handleSubmit, isValid, dirty }) => (
           <>
             <Form
               id={'edit-question-form'}
@@ -259,7 +260,7 @@ const EditQuestion = () => {
             </div>
           </>
         )}
-      />
+      </Formik>
     </EditQuestionWrapper>
   );
 };

@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { NavBarWrapper } from './styles';
 import { DEFAULT_THEME_COLOR, ROUTE_PATH } from 'enums';
 import { LogoIcon } from 'icons';

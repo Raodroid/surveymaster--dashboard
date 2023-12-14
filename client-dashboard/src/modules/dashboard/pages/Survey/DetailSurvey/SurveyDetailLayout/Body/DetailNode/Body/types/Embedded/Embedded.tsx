@@ -1,14 +1,14 @@
-import React, { FC, Fragment } from 'react';
-import { useTranslation } from 'react-i18next';
-import { INPUT_TYPES } from '@input/type';
-import { FieldArray, useField } from 'formik';
-import { SubEmbeddedDataDto } from '@/type';
-import { Button, Divider, Empty } from 'antd';
-import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
-import { PlusOutLinedIcon, TrashOutlined } from '@/icons';
+import {FC, Fragment} from 'react';
+import {useTranslation} from 'react-i18next';
+import {INPUT_TYPES} from '@input/type';
+import {FieldArray, useField} from 'formik';
+import {SubEmbeddedDataDto} from '@/type';
+import {Button, Divider, Empty} from 'antd';
+import {useCheckSurveyFormMode} from '@pages/Survey/SurveyForm/util';
+import {PlusOutLinedIcon, TrashOutlined} from '@/icons';
 import SimpleBar from 'simplebar-react';
-import { QuestionBlockProps } from '../type';
-import { ControlledInputHasTopLabel } from '@/modules/common/input';
+import {QuestionBlockProps} from '../type';
+import {ControlledInputHasTopLabel} from '@/modules/common/input';
 
 const defaultListEmbeddedData: SubEmbeddedDataDto = {
   field: '',

@@ -1,8 +1,7 @@
-import { Input } from 'antd';
+import {Input} from 'antd';
 import InputMask from 'react-input-mask';
-import React from 'react';
-import { InputProps } from 'antd/lib/input';
-import { OnchangeType } from '../type';
+import {InputProps} from 'antd/lib/input';
+import {OnchangeType} from '../type';
 
 export type CustomInputMaskProps = InputProps &
   OnchangeType & {

@@ -1,6 +1,6 @@
-import React from 'react';
+import {FC, SVGAttributes} from 'react';
 
-export const DuplicateChatIcon = props => {
+export const DuplicateChatIcon: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (
     <svg
       width="16"

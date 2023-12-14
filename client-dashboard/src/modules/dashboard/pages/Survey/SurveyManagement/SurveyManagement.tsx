@@ -1,15 +1,15 @@
 import { ROUTE_PATH } from '@/enums';
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router';
 import { ProjectService } from 'services';
 import { ProjectHeader } from '@pages/Project';
 import { IBreadcrumbItem } from '@/modules/common';
-import SurveyTable from '@pages/Survey/SurveyManagement/SurveyTable';
 import { QsParams } from '@/type';
 import { CustomTab } from '@/customize-components';
 import { useParseQueryString } from '@/hooks';
 import { onError } from '@/utils';
+import SurveyTable from './SurveyTable';
 
 const options = [
   { label: 'Active', value: 'false' },

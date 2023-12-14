@@ -42,7 +42,7 @@ const Profile = () => {
     if (isMatch && (!isAdminRole || !canRead)) {
       navigate(ROUTE_PATH.DASHBOARD_PATHS.PROFILE.ROOT);
     }
-  }, [isMatch, navigate, canRead, isAdminRole, store]);
+  }, [isMatch, navigate, canRead, isAdminRole]);
 
   return (
     <ProfileStyled>

@@ -1,7 +1,6 @@
-import { SortableHandle } from 'react-sortable-hoc';
-import { DragIcon } from '@/icons';
+import {SortableHandle} from 'react-sortable-hoc';
+import {DragIcon} from '@/icons';
 import templateVariable from '../app/template-variables.module.scss';
-import React from 'react';
 
 const DragHandle = SortableHandle(() => (
   <DragIcon

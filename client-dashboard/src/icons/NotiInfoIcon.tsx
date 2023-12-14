@@ -1,6 +1,6 @@
-import React from 'react';
+import { FC, SVGAttributes } from 'react';
 
-export const InfoIcon = () => {
+export const InfoIcon: FC<SVGAttributes<HTMLOrSVGElement>> = () => {
   return (
     <svg
       width="40px"
