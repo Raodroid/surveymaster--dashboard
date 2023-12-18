@@ -1,6 +1,7 @@
 import { Button, Divider, Modal } from 'antd';
 import {
   IEditSurveyFormValues,
+  OverviewQuestionButton,
   projectSurveyParams,
   SurveyFormSubmitButton,
   SurveyVersionRemarkButton,
@@ -79,6 +80,7 @@ const EditSurveyHeader = () => {
           </>
         )}
         <SurveyFormSubmitButton />
+        <OverviewQuestionButton />
       </div>
     </>
   );

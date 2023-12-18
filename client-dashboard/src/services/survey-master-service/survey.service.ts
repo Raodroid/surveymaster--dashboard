@@ -1,21 +1,19 @@
 import { AxiosResponse } from 'axios';
 import {
-  IGetParams,
   CreateSurveyBodyDto,
+  DuplicateSurveyVersionDto,
+  IGetParams,
+  IPaginationResponse,
   IPostSurveyVersionBodyDto,
   IPutSurveyVersionBodyDtoExtendId,
   ISurvey,
   ISurveyRemark,
-  DuplicateSurveyVersionDto,
   ISurveyVersion,
-  IPaginationResponse,
-  SurveyVersionStatus,
   IUpdateSurveyVersionStatusDto,
 } from 'type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
 import { IAction } from '@/interfaces';
-import { Pagination } from 'antd';
 
 interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
   projectId?: string;
@@ -50,11 +48,13 @@ export default class SurveyService {
   static createSurvey(props: CreateSurveyBodyDto): Promise<AxiosResponse> {
     return APIService.post(EntityEnum.SURVEY, props);
   }
+
   static createSurveyVersion(
     props: IPostSurveyVersionBodyDto,
-  ): Promise<AxiosResponse<IPaginationResponse<ISurveyVersion>>> {
+  ): Promise<AxiosResponse<ISurveyVersion>> {
     return APIService.post(`/${EntityEnum.SURVEY}/version`, props);
   }
+
   static duplicateSurvey(
     props: DuplicateSurveyVersionDto,
   ): Promise<AxiosResponse> {
