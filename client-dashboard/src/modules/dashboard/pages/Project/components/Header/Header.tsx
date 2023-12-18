@@ -2,14 +2,7 @@ import { Divider, Form, Input, InputRef } from 'antd';
 import { useParseQueryString } from '@/hooks/useParseQueryString';
 import { SearchIcon } from '@/icons/SearchIcon';
 import qs from 'qs';
-import React, {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from '@/type';
 
