@@ -13,7 +13,7 @@ export const mainMenuItem = [
     icon: <DiagramIcon />,
   },
   {
-    label: 'Questions Bank',
+    label: 'Question Bank',
     key: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT,
     icon: <QuestionTypeIcon />,
   },
