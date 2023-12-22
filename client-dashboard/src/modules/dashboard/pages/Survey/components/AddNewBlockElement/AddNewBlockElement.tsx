@@ -1,4 +1,4 @@
-import React, { FC, memo, useCallback } from 'react';
+import { FC, memo, useCallback } from 'react';
 import { Button, Dropdown } from 'antd';
 import { useField, useFormikContext } from 'formik';
 import { EmptyString, SubSurveyFlowElement } from '@/type';
@@ -68,11 +68,12 @@ const AddNewBlockElement: FC<{
       if (isRootPath(currentFieldName, value)) {
         const blockIndex = values?.version?.surveyFlowElements?.length || 0;
         const fieldName = rootSurveyFlowElementFieldName + `[${blockIndex}]`;
+        const blockDescription = genDefaultBlockDescription(fieldName);
         return {
           blockSort: blockIndex + 1,
           fieldName,
           key: fieldName,
-          blockDescription: `Block ${blockIndex + 1}`,
+          blockDescription,
         };
       }
       const x = calcLevelNodeByFieldName(currentFieldName);

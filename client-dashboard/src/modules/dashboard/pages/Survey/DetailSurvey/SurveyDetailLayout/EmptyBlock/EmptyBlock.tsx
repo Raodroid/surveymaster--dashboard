@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import Block from '@components/Block/Block';
 import { EmptyString, SubSurveyFlowElement } from '@/type';
 import { BranchIcon, EmbeddedTypeIcon, QuestionTypeIcon } from '@/icons';
@@ -6,6 +6,7 @@ import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { blockColor } from '@pages/Survey/components/QuestionBranchIcon/QuestionBranchIcon';
 import {
+  genDefaultBlockDescription,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
   useSurveyFormContext,
@@ -36,13 +37,14 @@ const EmptyBlock = () => {
 
   const handleAddBlock = useCallback(
     (type: SubSurveyFlowElement) => {
+      const fieldName = `${rootSurveyFlowElementFieldName}[0]`;
       const newBlockValue: SurveyDataTreeNode = {
         ...defaultNode,
         type,
         blockSort: 1,
-        fieldName: `${rootSurveyFlowElementFieldName}[0]`,
+        fieldName,
         key: `${rootSurveyFlowElementFieldName}[0]`,
-        blockDescription: 'Block 1',
+        blockDescription: genDefaultBlockDescription(fieldName),
       };
 
       setValue([newBlockValue]);

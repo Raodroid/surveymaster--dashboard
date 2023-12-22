@@ -1,22 +1,21 @@
 import React, { FC, useCallback } from 'react';
 
-import { defaultNode, isRootPath } from './AddNewBlockElement';
+import { defaultNode } from './AddNewBlockElement';
 import { objectKeys } from '@/utils';
 import { SubSurveyFlowElement } from '@/type';
 import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
 import { Button, Dropdown } from 'antd';
 import { PlusOutLinedIcon } from '@/icons';
 import {
+  genDefaultBlockDescription,
   getBranchLevel,
   getParentBlockSort,
   getParentChildrenFieldName,
   getParentFieldName,
   SurveyDataTreeNode,
-  useSurveyFormContext,
   transformToSurveyDataTreeNode,
-  rootSurveyFlowElementFieldName,
-  calcLevelNodeByFieldName,
-  genDefaultBlockDescription,
+  updateExpandKeysAfterInsertNewBlock,
+  useSurveyFormContext,
 } from '@pages/Survey';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +41,7 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
       }
 
       currentLevel = Number(currentLevel);
+
       const newBlockValue: SurveyDataTreeNode = {
         ...defaultNode,
         type,
@@ -50,7 +50,7 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
 
       const parentBlockSort = getParentBlockSort(parentLayerFieldName);
       const newValue = [...parentNodeValue];
-      (newValue || []).splice(currentLevel, 0, newBlockValue);
+      (newValue || []).splice(currentLevel, 0, newBlockValue); //insert new Block to the tree
 
       if (!isNaN(parentBlockSort)) {
         const parentFieldName = getParentFieldName(fieldName);
@@ -64,13 +64,20 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
       } else {
         setParentNodeValue(transformToSurveyDataTreeNode(newValue));
       }
-      setSurveyFormContext(oldState => ({
-        ...oldState,
-        tree: {
-          ...oldState.tree,
-          expendKeys: [],
-        },
-      }));
+
+      setSurveyFormContext(oldState => {
+        return {
+          ...oldState,
+          tree: {
+            ...oldState.tree,
+            expendKeys: updateExpandKeysAfterInsertNewBlock(
+              fieldName,
+              oldState.tree.expendKeys as string[],
+            ),
+            focusBlock: { ...newBlockValue, fieldName, key: fieldName },
+          },
+        };
+      });
     },
     [
       fieldName,
