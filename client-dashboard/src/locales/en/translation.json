@@ -20,6 +20,8 @@
     "foods": "Foods"
   },
   "common": {
+    "allQuestions": "All questions",
+    "viewAllQuestions": "View All Questions",
     "questionVersionId": "Question Version ID",
     "denyRequest": "Deny Request",
     "approveRequest": "Approve Request",
