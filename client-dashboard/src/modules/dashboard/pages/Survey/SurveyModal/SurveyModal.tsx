@@ -3,6 +3,7 @@ import {
   CreateSurveyBodyDto,
   DuplicateSurveyVersionDto,
   IModal,
+  ISurveyVersionBaseDto,
   SurveyVersionStatus,
 } from '@/type';
 import { Button, Form, Modal, notification, Spin } from 'antd';
@@ -18,7 +19,16 @@ import { ROUTE_PATH } from '@/enums';
 import { onError } from '@/utils';
 import { SurveyTemplateEnum, useSurveyFormContext } from '@pages/Survey';
 
-const defaultInitValue: CreateSurveyBodyDto = {
+interface IForm {
+  projectId: string;
+  version?: Omit<ISurveyVersionBaseDto, 'remarks'> & {
+    remark: string;
+  };
+  template?: SurveyTemplateEnum | string;
+  duplicateSurveyId?: string;
+}
+
+const defaultInitValue: IForm = {
   projectId: '',
   template: '',
   duplicateSurveyId: '',
@@ -37,9 +47,7 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
   const queryClient = useQueryClient();
   const { survey } = useSurveyFormContext();
 
-  const initValue = useMemo<
-    CreateSurveyBodyDto & { displayId?: string }
-  >(() => {
+  const initValue = useMemo<IForm & { displayId?: string }>(() => {
     if (mode === 'create') return defaultInitValue;
     return {
       ...defaultInitValue,
@@ -108,7 +116,8 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
           generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
             projectId: params.projectId,
             surveyId: newVersion.surveyId,
-          }) + `?version=${newVersion.displayId}`,
+          }) +
+            `?version=${newVersion.displayId}&surveyVersionId=${newVersion.id}`,
         );
       },
       onError,
@@ -116,20 +125,23 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
   );
 
   const onFinish = useCallback(
-    async (values: CreateSurveyBodyDto) => {
+    async (values: IForm) => {
       if (!params.projectId) return;
+
+      const data: DuplicateSurveyVersionDto['version'] = {
+        name: values.version?.name as string,
+        remarks: [values.version?.remark] as string[],
+      };
+
       if (values.template === SurveyTemplateEnum.DUPLICATE) {
         await duplicateSurveyMutation.mutateAsync({
-          version: {
-            name: values.version?.name as string,
-            remark: values.version?.remark as string,
-          },
+          version: data,
           surveyId: values.duplicateSurveyId as string,
         });
         return;
       }
       await addSurveyMutation.mutateAsync({
-        ...values,
+        version: data,
         projectId: params.projectId,
       });
     },
@@ -176,7 +188,7 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
                   <ControlledInput
                     inputType={INPUT_TYPES.TEXTAREA}
                     name="version.remark"
-                    label={t(`common.remark`)}
+                    label={t('common.remark')}
                   />
                 )}
                 {mode === 'create' && (

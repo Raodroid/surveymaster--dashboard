@@ -51,8 +51,10 @@ const RemarkSection: FC<IRemarkSection> = props => {
                 <Button
                   className={'info-btn'}
                   onClick={() => {
+                    const remarkFormat = newRemark.trim();
+                    if (!remarkFormat) return;
                     const newItem: IQuestionRemark = {
-                      remark: newRemark,
+                      remark: remarkFormat,
                       owner: {
                         avatar: profile?.avatar,
                         firstName: profile?.firstName || '',

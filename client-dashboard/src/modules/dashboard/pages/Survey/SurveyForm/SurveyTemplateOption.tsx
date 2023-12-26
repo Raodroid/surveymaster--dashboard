@@ -54,7 +54,7 @@ export const TemplateOption = () => {
   );
 
   const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery(
-    ['getProjectList', queryParams],
+    ['getSurveys', queryParams],
     ({ pageParam = queryParams }) => {
       return SurveyService.getSurveys(pageParam);
     },
@@ -108,64 +108,78 @@ export const TemplateOption = () => {
   const hasError = touched.template && errors.duplicateSurveyId;
 
   return (
-    <TemplateOptionWrapper>
-      <ControlledInput
-        label={t('common.template')}
-        onChange={onChange}
-        options={[
-          {
-            label: t(`surveyTemplateEnum.${SurveyTemplateEnum.NEW}`),
-            value: SurveyTemplateEnum.NEW,
-          },
-          {
-            label: t(`surveyTemplateEnum.${SurveyTemplateEnum.DUPLICATE}`),
-            value: SurveyTemplateEnum.DUPLICATE,
-          },
-        ]}
-        name={'template'}
-        inputType={INPUT_TYPES.SELECT}
-      />
-      {values.template === SurveyTemplateEnum.DUPLICATE && (
-        <div
-          className={'survey-dropdown border border-solid'}
-          style={{
-            borderColor: hasError ? DEFAULT_THEME_COLOR.ERROR : '#F3EEF3',
-          }}
-        >
-          <Input
-            onChange={e => setSearchTxt(e.target.value)}
-            style={{ width: '100%' }}
-            value={searchTxt}
-            placeholder={'Search...'}
-          />
-          <InfiniteScroll
-            loadMore={fetchNextPage as any}
-            useWindow={false}
-            pageStart={1}
-            hasMore={hasNextPage}
-            loader={undefined}
-            className="infinity-scroll"
-            initialLoad={false}
-            threshold={10}
-          >
-            <div style={{ height: 200 }}>
-              <SimpleBarCustom>
-                <Table
-                  rowSelection={{
-                    type: 'radio',
-                    ...rowSelection,
-                  }}
-                  columns={columns}
-                  dataSource={surveys}
-                  pagination={false}
-                  loading={isLoading}
-                  rowKey={record => record.id as string}
-                />
-              </SimpleBarCustom>
+    <>
+      <TemplateOptionWrapper>
+        <ControlledInput
+          label={t('common.template')}
+          onChange={onChange}
+          options={[
+            {
+              label: t(`surveyTemplateEnum.${SurveyTemplateEnum.NEW}`),
+              value: SurveyTemplateEnum.NEW,
+            },
+            {
+              label: t(`surveyTemplateEnum.${SurveyTemplateEnum.DUPLICATE}`),
+              value: SurveyTemplateEnum.DUPLICATE,
+            },
+          ]}
+          name={'template'}
+          inputType={INPUT_TYPES.SELECT}
+        />
+        {values.template === SurveyTemplateEnum.DUPLICATE && (
+          <>
+            <div
+              className={'survey-dropdown border border-solid'}
+              style={{
+                borderColor: hasError ? DEFAULT_THEME_COLOR.ERROR : '#F3EEF3',
+              }}
+            >
+              <Input
+                onChange={e => setSearchTxt(e.target.value)}
+                style={{ width: '100%' }}
+                value={searchTxt}
+                placeholder={'Search...'}
+              />
+              <InfiniteScroll
+                loadMore={fetchNextPage as any}
+                useWindow={false}
+                pageStart={1}
+                hasMore={hasNextPage}
+                loader={undefined}
+                className="infinity-scroll"
+                initialLoad={false}
+                threshold={10}
+              >
+                <div style={{ height: 200 }}>
+                  <SimpleBarCustom>
+                    <Table
+                      rowSelection={{
+                        type: 'radio',
+                        ...rowSelection,
+                      }}
+                      columns={columns}
+                      dataSource={surveys}
+                      pagination={false}
+                      loading={isLoading}
+                      rowKey={record => record.id as string}
+                    />
+                  </SimpleBarCustom>
+                </div>
+              </InfiniteScroll>
             </div>
-          </InfiniteScroll>
-        </div>
-      )}
-    </TemplateOptionWrapper>
+            {hasError && (
+              <div
+                className="ant-form-item-explain ant-form-item-explain-connected"
+                role="alert"
+              >
+                <div className="ant-form-item-explain-error">
+                  {t('validation.messages.required')}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </TemplateOptionWrapper>
+    </>
   );
 };

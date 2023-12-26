@@ -177,13 +177,8 @@ const ActionThreeDropDown: FC<
   const { record, handleSelect } = props;
   const { t } = useTranslation();
 
-  const items = useMemo<IMenuItem[]>(
-    () => [
-      {
-        key: ACTION.RENAME,
-        icon: <PenFilled className="text-primary" />,
-        label: <label className={''}> {t('common.rename')}</label>,
-      },
+  const items = useMemo<IMenuItem[]>(() => {
+    const base: IMenuItem[] = [
       {
         key: ACTION.DUPLICATE,
         icon: <DuplicateIcon className="text-primary" />,
@@ -194,9 +189,16 @@ const ActionThreeDropDown: FC<
         icon: <TrashOutlined className="text-primary" />,
         label: <label className={''}> {t('common.delete')}</label>,
       },
-    ],
-    [t],
-  );
+    ];
+    if (record.type === SubSurveyFlowElement.BLOCK) {
+      base.unshift({
+        key: ACTION.RENAME,
+        icon: <PenFilled className="text-primary" />,
+        label: <label className={''}> {t('common.rename')}</label>,
+      });
+    }
+    return base;
+  }, [record.type, t]);
 
   return (
     <ThreeDotsDropdown

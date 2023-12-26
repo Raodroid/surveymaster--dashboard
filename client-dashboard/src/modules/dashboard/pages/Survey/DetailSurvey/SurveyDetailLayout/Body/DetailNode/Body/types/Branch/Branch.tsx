@@ -80,7 +80,7 @@ const Branch: FC<QuestionBlockProps> = props => {
                   return (
                     <Fragment key={index}>
                       <div className={'font-semibold text-[16px] mb-3'}>
-                        {t('common.condition')} №{index + 1}:
+                        {t('common.condition')} No{index + 1}:
                       </div>
                       <div className={'flex gap-3'} key={index}>
                         {index === 0 ? (

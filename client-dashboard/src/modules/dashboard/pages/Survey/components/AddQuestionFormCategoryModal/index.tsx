@@ -121,7 +121,7 @@ const AddQuestionFormCategoryModal: FC<
     () => {
       return QuestionBankService.getCategories(currentParam);
     },
-    { onError, enabled: open, refetchOnWindowFocus: false },
+    { onError, refetchOnWindowFocus: false },
   );
 
   const categoryTreeData = useMemo(() => {
@@ -160,25 +160,25 @@ const AddQuestionFormCategoryModal: FC<
       onSuccess: res => {
         const questions: IQuestion[] = res.data.data;
 
-        const newQuestions: string[] = [];
+        const newQuestionIds: string[] = [];
 
         questions.forEach(q => {
           if (
             q?.masterSubCategory?.id &&
             newSelectedCategoryIds.current.includes(q.masterSubCategory.id)
           ) {
-            newQuestions.push(q?.latestCompletedVersion.id as string);
+            newQuestionIds.push(q?.latestCompletedVersion.id as string);
           }
         });
 
         setQuestionListState(s => ({
           ...s,
           questions,
-          selectedVersionIds: [...s.selectedVersionIds, ...newQuestions],
+          selectedVersionIds: [...s.selectedVersionIds, ...newQuestionIds],
         }));
       },
       onError,
-      enabled: selectedCategoryIds.length !== 0 && open,
+      enabled: selectedCategoryIds.length !== 0,
       refetchOnWindowFocus: false,
     },
   );
@@ -192,8 +192,6 @@ const AddQuestionFormCategoryModal: FC<
 
   const onCloseModal = useCallback(() => {
     onCancel();
-    setSelectedCategoryIds([]);
-    setQuestionListState(defaultQuestionListState);
   }, [onCancel]);
 
   const handleAddQuestions = useCallback(async () => {

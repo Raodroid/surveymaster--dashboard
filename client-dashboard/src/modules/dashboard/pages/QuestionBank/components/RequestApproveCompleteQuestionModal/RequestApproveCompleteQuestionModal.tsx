@@ -67,7 +67,6 @@ const RequestApproveCompleteQuestionModal: FC<
     {
       refetchOnWindowFocus: false,
       onError,
-      enabled: open,
     },
   );
 

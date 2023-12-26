@@ -43,7 +43,11 @@ const DisplayAnswer = () => {
   const { t } = useTranslation();
   const fieldName = `${rootSurveyFlowElementFieldName}[${questionBlockIndex}].surveyQuestions`;
 
+  const { errors, touched } = useFormikContext<IEditSurveyFormValues>();
+
   const [{ value }, , { setValue }] = useField<questionValueType[]>(fieldName);
+
+  const hasError = touched.selectedRowKeys && errors.selectedRowKeys;
 
   const { question } = useSurveyFormContext();
   const { newQuestions, setSearchParams } = question;
@@ -157,7 +161,7 @@ const DisplayAnswer = () => {
           return (
             <>
               <ControlledInput
-                placeholder={'paremeter'}
+                placeholder={'parameter'}
                 className={`${
                   isEditMode ? '' : 'view-mode'
                 } w-full hide-helper-text`}
@@ -296,7 +300,7 @@ const DisplayAnswer = () => {
     <>
       <div className={'w-full h-full flex flex-col over-hidden'}>
         <SimpleBar className={'flex-1 overflow-y-scroll'}>
-          <div className={''}>
+          <div className={hasError ? 'border-error border' : ''}>
             <DragTable
               scroll={{ x: size.large }}
               rowSelection={isEditMode ? rowSelection : undefined}
@@ -310,7 +314,17 @@ const DisplayAnswer = () => {
         </SimpleBar>
 
         {isEditMode && (
-          <div className={'w-full pt-8'}>
+          <div className={'w-full pt-3'}>
+            {hasError && (
+              <div
+                className="ant-form-item-explain ant-form-item-explain-connected mb-3"
+                role="alert"
+              >
+                <div className="ant-form-item-explain-error">
+                  {t('validation.messages.selectRow')}
+                </div>
+              </div>
+            )}
             <Button
               className={'w-full'}
               type={'primary'}

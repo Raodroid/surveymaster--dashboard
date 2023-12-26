@@ -485,6 +485,7 @@
   },
   "validation": {
     "messages": {
+      "selectRow": "Survey can not be empty! Please select question rows",
       "requireToPass": "You need to answer this question in order to proceed",
       "required": "Required",
       "minUserName": "Min 1 character!",
