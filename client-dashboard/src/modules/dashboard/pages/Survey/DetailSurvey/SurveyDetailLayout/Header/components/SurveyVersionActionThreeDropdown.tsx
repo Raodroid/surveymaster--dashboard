@@ -13,7 +13,6 @@ import { useCheckScopeEntityDefault } from '@/modules/common';
 import { SCOPE_CONFIG } from '@/enums';
 import {
   CheckIcon,
-  Clock,
   CloseIcon,
   DownloadIcon,
   DuplicateIcon,
@@ -128,7 +127,7 @@ const ActionThreeDropDown: FC<
       });
     }
     baseMenu.push({
-      icon: <Clock className={'text-primary'} />,
+      icon: <showChan className={'text-primary'} />,
       label: t('common.showChangeLog'),
       key: ACTION.SHOW_CHANGE_LOG,
     });

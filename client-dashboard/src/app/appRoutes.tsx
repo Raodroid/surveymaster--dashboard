@@ -1,15 +1,15 @@
-import {lazy, Suspense, useEffect} from 'react';
-import {Navigate, Route, Routes} from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-import {CustomSpinSuspense} from 'modules/common/styles';
-import {useScrollbarContext} from '@/scrollbarContext/useScrollBar';
-import {ProtectedRoutes} from './protected.route';
-import {NoAuthenticationRoutes} from './public.route';
-import {UnProtectedRoutes} from './unProtected.route';
-import {useCheckScopeEntityDefault} from '@/modules/common/hoc';
-import {ROUTE_PATH, SCOPE_CONFIG} from '@/enums';
-import {useSelector} from 'react-redux';
-import {AuthSelectors} from '../redux/auth';
+import { CustomSpinSuspense } from 'modules/common/styles';
+import { useScrollbarContext } from '@/scrollbarContext/useScrollBar';
+import { ProtectedRoutes } from './protected.route';
+import { NoAuthenticationRoutes } from './public.route';
+import { UnProtectedRoutes } from './unProtected.route';
+import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
+import { ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '../redux/auth';
 
 const Home = lazy(() => import('modules/dashboard/pages/Home'));
 const Project = lazy(() => import('@pages/Project/Project'));
@@ -28,6 +28,10 @@ const CategoryDetail = lazy(
 );
 const AddQuestion = lazy(
   () => import('modules/dashboard/pages/QuestionBank/AddQuestion'),
+);
+
+const ChangelogManagement = lazy(
+  () => import('modules/dashboard/pages/ChangeLog/Changelog/ChangeLog'),
 );
 
 export const ScrollToTop = props => {
@@ -87,6 +91,11 @@ const AppRoutes = () => {
                 />
               </Route>
             )}
+
+            <Route
+              path={ROUTE_PATH.DASHBOARD_PATHS.CHANGE_LOG.ROOT}
+              element={<ChangelogManagement />}
+            ></Route>
             <Route path="*" element={<Navigate to={'/app'} replace />} />
           </Route>
           <Route path="*" element={<UnProtectedRoutes />}>

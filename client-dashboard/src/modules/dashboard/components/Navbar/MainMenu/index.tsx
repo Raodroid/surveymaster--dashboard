@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
-import { ROUTE_PATH } from '@/enums';
+import { ROUTE_PATH , SCOPE_CONFIG} from '@/enums';
 import BaseMenu from '../BaseMenu';
-import { SCOPE_CONFIG } from '@/enums';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { useCheckScopeEntityDefault } from '@/modules/common';
-import { DiagramIcon, QuestionTypeIcon } from '@/icons';
+import { Clock, DiagramIcon, QuestionTypeIcon } from '@/icons';
 
 export const mainMenuItem = [
   {
@@ -16,6 +15,11 @@ export const mainMenuItem = [
     label: 'Question Bank',
     key: ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT,
     icon: <QuestionTypeIcon />,
+  },
+  {
+    label: 'Change log',
+    key: ROUTE_PATH.DASHBOARD_PATHS.CHANGE_LOG.ROOT,
+    icon: <Clock />,
   },
 ];
 
@@ -35,6 +39,7 @@ const MainMenu = () => {
     if (canReadQuestion) {
       result.push(mainMenuItem[1]);
     }
+    result.push(mainMenuItem[2]);
     return result;
   }, [canReadProject, canReadQuestion]);
 
