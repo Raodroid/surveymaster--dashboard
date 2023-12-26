@@ -38,7 +38,7 @@ const Embedded: FC<QuestionBlockProps> = props => {
                 (listEmbeddedData || []).map((list, index) => (
                   <Fragment key={index}>
                     <span className={'font-semibold text-[16px]'}>
-                      {t('common.embeddedData')} №{index + 1}:
+                      {t('common.embeddedData')} No{index + 1}:
                     </span>
                     <div className={'flex items-center gap-3'}>
                       <ControlledInputHasTopLabel

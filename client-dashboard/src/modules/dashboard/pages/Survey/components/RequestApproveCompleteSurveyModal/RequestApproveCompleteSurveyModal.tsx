@@ -67,7 +67,6 @@ const RequestApproveCompleteSurveyModal: FC<
     {
       refetchOnWindowFocus: false,
       onError,
-      enabled: open,
     },
   );
 

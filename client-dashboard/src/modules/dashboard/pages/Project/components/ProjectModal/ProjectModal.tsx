@@ -1,4 +1,11 @@
-import React, { FC, ReactNode, useCallback, useMemo } from 'react';
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useGetProjectByIdQuery } from '@pages/Project';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Button, Divider, Form, Modal, notification, Spin } from 'antd';
@@ -66,15 +73,20 @@ const ProjectModal: FC<IProjectModal> = props => {
     [teamMembers],
   );
 
-  const initValues = useMemo<ProjectPayload>(() => {
-    if (mode === 'create') return defaultInitValues;
-    return project;
+  const [initValues, setInitValue] =
+    useState<ProjectPayload>(defaultInitValues);
+
+  useEffect(() => {
+    if (mode === 'create') return;
+    setInitValue(project);
   }, [mode, project]);
 
   const mutationCreateProject = useMutation(ProjectService.createProject, {
     onSuccess: () => {
       queryClient.invalidateQueries('getProjects');
       notification.success({ message: t('common.createSuccess') });
+      setInitValue({ ...defaultInitValues });
+
       toggleOpen();
     },
     onError,
@@ -112,6 +124,7 @@ const ProjectModal: FC<IProjectModal> = props => {
         onCancel={toggleOpen}
         width={488}
         footer={renderFooter(mode, t)}
+        // destroyOnClose
       >
         <Spin
           spinning={
@@ -121,7 +134,7 @@ const ProjectModal: FC<IProjectModal> = props => {
           }
         >
           <Formik
-            enableReinitialize={true}
+            enableReinitialize
             initialValues={initValues}
             onSubmit={onFinish}
             validationSchema={PROJECT_FORM_SCHEMA}

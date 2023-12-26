@@ -27,15 +27,17 @@ const SurveyVersionRemarkModal: FC<ISurveyVersionRemarkModal> = props => {
   const params = useParams<{ surveyId: string }>();
   const [initValue, setInitValue] = useState(initialValues);
 
+  const surveyVersionId = currentSurveyVersion?.id;
+
   const getRemarksQuery = useQuery(
-    ['getRemarks', params?.surveyId],
+    ['getRemarks', surveyVersionId],
     () =>
       SurveyService.getSurveyRemarks({
-        surveyVersionId: params?.surveyId as string,
+        surveyVersionId: surveyVersionId as string,
       }),
     {
       onError,
-      enabled: open && !!params?.surveyId,
+      enabled: !!params?.surveyId,
       refetchOnWindowFocus: false,
     },
   );
@@ -60,10 +62,10 @@ const SurveyVersionRemarkModal: FC<ISurveyVersionRemarkModal> = props => {
     values => {
       updateRemarkMutation.mutateAsync({
         remark: values.remark,
-        surveyVersionId: params?.surveyId || '',
+        surveyVersionId: surveyVersionId || '',
       });
     },
-    [params.surveyId, updateRemarkMutation],
+    [surveyVersionId, updateRemarkMutation],
   );
 
   const remarks: ISurveyRemark[] = _get(getRemarksQuery.data, 'data.data', []);

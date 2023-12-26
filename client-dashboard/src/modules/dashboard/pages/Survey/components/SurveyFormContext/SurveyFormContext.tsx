@@ -175,18 +175,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
             IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
           > = { ...s.question.questionVersionIdMap };
 
-          const newQuestions: Array<
-            IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
-          > = [];
-          questionListData.pages.forEach(page => {
-            page.data.data.forEach(q => {
-              newQuestions.push({
-                ...q.latestCompletedVersion,
-                masterCategory: q.masterCategory,
-              });
-            });
-          });
-
           questionListData.pages.at(-1)?.data?.data.forEach((q: IQuestion) => {
             const latestQuestionVersionId = q.latestCompletedVersion
               ?.id as string;
@@ -197,6 +185,22 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
                 masterCategory: q.masterCategory,
               };
             }
+          });
+
+          const newQuestions: Array<
+            IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
+          > = [];
+          questionListData.pages.forEach(page => {
+            page.data.data.forEach(q => {
+              if (!normalizeByQuestionId[q.latestCompletedVersion.id as string])
+                //make sure context store this question
+                return;
+
+              newQuestions.push({
+                ...q.latestCompletedVersion,
+                masterCategory: q.masterCategory,
+              });
+            });
           });
 
           return {

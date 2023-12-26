@@ -182,7 +182,7 @@ export interface EditSurveyBodyDto {
 export interface CreateSurveyBodyDto {
   projectId: string;
   version?: Omit<ISurveyVersionBaseDto, 'remarks'> & {
-    remark: string;
+    remarks: string[];
   };
   template?: SurveyTemplateEnum | string;
   duplicateSurveyId?: string;
@@ -191,7 +191,7 @@ export interface CreateSurveyBodyDto {
 export type DuplicateSurveyVersionDto = {
   version: {
     name: string;
-    remark: string;
+    remarks: string[];
   };
   surveyId: string;
 };
