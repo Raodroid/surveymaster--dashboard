@@ -1,8 +1,5 @@
 import styled from 'styled-components/macro';
-import { Form } from 'antd';
-import templateVariable from '../../../../../../../app/template-variables.module.scss';
-
-export const DisplayAnswerListWrapper = styled(Form)``;
+import templateVariable from '@/app/template-variables.module.scss';
 
 export const AnswerListWrapper = styled.div`
   .drag-icon-wrapper {

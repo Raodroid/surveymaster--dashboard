@@ -20,6 +20,7 @@ import { generateRandom } from 'modules/common/funcs';
 import { DragHandle } from '@/customize-components';
 import { ControlledInput } from '@/modules/common';
 import { filterColumn, IRenderColumnCondition } from '@/utils';
+import { InputWrapperMultipleChoice } from '../styles';
 
 const MultipleChoice = ({ isKeyPath = true }: { isKeyPath?: boolean }) => {
   const { t } = useTranslation();
@@ -106,7 +107,7 @@ const MultipleChoice = ({ isKeyPath = true }: { isKeyPath?: boolean }) => {
         ),
       },
     ],
-    [className, handleDeleteRow, isViewMode, t, values.type],
+    [className, handleDeleteRow, isKeyPath, isViewMode, t, values.type],
   );
 
   const renderColumnCondition: IRenderColumnCondition = [

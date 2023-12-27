@@ -2,7 +2,6 @@ import { memo } from 'react';
 import { INPUT_TYPES } from '@input/type';
 import { BaseQuestionVersionDto, QuestionType } from '@/type';
 import { useTranslation } from 'react-i18next';
-import { DisplayAnswerListWrapper } from './RenderQuestionType/style';
 import { useFormikContext } from 'formik';
 import MultipleChoice from './RenderQuestionType/MultipleChoice';
 import { useMatch } from 'react-router-dom';
@@ -40,7 +39,7 @@ const DisplayAnswerList = () => {
       return <MultipleChoice />;
     case QuestionType.SLIDER:
       return (
-        <DisplayAnswerListWrapper className={'DisplayAnswerListWrapper'}>
+        <>
           <ControlledInput
             inputType={INPUT_TYPES.NUMBER}
             name="numberStep"
@@ -73,7 +72,7 @@ const DisplayAnswerList = () => {
               label={t('common.label')}
             />
           </InputWrapper>
-        </DisplayAnswerListWrapper>
+        </>
       );
     case QuestionType.FORM_FIELD:
       return <MultipleChoice />;
@@ -83,7 +82,7 @@ const DisplayAnswerList = () => {
       return <Datamatrix />;
     case QuestionType.TEXT_NUMBER:
       return (
-        <DisplayAnswerListWrapper className={'DisplayAnswerListWrapper'}>
+        <>
           <InputWrapper>
             <ControlledInput
               inputType={INPUT_TYPES.NUMBER}
@@ -111,7 +110,7 @@ const DisplayAnswerList = () => {
               className={className}
             />
           </InputWrapper>
-        </DisplayAnswerListWrapper>
+        </>
       );
     case QuestionType.RANK_ORDER:
       return <MultipleChoice isKeyPath={false} />;
