@@ -6,6 +6,7 @@ import {
   IQuestionCreatePostDto,
   IQuestionVersionPatchUpdateDtoExtendId,
   IQuestionVersionPostNewDto,
+  IQuestionVersionPutUpdateDtoExtendId,
   QuestionVersionStatus,
 } from '@/type';
 import { EntityEnum } from '@/enums';
@@ -61,7 +62,7 @@ export default class QuestionBankService {
   }
 
   static updateDraftQuestion(
-    props: IQuestionVersionPatchUpdateDtoExtendId,
+    props: IQuestionVersionPutUpdateDtoExtendId,
   ): Promise<AxiosResponse> {
     const { id, ...rest } = props;
     return APIService.put(`/${EntityEnum.QUESTION}/version/${id}`, rest);

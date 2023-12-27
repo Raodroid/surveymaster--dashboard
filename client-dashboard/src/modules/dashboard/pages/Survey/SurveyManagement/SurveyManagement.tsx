@@ -27,7 +27,7 @@ function SurveyManagement() {
   );
 
   const { data: project } = useQuery(
-    ['project', params.projectId],
+    ['getProjectById', params.projectId],
     () => ProjectService.getProjectById(params.projectId),
     {
       onError,
@@ -56,7 +56,7 @@ function SurveyManagement() {
       />
       <CustomTab
         onChange={handleChangeTab}
-        value={qsParams.isDeleted}
+        value={qsParams.isDeleted || 'false'}
         size={'large'}
         options={options}
       />

@@ -29,6 +29,7 @@ import { transformQuestionData } from '../AddQuestion/util';
 import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
 import { ADD_QUESTION_FIELDS } from '@/modules/common/validate/validate';
 import { useParseQueryString } from '@/hooks';
+import isNumber from 'lodash/isNumber';
 
 export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   masterCategoryId: string;

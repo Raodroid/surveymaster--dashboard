@@ -12,15 +12,21 @@ import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/enums';
 import { useFormikContext } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import ViewSurveyButton from '@pages/Survey/SurveyModal/ViewSurveyButton';
+import { ProjectTypes } from '@/type';
 
 const { confirm } = Modal;
 const EditSurveyHeader = () => {
   const { t } = useTranslation();
   const params = useParams<projectSurveyParams>();
-  const { survey, setSurveyFormContext } = useSurveyFormContext();
+  const { survey, setSurveyFormContext, project } = useSurveyFormContext();
   const { resetForm, dirty } = useFormikContext<IEditSurveyFormValues>();
+
+  const isExternalProject = useMemo(
+    () => project.projectData?.type === ProjectTypes.EXTERNAL,
+    [project.projectData?.type],
+  );
 
   const navigate = useNavigate();
   const handleCancel = useCallback(() => {
@@ -87,7 +93,7 @@ const EditSurveyHeader = () => {
           </>
         )}
         <SurveyFormSubmitButton />
-        <OverviewQuestionButton />
+        {!isExternalProject && <OverviewQuestionButton />}
       </div>
     </>
   );
