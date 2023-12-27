@@ -1,4 +1,4 @@
-import {FC, SVGAttributes} from 'react';
+import { FC, SVGAttributes } from 'react';
 
 export const BoxIconOutlined: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   const { style } = props;

@@ -1,4 +1,4 @@
-import {Button, Divider, Modal} from 'antd';
+import { Button, Divider, Modal } from 'antd';
 import {
   IEditSurveyFormValues,
   OverviewQuestionButton,
@@ -8,18 +8,18 @@ import {
   SurveyVersionSelect,
   useSurveyFormContext,
 } from '@pages/Survey';
-import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate, useParams} from 'react-router';
-import {ROUTE_PATH} from '@/enums';
-import {useFormikContext} from 'formik';
-import {useCallback} from 'react';
+import { useTranslation } from 'react-i18next';
+import { generatePath, useNavigate, useParams } from 'react-router';
+import { ROUTE_PATH } from '@/enums';
+import { useFormikContext } from 'formik';
+import { useCallback } from 'react';
 import ViewSurveyButton from '@pages/Survey/SurveyModal/ViewSurveyButton';
 
 const { confirm } = Modal;
 const EditSurveyHeader = () => {
   const { t } = useTranslation();
   const params = useParams<projectSurveyParams>();
-  const { survey } = useSurveyFormContext();
+  const { survey, setSurveyFormContext } = useSurveyFormContext();
   const { resetForm, dirty } = useFormikContext<IEditSurveyFormValues>();
 
   const navigate = useNavigate();
@@ -38,6 +38,13 @@ const EditSurveyHeader = () => {
           )}?version=${survey.currentSurveyVersion?.displayId}`,
         );
         resetForm();
+        setSurveyFormContext(oldState => ({
+          ...oldState,
+          tree: {
+            ...oldState.tree,
+            focusBlock: undefined,
+          },
+        }));
         return;
       },
       onCancel() {
