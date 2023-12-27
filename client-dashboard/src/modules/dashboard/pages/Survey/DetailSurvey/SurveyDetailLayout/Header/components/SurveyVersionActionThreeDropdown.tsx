@@ -98,16 +98,12 @@ const ActionThreeDropDown: FC<
         label: t('common.approveRequest'),
         key: ACTION.APPROVE_REQUEST,
       });
-      baseMenu.push({
-        icon: <CloseIcon className={'text-primary'} />,
-        label: t('common.denyRequest'),
-        key: ACTION.DENY_REQUEST,
-      });
     }
     if (
       canUpdate &&
       record.status === SurveyVersionStatus.AWAIT_APPROVAL &&
-      profile?.id === record?.createdBy
+      (profile?.id === record?.createdBy ||
+        profile?.id === record?.approvalUserId)
     ) {
       baseMenu.push({
         icon: <CloseIcon className={'text-primary'} />,

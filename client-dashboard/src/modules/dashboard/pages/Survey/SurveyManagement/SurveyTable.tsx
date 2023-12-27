@@ -116,7 +116,7 @@ function SurveyTable() {
       duplicateMutation.mutateAsync({
         version: {
           name: createDuplicateSurveyVersionName(record?.latestVersion?.name),
-          remark: '',
+          remarks: [],
         },
         // projectId: params.projectId as string,
         surveyId: record.id as string,

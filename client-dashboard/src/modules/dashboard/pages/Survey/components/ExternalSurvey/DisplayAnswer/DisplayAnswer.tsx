@@ -78,8 +78,7 @@ const DisplayAnswer = () => {
     data: questionValueType | null;
   }>({ index: null, data: null });
 
-  const { setValues, setFieldValue, values } =
-    useFormikContext<IEditSurveyFormValues>();
+  const { setFieldValue, values } = useFormikContext<IEditSurveyFormValues>();
 
   const handleSelectNewQuestionVersion = useCallback(
     newQuestionVersionId => {
@@ -277,23 +276,24 @@ const DisplayAnswer = () => {
 
   const rowSelection = useMemo(
     () => ({
-      selectedRowKeys: values.selectedRowKeys,
-      onChange: onSelectChange,
+      selectedRowKeys: values.selectedRowKeys.map(key => {
+        return dataSource.findIndex(record => record.questionVersionId === key);
+      }),
+      onChange: (keyIndexs: Key[]) => {
+        const newKeys: Key[] = keyIndexs.map(
+          index => dataSource[index].questionVersionId,
+        );
+        onSelectChange(newKeys);
+      },
       getCheckboxProps: (record: questionValueType) => ({
         disabled: !record.questionVersionId, // Column configuration not to be checked
       }),
     }),
-    [values.selectedRowKeys, onSelectChange],
+    [values.selectedRowKeys, onSelectChange, dataSource],
   );
 
   const setDataTable = (questions: questionValueType[]) => {
-    setValues(s => ({
-      ...s,
-      version: {
-        ...s.version,
-        questions,
-      },
-    }));
+    setValue(questions);
   };
 
   return (
@@ -308,7 +308,6 @@ const DisplayAnswer = () => {
               dataSource={dataSource}
               pagination={false}
               setDataTable={setDataTable}
-              rowKey={(record: questionValueType) => record.questionVersionId}
             />
           </div>
         </SimpleBar>
