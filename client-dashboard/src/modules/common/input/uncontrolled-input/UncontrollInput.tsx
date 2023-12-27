@@ -1,20 +1,20 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import {
-  CustomInput,
-  CustomSelect,
-  CustomTextArea,
-  CustomPassword,
-  CustomInputNumber,
-  CustomDayPicker,
+  CustomCheckableTag,
   CustomCheckbox,
+  CustomDayPicker,
   CustomGroupRadioButton,
   CustomImageUpload,
-  CustomRating,
-  CustomCheckableTag,
-  CustomSlider,
+  CustomInput,
   CustomInputDebounce,
+  CustomInputNumber,
+  CustomPassword,
+  CustomRating,
+  CustomSelect,
+  CustomSlider,
+  CustomTextArea,
 } from '../inputs';
-import { UncontrolledInputProps, INPUT_TYPES } from '../type';
+import { INPUT_TYPES, UncontrolledInputProps } from '../type';
 import CustomGroupCheckbox from '../inputs/custom-group-checkbox/CustomGroupCheckbox';
 import CustomInputGroupMask from '../inputs/custom-input-group-mask/CustomInputGroupMask';
 import CustomInputMask from '../inputs/custom-input-mask/CustomInputMask';

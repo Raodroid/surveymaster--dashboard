@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { AddQuestionWrapper } from './style';
-import GeneralSectionHeader from '../../../components/GeneralSectionHeader';
+import GeneralSectionHeader from '@components/GeneralSectionHeader/GeneralSectionHeader';
 import { useTranslation } from 'react-i18next';
 import { Button, Form, notification } from 'antd';
 import QuestionCategoryForm from './QuestionCategoryForm';
@@ -12,7 +12,7 @@ import { QuestionBankService } from 'services';
 import { onError } from 'utils';
 import { IQuestionCreatePostDto, MatrixType, QuestionType } from 'type';
 import { ROUTE_PATH } from 'enums';
-import { ADD_QUESTION_FIELDS } from '../../../../common/validate/validate';
+import { ADD_QUESTION_FIELDS } from '@/modules/common/validate/validate';
 import DisplayAnswerList from './DisplayAnswerList';
 import { generatePath } from 'react-router';
 import DisplayTitle from './DisplayTitle';
@@ -24,10 +24,10 @@ const initValue: IAddQuestionFormValue = {
   masterCategoryId: '',
   masterSubCategoryId: '',
   masterVariableName: '',
-  numberStep: undefined,
-  numberMin: undefined,
+  numberStep: 1,
+  numberMin: 1,
   numberMinLabel: '',
-  numberMax: undefined,
+  numberMax: 10,
   numberMaxLabel: '',
   maxDecimal: undefined,
   options: undefined,
@@ -99,9 +99,7 @@ const AddQuestion = () => {
           delete column.id;
         });
       }
-      const payload = transformData(newValue);
-      // console.log('payload =', payload);
-      return addQuestionMutation.mutateAsync(payload);
+      return addQuestionMutation.mutateAsync(transformData(newValue));
     },
     [addQuestionMutation],
   );
@@ -117,7 +115,8 @@ const AddQuestion = () => {
         onSubmit={onFinish}
         initialValues={initValue}
         validationSchema={ADD_QUESTION_FIELDS}
-        render={({ handleSubmit, isValid, dirty }) => (
+      >
+        {({ handleSubmit, isValid, dirty }) => (
           <>
             <Form
               id={'add-question-form'}
@@ -175,7 +174,7 @@ const AddQuestion = () => {
             </div>
           </>
         )}
-      />
+      </Formik>
     </AddQuestionWrapper>
   );
 };

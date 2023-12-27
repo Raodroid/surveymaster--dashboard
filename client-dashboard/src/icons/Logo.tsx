@@ -1,8 +1,6 @@
-import React from 'react';
-import templateVariable from '../app/template-variables.module.scss';
+import { FC, SVGAttributes } from 'react';
 
-export const LogoIcon = props => {
-  const { style, className } = props;
+export const LogoIcon: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (
     <svg
       width="165px"
@@ -10,8 +8,7 @@ export const LogoIcon = props => {
       viewBox="0 0 165 28"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      style={{ ...style }}
+      {...props}
     >
       <title>Survey master logo</title>
       <g

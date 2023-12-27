@@ -1,6 +1,6 @@
-import React from 'react';
+import { FC, SVGAttributes } from 'react';
 
-export const WarningIcon = props => {
+export const WarningIcon: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   const { style, className } = props;
   return (
     <svg

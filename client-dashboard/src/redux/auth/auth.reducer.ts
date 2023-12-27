@@ -1,6 +1,5 @@
 import { RecordOf, Record } from 'immutable';
 import jwt_decode from 'jwt-decode';
-import _keyBy from 'lodash/keyBy';
 import AuthAction from './auth.actions';
 import { StandardAction } from '../types';
 import { AuthState } from './types';
@@ -70,12 +69,6 @@ export default class AuthReducer {
       case AuthAction.TYPES.GET_PROFILE.SUCCESS:
       case AuthAction.TYPES.GET_PROFILE.FAILURE:
         return AuthReducer.handleGetprofile(state, action);
-
-      // Get all roles
-      case AuthAction.TYPES.GET_ALL_ROLES.START:
-      case AuthAction.TYPES.GET_ALL_ROLES.SUCCESS:
-      case AuthAction.TYPES.GET_ALL_ROLES.FAILURE:
-        return AuthReducer.handleGetAllRoles(state, action);
 
       // challenge two factor authentication
       case AuthAction.TYPES.CONFIRM_TEXT_SMS.START:
@@ -196,25 +189,6 @@ export default class AuthReducer {
 
       case AuthAction.TYPES.GET_PROFILE.FAILURE:
         return state.set('isFetchingProfile', false).set('error', action.error);
-
-      default:
-        return state;
-    }
-  };
-
-  static handleGetAllRoles = (
-    state: RecordOf<AuthState>,
-    action: StandardAction,
-  ): RecordOf<AuthState> => {
-    switch (action.type) {
-      case AuthAction.TYPES.GET_ALL_ROLES.START:
-        return state.set('isFetching', true).set('error', '');
-
-      case AuthAction.TYPES.GET_ALL_ROLES.SUCCESS:
-        return state.set('allRoles', _keyBy(action.payload, 'id'));
-
-      case AuthAction.TYPES.GET_ALL_ROLES.FAILURE:
-        return state.set('error', action.error);
 
       default:
         return state;

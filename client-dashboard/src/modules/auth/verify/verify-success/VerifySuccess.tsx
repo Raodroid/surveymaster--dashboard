@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { VerifySuccessStyled } from './style';
 import { CheckIcon } from 'icons';

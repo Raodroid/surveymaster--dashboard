@@ -15,12 +15,7 @@ import _get from 'lodash/get';
 import AuthAction from './auth.actions';
 import { AuthService, UserService } from 'services';
 import history from '../../utils/history';
-import {
-  DEFAULT_THEME_COLOR,
-  ReduxCollections,
-  ReduxCollectionType,
-  ROUTE_PATH,
-} from 'enums';
+import { ReduxCollections, ReduxCollectionType, ROUTE_PATH } from 'enums';
 import {
   SignInPayload,
   VerifyAccountPayload,
@@ -29,12 +24,13 @@ import {
   AuthChallengePayload,
 } from './types';
 import { StandardAction } from '../types';
-import { clearAxiosToken } from '../../services/survey-master-service/base.service';
+import { clearAxiosToken } from '@/services/survey-master-service/base.service';
 import { AUTH_ERROR, AUTH_CHALLENGE } from 'enums';
 import { AuthSelectors } from '.';
 import { CognitoService } from 'services';
 import { getI18n } from 'react-i18next';
 import { errorNotification } from 'utils/funcs';
+import UserAction from '../user/user.actions';
 
 const {
   userSignInSuccess,
@@ -50,13 +46,13 @@ const {
   confirmResetPasswordSuccess,
   userConfirmTextSmsSuccess,
   userConfirmTextSmsFail,
-  getAllRoleSuccess,
-  getAllRoleFail,
   userChangePassDefaultSuccess,
   userChangePassDefaultFail,
   userResendCodeSuccess,
   userResendCodeError,
 } = AuthAction;
+
+const { updateRoles } = UserAction;
 const {
   SIGNIN,
   SIGNOUT,
@@ -65,14 +61,13 @@ const {
   RESET_PASSWORD,
   CONFIRM_RESET_PASSWORD,
   CONFIRM_TEXT_SMS,
-  GET_ALL_ROLES,
   CHALLENGE_REQUIRED_PASSWORD,
   RESEND_CODE,
 } = AuthAction.TYPES;
 
 export function* fetchRequiredData() {
   yield put(AuthAction.getProfile());
-  yield put(AuthAction.getAllRole());
+  // yield put(AuthAction.getAllRole());
 }
 
 export function* signInUserWithEmailPassword(
@@ -228,8 +223,11 @@ export function* getProfile() {
     const collections: ReduxCollectionType = {
       [ReduxCollections.USER]: [profile.data],
     };
+
     yield put(getProfileSuccess(collections));
-    if (process.env.REACT_APP_ENV === 'prod') {
+    yield put(updateRoles(collections));
+
+    if (import.meta.env.VITE_APP_ENV === 'prod') {
       // yield fork(identifyUserPageSense, profile?.data?.email);
       yield fork(identifyUserInspectlet, profile?.data?.email);
     }
@@ -239,21 +237,6 @@ export function* getProfile() {
     errorNotification({
       error,
       i18nKey: 'common.getProfileFail',
-    });
-  }
-}
-
-export function* getAllRole() {
-  const i18n = getI18n();
-  try {
-    const response = yield call(AuthService.getAllRoles);
-    yield put(getAllRoleSuccess(response.data));
-  } catch (error: any) {
-    const errorMessage = error.response?.data?.message || error?.message;
-    yield put(getAllRoleFail(errorMessage));
-    errorNotification({
-      error,
-      i18nKey: 'common.getRolesFail',
     });
   }
 }
@@ -413,7 +396,6 @@ export default function* AuthSaga(): Generator {
     takeLatest(RESET_PASSWORD.START, handleResetPassword),
     takeLatest(CONFIRM_RESET_PASSWORD.START, handleConfirmResetPassword),
     takeLatest(CONFIRM_TEXT_SMS.START, userConfirmSms),
-    takeLatest(GET_ALL_ROLES.START, getAllRole),
     takeLatest(CHALLENGE_REQUIRED_PASSWORD.START, userChangePassDefault),
     takeLatest(RESEND_CODE.START, userResendCode),
     takeLatest(REHYDRATE, startStartupBackgroundTasks),

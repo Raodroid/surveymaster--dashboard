@@ -1,6 +1,6 @@
-import React from 'react';
-import { Tag } from 'antd';
-import { TagProps } from 'antd/lib/tag';
+import {Tag} from 'antd';
+import {TagProps} from 'antd/lib/tag';
+import {FC} from 'react';
 
 interface CustomBtnProps {
   success?: boolean;
@@ -10,7 +10,7 @@ interface CustomBtnProps {
   pointer?: boolean;
 }
 
-const CustomTag: React.FC<CustomBtnProps & TagProps> = props => {
+const CustomTag: FC<CustomBtnProps & TagProps> = props => {
   const { success, warning, dark, danger, pointer, ...res } = props;
   const className = `${pointer ? 'ant-tag-pointer' : ''} ${
     success

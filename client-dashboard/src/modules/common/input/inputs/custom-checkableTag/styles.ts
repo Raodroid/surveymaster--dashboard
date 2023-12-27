@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import CheckableTag from 'antd/lib/tag/CheckableTag';
 
 export const CheckableTagCustomized = styled(CheckableTag)`

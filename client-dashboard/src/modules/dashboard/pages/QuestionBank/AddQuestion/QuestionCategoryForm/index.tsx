@@ -1,10 +1,9 @@
-import React from 'react';
-import { ControlledInput } from '../../../../../common';
-import { INPUT_TYPES } from '../../../../../common/input/type';
+import { INPUT_TYPES } from '@input/type';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext } from 'formik';
 import { useGetAllCategories } from '../../util';
 import { IAddQuestionFormValue } from '../util';
+import { ControlledInput } from '@input/index';
 
 const QuestionCategoryForm = props => {
   const { disabled } = props;
@@ -22,7 +21,7 @@ const QuestionCategoryForm = props => {
           className={className}
           inputType={INPUT_TYPES.INPUT}
           name="id"
-          label={t('common.question') + ' ID'}
+          label={t('common.questionVersionId')}
         />
       )}
       <ControlledInput

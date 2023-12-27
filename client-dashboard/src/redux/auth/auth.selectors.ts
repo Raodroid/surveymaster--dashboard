@@ -47,8 +47,8 @@ export default class AuthSelectors {
 
   static getCurrentScopes = createSelector(AuthSelectors.getProfile, user => {
     if (!user) return [];
-    if (user && user.userRoles) {
-      return getAllScopes(user.userRoles[0].role.roleScopes);
+    if (user && user.roles) {
+      return getAllScopes(user.roles);
     }
     return [];
   });
@@ -97,9 +97,9 @@ export default class AuthSelectors {
   );
 
   static getCognitoClientId(): string {
-    return process.env.REACT_APP_AWS_COGNITO_CLIENT_ID as string;
+    return import.meta.env.VITE_APP_AWS_COGNITO_CLIENT_ID as string;
   }
   static getRegion(): string {
-    return process.env.REACT_APP_AWS_COGNITO_REGION as string;
+    return import.meta.env.VITE_APP_AWS_COGNITO_REGION as string;
   }
 }

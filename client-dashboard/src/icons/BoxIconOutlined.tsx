@@ -1,6 +1,6 @@
-import React from 'react';
+import { FC, SVGAttributes } from 'react';
 
-export const BoxIconOutlined = props => {
+export const BoxIconOutlined: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   const { style } = props;
   return (
     <svg

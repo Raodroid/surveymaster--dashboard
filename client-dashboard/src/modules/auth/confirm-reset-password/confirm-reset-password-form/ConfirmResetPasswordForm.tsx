@@ -1,17 +1,15 @@
-import React from 'react';
-import { Form, Button } from 'antd';
-import { Formik } from 'formik';
+import {Button, Form} from 'antd';
+import {Formik} from 'formik';
 import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { AuthAction, AuthSelectors } from 'redux/auth';
-import { useTranslation } from 'react-i18next';
-import { ControlledInput } from 'modules/common';
-import { INPUT_TYPES } from 'modules/common/input/type';
-import { ConfirmResetPasswordFormRoot } from './style';
-import { emailYup } from 'modules/common/validate/validate';
-import { FormWrapper } from 'modules/common/styles';
-import { useNavigate } from 'react-router-dom';
-import { ROUTE_PATH } from 'enums';
+import {useDispatch, useSelector} from 'react-redux';
+import {AuthAction, AuthSelectors} from 'redux/auth';
+import {useTranslation} from 'react-i18next';
+import {ControlledInput} from 'modules/common';
+import {INPUT_TYPES} from 'modules/common/input/type';
+import {ConfirmResetPasswordFormRoot} from './style';
+import {emailYup} from 'modules/common/validate/validate';
+import {useNavigate} from 'react-router-dom';
+import {ROUTE_PATH} from 'enums';
 
 const layout = {
   wrapperCol: {
@@ -56,8 +54,9 @@ const ConfirmResetPasswordForm = () => {
         onSubmit={onFinish}
         initialValues={initialValues}
         validationSchema={ConfirmResetPasswordSchema}
-        render={({ handleSubmit }) => (
-          <FormWrapper>
+      >
+        {({ handleSubmit }) => (
+          <div className={'w-full'}>
             <Form
               {...layout}
               onFinish={handleSubmit}
@@ -80,9 +79,9 @@ const ConfirmResetPasswordForm = () => {
                 </Button>
               </Form.Item>
             </Form>
-          </FormWrapper>
+          </div>
         )}
-      />
+      </Formik>
     </ConfirmResetPasswordFormRoot>
   );
 };

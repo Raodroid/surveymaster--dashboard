@@ -6,7 +6,7 @@ import {
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QuestionBankService } from 'services';
-import { ROUTE_PATH } from '../../../../../../../enums';
+import { ROUTE_PATH } from '@/enums';
 
 const mockedUsedNavigate = jest.fn();
 

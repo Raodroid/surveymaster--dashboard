@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from 'redux/auth';
-import { SCOPE_CONFIG } from 'enums';
+import { EntityEnum, SCOPE_CONFIG } from 'enums';
 
 export interface ScopeActionArray {
   action: string;
@@ -13,14 +13,17 @@ export const useCheckScopeEntity = (
   actions: ScopeActionArray[],
 ): boolean[] => {
   const allScopesValues = useSelector(AuthSelectors.getCurrentScopes);
+
   return useMemo<boolean[]>(() => {
     return actions.map(action => {
       return allScopesValues.some(scope => {
-        let checkPermission =
-          scope.action === action.action && scope.entity === entity;
+        const checkPermission =
+          scope?.action === action.action && scope?.entity === entity;
         if (action.metadata) {
           return (
-            checkPermission && scope.metadata && action.metadata(scope.metadata)
+            checkPermission &&
+            scope?.metadata &&
+            action.metadata(scope.metadata)
           );
         }
         return checkPermission;
@@ -38,7 +41,7 @@ const permissions: ScopeActionArray[] = [
 ];
 
 export const useCheckScopeEntityDefault = (
-  entity: string,
+  entity: EntityEnum,
 ): {
   canDelete: boolean;
   canUpdate: boolean;

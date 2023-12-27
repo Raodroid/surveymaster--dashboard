@@ -4,6 +4,7 @@ import { StandardAction } from '../types';
 import { UserPayload, UserState, ChangePasswordPayload } from './types';
 import { generateIndexes, updateAndIndexingData } from 'redux/helpers';
 import { ReduxCollections, ReduxCollectionType, ReduxModules } from 'enums';
+import { AuthAction } from '../auth';
 
 export const initData: UserState = {
   users: {},
@@ -39,6 +40,11 @@ export default class UserReducer {
       case UserAction.TYPES.USER.CHANGE_TWO_FACTOR_FAILURE:
         return UserReducer.handleChangeTwoFactorAuthentication(state, action);
 
+      case AuthAction.TYPES.GET_PROFILE.SUCCESS:
+        return UserReducer.handleAddContinues(
+          state,
+          action.payload.users || [],
+        );
       default:
         return state;
     }

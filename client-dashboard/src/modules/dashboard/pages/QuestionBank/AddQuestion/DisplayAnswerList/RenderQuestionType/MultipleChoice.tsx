@@ -1,10 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
-import { DragTable } from '../../../../../components/DragTable/DragTable';
+import { useCallback, useMemo } from 'react';
+import { DragTable } from '@/modules/dashboard';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
-import { SortableHandle } from 'react-sortable-hoc';
-import { DragIcon, TrashOutlined } from 'icons';
-import templateVariable from 'app/template-variables.module.scss';
+import { TrashOutlined } from 'icons';
 import { useFormikContext } from 'formik';
 import {
   BaseQuestionVersionDto,
@@ -14,22 +12,15 @@ import {
 import { Button } from 'antd';
 import SimpleBar from 'simplebar-react';
 import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../../enums';
-import {
-  filterColumn,
-  IRenderColumnCondition,
-} from '../../../../../../../utils';
-import { AnswerListWrapper } from './style';
-import { INPUT_TYPES } from '../../../../../../common/input/type';
-import { ControlledInput } from '../../../../../../common';
-import { generateRandom } from 'modules/common/funcs';
-import { InputWrapperMultipleChoice } from '../styles';
+import { ROUTE_PATH } from '@/enums';
 
-const DragHandle = SortableHandle(() => (
-  <DragIcon
-    style={{ cursor: 'grab', color: templateVariable.text_primary_color }}
-  />
-));
+import { AnswerListWrapper } from './style';
+import { INPUT_TYPES } from '@input/type';
+import { generateRandom } from 'modules/common/funcs';
+import { DragHandle } from '@/customize-components';
+import { ControlledInput } from '@/modules/common';
+import { filterColumn, IRenderColumnCondition } from '@/utils';
+import { InputWrapperMultipleChoice } from '../styles';
 
 const MultipleChoice = ({ isKeyPath = true }: { isKeyPath?: boolean }) => {
   const { t } = useTranslation();
@@ -41,7 +32,7 @@ const MultipleChoice = ({ isKeyPath = true }: { isKeyPath?: boolean }) => {
     caseSensitive: true,
   });
 
-  const className = !!isViewMode ? 'view-mode' : undefined;
+  const className = isViewMode ? 'view-mode' : undefined;
 
   const handleDeleteRow = useCallback(
     (record: IQuestionVersionOption) => {
@@ -105,7 +96,6 @@ const MultipleChoice = ({ isKeyPath = true }: { isKeyPath?: boolean }) => {
         width: 60,
         render: (value, record, index) => (
           <Button
-            ghost
             type={'text'}
             aria-label={'trash-icon'}
             onClick={() => {
@@ -117,7 +107,7 @@ const MultipleChoice = ({ isKeyPath = true }: { isKeyPath?: boolean }) => {
         ),
       },
     ],
-    [className, handleDeleteRow, isViewMode, t, values.type],
+    [className, handleDeleteRow, isKeyPath, isViewMode, t, values.type],
   );
 
   const renderColumnCondition: IRenderColumnCondition = [
@@ -132,10 +122,7 @@ const MultipleChoice = ({ isKeyPath = true }: { isKeyPath?: boolean }) => {
     columns,
   );
 
-  const dataSource = useMemo(
-    () => (values.options || []).map((q, index) => ({ ...q, index })),
-    [values.options],
-  );
+  const dataSource = useMemo(() => values.options || [], [values.options]);
 
   const setDataTable = (options: IQuestionVersionOption[]) => {
     setValues(s => ({

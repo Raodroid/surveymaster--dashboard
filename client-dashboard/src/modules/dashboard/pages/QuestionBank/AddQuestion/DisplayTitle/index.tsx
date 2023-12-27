@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext } from 'formik';
 import { IAddQuestionFormValue } from '../util';
-import { QuestionType } from '../../../../../../type';
+import { QuestionType } from '@/type';
+
 const DisplayTitle: FC = () => {
   const { t } = useTranslation();
   const { values } = useFormikContext<IAddQuestionFormValue>();

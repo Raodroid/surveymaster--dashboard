@@ -1,14 +1,11 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Spin } from 'antd';
-import templateVariable from '../../app/template-variables.module.scss';
+import templateVariable from 'app/template-variables.module.scss';
 
 export const BaseSectionWrapper = styled.section`
   background: white;
   border-radius: ${templateVariable.border_radius};
-`;
-
-export const FormWrapper = styled.div`
-  width: 100%;
+  height: 100%;
 `;
 
 export const CustomSpinSuspense = styled(Spin)`

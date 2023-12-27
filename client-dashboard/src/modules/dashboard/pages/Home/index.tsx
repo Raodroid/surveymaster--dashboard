@@ -8,7 +8,7 @@ import { AuthSelectors } from '../../../../redux/auth';
 const Home = () => {
   const navigate = useNavigate();
   const { canRead: canReadProject } = useCheckScopeEntityDefault(
-    SCOPE_CONFIG.ENTITY.PROJECTS,
+    SCOPE_CONFIG.ENTITY.PROJECT,
   );
   const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);
 

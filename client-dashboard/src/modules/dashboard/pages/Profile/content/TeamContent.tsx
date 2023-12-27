@@ -1,5 +1,4 @@
 import {
-  DeleteOutlined,
   EyeOutlined,
   SettingOutlined,
   UserDeleteOutlined,
@@ -11,20 +10,17 @@ import {
   Form,
   Input,
   InputRef,
-  Menu,
+  Spin,
   Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import ThreeDotsDropdown from 'customize-components/ThreeDotsDropdown';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
 import { useParseQueryString } from 'hooks/useParseQueryString';
 import { SearchIcon } from 'icons/SearchIcon';
 import _get from 'lodash/get';
-import { useCheckScopeEntityDefault } from 'modules/common/hoc/useCheckScopeEntityDefault';
-import StyledPagination from 'modules/dashboard/components/StyledPagination';
 import qs from 'qs';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { FC, Key, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -32,13 +28,9 @@ import { useLocation, useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
-import { IGetParams } from 'type';
-import { QsParams } from '../../Project/ProjectContent/components/project-filter/ProjectFilter';
-import {
-  CustomFallbackStyled,
-  DropDownMenuStyled,
-  TeamContentStyled,
-} from '../styles';
+import { ActionThreeDropDownType, IGetParams, IMenuItem, QsParams } from 'type';
+
+import { CustomFallbackStyled, TeamContentStyled } from '../styles';
 import {
   ConfirmDeactivateUserModal,
   ConfirmRestoreUserModal,
@@ -46,7 +38,11 @@ import {
   UpdateMemberModal,
 } from './modals';
 import SimpleBar from 'simplebar-react';
-import HannahCustomSpin from '../../../components/HannahCustomSpin';
+import { StyledPagination } from 'modules/dashboard';
+import { useCheckScopeEntityDefault } from 'modules/common';
+import { keysAction, useSelectTableRecord } from 'hooks';
+import { ThreeDotsDropdown } from 'customize-components';
+
 interface TeamMember extends UserPayload {
   key: string;
   name: string;
@@ -54,7 +50,7 @@ interface TeamMember extends UserPayload {
 }
 
 const rowSelection = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: TeamMember[]) => {
+  onChange: (selectedRowKeys: Key[], selectedRows: TeamMember[]) => {
     console.log(
       `selectedRowKeys: ${selectedRowKeys}`,
       'selectedRows: ',
@@ -82,7 +78,6 @@ function TeamContent() {
 
   const [userId, setUserId] = useState<string>('');
   const allRoles = useSelector(AuthSelectors.getAllRoles);
-  const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
 
   const [search, setSearch] = useState('');
   const searchRef = useRef<InputRef>(null);
@@ -97,12 +92,7 @@ function TeamContent() {
   const [showEditPreferencesModal, setShowEditPreferencesModal] =
     useState<boolean>(false);
 
-  const isAdminRole = useMemo(() => {
-    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
-  }, [currentRoles]);
-
-  const { canUpdate, canDelete, canRestore, canRead } =
-    useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USERS);
+  const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USER);
 
   const baseParams = useMemo<IGetParams>(() => {
     if (qsParams.q) setSearch(qsParams.q);
@@ -112,15 +102,16 @@ function TeamContent() {
       page: Number(qsParams.page) || initParams.page,
       take: Number(qsParams.take) || initParams.take,
       isDeleted: qsParams.isDeleted === 'true',
-      roles: Object.values(allRoles).map(elm => elm.id),
+      roleIds: Object.values(allRoles).map(elm => elm.id),
     };
   }, [allRoles, qsParams]);
 
   const { data: teamMembers, isLoading } = useQuery(
     ['getTeamMembers', baseParams, canRead],
-    () => (canRead ? AdminService.getTeamMembers(baseParams) : () => {}),
+    () => AdminService.getTeamMembers(baseParams),
     {
       refetchOnWindowFocus: false,
+      enabled: canRead,
     },
   );
 
@@ -158,15 +149,52 @@ function TeamContent() {
     handleSearch();
   }, [searchRef, handleSearch, qsParams]);
 
-  const handleEditPreferences = (id: string) => {
-    setUserId(id);
+  const handleEditPreferences = useCallback((record: TeamMember) => {
+    setUserId(record?.key);
     setShowEditPreferencesModal(true);
-  };
+  }, []);
 
-  const handleResetPassword = (id: string) => {
-    setUserId(id);
+  const handleResetPassword = useCallback((record: TeamMember) => {
+    setUserId(record?.key);
     setShowResetPasswordModal(true);
-  };
+  }, []);
+
+  const handleRemoveFromTeam = useCallback(
+    () => setShowConfirmDeactivateModal(true),
+    [],
+  );
+
+  const handleRestore = useCallback(() => setShowConfirmRestoreModal(true), []);
+
+  const tableActions = useMemo<keysAction<TeamMember>>(
+    () => [
+      {
+        key: ACTION.RESET_PASSWORD,
+        action: handleResetPassword,
+      },
+      {
+        key: ACTION.EDIT_PREFERENCE,
+        action: handleEditPreferences,
+      },
+      {
+        key: ACTION.DELETE,
+        action: handleRemoveFromTeam,
+      },
+      {
+        key: ACTION.RESTORE,
+        action: handleRestore,
+      },
+    ],
+    [
+      handleEditPreferences,
+      handleRemoveFromTeam,
+      handleResetPassword,
+      handleRestore,
+    ],
+  );
+
+  const { handleSelect, selectedRecord } =
+    useSelectTableRecord<TeamMember>(tableActions);
 
   const columns: ColumnsType<TeamMember> = useMemo(
     () => [
@@ -224,70 +252,15 @@ function TeamContent() {
         width: 50,
         dataIndex: 'threeDots',
         render: (_, record: TeamMember) => (
-          <ThreeDotsDropdown
-            overlay={
-              <DropDownMenuStyled>
-                {!record.deletedAt && canUpdate ? (
-                  <Menu.Item
-                    key="editPreferences"
-                    disabled={!isAdminRole}
-                    onClick={() => {
-                      handleEditPreferences(record.key);
-                    }}
-                  >
-                    <SettingOutlined className="dropdown-icon" />{' '}
-                    {t('common.editPreferences')}
-                  </Menu.Item>
-                ) : null}
-                {profile &&
-                canUpdate &&
-                !record.deletedAt &&
-                record.key !== profile.id ? (
-                  <Menu.Item
-                    key="resetUserPassword"
-                    disabled={!isAdminRole}
-                    onClick={() => {
-                      handleResetPassword(record.key);
-                    }}
-                  >
-                    <EyeOutlined className="dropdown-icon" />{' '}
-                    {t('common.resetPassword')}
-                  </Menu.Item>
-                ) : null}
-                {profile &&
-                canDelete &&
-                !record.deletedAt &&
-                profile.id !== record.key ? (
-                  <Menu.Item
-                    key="deactivateUser"
-                    disabled={!isAdminRole}
-                    onClick={() => setShowConfirmDeactivateModal(true)}
-                  >
-                    <UserDeleteOutlined className="dropdown-icon" />{' '}
-                    {t('common.removeFromTeam')}
-                  </Menu.Item>
-                ) : null}
-                {record.deletedAt && canRestore ? (
-                  <Menu.Item
-                    key="restore"
-                    disabled={!isAdminRole}
-                    onClick={() => setShowConfirmRestoreModal(true)}
-                  >
-                    <DeleteOutlined className="dropdown-icon" />{' '}
-                    {t('common.restore')}
-                  </Menu.Item>
-                ) : null}
-              </DropDownMenuStyled>
-            }
-            trigger={['click']}
-            onOpenChange={() => {
-              setUserId(record.key);
-            }}
+          <ActionThreeDropDown
+            record={record}
+            handleSelect={handleSelect}
+            profile={profile}
           />
         ),
       },
     ],
-    [profile, t, isAdminRole, canUpdate, canRestore, canDelete, allRoles],
+    [allRoles, handleSelect, profile],
   );
 
   const data: TeamMember[] = useMemo(
@@ -308,12 +281,11 @@ function TeamContent() {
         : [],
     [teamMembers],
   );
-  const wrapperRef = useRef<any>(null);
   return (
     <TeamContentStyled>
       <div className="cell padding-24 name title flex-a-center">AMiLi</div>
 
-      <div className="cell flex-column" style={{ overflow: 'hidden' }}>
+      <div className="cell flex flex-col" style={{ overflow: 'hidden' }}>
         {canRead && (
           <>
             <div className="search padding-24 flex-center">
@@ -344,22 +316,23 @@ function TeamContent() {
 
             <Divider />
 
-            <div className="table-wrapper" ref={wrapperRef}>
-              <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
-              <SimpleBar>
-                <Table
-                  style={{ padding: '0 10px' }}
-                  rowSelection={{
-                    type: 'checkbox',
-                    ...rowSelection,
-                  }}
-                  columns={columns}
-                  dataSource={data}
-                  pagination={false}
-                  scroll={{ x: 800 }}
-                />
-              </SimpleBar>
-            </div>
+            <Spin spinning={isLoading} style={{ maxHeight: 'unset' }}>
+              <div className="table-wrapper">
+                <SimpleBar>
+                  <Table
+                    style={{ padding: '0 10px' }}
+                    rowSelection={{
+                      type: 'checkbox',
+                      ...rowSelection,
+                    }}
+                    columns={columns}
+                    dataSource={data}
+                    pagination={false}
+                    scroll={{ x: 800 }}
+                  />
+                </SimpleBar>
+              </div>
+            </Spin>
             <StyledPagination
               onChange={(page, pageSize) =>
                 handleNavigate({ page: page, take: pageSize })
@@ -402,3 +375,80 @@ function TeamContent() {
 }
 
 export default TeamContent;
+
+const ACTION = {
+  EDIT_PREFERENCE: 'EDIT_PREFERENCE',
+  DELETE: 'DELETE',
+  RESTORE: 'RESTORE',
+  RESET_PASSWORD: 'RESET_PASSWORD',
+} as const;
+
+const ActionThreeDropDown: FC<
+  ActionThreeDropDownType<TeamMember> & { profile }
+> = props => {
+  const { record, handleSelect, profile } = props;
+  const { t } = useTranslation();
+  const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
+
+  const { canDelete, canRestore, canUpdate } = useCheckScopeEntityDefault(
+    SCOPE_CONFIG.ENTITY.USER,
+  );
+  const isAdminRole = useMemo(() => {
+    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
+  }, [currentRoles]);
+
+  const items = useMemo<IMenuItem[]>(() => {
+    const baseMenu: IMenuItem[] = [];
+
+    if (record.deletedAt && canRestore) {
+      baseMenu.push({
+        key: ACTION.RESTORE,
+        icon: <UserDeleteOutlined className="text-primary" />,
+        label: <label className={''}> {t('common.restore')}</label>,
+      });
+      return baseMenu;
+    }
+
+    if (canUpdate) {
+      baseMenu.push({
+        disabled: !isAdminRole,
+        key: ACTION.EDIT_PREFERENCE,
+        icon: <SettingOutlined className="text-primary" />,
+        label: <label className={''}> {t('common.editPreferences')}</label>,
+      });
+    }
+    if (profile && record.key !== profile.id) {
+      if (canUpdate) {
+        baseMenu.push({
+          key: ACTION.RESET_PASSWORD,
+          icon: <EyeOutlined className="text-primary" />,
+          label: <label className={''}> {t('common.resetPassword')}</label>,
+        });
+      }
+      if (canDelete) {
+        baseMenu.push({
+          key: ACTION.DELETE,
+          icon: <UserDeleteOutlined className="text-primary" />,
+          label: <label className={''}> {t('common.removeFromTeam')}</label>,
+        });
+      }
+    }
+    return baseMenu;
+  }, [
+    canDelete,
+    canRestore,
+    canUpdate,
+    isAdminRole,
+    profile,
+    record.deletedAt,
+    record.key,
+    t,
+  ]);
+
+  return (
+    <ThreeDotsDropdown
+      onChooseItem={key => handleSelect({ key, record })}
+      items={items}
+    />
+  );
+};

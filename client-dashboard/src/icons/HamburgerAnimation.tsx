@@ -1,11 +1,11 @@
-import React, { FC, HTMLAttributes } from 'react';
+import {FC, HTMLAttributes} from 'react';
 import styled from 'styled-components/macro';
 import templateVariable from '../app/template-variables.module.scss';
 
 interface IHamburgerAnimation {
   open?: boolean;
 }
-const HamburgerAnimation: FC<
+export const HamburgerAnimation: FC<
   IHamburgerAnimation & HTMLAttributes<HTMLElement>
 > = props => {
   const { open, className = '', ...rest } = props;
@@ -13,7 +13,7 @@ const HamburgerAnimation: FC<
   return (
     <HamburgerAnimationWrapper
       {...rest}
-      className={`hamburger-icon ${Boolean(open) ? 'open' : ''} ${className}`}
+      className={`hamburger-icon ${open ? 'open' : ''} ${className}`}
     >
       <span className={'hamburger-icon__line'} />
       <span className={'hamburger-icon__line'} />
@@ -22,8 +22,6 @@ const HamburgerAnimation: FC<
     </HamburgerAnimationWrapper>
   );
 };
-
-export default HamburgerAnimation;
 
 const HamburgerAnimationWrapper = styled.div<HTMLAttributes<any>>`
   width: 28px;

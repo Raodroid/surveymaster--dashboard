@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
-import { Rate } from 'antd';
-import { RateProps } from 'antd/lib/rate';
-import { OnchangeType } from '../../type';
+import {memo} from 'react';
+import {Rate} from 'antd';
+import {RateProps} from 'antd/lib/rate';
+import {OnchangeType} from '../../type';
 
 export type CustomRatingProps = RateProps & OnchangeType;
 

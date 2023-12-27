@@ -1,5 +1,5 @@
-import React, { memo, useCallback } from 'react';
-import { Slider } from 'antd';
+import {memo, useCallback} from 'react';
+import {Slider} from 'antd';
 
 const CusSlider = props => {
   const { onChange } = props;

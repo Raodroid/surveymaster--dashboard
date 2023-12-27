@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Layout } from 'antd';
 
 const { Header } = Layout;
@@ -13,9 +13,6 @@ export const NavBarWrapper = styled(Header)`
   z-index: 10;
   height: 70px;
 
-  .main-menu-root {
-    flex: 1;
-  }
   .right-menu-root {
     min-width: 200px;
     display: flex;

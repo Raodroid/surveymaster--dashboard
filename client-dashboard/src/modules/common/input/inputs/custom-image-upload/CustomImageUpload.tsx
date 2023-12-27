@@ -1,17 +1,11 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  memo,
-  useEffect,
-  useState,
-} from 'react';
-import { Upload } from 'antd';
+import {Dispatch, memo, SetStateAction, useEffect, useMemo, useState,} from 'react';
+import {Upload} from 'antd';
 import notification from 'customize-components/CustomNotification';
-import { RcFile, UploadChangeParam, UploadProps } from 'antd/lib/upload';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { OnchangeType } from '../../type';
-import { useTranslation } from 'react-i18next';
-import { UploadService } from 'services';
+import {RcFile, UploadChangeParam, UploadProps} from 'antd/lib/upload';
+import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
+import {OnchangeType} from '../../type';
+import {useTranslation} from 'react-i18next';
+import {UploadService} from 'services';
 
 export type CustomUploadProps = UploadProps &
   OnchangeType & {
@@ -33,8 +27,8 @@ const CustomImageUpload = (props: CustomUploadProps) => {
   const { t } = useTranslation();
 
   const customRequest = async options => {
-    let type = options.file.type;
-    let nameImage = options.file.name;
+    const type = options.file.type;
+    const nameImage = options.file.name;
     const moduleName = props.moduleName || 'users';
     const subPath = props.subPath || 'avatar';
     try {
@@ -49,7 +43,7 @@ const CustomImageUpload = (props: CustomUploadProps) => {
       if (data) {
         await UploadService.putWithFormFileAsync(data.url, options.file, type);
         options.onSuccess({
-          url: `${process.env.REACT_APP_S3_URL}/${data.filePath}`,
+          url: `${import.meta.env.VITE_APP_S3_URL}/${data.filePath}`,
         });
       }
     } catch (error) {
@@ -64,7 +58,7 @@ const CustomImageUpload = (props: CustomUploadProps) => {
     </div>
   );
 
-  const image = React.useMemo(() => {
+  const image = useMemo(() => {
     if (!props.value) return null;
     return imageUrl || props.value;
   }, [props.value, imageUrl]);

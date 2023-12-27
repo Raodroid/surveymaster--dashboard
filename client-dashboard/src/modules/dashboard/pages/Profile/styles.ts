@@ -1,5 +1,5 @@
 import { Menu } from 'antd';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { screenSize } from './../../../../enums/screenSize';
 
 export const ProfileStyled = styled.div`

@@ -1,7 +1,6 @@
-import styled from 'styled-components';
-import { Form } from 'antd';
+import styled from 'styled-components/macro';
 
-export const QuestionDetailFormWrapper = styled(Form)`
+export const QuestionDetailFormWrapper = styled.div`
   .QuestionDetailForm {
     &__row {
       display: flex;

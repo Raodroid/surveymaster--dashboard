@@ -1,5 +1,4 @@
 import { Helmet } from 'react-helmet-async';
-
 import { GlobalStyle } from 'styles/global-styles';
 import { ConfigProvider } from 'antd';
 
@@ -11,8 +10,8 @@ import 'antd/dist/antd.variable.min.css';
 import './index.sass';
 import './globle-varaiable.sass';
 import { useEffect } from 'react';
-import { DEFAULT_THEME_COLOR } from '../enums';
-import { setSecondaryColor } from '../modules/common/funcs';
+import { DEFAULT_THEME_COLOR } from 'enums';
+import { setSecondaryColor } from 'modules/common/funcs';
 
 export function App() {
   const { i18n } = useTranslation();

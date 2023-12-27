@@ -58,7 +58,7 @@ export type ControlledInputProps = UncontrolledInputProps & {
   isOptionValue?: boolean;
   errorMessage?: string | null;
   customOptions?: JSX.Element[];
-  ref: any;
+  ref?: any;
   isFastField?: boolean;
   className?: string;
   moduleName?: string;
