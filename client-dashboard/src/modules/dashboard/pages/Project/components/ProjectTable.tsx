@@ -1,10 +1,10 @@
-import { Divider, Modal, notification, Table, Tooltip } from 'antd';
+import { Divider, Modal, notification, Spin, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { ExternalIcon, InternalIcon, PenFilled, TrashOutlined } from '@/icons';
 import { Refresh } from '@/icons/Refresh';
 import _get from 'lodash/get';
 import moment from 'moment';
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { generatePath } from 'react-router';
@@ -20,7 +20,7 @@ import {
 } from '@/type';
 import { useHandleNavigate, useParseQueryString } from '@/hooks';
 import { objectKeys, onError, useToggle } from '@/utils';
-import { HannahCustomSpin, StyledPagination } from '@/modules/dashboard';
+import { StyledPagination } from '@/modules/dashboard';
 import { ProjectTableWrapper } from '../ProjectContent/styles';
 import SimpleBar from 'simplebar-react';
 import { useCheckScopeEntityDefault } from '@hoc/index';
@@ -53,7 +53,6 @@ const getProjects = (params: ProjectQueryParam) => {
 };
 
 function ProjectTable() {
-  const wrapperRef = useRef<any>();
   const { t } = useTranslation();
   const qsParams = useParseQueryString<
     QsParams & { type: ProjectTypes | 'All' }
@@ -279,12 +278,11 @@ function ProjectTable() {
   );
 
   return (
-    <>
-      <ProjectTableWrapper ref={wrapperRef} centerLastChild>
-        <HannahCustomSpin
-          parentRef={wrapperRef}
-          spinning={getProjectListQuery.isLoading}
-        />
+    <Spin
+      spinning={getProjectListQuery.isLoading}
+      style={{ maxHeight: 'unset' }}
+    >
+      <ProjectTableWrapper centerLastChild>
         <SimpleBar className={'ProjectTableWrapper__body'}>
           <Table
             dataSource={projects}
@@ -311,7 +309,7 @@ function ProjectTable() {
         toggleOpen={toggleProjectModal}
         projectId={selectedRecord?.id}
       />
-    </>
+    </Spin>
   );
 }
 

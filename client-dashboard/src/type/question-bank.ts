@@ -15,6 +15,7 @@ export interface UserUpdatedDto {
 
 export interface IQuestion {
   id?: string;
+  approvalUserId?: string;
   displayId: string;
   latestCompletedVersion: IQuestionVersion;
   latestVersion: IQuestionVersion;

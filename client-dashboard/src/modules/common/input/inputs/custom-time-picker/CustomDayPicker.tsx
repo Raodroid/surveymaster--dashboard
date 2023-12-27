@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
-import { DatePicker } from 'antd';
+import {memo} from 'react';
+import {DatePicker} from 'antd';
 
-import { MOMENT_FORMAT, DATE_PICKER_TYPES } from 'enums';
+import {DATE_PICKER_TYPES, MOMENT_FORMAT} from 'enums';
 
 const CustomDayPicker = props => {
   const { picker, format, isEditFormat } = props;

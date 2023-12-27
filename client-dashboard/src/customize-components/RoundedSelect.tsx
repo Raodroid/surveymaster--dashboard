@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Select } from 'antd';
 import { SelectProps } from 'antd/lib/select';
 import styled from 'styled-components/macro';
@@ -8,9 +8,7 @@ interface IRoundedSelect extends SelectProps<string | number> {
   color?: string;
 }
 
-const RoundedSelectWrapper: React.FunctionComponent<IRoundedSelect> = styled(
-  Select,
-)<IRoundedSelect>`
+const RoundedSelectWrapper: FC<IRoundedSelect> = styled(Select)<IRoundedSelect>`
   &.ant-select:not(.ant-select-customize-input) .ant-select-selector {
     border-radius: 16px;
     border-color: ${p => (p.color ? p.color : templateVariable.primary_color)};

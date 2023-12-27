@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { BranchChoiceType, IOptionGroupItem, LogicOperator } from '@/type';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import { IQuestionRemark } from '@/type';
 import { Avatar, Button, Empty, List } from 'antd';
 import { useSelector } from 'react-redux';

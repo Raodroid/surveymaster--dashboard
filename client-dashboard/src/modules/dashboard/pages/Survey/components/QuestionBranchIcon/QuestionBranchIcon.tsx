@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, SVGAttributes } from 'react';
+import { FC, SVGAttributes } from 'react';
 import { SubSurveyFlowElement } from '@/type';
 import {
   BranchIcon,

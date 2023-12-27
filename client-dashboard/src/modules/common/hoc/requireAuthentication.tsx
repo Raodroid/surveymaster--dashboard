@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
 import { AuthSelectors } from 'redux/auth/index';
-import { Component, HigherOrderComType } from '../../../type';
-import { useParseQueryString } from '../../../hooks';
+import { Component, HigherOrderComType } from '@/type';
+import { useParseQueryString } from '@/hooks';
 
-const requireAuthentication: HigherOrderComType = (Com: Component) => {
+export const requireAuthentication: HigherOrderComType = (Com: Component) => {
   return props => {
     const isLogged = !!useSelector(AuthSelectors.getIdToken);
     const navigator = useNavigate();
@@ -25,4 +25,3 @@ const requireAuthentication: HigherOrderComType = (Com: Component) => {
     return <Com {...props} />;
   };
 };
-export default requireAuthentication;

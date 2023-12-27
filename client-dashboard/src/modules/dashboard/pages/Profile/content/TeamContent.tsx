@@ -3,7 +3,16 @@ import {
   SettingOutlined,
   UserDeleteOutlined,
 } from '@ant-design/icons';
-import { Button, Checkbox, Divider, Form, Input, InputRef, Table } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Form,
+  Input,
+  InputRef,
+  Spin,
+  Table,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
@@ -11,7 +20,7 @@ import { useParseQueryString } from 'hooks/useParseQueryString';
 import { SearchIcon } from 'icons/SearchIcon';
 import _get from 'lodash/get';
 import qs from 'qs';
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import { FC, Key, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -29,7 +38,7 @@ import {
   UpdateMemberModal,
 } from './modals';
 import SimpleBar from 'simplebar-react';
-import { HannahCustomSpin, StyledPagination } from 'modules/dashboard';
+import { StyledPagination } from 'modules/dashboard';
 import { useCheckScopeEntityDefault } from 'modules/common';
 import { keysAction, useSelectTableRecord } from 'hooks';
 import { ThreeDotsDropdown } from 'customize-components';
@@ -41,7 +50,7 @@ interface TeamMember extends UserPayload {
 }
 
 const rowSelection = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: TeamMember[]) => {
+  onChange: (selectedRowKeys: Key[], selectedRows: TeamMember[]) => {
     console.log(
       `selectedRowKeys: ${selectedRowKeys}`,
       'selectedRows: ',
@@ -272,7 +281,6 @@ function TeamContent() {
         : [],
     [teamMembers],
   );
-  const wrapperRef = useRef<any>(null);
   return (
     <TeamContentStyled>
       <div className="cell padding-24 name title flex-a-center">AMiLi</div>
@@ -308,22 +316,23 @@ function TeamContent() {
 
             <Divider />
 
-            <div className="table-wrapper" ref={wrapperRef}>
-              <HannahCustomSpin parentRef={wrapperRef} spinning={isLoading} />
-              <SimpleBar>
-                <Table
-                  style={{ padding: '0 10px' }}
-                  rowSelection={{
-                    type: 'checkbox',
-                    ...rowSelection,
-                  }}
-                  columns={columns}
-                  dataSource={data}
-                  pagination={false}
-                  scroll={{ x: 800 }}
-                />
-              </SimpleBar>
-            </div>
+            <Spin spinning={isLoading} style={{ maxHeight: 'unset' }}>
+              <div className="table-wrapper">
+                <SimpleBar>
+                  <Table
+                    style={{ padding: '0 10px' }}
+                    rowSelection={{
+                      type: 'checkbox',
+                      ...rowSelection,
+                    }}
+                    columns={columns}
+                    dataSource={data}
+                    pagination={false}
+                    scroll={{ x: 800 }}
+                  />
+                </SimpleBar>
+              </div>
+            </Spin>
             <StyledPagination
               onChange={(page, pageSize) =>
                 handleNavigate({ page: page, take: pageSize })

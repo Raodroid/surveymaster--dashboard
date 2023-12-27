@@ -1,5 +1,5 @@
-import React, { memo, useCallback } from 'react';
-import { CheckableTagCustomized } from './styles';
+import {memo, useCallback} from 'react';
+import {CheckableTagCustomized} from './styles';
 
 const CustomCheckableTag = props => {
   const {

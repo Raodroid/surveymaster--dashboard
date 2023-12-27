@@ -1,4 +1,3 @@
-import React from 'react';
 import { useToggle } from '@/utils';
 import { Button, Tooltip } from 'antd';
 import { DetailIcon } from '@/icons';

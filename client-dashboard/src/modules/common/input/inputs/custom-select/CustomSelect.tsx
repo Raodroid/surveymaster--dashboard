@@ -1,11 +1,11 @@
-import React, { memo, useState, useMemo, useCallback } from 'react';
-import { Select } from 'antd';
-import { SelectProps } from 'antd/lib/select';
+import {FunctionComponent, memo, ReactNode, useCallback, useEffect, useMemo, useState,} from 'react';
+import {Select} from 'antd';
+import {SelectProps} from 'antd/lib/select';
 import styled from 'styled-components/macro';
-import { FetchParamsSelect } from 'type';
-import { Entities } from '@/enums';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { ArrowDown } from '@/icons';
+import {FetchParamsSelect} from 'type';
+import {Entities} from '@/enums';
+import {CheckboxValueType} from 'antd/lib/checkbox/Group';
+import {ArrowDown} from '@/icons';
 import templateVariable from '@/app/template-variables.module.scss';
 import useFetchFilterOption from '@hoc/useFetchFilterOptions';
 
@@ -14,13 +14,13 @@ export type CustomSelectProps = SelectProps<string | number> & {
   params?: FetchParamsSelect;
   isLabelDisplayId?: boolean;
   customOptions?: Array<{
-    label: React.ReactNode;
+    label: ReactNode;
     value: CheckboxValueType;
     conditionCom: JSX.Element;
   }>;
 };
 
-const SelectStyled: React.FunctionComponent<CustomSelectProps> = styled(
+const SelectStyled: FunctionComponent<CustomSelectProps> = styled(
   Select,
 )<CustomSelectProps>`
   .ant-select-selector {
@@ -76,7 +76,7 @@ const CustomSelect = (props: CustomSelectProps) => {
     setSearchValue('');
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.querySelectorAll('.ant-select-selector input').forEach(e => {
       e.setAttribute('autocomplete', 'chrome-off');
       //you can put any value but NOT "off" or "false" because they DO NOT works

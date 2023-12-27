@@ -1,26 +1,22 @@
-import { Divider, Form, Input, InputRef } from 'antd';
-import { useParseQueryString } from '@/hooks/useParseQueryString';
-import { SearchIcon } from '@/icons/SearchIcon';
+import {Divider, Form, Input, InputRef} from 'antd';
+import {useParseQueryString} from '@/hooks/useParseQueryString';
+import {SearchIcon} from '@/icons/SearchIcon';
 import qs from 'qs';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IGetParams } from '@/type';
 
-import {
-  IBreadcrumbItem,
-  StyledBreadcrumb,
-  useCheckScopeEntityDefault,
-} from '@/modules/common';
-import { EntityEnum, ROUTE_PATH } from '@/enums';
+import {IBreadcrumbItem, StyledBreadcrumb, useCheckScopeEntityDefault,} from '@/modules/common';
+import {EntityEnum, ROUTE_PATH} from '@/enums';
 import AddSurveyButton from '../../../Survey/SurveyModal/AddSurveyButton';
 import ViewProjectDetailButton from '../ProjectModal/ViewProjectDetailButton';
 import EditProjectButton from '../ProjectModal/EditProjectButton';
 import AddProjectButton from '../ProjectModal/AddProjectButton';
-import { ProjectFilter } from '@pages/Project/components/project-filter/ProjectFilter';
+import ProjectFilter from '@pages/Project/components/project-filter/ProjectFilter';
 import ViewSurveyButton from '@pages/Survey/SurveyModal/ViewSurveyButton';
-import { SurveyVersionSelect, useGetSurveyById } from '@pages/Survey';
-import { useParams } from 'react-router';
-import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
+import {SurveyVersionSelect, useGetSurveyById} from '@pages/Survey';
+import {useParams} from 'react-router';
+import {projectSurveyParams} from '@pages/Survey/DetailSurvey/DetailSurvey';
 
 interface IProjectHeader {
   routes?: IBreadcrumbItem[];

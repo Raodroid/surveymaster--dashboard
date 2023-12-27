@@ -7,7 +7,6 @@ import {
   SurveyDataTreeNode,
   SurveyTemplateEnum,
 } from './type';
-import { isEqual } from 'lodash';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
 import {
@@ -94,13 +93,6 @@ export const transformInitSurveyFormData = (
     template: SurveyTemplateEnum.NEW,
     projectId: '',
   };
-};
-
-export const isSurveyFlowChange = (
-  newSurveyFlow: unknown[] = [],
-  initSurveyFlow: unknown[] = [],
-): boolean => {
-  return !isEqual(newSurveyFlow, initSurveyFlow);
 };
 
 export const useCheckSurveyFormMode = () => {

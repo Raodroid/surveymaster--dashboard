@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { QuestionBlockProps } from '../type';
+import {FC} from 'react';
+import {QuestionBlockProps} from '../type';
 import SurveyQuestions from '@pages/Survey/components/SurveyQuestion/SurveyQuestions';
 
 const Block: FC<QuestionBlockProps> = props => {

@@ -1,8 +1,8 @@
-import React, { FC, useCallback, useState } from 'react';
+import { FC, useCallback } from 'react';
 import { Button, Divider, Empty, Form, Modal, notification, Spin } from 'antd';
 import { IModal, ISurveyRemark } from '@/type';
 import { useTranslation } from 'react-i18next';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { DisplayRemarkItem, useSurveyFormContext } from '@pages/Survey';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
@@ -17,7 +17,7 @@ import SimpleBar from 'simplebar-react';
 
 type ISurveyVersionRemarkModal = IModal;
 
-const initialValues = { remark: '' };
+const defaultValue = { remark: '' };
 
 const SurveyVersionRemarkModal: FC<ISurveyVersionRemarkModal> = props => {
   const { open, toggleOpen } = props;
@@ -25,7 +25,6 @@ const SurveyVersionRemarkModal: FC<ISurveyVersionRemarkModal> = props => {
   const { survey } = useSurveyFormContext();
   const { currentSurveyVersion } = survey;
   const params = useParams<{ surveyId: string }>();
-  const [initValue, setInitValue] = useState(initialValues);
 
   const surveyVersionId = currentSurveyVersion?.id;
 
@@ -52,18 +51,17 @@ const SurveyVersionRemarkModal: FC<ISurveyVersionRemarkModal> = props => {
       onSuccess: () => {
         notification.success({ message: t('common.updateSuccess') });
         queryClient.invalidateQueries('getRemarks');
-        setInitValue(initialValues);
-        toggleOpen();
       },
     },
   );
 
   const handleSubmit = useCallback(
-    values => {
-      updateRemarkMutation.mutateAsync({
+    async (values, helper: FormikHelpers<any>) => {
+      await updateRemarkMutation.mutateAsync({
         remark: values.remark,
         surveyVersionId: surveyVersionId || '',
       });
+      helper.resetForm();
     },
     [surveyVersionId, updateRemarkMutation],
   );
@@ -83,8 +81,8 @@ const SurveyVersionRemarkModal: FC<ISurveyVersionRemarkModal> = props => {
     >
       <Spin spinning={loading}>
         <Formik
-          enableReinitialize={true}
-          initialValues={initValue}
+          enableReinitialize
+          initialValues={defaultValue}
           onSubmit={handleSubmit}
           validationSchema={Yup.object().shape({
             remark: Yup.string().required(INVALID_FIELDS.REQUIRED),
@@ -126,6 +124,7 @@ const SurveyVersionRemarkModal: FC<ISurveyVersionRemarkModal> = props => {
                   inputType={INPUT_TYPES.INPUT}
                   name={'remark'}
                   className={'flex-1'}
+                  allowClear
                 />
                 <Button
                   type="primary"

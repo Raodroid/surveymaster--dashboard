@@ -1,10 +1,8 @@
-import React from 'react';
+import {FC, SVGAttributes} from 'react';
 
-export const CloseIcon = props => {
-  const { style } = props;
+export const CloseIcon: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (
     <svg
-      style={style}
       width="12"
       height="12"
       viewBox="0 0 12 12"

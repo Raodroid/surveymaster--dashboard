@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,

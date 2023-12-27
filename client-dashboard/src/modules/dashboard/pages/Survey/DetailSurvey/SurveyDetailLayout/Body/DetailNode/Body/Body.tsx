@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
-import { SubSurveyFlowElement } from '@/type';
-import { Block, Branch, Embedded, EndSurvey } from './types';
-import { SurveyDataTreeNode } from '@pages/Survey';
-import { QuestionBlockProps } from './types/type';
+import {FC} from 'react';
+import {SubSurveyFlowElement} from '@/type';
+import {Block, Branch, Embedded, EndSurvey} from './types';
+import {SurveyDataTreeNode} from '@pages/Survey';
+import {QuestionBlockProps} from './types/type';
 
 const contentMap: Record<SubSurveyFlowElement, FC<QuestionBlockProps>> = {
   [SubSurveyFlowElement.END_SURVEY]: EndSurvey,

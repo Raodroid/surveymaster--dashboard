@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { Key, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext } from 'formik';
 import { ColumnsType } from 'antd/lib/table/interface';
@@ -88,7 +88,7 @@ export const TemplateOption = () => {
   const rowSelection = useMemo(
     () => ({
       selectedRowKeys: x,
-      onChange: (selectedRowKeys: React.Key[], selectedRows: ISurvey[]) => {
+      onChange: (selectedRowKeys: Key[], selectedRows: ISurvey[]) => {
         setFieldValue('duplicateSurveyId', selectedRows[0].id);
         setX([selectedRows[0].id as string]);
       },

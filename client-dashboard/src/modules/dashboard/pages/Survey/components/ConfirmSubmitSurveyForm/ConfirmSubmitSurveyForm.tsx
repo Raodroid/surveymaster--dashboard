@@ -1,10 +1,10 @@
-import React, { FC, useCallback } from 'react';
-import { IModal, SurveyVersionStatus } from '@/type';
-import { Button, Modal, notification, Spin } from 'antd';
-import { SaveIcon } from '@/icons';
-import { useTranslation } from 'react-i18next';
-import { IEditSurveyFormValues, useSurveyFormContext } from '@pages/Survey';
-import { useFormikContext } from 'formik';
+import {FC, useCallback} from 'react';
+import {IModal, SurveyVersionStatus} from '@/type';
+import {Button, Modal, notification, Spin} from 'antd';
+import {SaveIcon} from '@/icons';
+import {useTranslation} from 'react-i18next';
+import {IEditSurveyFormValues, useSurveyFormContext} from '@pages/Survey';
+import {useFormikContext} from 'formik';
 
 const ConfirmSubmitSurveyForm: FC<IModal> = props => {
   const { open, toggleOpen } = props;

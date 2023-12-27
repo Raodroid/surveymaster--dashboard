@@ -10,13 +10,13 @@ import {
 import { projectSurveyParams } from '@pages/Survey';
 import { ThumbWrapper } from '../styles';
 import { IGetParams } from '@/type';
-import Month from '@pages/Survey/DetailSurvey/History/ActionsHistoryCalendar/CalendarScrollbar/Month';
 import { useNavigate } from 'react-router-dom';
 import { useParseQueryString } from '@/hooks';
 import qs from 'qs';
-import { useActionHistoryContext } from '@pages/Survey/DetailSurvey/History/ActionsHistoryCalendar/ActionHistoryContext/useActionHistoryContext';
 import { usePrevious } from '@/utils';
 import { useParams } from 'react-router';
+import { useActionHistoryContext } from '../ActionHistoryContext/useActionHistoryContext';
+import Month from './Month';
 
 export const MONTH_HEIGHT = 124;
 

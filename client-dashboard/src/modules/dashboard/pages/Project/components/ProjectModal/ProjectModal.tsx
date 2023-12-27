@@ -1,16 +1,9 @@
-import React, {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, ReactNode, useCallback, useMemo } from 'react';
 import { useGetProjectByIdQuery } from '@pages/Project';
 import { TFunction, useTranslation } from 'react-i18next';
 import { Button, Divider, Form, Modal, notification, Spin } from 'antd';
 import { IModal, ProjectTypes } from '@/type';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { ControlledInput, PROJECT_FORM_SCHEMA } from '@/modules/common';
 import { ProjectPayload } from '@/interfaces';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -73,20 +66,15 @@ const ProjectModal: FC<IProjectModal> = props => {
     [teamMembers],
   );
 
-  const [initValues, setInitValue] =
-    useState<ProjectPayload>(defaultInitValues);
-
-  useEffect(() => {
-    if (mode === 'create') return;
-    setInitValue(project);
+  const initValues = useMemo(() => {
+    if (mode === 'create') return defaultInitValues;
+    return project;
   }, [mode, project]);
 
   const mutationCreateProject = useMutation(ProjectService.createProject, {
     onSuccess: () => {
       queryClient.invalidateQueries('getProjects');
       notification.success({ message: t('common.createSuccess') });
-      setInitValue({ ...defaultInitValues });
-
       toggleOpen();
     },
     onError,
@@ -102,16 +90,18 @@ const ProjectModal: FC<IProjectModal> = props => {
   });
 
   const onFinish = useCallback(
-    (payload: ProjectPayload) => {
+    async (payload: ProjectPayload, helper: FormikHelpers<any>) => {
       if (mode === 'create') {
-        mutationCreateProject.mutateAsync(payload);
+        await mutationCreateProject.mutateAsync(payload);
+        helper.resetForm();
         return;
       }
       if (mode === 'edit') {
-        mutationEditProject.mutateAsync({
+        await mutationEditProject.mutateAsync({
           ...payload,
           // type: project.type,
         });
+        helper.resetForm();
       }
     },
     [mode, mutationCreateProject, mutationEditProject],

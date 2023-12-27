@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components/macro';
 import { Button, Pagination, PaginationProps } from 'antd';
 import { ArrowLeft, ArrowRight } from '@/icons';

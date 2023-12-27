@@ -1,5 +1,4 @@
 import { Helmet } from 'react-helmet-async';
-
 import { GlobalStyle } from 'styles/global-styles';
 import { ConfigProvider } from 'antd';
 

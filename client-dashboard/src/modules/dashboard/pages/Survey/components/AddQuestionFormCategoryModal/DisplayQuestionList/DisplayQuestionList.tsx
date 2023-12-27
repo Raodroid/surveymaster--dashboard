@@ -1,18 +1,11 @@
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
-import { IOptionItem, IQuestionVersion } from '@/type';
-import { Input } from 'antd';
+import {Dispatch, FC, SetStateAction, useCallback, useMemo, useState,} from 'react';
+import {IOptionItem, IQuestionVersion} from '@/type';
+import {Input} from 'antd';
 import Checkbox from 'antd/lib/checkbox';
-import { DisplayQuestionListWrapper } from './style';
-import { useTranslation } from 'react-i18next';
-import { useDebounce } from '@/utils';
-import { questionListState } from '..';
+import {DisplayQuestionListWrapper} from './style';
+import {useTranslation} from 'react-i18next';
+import {useDebounce} from '@/utils';
+import {questionListState} from '..';
 
 interface IDisplayQuestionList {
   setQuestionListState: Dispatch<SetStateAction<questionListState>>;

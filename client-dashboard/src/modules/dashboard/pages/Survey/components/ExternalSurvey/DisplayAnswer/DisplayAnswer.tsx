@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, Key, useCallback, useEffect, useMemo, useState } from 'react';
 import { useField, useFormikContext } from 'formik';
 import { Button, Popover } from 'antd';
 
@@ -269,7 +269,7 @@ const DisplayAnswer = () => {
   const dataSource = useMemo(() => value as IExpandableTable[], [value]);
 
   const onSelectChange = useCallback(
-    (newSelectedRowKeys: React.Key[]) => {
+    (newSelectedRowKeys: Key[]) => {
       setFieldValue('selectedRowKeys', newSelectedRowKeys);
     },
     [setFieldValue],

@@ -1,29 +1,19 @@
-import React, { FC, Fragment, memo, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ControlledInput, UncontrolledInput } from '@/modules/common';
-import { INPUT_TYPES } from '@input/type';
-import { FieldArray, useField, useFormikContext } from 'formik';
-import {
-  BranchLogicType,
-  Conjunction,
-  EmptyString,
-  IOptionGroupItem,
-} from '@/type';
-import { Button, Divider, Empty, Tooltip } from 'antd';
-import { objectKeys, transformEnumToOption } from '@/utils';
+import {FC, Fragment, memo, useMemo} from 'react';
+import {useTranslation} from 'react-i18next';
+import {ControlledInput, UncontrolledInput} from '@/modules/common';
+import {INPUT_TYPES} from '@input/type';
+import {FieldArray, useField, useFormikContext} from 'formik';
+import {BranchLogicType, Conjunction, EmptyString, IOptionGroupItem,} from '@/type';
+import {Button, Divider, Empty, Tooltip} from 'antd';
+import {objectKeys, transformEnumToOption} from '@/utils';
 import EmbeddedBlockChoice from './EmbeddedBlockChoice/EmbeddedBlockChoice';
-import QuestionChoice, {
-  IQuestionChoice,
-} from './QuestionChoice/QuestionChoice';
-import { QuestionBlockProps } from '../type';
-import {
-  ExtraSubBranchLogicDto,
-  IEditSurveyFormValues,
-} from '@pages/Survey/SurveyForm/type';
-import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
-import { PlusOutLinedIcon, TrashOutlined } from '@/icons';
-import { getQuestionFromAllBlocks } from './QuestionChoice/util';
-import { SimpleBarCustom } from '@/customize-components';
+import QuestionChoice, {IQuestionChoice,} from './QuestionChoice/QuestionChoice';
+import {QuestionBlockProps} from '../type';
+import {ExtraSubBranchLogicDto, IEditSurveyFormValues,} from '@pages/Survey/SurveyForm/type';
+import {useCheckSurveyFormMode} from '@pages/Survey/SurveyForm/util';
+import {PlusOutLinedIcon, TrashOutlined} from '@/icons';
+import {getQuestionFromAllBlocks} from './QuestionChoice/util';
+import {SimpleBarCustom} from '@/customize-components';
 
 const defaultLogicBranch: EmptyString<ExtraSubBranchLogicDto> = {
   blockSort_qId: '',

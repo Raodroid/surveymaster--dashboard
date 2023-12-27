@@ -1,6 +1,6 @@
-import React, { FC, useCallback } from 'react';
-import { Button, Tooltip } from 'antd';
-import { CopyOutlinedIcon } from 'icons';
+import {FC, useCallback} from 'react';
+import {Button, Tooltip} from 'antd';
+import {CopyOutlinedIcon} from 'icons';
 
 const CopyButton: FC<{ content: string | undefined | number }> = props => {
   const { content } = props;

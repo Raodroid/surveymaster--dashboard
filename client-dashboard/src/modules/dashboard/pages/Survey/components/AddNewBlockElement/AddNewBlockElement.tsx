@@ -6,16 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { objectKeys } from '@/utils';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import {
-  IEditSurveyFormValues,
-  rootSurveyFlowElementFieldName,
-  SurveyDataTreeNode,
+    IEditSurveyFormValues,
+    rootSurveyFlowElementFieldName,
+    SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
-import { PlusOutLinedIcon } from '@/icons';
-import {
-  calcLevelNodeByFieldName,
-  genDefaultBlockDescription,
-  useSurveyFormContext,
-} from '@pages/Survey';
+import {PlusOutLinedIcon} from '@/icons';
+import {calcLevelNodeByFieldName, genDefaultBlockDescription, useSurveyFormContext,} from '@pages/Survey';
 import _uniq from 'lodash/uniq';
 import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
 

@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import { FC, useCallback } from 'react';
 
 import { defaultNode } from './AddNewBlockElement';
 import { objectKeys } from '@/utils';

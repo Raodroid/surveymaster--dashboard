@@ -1,16 +1,16 @@
-import React, { createContext, ReactElement, useRef, useState } from 'react';
-import { HannahCustomSpin } from '@/modules/dashboard';
-import { useParseQueryString } from '@/hooks';
-import { IPaginationResponse, ISurvey, QsParams } from '@/type';
-import { useParams } from 'react-router';
-import { projectSurveyParams } from '@pages/Survey';
-import { useQueries, useQuery } from 'react-query';
-import { SurveyService } from '@/services';
+import {createContext, ReactElement, useRef, useState} from 'react';
+import {useParseQueryString} from '@/hooks';
+import {IPaginationResponse, ISurvey, QsParams} from '@/type';
+import {useParams} from 'react-router';
+import {projectSurveyParams} from '@pages/Survey';
+import {useQueries, useQuery} from 'react-query';
+import {SurveyService} from '@/services';
 import moment from 'moment';
-import { IAction } from '@/interfaces';
+import {IAction} from '@/interfaces';
 import _get from 'lodash/get';
-import { onError } from '@/utils';
-import { AxiosResponse } from 'axios';
+import {onError} from '@/utils';
+import {AxiosResponse} from 'axios';
+import {Spin} from 'antd';
 
 type IMonthQuery = {
   createdFrom: string;
@@ -19,7 +19,7 @@ type IMonthQuery = {
   monthNumber: number;
 };
 
-interface IActionHistortContext {
+interface IActionHistoryContext {
   displayHistory: IAction[];
   todayAction: IAction | undefined;
   createAction: IAction | undefined;
@@ -28,7 +28,7 @@ interface IActionHistortContext {
   monthData: Record<string, { data?: IAction[]; index: number }>;
 }
 
-const initValueContext: IActionHistortContext = {
+const initValueContext: IActionHistoryContext = {
   displayHistory: [],
   todayAction: undefined,
   createAction: undefined,
@@ -38,11 +38,11 @@ const initValueContext: IActionHistortContext = {
 };
 
 export const ActionHistortContext =
-  createContext<IActionHistortContext>(initValueContext);
+  createContext<IActionHistoryContext>(initValueContext);
 
 const ActionHistoryProvider = (props: { children?: ReactElement }) => {
   const [context, setContext] =
-    useState<IActionHistortContext>(initValueContext);
+    useState<IActionHistoryContext>(initValueContext);
   const wrapperRef = useRef<any>();
 
   const qsParams = useParseQueryString<QsParams>();
@@ -107,7 +107,7 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
         onSuccess: (res: AxiosResponse<IPaginationResponse<IAction>>) => {
           const record = res.data.data?.[0];
 
-          const newItem: IActionHistortContext['monthData'] = {
+          const newItem: IActionHistoryContext['monthData'] = {
             [moment(month?.createdFrom).startOf('month').format()]: {
               data: res.data.data,
               index,
@@ -182,18 +182,16 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
         ...context,
       }}
     >
-      <div ref={wrapperRef} className={'h-full'}>
-        <HannahCustomSpin
-          parentRef={wrapperRef}
-          spinning={
-            getActionsHistories.isLoading ||
-            surveyDataQuery.isLoading ||
-            loading ||
-            getTodayActions.isLoading
-          }
-        />
-        {props.children}
-      </div>
+      <Spin
+        spinning={
+          getActionsHistories.isLoading ||
+          surveyDataQuery.isLoading ||
+          loading ||
+          getTodayActions.isLoading
+        }
+      >
+        <div className={'h-full'}>{props.children}</div>
+      </Spin>
     </ActionHistortContext.Provider>
   );
 };

@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 
 import { MenuProps } from 'antd';
 import { useLocation, matchPath, useNavigate } from 'react-router-dom';

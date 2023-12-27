@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { Button, Input, Spin } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import { IQuestion, IQuestionCategory } from '@/type';

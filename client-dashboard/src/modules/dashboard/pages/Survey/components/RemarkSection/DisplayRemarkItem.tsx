@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
-import { Avatar, Divider, List } from 'antd';
+import {FC} from 'react';
+import {Avatar, Divider, List} from 'antd';
 import moment from 'moment';
-import { IQuestionRemark } from '@/type';
+import {IQuestionRemark} from '@/type';
 
 const DisplayRemarkItem: FC<{ record: IQuestionRemark }> = props => {
   const { record } = props;

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { RoundedSelect, ThreeDotsDropdown } from '@/customize-components';
 import { SelectProps } from 'antd/lib/select';
 import { generatePath, useNavigate, useParams } from 'react-router';
@@ -19,7 +19,7 @@ import {
   useSurveyFormContext,
 } from '@pages/Survey';
 import { useFormikContext } from 'formik';
-import { Modal, notification, Spin } from 'antd';
+import { Modal, notification } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 import { useCheckScopeEntityDefault } from '@/modules/common';
 import { MOMENT_FORMAT, ROUTE_PATH, SCOPE_CONFIG } from '@/enums';

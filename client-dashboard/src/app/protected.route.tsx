@@ -1,11 +1,12 @@
 import { ROUTE_PATH } from 'enums';
-import React, { lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
 import { Layout } from 'antd';
 import styled from 'styled-components/macro';
 import { CustomSpinSuspense } from '@/modules/common';
+
 const { Content } = Layout;
 
 const LayoutNavbar = lazy(() => import('modules/dashboard/components/Navbar'));

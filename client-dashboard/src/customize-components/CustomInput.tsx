@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import { Input } from 'antd';
-import { InputProps } from 'antd/lib/input';
-import { ColorOutlined, BoxIconOutlined } from 'icons';
+import {FC, useMemo} from 'react';
+import {Input} from 'antd';
+import {InputProps} from 'antd/lib/input';
+import {BoxIconOutlined, ColorOutlined} from 'icons';
 
 interface CustomInputProps {
   success?: boolean;
@@ -36,7 +36,7 @@ const suffix = type => {
   }
 };
 
-const CustomInput: React.FC<CustomInputProps & InputProps> = props => {
+const CustomInput: FC<CustomInputProps & InputProps> = props => {
   const { success, error, inverted, ...res } = props;
   const className = `${success ? 'ant-input-affix-wrapper-success' : ''}
     ${error ? 'ant-input-affix-wrapper-error' : ''}

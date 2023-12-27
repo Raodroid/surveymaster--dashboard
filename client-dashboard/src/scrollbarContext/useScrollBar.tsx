@@ -1,4 +1,11 @@
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import {
+  createContext,
+  ReactElement,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 interface IMyScrollbarContext {
@@ -13,9 +20,9 @@ const intValue: IMyScrollbarContext = {
   ref: null,
 };
 
-const ScrollbarContext = React.createContext<IMyScrollbarContext>(intValue);
+const ScrollbarContext = createContext<IMyScrollbarContext>(intValue);
 
-const ScrollbarProvider = (props: { children?: React.ReactElement }) => {
+const ScrollbarProvider = (props: { children?: ReactElement }) => {
   const [currentScrollTop, setCurrentScrollTop] = useState(0);
   const handleScroll = useCallback(e => {
     setCurrentScrollTop(e.target.scrollTop);

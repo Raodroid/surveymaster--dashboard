@@ -1,10 +1,9 @@
-import React from 'react';
-import { useToggle } from '@/utils';
-import { Button } from 'antd';
-import { PenFilled } from '@/icons';
+import {useToggle} from '@/utils';
+import {Button} from 'antd';
+import {PenFilled} from '@/icons';
 import ProjectModal from './ProjectModal';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import {useTranslation} from 'react-i18next';
+import {useParams} from 'react-router';
 
 const EditProjectButton = () => {
   const [openModal, toggleModal] = useToggle();

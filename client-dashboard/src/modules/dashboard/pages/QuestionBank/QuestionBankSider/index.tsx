@@ -1,8 +1,8 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { QuestionBankSiderWrapper } from './style';
 import QuestionBankSiderMainContent from './main-content';
 import QuestionBankSiderFooter from './footer';
-import { useCheckScopeEntityDefault } from '../../../../common/hoc';
+import { useCheckScopeEntityDefault } from '@/modules/common';
 import { SCOPE_CONFIG } from 'enums';
 
 const QuestionBankSider = () => {

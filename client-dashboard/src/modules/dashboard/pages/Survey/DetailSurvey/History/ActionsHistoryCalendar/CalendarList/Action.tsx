@@ -1,9 +1,8 @@
-import { IAction } from '@/interfaces';
+import {IAction} from '@/interfaces';
 import moment from 'moment';
-import { useTranslation } from 'react-i18next';
-import { genHandleActionType } from '@pages/Survey';
-import { Avatar, Divider } from 'antd';
-import React from 'react';
+import {useTranslation} from 'react-i18next';
+import {genHandleActionType} from '@pages/Survey';
+import {Avatar, Divider} from 'antd';
 
 function Action(props: { action?: IAction; today?: boolean }) {
   const { action, today = false } = props;

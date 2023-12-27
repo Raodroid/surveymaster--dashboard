@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import BaseMenu from '../BaseMenu';
 import { mainMenuItem } from '../MainMenu';
 import { MenuProps } from 'antd';

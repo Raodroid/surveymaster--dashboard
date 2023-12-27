@@ -1,6 +1,6 @@
-import React from 'react';
+import {FC, SVGAttributes} from 'react';
 
-export const Chat = props => {
+export const Chat: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (
     <svg
       width="16px"

@@ -1,18 +1,13 @@
-import React, { FC, useCallback, useMemo } from 'react';
-import { IQuestionChoiceComponent } from '../type';
-import { useField } from 'formik';
-import { ExtraSubBranchLogicDto } from '@pages/Survey/SurveyForm/type';
-import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
-import {
-  BranchChoiceType,
-  IOptionItem,
-  LogicOperator,
-  QuestionType,
-} from '@/type';
-import { ControlledInput } from '@/modules/common';
-import { INPUT_TYPES } from '@input/type';
+import {FC, useCallback, useMemo} from 'react';
+import {IQuestionChoiceComponent} from '../type';
+import {useField} from 'formik';
+import {ExtraSubBranchLogicDto} from '@pages/Survey/SurveyForm/type';
+import {useCheckSurveyFormMode} from '@pages/Survey/SurveyForm/util';
+import {BranchChoiceType, IOptionItem, LogicOperator, QuestionType,} from '@/type';
+import {ControlledInput} from '@/modules/common';
+import {INPUT_TYPES} from '@input/type';
 import LogicOperatorInput from './LogicOperatorInput';
-import { gen_row_column_BranchChoiceType } from '../util';
+import {gen_row_column_BranchChoiceType} from '../util';
 
 const FormField: FC<IQuestionChoiceComponent> = props => {
   const { fieldName, questionData } = props;

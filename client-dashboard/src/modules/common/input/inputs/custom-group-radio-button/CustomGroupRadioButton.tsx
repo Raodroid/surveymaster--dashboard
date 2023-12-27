@@ -1,13 +1,13 @@
-import React, { memo } from 'react';
-import { Radio } from 'antd';
-import { RadioGroupProps } from 'antd/lib/radio';
-import { OnchangeType } from '../../type';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import {memo, ReactNode} from 'react';
+import {Radio} from 'antd';
+import {RadioGroupProps} from 'antd/lib/radio';
+import {OnchangeType} from '../../type';
+import {CheckboxValueType} from 'antd/lib/checkbox/Group';
 
 export type CustomRadioButtonGroupProps = RadioGroupProps &
   OnchangeType & {
     customOptions?: Array<{
-      label: React.ReactNode;
+      label: ReactNode;
       value: CheckboxValueType;
       conditionCom: Element;
     }>;

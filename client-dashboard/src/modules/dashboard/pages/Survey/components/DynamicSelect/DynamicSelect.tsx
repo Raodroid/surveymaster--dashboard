@@ -1,14 +1,14 @@
-import React, { FC, useCallback, useMemo } from 'react';
-import { useSurveyFormContext } from '@pages/Survey/components/SurveyFormContext';
-import { useTranslation } from 'react-i18next';
-import { useField } from 'formik';
-import { questionValueType } from '@pages/Survey/SurveyForm/type';
-import { IOptionItem } from '@/type';
-import { Badge } from 'antd';
+import {FC, useCallback, useMemo} from 'react';
+import {useSurveyFormContext} from '@pages/Survey/components/SurveyFormContext';
+import {useTranslation} from 'react-i18next';
+import {useField} from 'formik';
+import {questionValueType} from '@pages/Survey/SurveyForm/type';
+import {IOptionItem} from '@/type';
+import {Badge} from 'antd';
 import moment from 'moment';
-import { MOMENT_FORMAT } from '@/enums';
-import { ControlledInput } from '@/modules/common';
-import { INPUT_TYPES } from '@input/type';
+import {MOMENT_FORMAT} from '@/enums';
+import {ControlledInput} from '@/modules/common';
+import {INPUT_TYPES} from '@input/type';
 import _get from 'lodash/get';
 
 interface IDynamicSelectQuestion {

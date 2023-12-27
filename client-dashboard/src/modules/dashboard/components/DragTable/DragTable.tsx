@@ -1,10 +1,8 @@
-import React from 'react';
-
-import { Table } from 'antd';
-
-import type { SortableContainerProps, SortEnd } from 'react-sortable-hoc';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { TableProps } from 'antd/lib/table';
+import {Table} from 'antd';
+import type {SortableContainerProps, SortEnd} from 'react-sortable-hoc';
+import {SortableContainer, SortableElement} from 'react-sortable-hoc';
+import {TableProps} from 'antd/lib/table';
+import {createContext, FC, HTMLAttributes} from 'react';
 
 export function arrayMoveMutable<Type>(
   array: Type[],
@@ -31,7 +29,7 @@ export function arrayMoveImmutable<Type>(
   return newArray;
 }
 
-const ThemeContext = React.createContext<{
+const ThemeContext = createContext<{
   onSortEnd: ({ oldIndex, newIndex }: SortEnd) => void;
   dataSource: any;
   renderRowClassName?: (value: any) => string;
@@ -51,7 +49,7 @@ const DraggableContainer = (props: SortableContainerProps) => (
   </ThemeContext.Consumer>
 );
 
-const DraggableBodyRow: React.FC<any> = ({
+const DraggableBodyRow: FC = ({
   // className,
   style,
   ...restProps
@@ -79,14 +77,12 @@ const DraggableBodyRow: React.FC<any> = ({
 };
 
 const SortableItem = SortableElement(
-  (props: React.HTMLAttributes<HTMLTableRowElement>) => {
+  (props: HTMLAttributes<HTMLTableRowElement>) => {
     return <tr {...props} />;
   },
 );
 const SortableBody = SortableContainer(
-  (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
-    <tbody {...props} />
-  ),
+  (props: HTMLAttributes<HTMLTableSectionElement>) => <tbody {...props} />,
 );
 
 interface HanhTableProps<RecordType> extends TableProps<RecordType> {
@@ -94,7 +90,7 @@ interface HanhTableProps<RecordType> extends TableProps<RecordType> {
   renderRowClassName?: (value) => string;
 }
 
-export const DragTable: React.FC<HanhTableProps<any>> = props => {
+export const DragTable: FC<HanhTableProps<any>> = props => {
   const {
     dataSource,
     setDataTable,

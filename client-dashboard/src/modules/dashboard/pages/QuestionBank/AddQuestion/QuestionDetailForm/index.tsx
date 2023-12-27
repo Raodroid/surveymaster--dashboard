@@ -1,15 +1,14 @@
-import React from 'react';
-import { ControlledInput } from '../../../../../common';
 import { INPUT_TYPES } from '@input/type';
 import { QuestionType } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { QuestionDetailFormWrapper } from './style';
 import { transformEnumToOption } from '@/utils';
 import { useFormikContext } from 'formik';
-import TextGraphic from '../DisplayAnswerList/RenderQuestionType/TextGraphic';
 import { IAddQuestionFormValue } from '@pages/QuestionBank/AddQuestion/util';
 import { useMatch } from 'react-router-dom';
 import { ROUTE_PATH } from '@/enums';
+import { ControlledInput } from '@/modules/common';
+import TextGraphic from '../DisplayAnswerList/RenderQuestionType/TextGraphic';
 
 const AddQuestionDetailForm = () => {
   const isViewMode = useMatch({

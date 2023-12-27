@@ -1,5 +1,4 @@
-import React from 'react';
-import { useCheckSurveyFormMode } from '@pages/Survey';
+import {useCheckSurveyFormMode} from '@pages/Survey';
 import EditSurveyHeader from './components/EditSurveyHeader';
 import ViewModeHeader from './components/ViewModeHeader';
 

@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import { IBreadcrumbItem } from '@commonCom/StyledBreadcrumb';
 import { useGetProjectByIdQuery } from '@pages/Project/util';
 import moment from 'moment';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useParams } from 'react-router';
 import { projectSurveyParams } from '../DetailSurvey';

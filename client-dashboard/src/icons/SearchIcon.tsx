@@ -1,6 +1,6 @@
-import React from 'react';
+import { FC, SVGAttributes } from 'react';
 
-export const SearchIcon = props => {
+export const SearchIcon: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   const { style, className } = props;
   return (
     <svg

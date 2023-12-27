@@ -1,17 +1,24 @@
-import React, {
+import {
+  createContext,
   Dispatch,
   FC,
   SetStateAction,
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import { CategoryDetailWrapper, QuestionTypePopover } from './style';
 import CategoryDetailHeader from './CategoryDetailHeader';
 
-import { Modal, notification, PaginationProps, Popover, Table } from 'antd';
+import {
+  Modal,
+  notification,
+  PaginationProps,
+  Popover,
+  Spin,
+  Table,
+} from 'antd';
 import {
   ActionThreeDropDownType,
   GetListQuestionDto,
@@ -22,20 +29,22 @@ import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
 import { useParseQueryString } from '@/hooks/useParseQueryString';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { onError, useDebounce } from '@/utils';
+import { onError, useToggle } from '@/utils';
 import { QuestionBankService } from '@/services';
 import _get from 'lodash/get';
-import { ROUTE_PATH, SCOPE_CONFIG, size } from '@/enums';
+import { EntityEnum, ROUTE_PATH, SCOPE_CONFIG, size } from '@/enums';
 import { Link, useNavigate } from 'react-router-dom';
 import { StyledPagination } from '@/modules/dashboard';
 import qs from 'qs';
-import HannahCustomSpin from '@components/HannahCustomSpin';
 import SimpleBar from 'simplebar-react';
 import { keysAction, useSelectTableRecord } from '@/hooks';
 import { generatePath } from 'react-router';
 import { useCheckScopeEntityDefault } from '@/modules/common';
-import { FileIconOutlined, PenFilled, TrashOutlined } from '@/icons';
+import { FileIconOutlined, LightingIcon, PenFilled } from '@/icons';
 import { ThreeDotsDropdown } from '@/customize-components';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '@/redux/auth';
+import RequestApproveDeleteQuestionModal from './RequestApproveDeleteQuestionModal/RequestApproveDeleteQuestionModal';
 
 const { confirm } = Modal;
 interface ICategoryDetailContext {
@@ -55,7 +64,7 @@ const initParams: GetListQuestionDto = {
 };
 
 export const CategoryDetailContext =
-  React.createContext<ICategoryDetailContext | null>(null);
+  createContext<ICategoryDetailContext | null>(null);
 
 const getQuestion = (params: GetListQuestionDto) => {
   const newParams: GetListQuestionDto = {
@@ -76,15 +85,15 @@ const getQuestion = (params: GetListQuestionDto) => {
 
 const CategoryDetail = () => {
   const { t } = useTranslation();
-  const [searchTxt, setSearchTxt] = useState<string>('');
+
   const queryString = useParseQueryString<GetListQuestionDto>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
+  const [openRequestModal, toggleOpenRequestModal] = useToggle();
+  const { canUpdate } = useCheckScopeEntityDefault(EntityEnum.QUESTION);
 
   const [params, setParams] = useState<GetListQuestionDto>(initParams);
-
-  const debounceSearchText = useDebounce(searchTxt);
 
   const deleteMutation = useMutation(
     (data: { id: string }) => {
@@ -149,19 +158,6 @@ const CategoryDetail = () => {
     [navigate],
   );
 
-  const handleDelete = useCallback(
-    (record: IQuestion) => {
-      confirm({
-        icon: null,
-        content: t('common.confirmDeleteQuestion'),
-        onOk() {
-          deleteMutation.mutateAsync({ id: record.id as string });
-        },
-      });
-    },
-    [deleteMutation, t],
-  );
-
   const handleDuplicate = useCallback(
     (record: IQuestion) => {
       confirm({
@@ -188,26 +184,23 @@ const CategoryDetail = () => {
 
       {
         key: ACTION.DELETE,
-        action: handleDelete,
+        action: toggleOpenRequestModal,
       },
       {
         key: ACTION.RESTORE,
         action: handleRestore,
       },
     ],
-    [handleDelete, handleDuplicate, handleEdit, handleRestore],
+    [handleDuplicate, handleEdit, handleRestore, toggleOpenRequestModal],
   );
 
   const { handleSelect, selectedRecord } =
     useSelectTableRecord<IQuestion>(tableActions);
 
   const getQuestionListQuery = useQuery(
-    ['getQuestionList', params, debounceSearchText],
+    ['getQuestionList', params],
     () => {
-      return getQuestion({
-        ...params,
-        q: debounceSearchText,
-      });
+      return getQuestion(params);
     },
     {
       refetchOnWindowFocus: false,
@@ -322,7 +315,7 @@ const CategoryDetail = () => {
         ),
       },
     ],
-    [handleSelect, t],
+    [handleSelect, queryString, t],
   );
 
   const onShowSizeChange: PaginationProps['onShowSizeChange'] = useCallback(
@@ -336,48 +329,52 @@ const CategoryDetail = () => {
     setParams({ ...initParams, ...queryString });
   }, [queryString]);
 
-  const ref = useRef<any>();
-
   return (
-    <CategoryDetailContext.Provider
-      value={{ params, setParams, loading, setLoading }}
+    <Spin
+      spinning={
+        loading ||
+        getQuestionListQuery.isLoading ||
+        restoreMutation.isLoading ||
+        deleteMutation.isLoading ||
+        restoreMutation.isLoading
+      }
+      style={{ maxHeight: 'unset' }}
     >
-      <CategoryDetailWrapper ref={ref}>
-        <HannahCustomSpin
-          parentRef={ref}
-          spinning={
-            loading ||
-            getQuestionListQuery.isLoading ||
-            restoreMutation.isLoading ||
-            deleteMutation.isLoading ||
-            restoreMutation.isLoading
-          }
-        />
-        <CategoryDetailHeader
-          searchTxt={searchTxt}
-          setSearchTxt={setSearchTxt}
-        />
-        <SimpleBar className={'CategoryDetail__body'}>
-          <Table
-            rowKey={record => record?.id as string}
-            dataSource={questionList}
-            columns={columns}
-            pagination={false}
-            scroll={{ x: size.medium }}
+      <CategoryDetailContext.Provider
+        value={{ params, setParams, loading, setLoading }}
+      >
+        <CategoryDetailWrapper>
+          <CategoryDetailHeader />
+          <SimpleBar className={'CategoryDetail__body'}>
+            <Table
+              rowKey={record => record?.id as string}
+              dataSource={questionList}
+              columns={columns}
+              pagination={false}
+              scroll={{ x: size.medium }}
+            />
+          </SimpleBar>
+          <StyledPagination
+            current={params.page}
+            onChange={page => {
+              setParams(s => ({ ...s, page }));
+            }}
+            showSizeChanger
+            pageSize={params.take}
+            onShowSizeChange={onShowSizeChange}
+            total={total}
           />
-        </SimpleBar>
-        <StyledPagination
-          current={params.page}
-          onChange={page => {
-            setParams(s => ({ ...s, page }));
-          }}
-          showSizeChanger
-          pageSize={params.take}
-          onShowSizeChange={onShowSizeChange}
-          total={total}
+        </CategoryDetailWrapper>
+      </CategoryDetailContext.Provider>
+
+      {canUpdate && (
+        <RequestApproveDeleteQuestionModal
+          open={openRequestModal}
+          toggleOpen={toggleOpenRequestModal}
+          versionId={selectedRecord?.id}
         />
-      </CategoryDetailWrapper>
-    </CategoryDetailContext.Provider>
+      )}
+    </Spin>
   );
 };
 
@@ -388,6 +385,8 @@ const ACTION = {
   EDIT: 'EDIT',
   DUPLICATE: 'DUPLICATE',
   DELETE: 'DELETE',
+  ACCEPT_REQUEST: 'ACCEPT_REQUEST',
+  DENY_REQUEST: 'DENY_REQUEST',
 } as const;
 
 const ActionThreeDropDown: FC<ActionThreeDropDownType<IQuestion>> = props => {
@@ -396,7 +395,7 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<IQuestion>> = props => {
   const { canCreate, canDelete, canUpdate } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTION,
   );
-
+  const profile = useSelector(AuthSelectors.getProfile);
   const items = useMemo<IMenuItem[]>(() => {
     const isDeleted = record?.deletedAt;
     const baseMenu: IMenuItem[] = [];
@@ -426,15 +425,35 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<IQuestion>> = props => {
         key: ACTION.EDIT,
       });
     }
-    if (canDelete) {
+    if (canUpdate && canDelete) {
       baseMenu.push({
-        icon: <TrashOutlined className={'text-primary'} />,
-        label: <label> {t('common.deleteQuestion')}</label>,
+        icon: <LightingIcon className={'text-primary'} />,
+        label: <label> {t('common.requestDeleteQuestion')}</label>,
         key: ACTION.DELETE,
       });
     }
+    if (canUpdate && canDelete && profile?.id === record?.approvalUserId) {
+      baseMenu.push({
+        icon: <LightingIcon className={'text-primary'} />,
+        label: <label> {t('common.acceptDeleteRequest')}</label>,
+        key: ACTION.ACCEPT_REQUEST,
+      });
+      baseMenu.push({
+        icon: <LightingIcon className={'text-primary'} />,
+        label: <label> {t('common.denyDeleteRequest')}</label>,
+        key: ACTION.DENY_REQUEST,
+      });
+    }
     return baseMenu;
-  }, [canCreate, canDelete, canUpdate, record?.deletedAt, t]);
+  }, [
+    canCreate,
+    canDelete,
+    canUpdate,
+    profile?.id,
+    record?.approvalUserId,
+    record?.deletedAt,
+    t,
+  ]);
 
   return (
     <ThreeDotsDropdown

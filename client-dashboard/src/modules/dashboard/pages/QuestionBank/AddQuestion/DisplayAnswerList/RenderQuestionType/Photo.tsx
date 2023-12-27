@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import styled from 'styled-components/macro';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext } from 'formik';
@@ -27,7 +27,7 @@ const Photo = () => {
     caseSensitive: true,
   });
 
-  const className = !!isViewMode ? 'view-mode' : undefined;
+  const className = isViewMode ? 'view-mode' : undefined;
 
   const handleDeleteRow = useCallback(
     (record: IQuestionVersionOption) => {
@@ -215,7 +215,6 @@ const DisplayPhotoAnswer: FC<{
               onClick={() => handleDeleteRow(record)}
               aria-label={'trash-icon'}
               type={'text'}
-              ghost
             >
               <TrashOutlined className={'trash-icon'} />
             </Button>

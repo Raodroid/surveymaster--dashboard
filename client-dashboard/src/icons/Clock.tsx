@@ -1,7 +1,6 @@
-import React from 'react';
+import {FC, SVGAttributes} from 'react';
 
-export const Clock = props => {
-  const { style, className } = props;
+export const Clock: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (
     <svg
       width="16px"

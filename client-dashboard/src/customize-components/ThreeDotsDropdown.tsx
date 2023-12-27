@@ -1,6 +1,6 @@
 import { Button, Dropdown } from 'antd';
 import { ThreeDotsIcon } from '@/icons';
-import React, { ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { IMenuItem } from '@/type';
 import { DropdownProps } from 'antd/lib/dropdown/dropdown';
 import { useToggle } from '@/utils';
@@ -14,7 +14,7 @@ interface IThreeDotsDropdown extends Omit<DropdownProps, 'overlay'> {
   title?: string | ReactNode;
 }
 
-const ThreeDotsDropdown: React.FC<IThreeDotsDropdown> = props => {
+const ThreeDotsDropdown: FC<IThreeDotsDropdown> = props => {
   const { items, onChooseItem, size, title, ...res } = props;
 
   const [state, toggleOpen] = useToggle();
@@ -44,7 +44,6 @@ const ThreeDotsDropdown: React.FC<IThreeDotsDropdown> = props => {
       >
         <Button
           type={'text'}
-          ghost
           aria-label={'three drop down'}
           size={size}
           onClick={e => {
