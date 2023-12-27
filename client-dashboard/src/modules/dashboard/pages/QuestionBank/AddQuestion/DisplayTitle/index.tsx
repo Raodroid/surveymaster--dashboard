@@ -23,6 +23,8 @@ const DisplayTitle: FC = () => {
     case QuestionType.RADIO_BUTTONS:
     case QuestionType.PHOTO:
     case QuestionType.MULTIPLE_CHOICE:
+    case QuestionType.RANK_ORDER:
+    case QuestionType.TEXT_NUMBER:
     default:
       return t('common.answerList');
   }

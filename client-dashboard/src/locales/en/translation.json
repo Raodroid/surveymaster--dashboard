@@ -160,6 +160,7 @@
     "gridLine": "Grid Line",
     "minValue": "Min Value",
     "maxValue": "Max Value",
+    "maxDecimal": "Max Decimal",
     "saveNewQuestionVersion": "Save New Question Version",
     "addNewQuestion": "Add New Question",
     "editQuestion": "Edit Question",
@@ -568,7 +569,9 @@
     "TEXT_GRAPHIC": "Text Graphic",
     "DATA_MATRIX": "Data Matrix",
     "FORM_FIELD": "Form Field",
-    "MATRIX_TABLE_WITH_PHOTOS": "Matrix Table with Photos"
+    "MATRIX_TABLE_WITH_PHOTOS": "Matrix Table with Photos",
+    "TEXT_NUMBER": "Text Number",
+    "RANK_ORDER": "Rank Order"
   },
   "matrixType": {
     "RADIO_BUTTON": "Radio Button",

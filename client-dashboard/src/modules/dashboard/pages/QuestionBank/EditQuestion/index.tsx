@@ -114,6 +114,9 @@ const EditQuestion = () => {
       numberStep: currentVersionQuestionData?.numberStep || 1,
       numberMax: currentVersionQuestionData?.numberMax || 10,
       numberMin: currentVersionQuestionData?.numberMin || 1,
+      maxDecimal: isNumber(currentVersionQuestionData?.maxDecimal)
+        ? currentVersionQuestionData?.maxDecimal
+        : undefined,
       dataMatrix: currentVersionQuestionData?.dataMatrix || {
         rows: [{ name: '', keyPath: '' }],
         columns: [{ name: '' }],
@@ -128,6 +131,7 @@ const EditQuestion = () => {
     ) {
       value.status = QuestionVersionStatus.DRAFT;
     }
+
     return value;
   }, [currentVersionQuestionData, questionData]);
 
