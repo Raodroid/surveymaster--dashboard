@@ -1,6 +1,6 @@
-import React from 'react';
-export const ErrorIcon = props => {
-  const { style, className } = props;
+import { FC, SVGAttributes } from 'react';
+
+export const ErrorIcon: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (
     <svg
       width="40px"
@@ -8,6 +8,7 @@ export const ErrorIcon = props => {
       viewBox="0 0 12 12"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <g
         id="Design"

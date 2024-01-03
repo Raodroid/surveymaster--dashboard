@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import BaseMenu from '../BaseMenu';
 import { mainMenuItem } from '../MainMenu';
 import { MenuProps } from 'antd';
-import { ROUTE_PATH } from '../../../../../enums';
+import { ROUTE_PATH } from 'enums';
 
 const allMenuItems: MenuProps['items'] = [
   ...mainMenuItem,
@@ -22,7 +22,7 @@ const MenuList: FC<IMenuList> = props => {
     <BaseMenu
       callback={onChangeMenu}
       items={allMenuItems}
-      className="main-menu-root"
+      className="flex-1"
       mode={'vertical'}
     />
   );

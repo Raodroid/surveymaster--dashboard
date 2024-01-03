@@ -1,18 +1,17 @@
-import React, { memo } from 'react';
-import { ControlledInput } from '../../../../../common';
-import { INPUT_TYPES } from '../../../../../common/input/type';
-import { BaseQuestionVersionDto, QuestionType } from '../../../../../../type';
+import { memo } from 'react';
+import { INPUT_TYPES } from '@input/type';
+import { BaseQuestionVersionDto, QuestionType } from '@/type';
 import { useTranslation } from 'react-i18next';
-import { DisplayAnswerListWrapper } from './RenderQuestionType/style';
 import { useFormikContext } from 'formik';
 import MultipleChoice from './RenderQuestionType/MultipleChoice';
 import { useMatch } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../enums';
+import { ROUTE_PATH } from '@/enums';
 import DateTimePicker from './RenderQuestionType/DateTimePicker';
 import Datamatrix from './RenderQuestionType/Datamatrix';
 import Photo from './RenderQuestionType/Photo';
 import TextGraphic from './RenderQuestionType/TextGraphic';
 import { InputWrapper } from './styles';
+import { ControlledInput } from '@/modules/common';
 
 const DisplayAnswerList = () => {
   const { values } = useFormikContext<BaseQuestionVersionDto>();
@@ -24,7 +23,7 @@ const DisplayAnswerList = () => {
     caseSensitive: true,
   });
 
-  const className = !!isViewMode ? 'view-mode' : undefined;
+  const className = isViewMode ? 'view-mode' : undefined;
 
   switch (values.type) {
     case QuestionType.DATE_PICKER:
@@ -40,7 +39,7 @@ const DisplayAnswerList = () => {
       return <MultipleChoice />;
     case QuestionType.SLIDER:
       return (
-        <DisplayAnswerListWrapper className={'DisplayAnswerListWrapper'}>
+        <>
           <ControlledInput
             inputType={INPUT_TYPES.NUMBER}
             name="numberStep"
@@ -73,7 +72,7 @@ const DisplayAnswerList = () => {
               label={t('common.label')}
             />
           </InputWrapper>
-        </DisplayAnswerListWrapper>
+        </>
       );
     case QuestionType.FORM_FIELD:
       return <MultipleChoice />;
@@ -83,7 +82,7 @@ const DisplayAnswerList = () => {
       return <Datamatrix />;
     case QuestionType.TEXT_NUMBER:
       return (
-        <DisplayAnswerListWrapper className={'DisplayAnswerListWrapper'}>
+        <>
           <InputWrapper>
             <ControlledInput
               inputType={INPUT_TYPES.NUMBER}
@@ -111,7 +110,7 @@ const DisplayAnswerList = () => {
               className={className}
             />
           </InputWrapper>
-        </DisplayAnswerListWrapper>
+        </>
       );
     case QuestionType.RANK_ORDER:
       return <MultipleChoice isKeyPath={false} />;

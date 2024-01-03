@@ -2,7 +2,6 @@ import APIService from './base.service';
 import { AxiosResponse } from 'axios';
 import { VerifyAccountPayload } from 'redux/auth/types';
 import { changeEmailPayload } from 'modules/auth/change-email/change-email-form/ChangeEmailForm';
-import { ChangePasswordPayload } from 'redux/user';
 
 export default class AuthService {
   static login(email: string, password: string): Promise<AxiosResponse> {
@@ -25,10 +24,6 @@ export default class AuthService {
   ): Promise<AxiosResponse> {
     const url = 'auth/SMSMfa';
     return APIService.post(url, { isEnableSMSSetting, accessToken });
-  }
-
-  static getAllRoles(): Promise<AxiosResponse> {
-    return APIService.get('/roles');
   }
 
   static changeEmail(payload: changeEmailPayload): Promise<AxiosResponse> {

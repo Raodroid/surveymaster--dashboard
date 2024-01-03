@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query';
 import { onError } from 'utils';
-import { QuestionBankService } from '../../../../services';
+import { QuestionBankService } from 'services';
 import { useMemo } from 'react';
 import _get from 'lodash/get';
-import { IOptionItem, IQuestion, IQuestionCategory } from '../../../../type';
+import { IOptionItem, IQuestion, IQuestionCategory } from '@/type';
 
 export const useGetQuestionByQuestionId = (
   questionId?: string,

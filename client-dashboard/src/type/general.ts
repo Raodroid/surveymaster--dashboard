@@ -1,15 +1,7 @@
-export const defaultUserAvatarSrc =
-  '/tiny-Img/Photos/Avatar/amili-user-default-avatar.svg';
-export const defaultCoachAvatarSrc =
-  '/tiny-Img/Photos/Avatar/amili-coach-default-avatar.svg';
+import {CSSProperties, ReactNode} from 'react';
 
 export interface Component {
   (props): JSX.Element;
-}
-
-export enum timeTypeTEnum {
-  repeatTime = 'repeat',
-  specialTime = 'special',
 }
 
 export enum sexEnum {
@@ -38,6 +30,15 @@ export interface IPagination {
   deleted?: boolean;
 }
 
+export interface QsParams {
+  q?: string;
+  page?: number;
+  take?: number;
+  isDeleted?: string;
+  createdFrom?: string;
+  createdTo?: string;
+}
+
 export interface FetchParamsSelect {
   page?: number | null;
   take?: number | null;
@@ -49,17 +50,42 @@ export interface FetchParamsSelect {
   deleted?: boolean;
 }
 
-export interface PaginationResponse<T> {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  itemCount: number;
-  pageCount: number;
-  take: number;
-  page: number;
-  data: T[];
-}
-
 export interface IOptionItem {
-  label: string;
+  label: string | ReactNode;
   value: string;
 }
+
+export interface IOptionGroupItem {
+  label: string | undefined;
+  options: { label: string; value: string; disabled?: boolean }[];
+}
+
+export type ObjectKey = Record<string | number, unknown>;
+
+export type EmptyString<T> = { [K in keyof T]: T[K] | '' };
+
+export type Replace<
+  T,
+  ReplacedKey extends keyof T,
+  NewValue extends Record<ReplacedKey, unknown>,
+> = {
+  [K in keyof T]: K extends ReplacedKey ? NewValue[ReplacedKey] : T[K];
+};
+
+export type ActionThreeDropDownType<T> = {
+  record: T;
+  handleSelect: (input: { key: any; record: T; index?: number }) => void;
+};
+
+export interface IMenuItem {
+  label: string | ReactNode;
+  key: string;
+  icon?: string | ReactNode;
+  style?: CSSProperties;
+  disabled?: boolean;
+}
+
+export type IModal = {
+  open: boolean;
+  toggleOpen: () => void;
+};

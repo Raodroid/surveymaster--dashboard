@@ -42,7 +42,8 @@ export interface UserPayload {
   userName?: string;
   phone?: string;
   description?: string;
-  roles?: Array<number>;
+  roles?: Array<Role>;
+
   password?: string;
   phonePrefix?: string;
   roleData?: Role[];

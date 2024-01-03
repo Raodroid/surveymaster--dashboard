@@ -1,9 +1,8 @@
-import React from 'react';
-import { ConfirmResetPasswordForm, ResetPasswordForm } from '..';
-import { ConfirmResetPasswordPageStyled } from './style';
-import requireAuthentication from 'modules/common/hoc/requireAuthentication';
-import { Link, useSearchParams } from 'react-router-dom';
-import { ROUTE_PATH } from 'enums';
+import {ConfirmResetPasswordForm, ResetPasswordForm} from '..';
+import {ConfirmResetPasswordPageStyled} from './style';
+import {Link, useSearchParams} from 'react-router-dom';
+import {ROUTE_PATH} from 'enums';
+import {requireAuthentication} from '@/modules/common';
 
 const ConfirmResetPasswordPage = () => {
   const [searchParams] = useSearchParams();

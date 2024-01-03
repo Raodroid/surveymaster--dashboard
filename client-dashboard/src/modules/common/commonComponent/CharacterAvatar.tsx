@@ -1,6 +1,6 @@
 import templateVariable from 'app/template-variables.module.scss';
-import React, { FC } from 'react';
-import styled from 'styled-components';
+import {FC} from 'react';
+import styled from 'styled-components/macro';
 
 interface ICharacterAvatar {
   firstName?: string;

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import templateVariable from '../../../../../app/template-variables.module.scss';
 
 interface IMobileMenuWrapper {

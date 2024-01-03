@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { Select } from 'antd';
-import { SelectProps } from 'antd/lib/select';
+import {FC, useEffect} from 'react';
+import {Select} from 'antd';
+import {SelectProps} from 'antd/lib/select';
 
 interface CustomInputProps {
   success?: boolean;
@@ -8,7 +8,7 @@ interface CustomInputProps {
   inverted?: boolean;
 }
 
-const CustomSelect: React.FC<CustomInputProps & SelectProps<any>> = props => {
+const CustomSelect: FC<CustomInputProps & SelectProps<any>> = props => {
   const { success, error, inverted, className, ...res } = props;
   const finalClassName = `${success ? 'ant-select-affix-wrapper-success' : ''}
     ${error ? 'ant-select-affix-wrapper-error' : ''}

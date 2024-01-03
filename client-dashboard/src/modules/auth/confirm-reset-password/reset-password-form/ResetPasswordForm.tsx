@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { Form, Avatar, Spin, Button } from 'antd';
+import { FC, useCallback, useState } from 'react';
+import { Button, Form } from 'antd';
 import notification from 'customize-components/CustomNotification';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -11,7 +11,6 @@ import { INPUT_TYPES } from 'modules/common/input/type';
 import { FORGOT_PASSWORD_FIELD } from 'modules/common/validate/validate';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from 'enums';
-import { FormWrapper } from 'modules/common/styles';
 import { ResetPasswordFormWrapper } from './style';
 import ReactCodeInput from 'react-verification-code-input';
 
@@ -43,7 +42,7 @@ interface Props {
   email: string;
 }
 
-const ResetPasswordForm: React.FC<Props> = props => {
+const ResetPasswordForm: FC<Props> = props => {
   const { email } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -93,8 +92,9 @@ const ResetPasswordForm: React.FC<Props> = props => {
         onSubmit={onFinish}
         initialValues={initialValues}
         validationSchema={ResetPasswordSchema}
-        render={({ handleSubmit, values, errors }) => (
-          <FormWrapper>
+      >
+        {({ handleSubmit }) => (
+          <div className={'w-full'}>
             <Form
               // autoComplete="off"
               {...layout}
@@ -139,9 +139,9 @@ const ResetPasswordForm: React.FC<Props> = props => {
                 </Button>
               </Form.Item>
             </Form>
-          </FormWrapper>
+          </div>
         )}
-      />
+      </Formik>
     </ResetPasswordFormWrapper>
   );
 };

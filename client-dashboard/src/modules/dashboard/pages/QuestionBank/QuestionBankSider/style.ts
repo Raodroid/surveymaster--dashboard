@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import { BaseSectionWrapper } from '../../../../common/styles';
-import { screenSize } from '../../../../../enums';
+import styled from 'styled-components/macro';
+import { BaseSectionWrapper } from '@/modules/common';
+import { screenSize } from '@/enums';
 import templateVariable from '../../../../../app/template-variables.module.scss';
 
 export const QuestionBankSiderWrapper = styled(BaseSectionWrapper)`

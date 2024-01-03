@@ -1,8 +1,7 @@
-import React from 'react';
-import { i18nInit } from '../locales/i18n';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { MemoryRouter } from 'react-router-dom';
-import { I18nextProvider } from 'react-i18next';
+import {i18nInit} from '../locales/i18n';
+import {QueryClient, QueryClientProvider} from 'react-query';
+import {MemoryRouter} from 'react-router-dom';
+import {I18nextProvider} from 'react-i18next';
 
 export const JestGeneralProviderHoc = props => {
   const queryClient = new QueryClient();

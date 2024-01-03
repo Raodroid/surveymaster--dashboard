@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { QuestionBankSiderFooterWrapper } from './style';
-import { PlusIcon } from '../../../../../../icons';
+import { PlusIcon } from '@/icons';
 import { useTranslation } from 'react-i18next';
 import { useMatch, useNavigate } from 'react-router-dom';
-import { ROUTE_PATH } from '../../../../../../enums';
-import templateVariable from '../../../../../../app/template-variables.module.scss';
+import { ROUTE_PATH } from '@/enums';
+import templateVariable from '@/app/template-variables.module.scss';
 
 const QuestionBankSiderFooter = () => {
   const { t } = useTranslation();

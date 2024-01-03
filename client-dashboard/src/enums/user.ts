@@ -1,3 +1,11 @@
+export enum EntityEnum {
+  USER = 'user',
+  SURVEY = 'survey',
+  PROJECT = 'project',
+  CATEGORY = 'category',
+  QUESTION = 'question',
+}
+
 export const SCOPE_CONFIG = {
   ACTION: {
     READ: 'READ',
@@ -7,10 +15,10 @@ export const SCOPE_CONFIG = {
     RESTORE: 'RESTORE',
   },
   ENTITY: {
-    USERS: 'users',
-    SURVEYS: 'surveys',
-    PROJECTS: 'projects',
-    CATEGORIES: 'categories',
-    QUESTIONS: 'questions',
+    USER: EntityEnum.USER,
+    SURVEY: EntityEnum.SURVEY,
+    PROJECT: EntityEnum.PROJECT,
+    CATEGORY: EntityEnum.CATEGORY,
+    QUESTION: EntityEnum.QUESTION,
   },
 };

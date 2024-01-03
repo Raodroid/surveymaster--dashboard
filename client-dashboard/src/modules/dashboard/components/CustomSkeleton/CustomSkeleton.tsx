@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC, HTMLAttributes, ReactNode } from 'react';
+import {CSSProperties, FC, HTMLAttributes, ReactNode} from 'react';
 import styled from 'styled-components/macro';
 
 interface ICustomSkeleton {

@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 export function hexToHSL(H) {
   //source https://codesandbox.io/s/2zd4x?file=/src/index.js:179-187
   // Convert hex to RGB first
@@ -53,18 +51,10 @@ export const setSecondaryColor = (hexColorValue: string) => {
     styleVar.setProperty('--secondary-color-hsl', hsl);
   }
 };
-export const minsToHours = (mins: number) => {
-  if (mins < 60) {
-    return `${mins} minutes`;
-  }
-  const minLeft = mins % 60;
-  const hours = (mins - minLeft) / 60;
-  return minLeft === 0 ? `${hours} hours` : `${hours} hours ${minLeft} minutes`;
-};
 
 export const generateRandom = () => {
   const crypto = window.crypto || (window as any).msCrypto;
-  var array = new Uint32Array(1);
+  const array = new Uint32Array(1);
   crypto?.getRandomValues(array);
   const string = '0.' + array[0].toString().slice(1);
   const random = Number(string);

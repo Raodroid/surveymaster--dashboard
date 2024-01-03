@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import useWindowSize from 'modules/common/hoc/useWindowSize';
-import { mobileSize } from '../enums';
+import { mobileSize } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 
 declare global {
@@ -48,12 +48,13 @@ export const errorNotification = (input: IErr) => {
 
 export const getAllScopes = (roleData: Role[]) => {
   const scopes: Record<string, boolean> = {};
-  const scopesArr: Scope[] = [];
+  let scopesArr: Scope[] = [];
+
   roleData.forEach(role => {
-    const scope = role.scope;
-    if (!scopes[scope.id]) {
-      scopesArr.push(scope);
-      scopes[scope.id] = true;
+    const scope = role.scopes;
+    if (!scopes[role?.id] && scope) {
+      scopesArr = [...scopesArr, ...scope];
+      scopes[role?.id] = true;
     }
   });
   return scopesArr;
@@ -63,17 +64,12 @@ export const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
 
-export const convertB64ToBuffer = (dataB64: any) => {
-  const buffer = new Buffer(dataB64.split(',')[1], 'base64');
-  return { buffer, type: 'image/png' };
-};
-
 export const saveBlob = (blob: Blob, filename: string) => {
   if (navigator.msSaveBlob) {
     // IE 10+
     navigator.msSaveBlob(blob, filename);
   } else {
-    var link = document.createElement('a');
+    const link = document.createElement('a');
     if (link.download !== undefined) {
       // feature detection
       // Browsers that support HTML5 download attribute
@@ -89,7 +85,7 @@ export const saveBlob = (blob: Blob, filename: string) => {
 };
 
 export function downloadURI(uri, name) {
-  let link = document.createElement('a');
+  const link = document.createElement('a');
   // If you don't know the name or want to use
   // the webserver default set name = ''
   link.setAttribute('download', name);
@@ -135,7 +131,7 @@ export const useMobile = (mobileWidth: number = mobileSize) => {
 };
 
 export const useToggle = (
-  initValue: boolean = false,
+  initValue = false,
 ): [boolean, () => void, Dispatch<SetStateAction<boolean>>] => {
   const [open, setOpen] = useState(initValue);
   const toggle = useCallback(() => {
@@ -149,7 +145,7 @@ export const useToggle = (
   return [open, toggle, setOpen];
 };
 
-export const useDebounce = (value: string, time: number = 500) => {
+export const useDebounce = (value: string, time = 500) => {
   const [text, setText] = useState<string>('');
 
   useEffect(() => {
@@ -166,7 +162,6 @@ export const useDebounce = (value: string, time: number = 500) => {
 };
 
 export const onError = (error: any) => {
-  console.error(error);
   notification.error({ message: error.response?.data?.message });
 };
 
@@ -183,8 +178,8 @@ export const transformEnumToOption = (
   translatePathKey?: (key) => string,
 ): Array<{ label: string; value: string }> => {
   return Object.keys(T).map(key => ({
-    value: key,
-    label: translatePathKey ? translatePathKey(key) : key,
+    value: T[key],
+    label: translatePathKey ? translatePathKey([T[key]]) : key,
   }));
 };
 
@@ -212,7 +207,7 @@ export const filterColumn = <T>(
         if (typeof dataIndex === 'string') {
           return dataIndex !== key;
         }
-        return !dataIndex.some(i => i === key);
+        return !dataIndex?.some(i => i === key);
       });
     },
     mainColumn,
@@ -230,3 +225,7 @@ export function formatBytes(bytes, decimals = 2) {
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+export const objectKeys = <T extends object>(object: T): Array<keyof T> => {
+  return Object.keys(object) as Array<keyof T>;
+};

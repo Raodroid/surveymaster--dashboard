@@ -1,4 +1,3 @@
-import React from 'react';
 import SignInForm from './sign-in-form/SignInForm';
 import { SignInWrapper } from './style';
 

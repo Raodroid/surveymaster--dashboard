@@ -1,7 +1,6 @@
-import React from 'react';
+import { FC, SVGAttributes } from 'react';
 
-export const Refresh = props => {
-  const { style, className } = props;
+export const Refresh: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   return (
     <svg
       width="14px"
@@ -9,6 +8,7 @@ export const Refresh = props => {
       viewBox="0 0 14 16"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <title>16px - Refresh - Pink@1.5x</title>
       <g

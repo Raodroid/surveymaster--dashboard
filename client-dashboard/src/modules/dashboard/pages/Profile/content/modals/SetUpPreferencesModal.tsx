@@ -56,7 +56,7 @@ const reverseNotificationTypeValue = (
   );
 };
 
-interface SetUpPreferences extends Omit<ProfileModal, 'userId'> {}
+type SetUpPreferences = Omit<ProfileModal, 'userId'>;
 
 function SetUpPreferencesModal(props: SetUpPreferences) {
   const { showModal, setShowModal } = props;
@@ -124,10 +124,8 @@ function SetUpPreferencesModal(props: SetUpPreferences) {
       centered
     >
       <Spin spinning={mutationSetupEmailNoti.isLoading}>
-        <Formik
-          onSubmit={handleSubmit}
-          initialValues={initialValues}
-          render={({ handleSubmit }) => (
+        <Formik onSubmit={handleSubmit} initialValues={initialValues}>
+          {({ handleSubmit }) => (
             <Form layout="vertical" onFinish={handleSubmit} requiredMark={true}>
               <ControlledInput
                 inputType={INPUT_TYPES.CHECKBOX_GROUP}
@@ -151,7 +149,7 @@ function SetUpPreferencesModal(props: SetUpPreferences) {
               </Button>
             </Form>
           )}
-        />
+        </Formik>
       </Spin>
     </SetUpPreferencesModalStyled>
   );

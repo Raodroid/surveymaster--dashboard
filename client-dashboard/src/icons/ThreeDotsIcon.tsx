@@ -1,6 +1,6 @@
-import React from 'react';
+import { FC, SVGAttributes } from 'react';
 
-export const ThreeDotsIcon = props => {
+export const ThreeDotsIcon: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   const { style } = props;
   return (
     <svg

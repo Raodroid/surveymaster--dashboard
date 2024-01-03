@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { MobileMenuWrapper } from './style';
-import { useToggle } from '../../../../../utils';
-import HamburgerAnimation from '../../../../../icons/HamburgerAnimation';
-import { LogoIcon } from '../../../../../icons';
+import { LogoIcon } from '@/icons';
 import MenuList from './MenuList';
+import { HamburgerAnimation } from '@/icons';
+import { useToggle } from '@/utils';
 
 const MobileMenu = () => {
   const [openMobileMenu, toggleOpenMobileMenu] = useToggle();

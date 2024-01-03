@@ -1,13 +1,13 @@
-import React, { memo } from 'react';
-import { Input } from 'antd';
-import { TextAreaProps } from 'antd/lib/input';
-import { OnchangeType } from '../../type';
+import {ChangeEvent, memo} from 'react';
+import {Input} from 'antd';
+import {TextAreaProps} from 'antd/lib/input';
+import {OnchangeType} from '../../type';
 
 export type CustomTextAreaProps = TextAreaProps & OnchangeType;
 const { TextArea: CustomTextArea } = Input;
 
 const TextArea = (props: CustomTextAreaProps) => {
-  const customOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const customOnChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (props.onChange) props.onChange(e.target.value);
   };
   const customProps: { onChange?: typeof customOnChange } = {};

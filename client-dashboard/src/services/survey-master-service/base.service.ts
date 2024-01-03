@@ -5,7 +5,7 @@ import { AuthSelectors, AuthAction } from 'redux/auth';
 import qs from 'qs';
 
 const APIService = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_API_URL,
+  baseURL: import.meta.env.VITE_APP_BACKEND_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -58,7 +58,7 @@ APIService.interceptors.request.use(
     } else {
       delete request.headers.Authorization;
     }
-    request.baseURL = process.env.REACT_APP_BACKEND_API_URL;
+    request.baseURL = import.meta.env.VITE_APP_BACKEND_API_URL;
     request.paramsSerializer = params => qs.stringify(params);
 
     return request;

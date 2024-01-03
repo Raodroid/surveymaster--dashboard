@@ -1,4 +1,7 @@
 import { UserPayload } from '../redux/user';
+import { ProjectTypes } from '@/type/project';
+import { RoleEnum } from '@/enums';
+
 export interface UserUpdatedDto {
   // roles: number[]; Don't allow user update their role by this api
   firstName: string;
@@ -12,6 +15,7 @@ export interface UserUpdatedDto {
 
 export interface IQuestion {
   id?: string;
+  approvalUserId?: string;
   displayId: string;
   latestCompletedVersion: IQuestionVersion;
   latestVersion: IQuestionVersion;
@@ -32,6 +36,7 @@ export interface IQuestion {
 }
 
 export interface IQuestionVersion {
+  approvalUserId?: string;
   id?: string;
   displayId: string;
   questionId: string;
@@ -108,6 +113,7 @@ export enum DateFormat {
 export enum QuestionVersionStatus {
   DRAFT = 'DRAFT',
   COMPLETED = 'COMPLETED',
+  AWAIT_APPROVAL = 'AWAIT_APPROVAL',
 }
 
 export interface IQuestionCategory {
@@ -331,6 +337,7 @@ export interface IQuestionVersionPatchUpdateDto {
 export interface IQuestionVersionPatchUpdateDtoExtendId
   extends IQuestionVersionPatchUpdateDto {
   id: string;
+  approvalUserId: string;
 }
 
 export interface IQuestionVersionPutUpdateDtoExtendId
@@ -347,10 +354,22 @@ export interface IGetParams {
   createdTo?: string;
   isDeleted?: boolean;
   selectAll?: boolean;
+  order?: 'DESC' | 'ASC';
+  roleIds?: RoleEnum[];
 }
 
 export type GetListQuestionDto = IGetParams & {
   types?: QuestionType[];
+  hasLatestCompletedVersion?: boolean;
+  body?: {
+    masterVariableNames?: string[];
+    categoryIds?: string[];
+    subCategoryIds?: string[];
+  };
+};
+
+export type ProjectQueryParam = IGetParams & {
+  types?: ProjectTypes[];
   hasLatestCompletedVersion?: boolean;
   body?: {
     masterVariableNames?: string[];

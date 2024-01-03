@@ -1,9 +1,8 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Layout } from 'antd';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { BodyAppWrapper } from './protected.route';
-import { screenSize } from '../enums';
+import { screenSize } from '@/enums';
 
 export const UnProtectedRoutes = () => {
   return (

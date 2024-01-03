@@ -1,13 +1,13 @@
-import React, { memo } from 'react';
-import { Input } from 'antd';
-import { InputProps } from 'antd/lib/input';
-import { OnchangeType } from '../../type';
+import {ChangeEvent, memo} from 'react';
+import {Input} from 'antd';
+import {InputProps} from 'antd/lib/input';
+import {OnchangeType} from '../../type';
 
 export type CustomInputNumberProps = InputProps & OnchangeType;
 
 const CustomInputNumber = (props: CustomInputNumberProps) => {
   const { onChange } = props;
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const reg = /^-?\d*(\.\d*)?$/;
     if (
