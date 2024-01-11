@@ -13,7 +13,7 @@ export const useGetQuestionByQuestionId = (
     () => {
       return QuestionBankService.getQuestionById({ id: questionId });
     },
-    { onError, enabled: !!questionId },
+    { onError, enabled: !!questionId, refetchOnWindowFocus: false },
   );
   const questionData = useMemo<IQuestion>(() => _get(data, 'data', {}), [data]);
 
@@ -30,6 +30,7 @@ export const useGetAllCategories = () => {
       }),
     {
       onError,
+      refetchOnWindowFocus: false,
     },
   );
 

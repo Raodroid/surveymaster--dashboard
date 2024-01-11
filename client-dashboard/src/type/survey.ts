@@ -44,9 +44,11 @@ export enum LogicOperator {
 export interface SubEmbeddedDataDto {
   field: string;
   value: string;
+  id?: string;
 }
 
 export interface SubBranchLogicDto {
+  id?: string;
   sort: number;
   conjunction: Conjunction;
   logicType: BranchLogicType;
@@ -163,6 +165,7 @@ export interface ISurveyQuestionDto {
   sort?: number;
   remarks?: IQuestionRemark[];
   parameter?: string;
+  id?: string;
 }
 
 export interface ISurveyVersionBaseDto {
