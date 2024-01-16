@@ -62,6 +62,7 @@ const EditSurveyHeader = () => {
     params?.projectId,
     params?.surveyId,
     resetForm,
+    setSurveyFormContext,
     survey.currentSurveyVersion?.displayId,
     t,
   ]);

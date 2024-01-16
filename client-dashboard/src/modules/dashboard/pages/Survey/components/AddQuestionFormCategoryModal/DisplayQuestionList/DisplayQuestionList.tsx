@@ -1,11 +1,18 @@
-import {Dispatch, FC, SetStateAction, useCallback, useMemo, useState,} from 'react';
-import {IOptionItem, IQuestionVersion} from '@/type';
-import {Input} from 'antd';
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
+import { IOptionItem, IQuestionCategory, IQuestionVersion } from '@/type';
+import { Input } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
-import {DisplayQuestionListWrapper} from './style';
-import {useTranslation} from 'react-i18next';
-import {useDebounce} from '@/utils';
-import {questionListState} from '..';
+import { DisplayQuestionListWrapper } from './style';
+import { useTranslation } from 'react-i18next';
+import { useDebounce } from '@/utils';
+import { questionListState } from '../AddQuestionFormCategoryModal';
 
 interface IDisplayQuestionList {
   setQuestionListState: Dispatch<SetStateAction<questionListState>>;
@@ -38,10 +45,19 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
   const searchDebounce = useDebounce(searchQuestionTxt.toLowerCase());
 
   const allOptions = useMemo<
-    Array<IOptionItem & { questionVersion: IQuestionVersion }>
+    Array<
+      IOptionItem & {
+        questionVersion: IQuestionVersion;
+        masterCategory?: IQuestionCategory;
+      }
+    >
   >(() => {
-    const result: Array<IOptionItem & { questionVersion: IQuestionVersion }> =
-      [];
+    const result: Array<
+      IOptionItem & {
+        questionVersion: IQuestionVersion;
+        masterCategory?: IQuestionCategory;
+      }
+    > = [];
     questionListState.questions.forEach(q => {
       result.push({
         label: (
@@ -69,6 +85,7 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
         ),
         value: q.latestCompletedVersion.id as string,
         questionVersion: q.latestCompletedVersion,
+        masterCategory: q.masterCategory,
       });
     });
     return result;
@@ -79,7 +96,11 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
     const displayOptions = allOptions.reduce(
       (result: IOptionItem[], option) => {
         if (
-          option.questionVersion.title.toLowerCase().includes(searchDebounce)
+          option.questionVersion.title.toLowerCase().includes(searchDebounce) ||
+          option.masterCategory?.name.toLowerCase().includes(searchDebounce) ||
+          t(`questionType.${option.questionVersion?.type}`)
+            .toLowerCase()
+            .includes(searchDebounce)
         ) {
           displayVersionIds.push(option.value);
           return [...result, option];
@@ -90,10 +111,10 @@ export const DisplayQuestionList: FC<IDisplayQuestionList> = props => {
     );
     setQuestionListState(s => ({ ...s, displayVersionIds }));
     return displayOptions;
-  }, [allOptions, searchDebounce, setQuestionListState]);
+  }, [allOptions, searchDebounce, setQuestionListState, t]);
 
   const onChange = useCallback(
-    newSelectedValues => {
+    (newSelectedValues: string[]) => {
       setQuestionListState(s => ({
         ...s,
         selectedVersionIds: s.selectedVersionIds.reduce(

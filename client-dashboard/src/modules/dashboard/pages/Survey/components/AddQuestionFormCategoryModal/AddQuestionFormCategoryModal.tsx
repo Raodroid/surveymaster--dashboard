@@ -40,7 +40,10 @@ const AddQuestionFormCategoryModal: FC<
   const { setSurveyFormContext } = useSurveyFormContext();
 
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
-  const newSelectedCategoryIds = useRef<string[]>([]);
+  const newSelectedCategoryIds = useRef<{
+    keys: string[];
+    action: null | 'checked' | 'unChecked';
+  }>({ keys: [], action: null });
 
   const [questionListState, setQuestionListState] = useState<questionListState>(
     defaultQuestionListState,
@@ -78,15 +81,17 @@ const AddQuestionFormCategoryModal: FC<
       const { key, children } = node;
 
       if (checked) {
+        newSelectedCategoryIds.current.action = 'checked';
         setSelectedCategoryIds(s => [...new Set([...s, ...checkedKeys])]);
-        newSelectedCategoryIds.current = [key];
+        newSelectedCategoryIds.current.keys = [key];
 
         if (children) {
           children.forEach(child => {
-            newSelectedCategoryIds.current.push(child.key);
+            newSelectedCategoryIds.current.keys.push(child.key);
           });
         }
       } else {
+        newSelectedCategoryIds.current.action = 'unChecked';
         const keyEntities: Record<
           string,
           {
@@ -106,9 +111,10 @@ const AddQuestionFormCategoryModal: FC<
         }, initValue);
 
         setSelectedCategoryIds(s => s.filter(i => !allFilterKey.includes(i)));
-        newSelectedCategoryIds.current = newSelectedCategoryIds.current.filter(
-          i => !allFilterKey.includes(i),
-        );
+        newSelectedCategoryIds.current.keys =
+          newSelectedCategoryIds.current.keys.filter(
+            i => !allFilterKey.includes(i),
+          );
       }
       if (!checkedKeys.length)
         setQuestionListState(s => ({ ...s, selectedVersionIds: [] }));
@@ -162,10 +168,13 @@ const AddQuestionFormCategoryModal: FC<
 
         const newQuestionIds: string[] = [];
 
+        const allQuestionIdFetched: string[] = [];
+
         questions.forEach(q => {
+          allQuestionIdFetched.push(q?.latestCompletedVersion.id as string);
           if (
             q?.masterSubCategory?.id &&
-            newSelectedCategoryIds.current.includes(q.masterSubCategory.id)
+            newSelectedCategoryIds.current.keys.includes(q.masterSubCategory.id)
           ) {
             newQuestionIds.push(q?.latestCompletedVersion.id as string);
           }
@@ -174,7 +183,19 @@ const AddQuestionFormCategoryModal: FC<
         setQuestionListState(s => ({
           ...s,
           questions,
-          selectedVersionIds: [...s.selectedVersionIds, ...newQuestionIds],
+          selectedVersionIds:
+            newSelectedCategoryIds.current.action === 'checked'
+              ? [...s.selectedVersionIds, ...newQuestionIds]
+              : [
+                  ...new Set(
+                    s.selectedVersionIds.reduce((res, key) => {
+                      if (allQuestionIdFetched.includes(key)) {
+                        res.push(key);
+                      }
+                      return res;
+                    }, newQuestionIds),
+                  ),
+                ],
         }));
       },
       onError,
