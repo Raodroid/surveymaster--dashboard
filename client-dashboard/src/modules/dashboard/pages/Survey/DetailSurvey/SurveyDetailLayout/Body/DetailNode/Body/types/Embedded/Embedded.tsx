@@ -1,14 +1,15 @@
-import {FC, Fragment} from 'react';
-import {useTranslation} from 'react-i18next';
-import {INPUT_TYPES} from '@input/type';
-import {FieldArray, useField} from 'formik';
-import {SubEmbeddedDataDto} from '@/type';
-import {Button, Divider, Empty} from 'antd';
-import {useCheckSurveyFormMode} from '@pages/Survey/SurveyForm/util';
-import {PlusOutLinedIcon, TrashOutlined} from '@/icons';
+import { FC, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
+import { INPUT_TYPES } from '@input/type';
+import { FieldArray, useField } from 'formik';
+import { SubEmbeddedDataDto } from '@/type';
+import { Button, Divider, Empty } from 'antd';
+import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
+import { PlusOutLinedIcon, TrashOutlined } from '@/icons';
 import SimpleBar from 'simplebar-react';
-import {QuestionBlockProps} from '../type';
-import {ControlledInputHasTopLabel} from '@/modules/common/input';
+import { QuestionBlockProps } from '../type';
+import { ControlledInputHasTopLabel } from '@/modules/common/input';
+import EmptyEmbedded from '@pages/Survey/components/Embedded/EmptyEmbedded';
 
 const defaultListEmbeddedData: SubEmbeddedDataDto = {
   field: '',
@@ -16,12 +17,24 @@ const defaultListEmbeddedData: SubEmbeddedDataDto = {
 };
 
 const Embedded: FC<QuestionBlockProps> = props => {
-  const { t } = useTranslation();
   const { fieldName: parentFieldName } = props;
   const fieldName = `${parentFieldName}.listEmbeddedData`;
+  const [{ value }] = useField<SubEmbeddedDataDto[]>(fieldName);
 
   const { isViewMode } = useCheckSurveyFormMode();
+  return value?.length ? (
+    <DisplayEmbedded fieldName={fieldName} />
+  ) : isViewMode ? (
+    <Empty />
+  ) : (
+    <EmptyEmbedded fieldName={fieldName} />
+  );
+};
 
+const DisplayEmbedded: FC<QuestionBlockProps> = props => {
+  const { t } = useTranslation();
+  const { fieldName } = props;
+  const { isViewMode } = useCheckSurveyFormMode();
   const [{ value: listEmbeddedData }] =
     useField<SubEmbeddedDataDto[]>(fieldName);
 
