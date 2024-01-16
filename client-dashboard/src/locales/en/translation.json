@@ -46,7 +46,6 @@
     "requestApproveCompleteQuestion": "Request Approve Complete Question",
     "addNewElement": "Add New Element",
     "deleteDraft": "Delete Draft",
-    "deleteVersion": "Delete Version",
     "editVersion": "Edit Version",
     "duplicateAndStartNewVersion": "Duplicate And Start New Version",
     "surveyInfo": "Survey Info",
@@ -131,6 +130,7 @@
     "browseLocalFile": "Browse Local File",
     "dragYourCSV": "Drag your CSV file here to start uploading.",
     "deleteThisVersion": "Delete this version",
+    "deleteVersion": "Delete version",
     "externalSurveyTitle": "External Survey Title",
     "external": "External",
     "surveyList": "Survey List",
@@ -553,6 +553,7 @@
     }
   },
   "direction": {
+    "requestApproveDelete": "Request Delete Version",
     "requestCompletedVersion": "Request Complete Version",
     "removeConditionRow": "Remove current condition row",
     "warningLostData": "Your changes could not be saved when you switch version of survey! <br/> Are you sure to leave the current page?",

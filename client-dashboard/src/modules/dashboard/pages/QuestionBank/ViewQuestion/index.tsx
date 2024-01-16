@@ -32,6 +32,7 @@ import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
 import { RequestApproveCompleteQuestionModal } from '../components';
 import { GeneralSectionHeader } from '@components/index';
+import RequestApproveDeleteQuestionVersionModal from '@pages/QuestionBank/components/RequestApproveDeleteQuestionVersionModal/RequestApproveDeleteQuestionVersionModal';
 
 const formSchema = Yup.object();
 
@@ -68,6 +69,9 @@ const ViewQuestion = () => {
 
   const isDraftVersion =
     selectedVerQuestionData?.status === QuestionVersionStatus.DRAFT;
+
+  const isCompletedVersion =
+    selectedVerQuestionData?.status === QuestionVersionStatus.COMPLETED;
 
   const initValue = useMemo<IViewQuestionFormValue>(
     () => ({
@@ -176,6 +180,7 @@ const ViewQuestion = () => {
   }, [deleteQuestionVersionMutation, selectedVerQuestionData?.id]);
 
   const [openRequest, toggleOpenRequest] = useToggle();
+  const [openRequestDelete, toggleOpenRequestDelete] = useToggle();
 
   const onFinish = useCallback(values => {}, []);
 
@@ -192,16 +197,16 @@ const ViewQuestion = () => {
           title={'View Question'}
           endingComponent={
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {canDelete && (
+              {canDelete && !isCompletedVersion && (
                 <Button
                   type={'primary'}
                   onClick={handleDeleteQuestionVersion}
                   loading={deleteQuestionVersionMutation.isLoading}
                 >
-                  {t('common.deleteThisVersion')}
+                  {t('common.deleteVersion')}
                 </Button>
               )}
-              {canUpdate && selectedVerQuestionData && isDraftVersion && (
+              {canUpdate && selectedVerQuestionData && !isCompletedVersion && (
                 <Button
                   type={'primary'}
                   className={'info-btn'}
@@ -209,6 +214,16 @@ const ViewQuestion = () => {
                   loading={updateQuestionVersionStatus.isLoading}
                 >
                   {t('common.requestApproveCompleteQuestion')}
+                </Button>
+              )}
+              {canUpdate && selectedVerQuestionData && isCompletedVersion && (
+                <Button
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={toggleOpenRequestDelete}
+                  loading={updateQuestionVersionStatus.isLoading}
+                >
+                  {t('direction.requestApproveDelete')}
                 </Button>
               )}
               {canUpdate &&
@@ -355,6 +370,11 @@ const ViewQuestion = () => {
         <RequestApproveCompleteQuestionModal
           toggleOpen={toggleOpenRequest}
           open={openRequest}
+          versionId={selectedVerQuestionData?.id}
+        />
+        <RequestApproveDeleteQuestionVersionModal
+          toggleOpen={toggleOpenRequestDelete}
+          open={openRequestDelete}
           versionId={selectedVerQuestionData?.id}
         />
       </ViewQuestionWrapper>

@@ -377,3 +377,8 @@ export type ProjectQueryParam = IGetParams & {
     subCategoryIds?: string[];
   };
 };
+
+export interface IUpdateQuestionVersionStatusDto {
+  status: QuestionVersionStatus;
+  approvalUserId: string;
+}
