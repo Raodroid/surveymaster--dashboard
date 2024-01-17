@@ -6,6 +6,7 @@ import {
   IPaginationResponse,
   IPostSurveyVersionBodyDto,
   IPutSurveyVersionBodyDtoExtendId,
+  IRequestDeleteRecordDto,
   ISurvey,
   ISurveyRemark,
   ISurveyVersion,
@@ -107,6 +108,27 @@ export default class SurveyService {
     const { id } = payload;
     return APIService.delete(`/${EntityEnum.SURVEY}/${id}`);
   }
+
+  static requestDeleteSurvey(
+    payload: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = payload;
+    return APIService.put(
+      `/${EntityEnum.SURVEY}/${id}/survey-deletion-process`,
+      rest,
+    );
+  }
+
+  static requestDeleteSurveyVersion(
+    payload: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = payload;
+    return APIService.put(
+      `/${EntityEnum.SURVEY}/version/${id}/survey-deletion-process`,
+      rest,
+    );
+  }
+
   static restoreSurveyById(payload: { id: string }): Promise<AxiosResponse> {
     const { id } = payload;
     return APIService.post(`/${EntityEnum.SURVEY}/${id}/restore`);

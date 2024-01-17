@@ -4,13 +4,13 @@ import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATH, SCOPE_CONFIG } from 'enums';
 import { useGetQuestionByQuestionId } from '../util';
-import { Button, Form, notification, Spin } from 'antd';
+import { Button, Form, Modal, notification, Spin } from 'antd';
 import QuestionCategoryForm from '../AddQuestion/QuestionCategoryForm';
 import { useTranslation } from 'react-i18next';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useParseQueryString } from 'hooks/useParseQueryString';
-import { PenFilled } from 'icons';
+import { CheckIcon, CloseIcon, PenFilled } from 'icons';
 import templateVariable from 'app/template-variables.module.scss';
 import qs from 'qs';
 import DisplayAnswerList from '../AddQuestion/DisplayAnswerList';
@@ -19,6 +19,7 @@ import {
   BaseQuestionVersionDto,
   IBaseQuestionOptionsVersionDto,
   IQuestionVersion,
+  IRequestDeleteRecordDto,
   QuestionType,
   QuestionVersionStatus,
 } from 'type';
@@ -30,9 +31,13 @@ import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
 import AddQuestionDetailForm from '../AddQuestion/QuestionDetailForm';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
-import { RequestApproveCompleteQuestionModal } from '../components';
+import {
+  RequestApproveCompleteQuestionModal,
+  RequestDeleteQuestionVersionModal,
+} from '../components';
 import { GeneralSectionHeader } from '@components/index';
-import RequestApproveDeleteQuestionVersionModal from '@pages/QuestionBank/components/RequestApproveDeleteQuestionVersionModal/RequestApproveDeleteQuestionVersionModal';
+
+const { confirm } = Modal;
 
 const formSchema = Yup.object();
 
@@ -51,6 +56,8 @@ const ViewQuestion = () => {
   const queryString = useParseQueryString<{ version?: string }>();
   const params = useParams<{ questionId?: string }>();
   const profile = useSelector(AuthSelectors.getProfile);
+  const [openRequest, toggleOpenRequest] = useToggle();
+  const [openRequestDelete, toggleOpenRequestDelete] = useToggle();
 
   const { canDelete, canUpdate } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTION,
@@ -124,6 +131,22 @@ const ViewQuestion = () => {
     },
   );
 
+  const requestDeleteQuestionVersion = useMutation(
+    (data: IRequestDeleteRecordDto) => {
+      return QuestionBankService.requestDeleteQuestionVersion({
+        ...data,
+      });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getQuestionList');
+        await queryClient.invalidateQueries('getQuestionQuery');
+        notification.success({ message: t('common.updateSuccess') });
+      },
+      onError,
+    },
+  );
+
   const handleEdit = useCallback(() => {
     const newQueryString = qs.stringify({
       ...queryString,
@@ -174,13 +197,44 @@ const ViewQuestion = () => {
   const handleDeleteQuestionVersion = useCallback(async () => {
     if (!selectedVerQuestionData?.id) return;
 
-    await deleteQuestionVersionMutation.mutateAsync({
-      id: selectedVerQuestionData?.id as string,
+    confirm({
+      icon: null,
+      content: t('common.confirmDeleteQuestionVersion'),
+      onOk() {
+        deleteQuestionVersionMutation.mutateAsync({
+          id: selectedVerQuestionData?.id as string,
+        });
+      },
     });
-  }, [deleteQuestionVersionMutation, selectedVerQuestionData?.id]);
+  }, [deleteQuestionVersionMutation, selectedVerQuestionData?.id, t]);
 
-  const [openRequest, toggleOpenRequest] = useToggle();
-  const [openRequestDelete, toggleOpenRequestDelete] = useToggle();
+  const handleResponseDeleteRequest = useCallback(
+    async (type: 'approve' | 'deny') => {
+      if (!selectedVerQuestionData?.id) return;
+
+      if (type === 'approve') {
+        await handleDeleteQuestionVersion();
+        return;
+      }
+
+      confirm({
+        icon: null,
+        content: t('common.confirmDenyDeleteRequestQuestionVersion'),
+        onOk() {
+          requestDeleteQuestionVersion.mutateAsync({
+            isAwaitingDeletion: false,
+            id: selectedVerQuestionData?.id as string,
+          });
+        },
+      });
+    },
+    [
+      selectedVerQuestionData?.id,
+      t,
+      handleDeleteQuestionVersion,
+      requestDeleteQuestionVersion,
+    ],
+  );
 
   const onFinish = useCallback(values => {}, []);
 
@@ -206,26 +260,33 @@ const ViewQuestion = () => {
                   {t('common.deleteVersion')}
                 </Button>
               )}
-              {canUpdate && selectedVerQuestionData && !isCompletedVersion && (
-                <Button
-                  type={'primary'}
-                  className={'info-btn'}
-                  onClick={toggleOpenRequest}
-                  loading={updateQuestionVersionStatus.isLoading}
-                >
-                  {t('common.requestApproveCompleteQuestion')}
-                </Button>
-              )}
-              {canUpdate && selectedVerQuestionData && isCompletedVersion && (
-                <Button
-                  type={'primary'}
-                  className={'info-btn'}
-                  onClick={toggleOpenRequestDelete}
-                  loading={updateQuestionVersionStatus.isLoading}
-                >
-                  {t('direction.requestApproveDelete')}
-                </Button>
-              )}
+              {canUpdate &&
+                selectedVerQuestionData &&
+                selectedVerQuestionData.status ===
+                  QuestionVersionStatus.DRAFT && (
+                  <Button
+                    type={'primary'}
+                    className={'info-btn'}
+                    onClick={toggleOpenRequest}
+                    loading={updateQuestionVersionStatus.isLoading}
+                  >
+                    {t('common.requestCompleteVersion')}
+                  </Button>
+                )}
+              {canUpdate &&
+                versions?.length > 1 &&
+                selectedVerQuestionData &&
+                !selectedVerQuestionData.isAwaitingDeletion &&
+                isCompletedVersion && (
+                  <Button
+                    type={'primary'}
+                    className={'info-btn'}
+                    onClick={toggleOpenRequestDelete}
+                    loading={updateQuestionVersionStatus.isLoading}
+                  >
+                    {t('direction.requestApproveDelete')}
+                  </Button>
+                )}
               {canUpdate &&
                 selectedVerQuestionData &&
                 selectedVerQuestionData.status ===
@@ -239,7 +300,7 @@ const ViewQuestion = () => {
                     }}
                     loading={updateQuestionVersionStatus.isLoading}
                   >
-                    {t('common.approveRequest')}
+                    {t('common.approveCompleteRequest')}
                   </Button>
                 )}
               {canUpdate &&
@@ -256,7 +317,43 @@ const ViewQuestion = () => {
                     }}
                     loading={updateQuestionVersionStatus.isLoading}
                   >
-                    {t('common.denyRequest')}
+                    {t('common.denyCompleteRequest')}
+                  </Button>
+                )}
+
+              {canUpdate &&
+                selectedVerQuestionData &&
+                selectedVerQuestionData.status ===
+                  QuestionVersionStatus.COMPLETED &&
+                selectedVerQuestionData.isAwaitingDeletion &&
+                profile?.id === selectedVerQuestionData?.deletedBy && (
+                  <Button
+                    icon={<CheckIcon className={'w-[18px] '} />}
+                    type={'primary'}
+                    className={'info-btn'}
+                    onClick={() => {
+                      handleResponseDeleteRequest('approve');
+                    }}
+                    loading={updateQuestionVersionStatus.isLoading}
+                  >
+                    {t('common.approveDeleteRequest')}
+                  </Button>
+                )}
+              {canUpdate &&
+                selectedVerQuestionData &&
+                selectedVerQuestionData.isAwaitingDeletion &&
+                (profile?.id === selectedVerQuestionData?.deletedBy ||
+                  profile?.id === selectedVerQuestionData?.deletedBy) && (
+                  <Button
+                    icon={<CloseIcon />}
+                    type={'primary'}
+                    className={'info-btn'}
+                    onClick={() => {
+                      handleResponseDeleteRequest('deny');
+                    }}
+                    loading={updateQuestionVersionStatus.isLoading}
+                  >
+                    {t('common.denyDeleteRequest')}
                   </Button>
                 )}
 
@@ -367,16 +464,20 @@ const ViewQuestion = () => {
           </Formik>
         )}
 
-        <RequestApproveCompleteQuestionModal
-          toggleOpen={toggleOpenRequest}
-          open={openRequest}
-          versionId={selectedVerQuestionData?.id}
-        />
-        <RequestApproveDeleteQuestionVersionModal
-          toggleOpen={toggleOpenRequestDelete}
-          open={openRequestDelete}
-          versionId={selectedVerQuestionData?.id}
-        />
+        {canUpdate && (
+          <RequestApproveCompleteQuestionModal
+            toggleOpen={toggleOpenRequest}
+            open={openRequest}
+            versionId={selectedVerQuestionData?.id}
+          />
+        )}
+        {canUpdate && (
+          <RequestDeleteQuestionVersionModal
+            toggleOpen={toggleOpenRequestDelete}
+            open={openRequestDelete}
+            versionId={selectedVerQuestionData?.id}
+          />
+        )}
       </ViewQuestionWrapper>
     </Spin>
   );

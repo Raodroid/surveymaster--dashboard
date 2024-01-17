@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ROUTE_PATH , SCOPE_CONFIG} from '@/enums';
+import { ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
 import BaseMenu from '../BaseMenu';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { useCheckScopeEntityDefault } from '@/modules/common';
@@ -42,6 +42,7 @@ const MainMenu = () => {
     result.push(mainMenuItem[2]);
     return result;
   }, [canReadProject, canReadQuestion]);
+  console.log(menuItems);
 
   return <BaseMenu items={menuItems} className="flex-1" />;
 };

@@ -7,6 +7,7 @@ import {
   IQuestionVersionPatchUpdateDtoExtendId,
   IQuestionVersionPostNewDto,
   IQuestionVersionPutUpdateDtoExtendId,
+  IRequestDeleteRecordDto,
   QuestionVersionStatus,
 } from '@/type';
 import { EntityEnum } from '@/enums';
@@ -53,6 +54,26 @@ export default class QuestionBankService {
   }): Promise<AxiosResponse> {
     const { id, ...rest } = props;
     return APIService.put(`/${EntityEnum.QUESTION}/version/${id}/status`, rest);
+  }
+
+  static requestDeleteQuestionVersion(
+    props: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = props;
+    return APIService.put(
+      `/${EntityEnum.QUESTION}/version/${id}/question-deletion-process`,
+      rest,
+    );
+  }
+
+  static requestDeleteQuestion(
+    props: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = props;
+    return APIService.put(
+      `/${EntityEnum.QUESTION}/${id}/question-deletion-process`,
+      rest,
+    );
   }
 
   static createQuestionVersion(

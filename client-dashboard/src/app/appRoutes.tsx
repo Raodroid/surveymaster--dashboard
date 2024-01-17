@@ -18,7 +18,7 @@ const QuestionBank = lazy(
   () => import('modules/dashboard/pages/QuestionBank/QuestionBank'),
 );
 const ViewQuestion = lazy(
-  () => import('modules/dashboard/pages/QuestionBank/ViewQuestion'),
+  () => import('@pages/QuestionBank/ViewQuestion/ViewQuestion'),
 );
 const EditQuestion = lazy(
   () => import('modules/dashboard/pages/QuestionBank/EditQuestion'),

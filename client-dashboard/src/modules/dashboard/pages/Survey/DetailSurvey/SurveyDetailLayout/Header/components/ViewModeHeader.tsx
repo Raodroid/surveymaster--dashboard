@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,
-  RequestApproveCompleteSurveyModal,
+  RequestCompleteSurveyModal,
   SurveyRenameModal,
   SurveyVersionRemarkButton,
   useSurveyFormContext,
@@ -10,6 +10,7 @@ import {
 import { Modal, notification, Spin } from 'antd';
 import {
   IGetParams,
+  IRequestDeleteRecordDto,
   ISurveyVersion,
   IUpdateSurveyVersionStatusDto,
   SubSurveyFlowElementDto,
@@ -33,6 +34,7 @@ import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
 import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
+import RequestDeleteSurveyVersionModal from '@pages/Survey/components/RequestDeleteSurveyVersionModal/RequestDeleteSurveyVersionModal';
 
 const { confirm } = Modal;
 
@@ -92,7 +94,12 @@ const RightMenu = () => {
   const navigate = useNavigate();
   const { canUpdate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
   const [openRenameModal, toggleRenameModal] = useToggle();
-  const [openApproveSurveyModal, toggleOpenApproveSurveyModal] = useToggle();
+  const [
+    openRequestCompleteVersionModal,
+    toggleOpenRequestCompleteVersionModal,
+  ] = useToggle();
+  const [openRequestDeleteVersionModal, toggleOpenRequestDeleteVersionModal] =
+    useToggle();
   const profile = useSelector(AuthSelectors.getProfile);
 
   const deleteMutation = useMutation(
@@ -113,6 +120,21 @@ const RightMenu = () => {
       onError,
     },
   );
+  const requestDeleteSurvey = useMutation(
+    (data: IRequestDeleteRecordDto) => {
+      return SurveyService.requestDeleteSurveyVersion({
+        ...data,
+      });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getSurveyById');
+        notification.success({ message: t('common.updateSuccess') });
+      },
+      onError,
+    },
+  );
+
   const changeSurveyVersionStatusMutation = useMutation(
     (data: IUpdateSurveyVersionStatusDto & { surveyVersionId: string }) => {
       return SurveyService.updateStatusSurveyVersion(data);
@@ -164,7 +186,7 @@ const RightMenu = () => {
     },
     [toggleExporting],
   );
-  const handleAcceptDenyRequest = useCallback(
+  const handleResponseCompleteRequest = useCallback(
     (type: 'APPROVE' | 'DENY', record: ISurveyVersion) => {
       confirm({
         icon: null,
@@ -182,6 +204,32 @@ const RightMenu = () => {
       });
     },
     [changeSurveyVersionStatusMutation, profile?.id, t],
+  );
+
+  const handleResponseDeleteRequest = useCallback(
+    (type: 'APPROVE' | 'DENY', record: ISurveyVersion) => {
+      if (type === 'APPROVE') {
+        confirm({
+          icon: null,
+          content: t('common.confirmDeleteSurveyVersion'),
+          onOk() {
+            deleteMutation.mutateAsync({ id: record.id as string });
+          },
+        });
+        return;
+      }
+      confirm({
+        icon: null,
+        content: t('common.confirmDenyDeleteSurveyVersion'),
+        onOk() {
+          requestDeleteSurvey.mutateAsync({
+            id: record.id as string,
+            isAwaitingDeletion: false,
+          });
+        },
+      });
+    },
+    [deleteMutation, requestDeleteSurvey, t],
   );
 
   const handleCLone = useCallback(
@@ -239,15 +287,15 @@ const RightMenu = () => {
       },
 
       {
-        key: ACTION.APPROVE_REQUEST,
+        key: ACTION.APPROVE_COMPLETE_REQUEST,
         action: record => {
-          handleAcceptDenyRequest('APPROVE', record);
+          handleResponseCompleteRequest('APPROVE', record);
         },
       },
       {
-        key: ACTION.DENY_REQUEST,
+        key: ACTION.DENY_COMPLETE_REQUEST,
         action: record => {
-          handleAcceptDenyRequest('DENY', record);
+          handleResponseCompleteRequest('DENY', record);
         },
       },
       {
@@ -268,18 +316,36 @@ const RightMenu = () => {
       },
       {
         key: ACTION.REQUEST_COMPLETE,
-        action: toggleOpenApproveSurveyModal,
+        action: toggleOpenRequestCompleteVersionModal,
+      },
+      {
+        key: ACTION.REQUEST_DELETE,
+        action: toggleOpenRequestDeleteVersionModal,
+      },
+      {
+        key: ACTION.APPROVE_DELETE_REQUEST,
+        action: record => {
+          handleResponseDeleteRequest('APPROVE', record);
+        },
+      },
+      {
+        key: ACTION.DENY_DELETE_REQUEST,
+        action: record => {
+          handleResponseDeleteRequest('DENY', record);
+        },
       },
     ],
     [
       handleDelete,
       handleExport,
-      handleAcceptDenyRequest,
       handleCLone,
       handleShowChangeLog,
       handleEdit,
       toggleRenameModal,
-      toggleOpenApproveSurveyModal,
+      toggleOpenRequestCompleteVersionModal,
+      toggleOpenRequestDeleteVersionModal,
+      handleResponseCompleteRequest,
+      handleResponseDeleteRequest,
     ],
   );
 
@@ -294,12 +360,14 @@ const RightMenu = () => {
           spinning={
             isExporting ||
             deleteMutation.isLoading ||
-            changeSurveyVersionStatusMutation.isLoading
+            changeSurveyVersionStatusMutation.isLoading ||
+            requestDeleteSurvey.isLoading
           }
         >
           <ActionThreeDropDown
             record={survey.currentSurveyVersion}
             handleSelect={handleSelect}
+            versionCount={survey.surveyData?.versions?.length || 0}
           />
         </Spin>
       )}
@@ -310,9 +378,16 @@ const RightMenu = () => {
         versionId={selectedRecord?.id}
       />
       {canUpdate && (
-        <RequestApproveCompleteSurveyModal
-          open={openApproveSurveyModal}
-          toggleOpen={toggleOpenApproveSurveyModal}
+        <RequestCompleteSurveyModal
+          open={openRequestCompleteVersionModal}
+          toggleOpen={toggleOpenRequestCompleteVersionModal}
+          versionId={selectedRecord?.id}
+        />
+      )}
+      {canUpdate && (
+        <RequestDeleteSurveyVersionModal
+          open={openRequestDeleteVersionModal}
+          toggleOpen={toggleOpenRequestDeleteVersionModal}
           versionId={selectedRecord?.id}
         />
       )}

@@ -3,7 +3,7 @@ import {
   baseAxiosResponse,
   JestGeneralProviderHoc,
 } from '../../../../../../get-mock-data-jest-test';
-import ViewQuestion from '../index';
+import ViewQuestion from '../ViewQuestion';
 import { QuestionBankService } from '../../../../../../services';
 import {
   IQuestion,

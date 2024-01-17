@@ -110,6 +110,7 @@ export interface ISurveyVersion {
   id?: string;
   displayId: string;
   approvalUserId?: string;
+  isAwaitingDeletion?: boolean;
 
   name: string;
   remarks?: ISurveyRemark[];
@@ -119,9 +120,9 @@ export interface ISurveyVersion {
   survey?: ISurvey;
   surveyId?: string;
 
-  createdBy?: UserPayload;
+  createdBy?: string;
   updatedBy?: UserPayload;
-  deletedBy?: UserPayload;
+  deletedBy?: string;
   createdAt?: Date | string;
   updatedAt?: Date | string | null;
   deletedAt?: Date | string | null;
@@ -146,10 +147,11 @@ export interface ISurvey {
   latestCompletedVersion?: ISurveyVersion;
   versions?: ISurveyVersion[];
   project?: IProject;
+  isAwaitingDeletion?: boolean;
 
-  createdBy?: UserPayload;
+  createdBy?: string;
   updatedBy?: UserPayload;
-  deletedBy?: UserPayload;
+  deletedBy?: string;
   createdAt: Date | string;
   updatedAt?: Date | string | null;
   deletedAt?: Date | string | null;

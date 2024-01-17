@@ -13,6 +13,7 @@ import { useCheckScopeEntityDefault } from '@/modules/common';
 import { SCOPE_CONFIG } from '@/enums';
 import {
   CheckIcon,
+  Clock,
   CloseIcon,
   DownloadIcon,
   DuplicateIcon,
@@ -26,20 +27,23 @@ import { AuthSelectors } from '@/redux/auth';
 
 const ACTION = {
   EDIT: 'EDIT',
-  APPROVE_REQUEST: 'APPROVE_REQUEST',
-  DENY_REQUEST: 'DENY_REQUEST',
+  APPROVE_COMPLETE_REQUEST: 'APPROVE_COMPLETE_REQUEST',
+  DENY_COMPLETE_REQUEST: 'DENY_COMPLETE_REQUEST',
   RENAME: 'RENAME',
   EXPORT: 'EXPORT',
   DELETE: 'DELETE',
   CLONE: 'CLONE',
   SHOW_CHANGE_LOG: 'SHOW_CHANGE_LOG',
   REQUEST_COMPLETE: 'REQUEST_COMPLETE',
+  REQUEST_DELETE: 'REQUEST_DELETE',
+  APPROVE_DELETE_REQUEST: 'APPROVE_DELETE_REQUEST',
+  DENY_DELETE_REQUEST: 'DENY_DELETE_REQUEST',
 } as const;
 
 const ActionThreeDropDown: FC<
-  ActionThreeDropDownType<ISurveyVersion>
+  ActionThreeDropDownType<ISurveyVersion> & { versionCount: number }
 > = props => {
-  const { record, handleSelect } = props;
+  const { record, handleSelect, versionCount } = props;
   const { t } = useTranslation();
   const params = useParams<{ surveyId?: string; projectId?: string }>();
   const profile = useSelector(AuthSelectors.getProfile);
@@ -47,10 +51,11 @@ const ActionThreeDropDown: FC<
   const { project } = useGetProjectByIdQuery(params?.projectId);
 
   const isDraftVersion = record?.status === SurveyVersionStatus.DRAFT;
+  const isCompletedVersion = record?.status === SurveyVersionStatus.COMPLETED;
 
   const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
-  const { canUpdate, canRead } = useCheckScopeEntityDefault(
+  const { canUpdate, canRead, canDelete } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.SURVEY,
   );
 
@@ -95,7 +100,7 @@ const ActionThreeDropDown: FC<
       baseMenu.push({
         icon: <CheckIcon className={'text-primary'} />,
         label: t('common.approveRequest'),
-        key: ACTION.APPROVE_REQUEST,
+        key: ACTION.APPROVE_COMPLETE_REQUEST,
       });
     }
     if (
@@ -107,7 +112,7 @@ const ActionThreeDropDown: FC<
       baseMenu.push({
         icon: <CloseIcon className={'text-primary'} />,
         label: t('common.denyRequest'),
-        key: ACTION.DENY_REQUEST,
+        key: ACTION.DENY_COMPLETE_REQUEST,
       });
     }
 
@@ -119,27 +124,69 @@ const ActionThreeDropDown: FC<
           key: ACTION.EXPORT,
         });
       }
-
+    }
+    if (canDelete && !isCompletedVersion) {
       baseMenu.push({
         icon: <TrashOutlined className={'text-primary'} />,
         label: t('common.delete'),
         key: ACTION.DELETE,
       });
     }
+
+    if (
+      versionCount > 1 &&
+      canUpdate &&
+      isCompletedVersion &&
+      !record.isAwaitingDeletion
+    ) {
+      baseMenu.push({
+        icon: <LightingIcon className={'text-primary'} />,
+        label: t('common.requestDeleteVersion'),
+        key: ACTION.REQUEST_DELETE,
+      });
+    }
+    if (
+      canUpdate &&
+      record.isAwaitingDeletion &&
+      profile?.id === record?.deletedBy
+    ) {
+      baseMenu.push({
+        icon: <CheckIcon className={'text-primary'} />,
+        label: t('common.approveDeleteRequest'),
+        key: ACTION.APPROVE_DELETE_REQUEST,
+      });
+    }
+    if (
+      canUpdate &&
+      record.isAwaitingDeletion &&
+      (profile?.id === record?.createdBy ||
+        profile?.id === record?.approvalUserId)
+    ) {
+      baseMenu.push({
+        icon: <CloseIcon className={'text-primary'} />,
+        label: t('common.denyDeleteRequest'),
+        key: ACTION.DENY_DELETE_REQUEST,
+      });
+    }
+
     baseMenu.push({
-      icon: <showChan className={'text-primary'} />,
+      icon: <Clock className={'text-primary'} />,
       label: t('common.showChangeLog'),
       key: ACTION.SHOW_CHANGE_LOG,
     });
     return baseMenu;
   }, [
+    versionCount,
+    canDelete,
     canRead,
     canUpdate,
+    isCompletedVersion,
     isDraftVersion,
     isExternalProject,
     profile?.id,
     record?.approvalUserId,
     record?.createdBy,
+    record.isAwaitingDeletion,
     record.status,
     record.surveyFlowElements?.length,
     t,

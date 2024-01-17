@@ -190,8 +190,8 @@ const EditQuestion = () => {
       ) {
         newValues.status = QuestionVersionStatus.DRAFT;
       }
-      console.log(newValues);
-      return;
+      // console.log(newValues);
+      // return;
 
       const newVal = transformData(newValues, currentVersionQuestionData);
       if (!newVal) return;
