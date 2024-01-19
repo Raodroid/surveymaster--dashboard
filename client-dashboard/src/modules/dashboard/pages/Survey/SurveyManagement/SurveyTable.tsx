@@ -21,7 +21,6 @@ import {
   ActionThreeDropDownType,
   DuplicateSurveyVersionDto,
   IGetParams,
-  IMenuItem,
   IRequestDeleteRecordDto,
   ISurvey,
   QsParams,
@@ -32,9 +31,9 @@ import {
   CheckIcon,
   CloseIcon,
   DuplicateIcon,
+  LightingIcon,
   PenFilled,
   RollbackOutlined,
-  TrashOutlined,
 } from '@/icons';
 import { onError, useToggle } from '@/utils';
 import { ThreeDotsDropdown } from '@/customize-components';
@@ -46,6 +45,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 const { confirm } = Modal;
 
@@ -155,7 +155,7 @@ function SurveyTable() {
     },
     {
       onSuccess: async () => {
-        notification.success({ message: t('common.updateSuccess') });
+        notification.success({ message: t('common.denySuccess') });
         await queryClient.invalidateQueries('getSurveys');
       },
       onError,
@@ -407,8 +407,8 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
     SCOPE_CONFIG.ENTITY.QUESTION,
   );
 
-  const items = useMemo<IMenuItem[]>(() => {
-    const baseMenu: IMenuItem[] = [];
+  const items = useMemo<ItemType[]>(() => {
+    const baseMenu: ItemType[] = [];
     if (canUpdate) {
       baseMenu.push({
         icon: <PenFilled className={'text-primary'} />,
@@ -430,12 +430,12 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
     }
     if (canDelete && !record.isAwaitingDeletion && !record.deletedAt) {
       baseMenu.push({
-        icon: <TrashOutlined className={'text-primary'} />,
+        icon: <LightingIcon className={'text-primary'} />,
         label: t('common.requestDeleteSurvey'),
         key: ACTION.REQUEST_DELETE,
       });
     }
-    if (canDelete && record.isAwaitingDeletion) {
+    if (canDelete && !record.deletedAt && record.isAwaitingDeletion) {
       if (record.deletedBy === profile?.id) {
         baseMenu.push({
           icon: <CheckIcon className={'text-primary'} />,

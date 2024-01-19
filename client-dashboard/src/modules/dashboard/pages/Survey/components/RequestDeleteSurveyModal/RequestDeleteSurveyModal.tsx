@@ -22,7 +22,7 @@ const RequestDeleteSurveyModal: FC<IModal & { versionId?: string }> = props => {
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveys');
-        notification.success({ message: t('common.updateSuccess') });
+        notification.success({ message: t('common.sentRequestSuccessfully') });
         toggleOpen();
       },
       onError,

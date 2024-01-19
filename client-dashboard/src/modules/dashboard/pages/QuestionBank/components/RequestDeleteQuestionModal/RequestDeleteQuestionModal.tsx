@@ -22,7 +22,7 @@ const RequestDeleteQuestionModal: FC<
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getQuestionList');
-        notification.success({ message: t('common.updateSuccess') });
+        notification.success({ message: t('common.sentRequestSuccessfully') });
         toggleOpen();
       },
       onError,

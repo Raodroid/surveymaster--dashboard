@@ -3,6 +3,7 @@ import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,
   RequestCompleteSurveyModal,
+  RequestDeleteSurveyVersionModal,
   SurveyRenameModal,
   SurveyVersionRemarkButton,
   useSurveyFormContext,
@@ -34,7 +35,6 @@ import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
 import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
-import RequestDeleteSurveyVersionModal from '@pages/Survey/components/RequestDeleteSurveyVersionModal/RequestDeleteSurveyVersionModal';
 
 const { confirm } = Modal;
 
@@ -129,7 +129,7 @@ const RightMenu = () => {
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveyById');
-        notification.success({ message: t('common.updateSuccess') });
+        notification.success({ message: t('common.denySuccess') });
       },
       onError,
     },
@@ -209,13 +209,7 @@ const RightMenu = () => {
   const handleResponseDeleteRequest = useCallback(
     (type: 'APPROVE' | 'DENY', record: ISurveyVersion) => {
       if (type === 'APPROVE') {
-        confirm({
-          icon: null,
-          content: t('common.confirmDeleteSurveyVersion'),
-          onOk() {
-            deleteMutation.mutateAsync({ id: record.id as string });
-          },
-        });
+        handleDelete(record);
         return;
       }
       confirm({
@@ -229,7 +223,7 @@ const RightMenu = () => {
         },
       });
     },
-    [deleteMutation, requestDeleteSurvey, t],
+    [handleDelete, requestDeleteSurvey, t],
   );
 
   const handleCLone = useCallback(

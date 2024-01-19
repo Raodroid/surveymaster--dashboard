@@ -13,7 +13,6 @@ export const useCheckScopeEntity = (
   actions: ScopeActionArray[],
 ): boolean[] => {
   const allScopesValues = useSelector(AuthSelectors.getCurrentScopes);
-  console.log(allScopesValues);
 
   return useMemo<boolean[]>(() => {
     return actions.map(action => {

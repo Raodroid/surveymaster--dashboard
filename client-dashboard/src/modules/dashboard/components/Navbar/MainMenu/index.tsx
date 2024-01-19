@@ -42,7 +42,6 @@ const MainMenu = () => {
     result.push(mainMenuItem[2]);
     return result;
   }, [canReadProject, canReadQuestion]);
-  console.log(menuItems);
 
   return <BaseMenu items={menuItems} className="flex-1" />;
 };

@@ -36,7 +36,7 @@ const SurveyVersionRemarkModal: FC<ISurveyVersionRemarkModal> = props => {
       }),
     {
       onError,
-      enabled: !!params?.surveyId,
+      enabled: !!surveyVersionId,
       refetchOnWindowFocus: false,
     },
   );

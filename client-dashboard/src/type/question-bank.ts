@@ -1,6 +1,7 @@
 import { UserPayload } from '@/redux/user';
 import { ProjectTypes } from '@/type/project';
 import { RoleEnum } from '@/enums';
+import { QsParams } from '@/type/general';
 
 export interface UserUpdatedDto {
   // roles: number[]; Don't allow user update their role by this api
@@ -369,3 +370,12 @@ export interface IRequestDeleteRecordDto {
   deletedBy?: string;
   isAwaitingDeletion: boolean;
 }
+
+export type HistoryQueryParam = QsParams & {
+  subCategoryIds?: string[];
+  categoryIds?: string[];
+  types?: string[];
+  projectIds?: string[];
+  createdFrom?: string;
+  createdTo?: string;
+};

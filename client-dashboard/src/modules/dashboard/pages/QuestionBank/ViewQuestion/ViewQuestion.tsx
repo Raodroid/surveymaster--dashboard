@@ -141,7 +141,7 @@ const ViewQuestion = () => {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getQuestionList');
         await queryClient.invalidateQueries('getQuestionQuery');
-        notification.success({ message: t('common.updateSuccess') });
+        notification.success({ message: t('common.denySuccess') });
       },
       onError,
     },
@@ -238,6 +238,51 @@ const ViewQuestion = () => {
 
   const onFinish = useCallback(values => {}, []);
 
+  const canShowDeleteVersion = canDelete && !isCompletedVersion;
+
+  const canShowRequestCompleteVersion =
+    canUpdate &&
+    selectedVerQuestionData &&
+    selectedVerQuestionData.status === QuestionVersionStatus.DRAFT;
+
+  const canShowRequestDeleteVersion =
+    canUpdate &&
+    versions?.length > 1 &&
+    selectedVerQuestionData &&
+    !selectedVerQuestionData.isAwaitingDeletion &&
+    isCompletedVersion;
+
+  const canApproveComplete =
+    canUpdate &&
+    selectedVerQuestionData &&
+    selectedVerQuestionData.status === QuestionVersionStatus.AWAIT_APPROVAL &&
+    profile?.id === selectedVerQuestionData?.approvalUserId;
+
+  const canDenyComplete =
+    canUpdate &&
+    selectedVerQuestionData &&
+    selectedVerQuestionData.status === QuestionVersionStatus.AWAIT_APPROVAL &&
+    (profile?.id === selectedVerQuestionData?.createdBy?.id ||
+      profile?.id === selectedVerQuestionData?.approvalUserId);
+
+  const canApproveDelete =
+    canUpdate &&
+    selectedVerQuestionData &&
+    selectedVerQuestionData.status === QuestionVersionStatus.COMPLETED &&
+    selectedVerQuestionData.isAwaitingDeletion &&
+    profile?.id === selectedVerQuestionData?.deletedBy;
+
+  const canDenyDelete =
+    canUpdate &&
+    selectedVerQuestionData &&
+    selectedVerQuestionData.isAwaitingDeletion &&
+    (profile?.id === selectedVerQuestionData?.deletedBy ||
+      profile?.id === selectedVerQuestionData?.deletedBy);
+
+  const canEdit =
+    canUpdate &&
+    selectedVerQuestionData?.status !== QuestionVersionStatus.AWAIT_APPROVAL;
+
   return (
     <Spin
       spinning={
@@ -251,7 +296,7 @@ const ViewQuestion = () => {
           title={'View Question'}
           endingComponent={
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {canDelete && !isCompletedVersion && (
+              {canShowDeleteVersion && (
                 <Button
                   type={'primary'}
                   onClick={handleDeleteQuestionVersion}
@@ -260,119 +305,92 @@ const ViewQuestion = () => {
                   {t('common.deleteVersion')}
                 </Button>
               )}
-              {canUpdate &&
-                selectedVerQuestionData &&
-                selectedVerQuestionData.status ===
-                  QuestionVersionStatus.DRAFT && (
-                  <Button
-                    type={'primary'}
-                    className={'info-btn'}
-                    onClick={toggleOpenRequest}
-                    loading={updateQuestionVersionStatus.isLoading}
-                  >
-                    {t('common.requestCompleteVersion')}
-                  </Button>
-                )}
-              {canUpdate &&
-                versions?.length > 1 &&
-                selectedVerQuestionData &&
-                !selectedVerQuestionData.isAwaitingDeletion &&
-                isCompletedVersion && (
-                  <Button
-                    type={'primary'}
-                    className={'info-btn'}
-                    onClick={toggleOpenRequestDelete}
-                    loading={updateQuestionVersionStatus.isLoading}
-                  >
-                    {t('direction.requestApproveDelete')}
-                  </Button>
-                )}
-              {canUpdate &&
-                selectedVerQuestionData &&
-                selectedVerQuestionData.status ===
-                  QuestionVersionStatus.AWAIT_APPROVAL &&
-                profile?.id === selectedVerQuestionData?.approvalUserId && (
-                  <Button
-                    type={'primary'}
-                    className={'info-btn'}
-                    onClick={() => {
-                      handleUpdateStatus(QuestionVersionStatus.COMPLETED);
-                    }}
-                    loading={updateQuestionVersionStatus.isLoading}
-                  >
-                    {t('common.approveCompleteRequest')}
-                  </Button>
-                )}
-              {canUpdate &&
-                selectedVerQuestionData &&
-                selectedVerQuestionData.status ===
-                  QuestionVersionStatus.AWAIT_APPROVAL &&
-                (profile?.id === selectedVerQuestionData?.createdBy?.id ||
-                  profile?.id === selectedVerQuestionData?.approvalUserId) && (
-                  <Button
-                    type={'primary'}
-                    className={'info-btn'}
-                    onClick={() => {
-                      handleUpdateStatus(QuestionVersionStatus.DRAFT);
-                    }}
-                    loading={updateQuestionVersionStatus.isLoading}
-                  >
-                    {t('common.denyCompleteRequest')}
-                  </Button>
-                )}
+              {canShowRequestCompleteVersion && (
+                <Button
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={toggleOpenRequest}
+                  loading={updateQuestionVersionStatus.isLoading}
+                >
+                  {t('common.requestCompleteVersion')}
+                </Button>
+              )}
+              {canShowRequestDeleteVersion && (
+                <Button
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={toggleOpenRequestDelete}
+                  loading={updateQuestionVersionStatus.isLoading}
+                >
+                  {t('direction.requestApproveDelete')}
+                </Button>
+              )}
+              {canApproveComplete && (
+                <Button
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={() => {
+                    handleUpdateStatus(QuestionVersionStatus.COMPLETED);
+                  }}
+                  loading={updateQuestionVersionStatus.isLoading}
+                >
+                  {t('common.approveCompleteRequest')}
+                </Button>
+              )}
+              {canDenyComplete && (
+                <Button
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={() => {
+                    handleUpdateStatus(QuestionVersionStatus.DRAFT);
+                  }}
+                  loading={updateQuestionVersionStatus.isLoading}
+                >
+                  {t('common.denyCompleteRequest')}
+                </Button>
+              )}
 
-              {canUpdate &&
-                selectedVerQuestionData &&
-                selectedVerQuestionData.status ===
-                  QuestionVersionStatus.COMPLETED &&
-                selectedVerQuestionData.isAwaitingDeletion &&
-                profile?.id === selectedVerQuestionData?.deletedBy && (
-                  <Button
-                    icon={<CheckIcon className={'w-[18px] '} />}
-                    type={'primary'}
-                    className={'info-btn'}
-                    onClick={() => {
-                      handleResponseDeleteRequest('approve');
-                    }}
-                    loading={updateQuestionVersionStatus.isLoading}
-                  >
-                    {t('common.approveDeleteRequest')}
-                  </Button>
-                )}
-              {canUpdate &&
-                selectedVerQuestionData &&
-                selectedVerQuestionData.isAwaitingDeletion &&
-                (profile?.id === selectedVerQuestionData?.deletedBy ||
-                  profile?.id === selectedVerQuestionData?.deletedBy) && (
-                  <Button
-                    icon={<CloseIcon />}
-                    type={'primary'}
-                    className={'info-btn'}
-                    onClick={() => {
-                      handleResponseDeleteRequest('deny');
-                    }}
-                    loading={updateQuestionVersionStatus.isLoading}
-                  >
-                    {t('common.denyDeleteRequest')}
-                  </Button>
-                )}
+              {canApproveDelete && (
+                <Button
+                  icon={<CheckIcon className={'w-[18px] '} />}
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={() => {
+                    handleResponseDeleteRequest('approve');
+                  }}
+                  loading={updateQuestionVersionStatus.isLoading}
+                >
+                  {t('common.approveDeleteRequest')}
+                </Button>
+              )}
+              {canDenyDelete && (
+                <Button
+                  icon={<CloseIcon />}
+                  type={'primary'}
+                  className={'info-btn'}
+                  onClick={() => {
+                    handleResponseDeleteRequest('deny');
+                  }}
+                  loading={updateQuestionVersionStatus.isLoading}
+                >
+                  {t('common.denyDeleteRequest')}
+                </Button>
+              )}
 
-              {canUpdate &&
-                selectedVerQuestionData?.status !==
-                  QuestionVersionStatus.AWAIT_APPROVAL && (
-                  <Button
-                    onClick={handleEdit}
-                    type={'text'}
-                    aria-label={'direct-edit-page'}
-                  >
-                    <PenFilled
-                      style={{
-                        color: templateVariable.primary_color,
-                        cursor: 'pointer',
-                      }}
-                    />
-                  </Button>
-                )}
+              {canEdit && (
+                <Button
+                  onClick={handleEdit}
+                  type={'text'}
+                  aria-label={'direct-edit-page'}
+                >
+                  <PenFilled
+                    style={{
+                      color: templateVariable.primary_color,
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Button>
+              )}
             </div>
           }
         />

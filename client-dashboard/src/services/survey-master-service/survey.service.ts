@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import {
   CreateSurveyBodyDto,
   DuplicateSurveyVersionDto,
+  HistoryQueryParam,
   IGetParams,
   IPaginationResponse,
   IPostSurveyVersionBodyDto,
@@ -11,7 +12,8 @@ import {
   ISurveyRemark,
   ISurveyVersion,
   IUpdateSurveyVersionStatusDto,
-} from 'type';
+  SurveyHistory,
+} from '@/type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
 import { IAction } from '@/interfaces';
@@ -165,14 +167,22 @@ export default class SurveyService {
     remark: string;
   }) {
     return APIService.post(
-      `/${EntityEnum.SURVEY}/survey_version_remark`,
+      `/${EntityEnum.SURVEY}/survey-version-remark`,
       params,
     );
   }
   static getSurveyRemarks(
     params: IGetParams & { surveyVersionId: string },
   ): Promise<AxiosResponse<ISurveyRemark[]>> {
-    return APIService.get(`/${EntityEnum.SURVEY}/survey_version_remark`, {
+    return APIService.get(`/${EntityEnum.SURVEY}/survey-version-remark`, {
+      params,
+    });
+  }
+
+  static getSurveyChangeLogHistories(
+    params: HistoryQueryParam,
+  ): Promise<AxiosResponse<SurveyHistory[]>> {
+    return APIService.get('/survey-history', {
       params,
     });
   }

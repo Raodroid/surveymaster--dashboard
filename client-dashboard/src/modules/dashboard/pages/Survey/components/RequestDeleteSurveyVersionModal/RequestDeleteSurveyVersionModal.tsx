@@ -24,7 +24,7 @@ const RequestDeleteSurveyVersionModal: FC<
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries('getSurveyById');
-        notification.success({ message: t('common.updateSuccess') });
+        notification.success({ message: t('common.sentRequestSuccessfully') });
         toggleOpen();
       },
       onError,

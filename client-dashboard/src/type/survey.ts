@@ -171,6 +171,7 @@ export interface ISurveyQuestionDto {
 }
 
 export interface ISurveyVersionBaseDto {
+  id?: string;
   name?: string;
   remarks?: ISurveyRemark[] | null;
   status?: SurveyVersionStatus;

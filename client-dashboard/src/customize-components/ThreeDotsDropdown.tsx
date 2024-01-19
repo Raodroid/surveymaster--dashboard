@@ -6,9 +6,10 @@ import { DropdownProps } from 'antd/lib/dropdown/dropdown';
 import { useToggle } from '@/utils';
 import styled from 'styled-components/macro';
 import { ButtonProps } from 'antd/lib/button';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 interface IThreeDotsDropdown extends Omit<DropdownProps, 'overlay'> {
-  items: Array<IMenuItem>;
+  items: Array<ItemType>;
   onChooseItem: (key: any) => void;
   size?: ButtonProps['size'];
   title?: string | ReactNode;
@@ -30,11 +31,7 @@ const ThreeDotsDropdown: FC<IThreeDotsDropdown> = props => {
             onChooseItem(e.key);
             toggleOpen();
           },
-          items: items.map(i => ({
-            icon: i.icon,
-            label: i.label,
-            key: i.key,
-          })),
+          items: items,
         }}
         placement={'bottomRight'}
         trigger={['click']}

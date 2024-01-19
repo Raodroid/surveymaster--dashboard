@@ -71,6 +71,7 @@ export const transSurveyFLowElement = (
             i.remarks?.length === 0
               ? undefined
               : i.remarks?.map(rm => ({
+                  id: rm?.id,
                   remark: rm.remark,
                   ownerId: rm.id ? rm?.owner?.id : undefined,
                 })),
@@ -98,6 +99,7 @@ export const transSurveyFLowElement = (
                 'operator',
                 'rightOperand',
                 'leftOperand',
+                'id',
               ]);
               return { ...x, sort: logicIndex + 1 };
             }
@@ -118,6 +120,7 @@ export const transSurveyFLowElement = (
         : undefined;
 
     return {
+      id: i?.id,
       blockSort,
       type: i.type,
       sort: idx,

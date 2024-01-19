@@ -1,15 +1,44 @@
 import styled from 'styled-components/macro';
-import React, { useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Popover } from 'antd';
 import templateVariable from 'app/template-variables.module.scss';
 
 import { ArrowDown, FilterOutlined } from 'icons';
 import { FilerDropdown } from './FilterDropDown';
+import { useParseQueryString } from '@/hooks';
+import { HistoryQueryParam, QsParams, QuestionType } from '@/type';
 
-export const FilterComponent = () => {
+const CHECKBOX_KEY = {
+  filterByCategory: 'filterByCategory',
+  filterBySubCategory: 'filterBySubCategory',
+  filterByCreatedDate: 'filterByCreatedDate',
+  filterByProject: 'filterByProject',
+  filterByActionType: 'filterByActionType',
+};
+export const FilterComponent: FC<{ type: 'Survey' | 'Question' }> = props => {
+  const { type } = props;
   const [numOfFilter, setNumOfFilter] = useState(0);
   const { t } = useTranslation();
+
+  const qsParams = useParseQueryString<HistoryQueryParam>();
+
+  useEffect(() => {
+    const values = {
+      filterByCreatedDate: !!(qsParams.createdFrom || qsParams.createdTo),
+      filterByActionType: !!qsParams.types,
+      filterBySubCategory: !!qsParams.subCategoryIds,
+      filterByCategory: !!qsParams.categoryIds,
+      filterByProject: !!qsParams.projectIds,
+    };
+    const filterCount = Object.keys(values).filter(key => {
+      const val = values[key];
+      return CHECKBOX_KEY[key] && val === true;
+    });
+
+    setNumOfFilter(filterCount.length);
+  }, [qsParams, setNumOfFilter]);
+
   return (
     <FilterComponentWrapper>
       <FilterOutlined className={'filter-icon'} />
@@ -21,6 +50,7 @@ export const FilterComponent = () => {
           <FilerDropdown
             numOfFilter={numOfFilter}
             setNumOfFilter={setNumOfFilter}
+            type={type}
           />
         }
       >

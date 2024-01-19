@@ -16,6 +16,7 @@ export { default as DisplayRemarkItem } from './RemarkSection/DisplayRemarkItem'
 export { default as SurveyFormSubmitButton } from './ConfirmSubmitSurveyForm/SurveyFormSubmitButton';
 export { default as RequestCompleteSurveyModal } from '@pages/Survey/components/RequestCompleteSurveyVersionModal/RequestCompleteSurveyVersionModal';
 export { default as RequestDeleteSurveyModal } from '@pages/Survey/components/RequestDeleteSurveyModal/RequestDeleteSurveyModal';
+export { default as RequestDeleteSurveyVersionModal } from '@pages/Survey/components/RequestDeleteSurveyVersionModal/RequestDeleteSurveyVersionModal';
 export { default as OverviewQuestionButton } from './OverviewQuestionButton/OverviewQuestionButton';
 
 export * from './SurveyFormContext';

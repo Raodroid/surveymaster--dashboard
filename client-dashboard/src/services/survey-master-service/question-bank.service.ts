@@ -2,12 +2,14 @@ import APIService from './base.service';
 import { AxiosResponse } from 'axios';
 import {
   GetListQuestionDto,
+  HistoryQueryParam,
   IGetParams,
   IQuestionCreatePostDto,
   IQuestionVersionPatchUpdateDtoExtendId,
   IQuestionVersionPostNewDto,
   IQuestionVersionPutUpdateDtoExtendId,
   IRequestDeleteRecordDto,
+  QuestionHistory,
   QuestionVersionStatus,
 } from '@/type';
 import { EntityEnum } from '@/enums';
@@ -99,5 +101,13 @@ export default class QuestionBankService {
   static restoreQuestionByVersionId(props): Promise<AxiosResponse> {
     const { id } = props;
     return APIService.post(`/${EntityEnum.QUESTION}/${id}/restore`);
+  }
+
+  static getQuestionChangeLogHistories(
+    params: HistoryQueryParam,
+  ): Promise<AxiosResponse<QuestionHistory[]>> {
+    return APIService.get('/question-history', {
+      params,
+    });
   }
 }

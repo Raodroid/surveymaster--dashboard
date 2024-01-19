@@ -25,7 +25,7 @@ const RequestDeleteQuestionVersionModal: FC<
       onSuccess: async () => {
         await queryClient.invalidateQueries('getQuestionList');
         await queryClient.invalidateQueries('getQuestionQuery');
-        notification.success({ message: t('common.updateSuccess') });
+        notification.success({ message: t('common.sentRequestSuccessfully') });
         toggleOpen();
         // navigate(ROUTE_PATH.DASHBOARD_PATHS.QUESTION_BANK.ROOT);
       },

@@ -24,6 +24,7 @@ import {
 import { ThreeDotsDropdown } from '@/customize-components';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 const ACTION = {
   EDIT: 'EDIT',
@@ -60,7 +61,7 @@ const ActionThreeDropDown: FC<
   );
 
   const items = useMemo(() => {
-    const baseMenu: IMenuItem[] = [];
+    const baseMenu: ItemType[] = [];
 
     if (canUpdate && isDraftVersion) {
       baseMenu.push({
@@ -125,7 +126,7 @@ const ActionThreeDropDown: FC<
         });
       }
     }
-    if (canDelete && !isCompletedVersion) {
+    if (versionCount > 1 && canDelete && !isCompletedVersion) {
       baseMenu.push({
         icon: <TrashOutlined className={'text-primary'} />,
         label: t('common.delete'),
@@ -170,26 +171,30 @@ const ActionThreeDropDown: FC<
     }
 
     baseMenu.push({
+      type: 'divider',
+    });
+    baseMenu.push({
       icon: <Clock className={'text-primary'} />,
       label: t('common.showChangeLog'),
       key: ACTION.SHOW_CHANGE_LOG,
     });
     return baseMenu;
   }, [
-    versionCount,
-    canDelete,
-    canRead,
     canUpdate,
-    isCompletedVersion,
     isDraftVersion,
-    isExternalProject,
-    profile?.id,
+    t,
+    record.surveyFlowElements?.length,
+    record.status,
     record?.approvalUserId,
     record?.createdBy,
     record.isAwaitingDeletion,
-    record.status,
-    record.surveyFlowElements?.length,
-    t,
+    record?.deletedBy,
+    profile?.id,
+    canRead,
+    canDelete,
+    isCompletedVersion,
+    versionCount,
+    isExternalProject,
   ]);
 
   return (
