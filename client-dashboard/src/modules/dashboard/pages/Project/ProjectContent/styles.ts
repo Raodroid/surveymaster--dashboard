@@ -8,5 +8,4 @@ export const ProjectTableWrapper = styled.div<{ centerLastChild: boolean }>`
   position: relative;
   overflow: hidden;
   padding: 12px 5px 0 12px;
-  background: indianred;
 `;
