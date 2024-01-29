@@ -20,6 +20,9 @@
     "foods": "Foods"
   },
   "common": {
+    "addEmbeddedCondition": "Add Embedded Condition",
+    "addQuestionCondition": "Add Question Condition",
+    "addEmbedded": "Add Embedded",
     "allQuestions": "All questions",
     "viewAllQuestions": "View All Questions",
     "showDeletedSurveys": "Show Deleted Surveys",
@@ -540,7 +543,8 @@
       "feedbackAppointment": "Please rate your coach",
       "onlySupportAlphabet": "Only support alphabet",
       "incorrectAccount": "Failed to sign in: User does not exist or password is incorrect.",
-      "clickToUpload": "Click to Upload"
+      "clickToUpload": "Click to Upload",
+      "contentNotCorrect": "{{type}}(s) not correct"
     }
   },
   "direction": {
@@ -553,6 +557,8 @@
     "markAsCompleted": "Mark as Completed",
     "addOneQuestion": "Select single question from the Question Bank",
     "selectWholeCategory": "Select the whole category from the Question Bank",
+    "addQuestionCondition": "Create new condition involve to question",
+    "addEmbeddedCondition": "Create new condition involve to embedded data",
     "questionary": "Add list of questions from Question Bank. ",
     "branch": "Set up rules to change user flow during survey.",
     "embeddedData": "Set up and store custom variables specific to each respondent."

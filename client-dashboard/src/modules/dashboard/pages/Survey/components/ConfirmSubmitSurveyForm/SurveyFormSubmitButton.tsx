@@ -28,7 +28,7 @@ const SurveyFormSubmitButton = () => {
         }}
         icon={<SaveIcon />}
       >
-        {t('common.completed')}
+        {t('common.save')}
       </Button>
       <ConfirmSubmitSurveyForm open={open} toggleOpen={toggleOpen} />
     </>

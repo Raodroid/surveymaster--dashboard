@@ -356,7 +356,7 @@ const QUESTION_BLOCK_VALIDATION = {
     )
     .test(
       '',
-      'Survey questions can not be empty',
+      'Survey question required',
       (
         value,
         values: {
@@ -378,7 +378,7 @@ const QUESTION_BLOCK_VALIDATION = {
     )
     .test(
       '',
-      'Embedded Data list can not be empty',
+      'Embedded required',
       (
         value,
         values: {
@@ -503,7 +503,7 @@ const QUESTION_BLOCK_VALIDATION = {
     )
     .test(
       '',
-      'Branch Logics can not be empty',
+      'Condition required',
       (
         value,
         values: {
@@ -526,7 +526,7 @@ const QUESTION_BLOCK_VALIDATION = {
     )
     .test(
       '',
-      'Block can not be empty',
+      'Element required',
       (
         value,
         values: {
