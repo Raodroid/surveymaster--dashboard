@@ -42,6 +42,7 @@ import { StyledPagination } from 'modules/dashboard';
 import { useCheckScopeEntityDefault } from 'modules/common';
 import { keysAction, useSelectTableRecord } from 'hooks';
 import { ThreeDotsDropdown } from 'customize-components';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 interface TeamMember extends UserPayload {
   key: string;
@@ -397,8 +398,8 @@ const ActionThreeDropDown: FC<
     return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
   }, [currentRoles]);
 
-  const items = useMemo<IMenuItem[]>(() => {
-    const baseMenu: IMenuItem[] = [];
+  const items = useMemo<ItemType[]>(() => {
+    const baseMenu: ItemType[] = [];
 
     if (record.deletedAt && canRestore) {
       baseMenu.push({

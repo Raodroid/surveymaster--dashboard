@@ -1,6 +1,7 @@
-import { UserPayload } from '../redux/user';
+import { UserPayload } from '@/redux/user';
 import { ProjectTypes } from '@/type/project';
 import { RoleEnum } from '@/enums';
+import { QsParams } from '@/type/general';
 
 export interface UserUpdatedDto {
   // roles: number[]; Don't allow user update their role by this api
@@ -26,16 +27,17 @@ export interface IQuestion {
   masterSubCategory?: IQuestionCategory;
   masterVariableName: string;
   masterCombineTokenString: string;
-
-  createdBy: UserPayload;
-  updatedBy?: UserPayload;
-  deletedBy?: UserPayload;
+  isAwaitingDeletion?: boolean;
+  createdBy: string;
+  updatedBy?: string;
+  deletedBy?: string;
   createdAt: Date | string;
   updatedAt?: Date | string | null;
   deletedAt?: Date | string | null;
 }
 
 export interface IQuestionVersion {
+  isAwaitingDeletion?: boolean;
   approvalUserId?: string;
   id?: string;
   displayId: string;
@@ -246,26 +248,6 @@ export const mockCategories: IPaginationResponse<IQuestionCategory> = {
   ],
 };
 
-export const QuestionDetail: IQuestion = {
-  id: '1',
-  displayId: '113-2121',
-  latestCompletedVersion: completedVersion,
-  latestVersion: draftVersion,
-  versions: [draftVersion, completedVersion],
-  masterCategoryId: '1',
-  masterCategory: mockCategories.data[0],
-  masterSubCategoryId: '1.1',
-  masterSubCategory:
-    mockCategories &&
-    mockCategories.data[0] &&
-    mockCategories.data[0].children &&
-    mockCategories.data[0].children[0],
-  masterVariableName: 'name',
-  masterCombineTokenString: 'name-1.1',
-  createdBy: mockUser,
-  createdAt: new Date(),
-};
-
 export interface BaseParameterDto {
   displayId: string;
 }
@@ -376,4 +358,24 @@ export type ProjectQueryParam = IGetParams & {
     categoryIds?: string[];
     subCategoryIds?: string[];
   };
+};
+
+export interface IUpdateQuestionVersionStatusDto {
+  status: QuestionVersionStatus;
+  approvalUserId: string;
+}
+
+export interface IRequestDeleteRecordDto {
+  id: string;
+  deletedBy?: string;
+  isAwaitingDeletion: boolean;
+}
+
+export type HistoryQueryParam = QsParams & {
+  subCategoryIds?: string[];
+  categoryIds?: string[];
+  types?: string[];
+  projectIds?: string[];
+  createdFrom?: string;
+  createdTo?: string;
 };

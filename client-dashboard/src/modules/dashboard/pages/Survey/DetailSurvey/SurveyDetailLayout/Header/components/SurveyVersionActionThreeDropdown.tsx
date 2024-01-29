@@ -24,23 +24,27 @@ import {
 import { ThreeDotsDropdown } from '@/customize-components';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 const ACTION = {
   EDIT: 'EDIT',
-  APPROVE_REQUEST: 'APPROVE_REQUEST',
-  DENY_REQUEST: 'DENY_REQUEST',
+  APPROVE_COMPLETE_REQUEST: 'APPROVE_COMPLETE_REQUEST',
+  DENY_COMPLETE_REQUEST: 'DENY_COMPLETE_REQUEST',
   RENAME: 'RENAME',
   EXPORT: 'EXPORT',
   DELETE: 'DELETE',
   CLONE: 'CLONE',
   SHOW_CHANGE_LOG: 'SHOW_CHANGE_LOG',
   REQUEST_COMPLETE: 'REQUEST_COMPLETE',
+  REQUEST_DELETE: 'REQUEST_DELETE',
+  APPROVE_DELETE_REQUEST: 'APPROVE_DELETE_REQUEST',
+  DENY_DELETE_REQUEST: 'DENY_DELETE_REQUEST',
 } as const;
 
 const ActionThreeDropDown: FC<
-  ActionThreeDropDownType<ISurveyVersion>
+  ActionThreeDropDownType<ISurveyVersion> & { versionCount: number }
 > = props => {
-  const { record, handleSelect } = props;
+  const { record, handleSelect, versionCount } = props;
   const { t } = useTranslation();
   const params = useParams<{ surveyId?: string; projectId?: string }>();
   const profile = useSelector(AuthSelectors.getProfile);
@@ -48,15 +52,16 @@ const ActionThreeDropDown: FC<
   const { project } = useGetProjectByIdQuery(params?.projectId);
 
   const isDraftVersion = record?.status === SurveyVersionStatus.DRAFT;
+  const isCompletedVersion = record?.status === SurveyVersionStatus.COMPLETED;
 
   const isExternalProject = project.type === ProjectTypes.EXTERNAL;
 
-  const { canUpdate, canRead } = useCheckScopeEntityDefault(
+  const { canUpdate, canRead, canDelete } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.SURVEY,
   );
 
   const items = useMemo(() => {
-    const baseMenu: IMenuItem[] = [];
+    const baseMenu: ItemType[] = [];
 
     if (canUpdate && isDraftVersion) {
       baseMenu.push({
@@ -96,7 +101,7 @@ const ActionThreeDropDown: FC<
       baseMenu.push({
         icon: <CheckIcon className={'text-primary'} />,
         label: t('common.approveRequest'),
-        key: ACTION.APPROVE_REQUEST,
+        key: ACTION.APPROVE_COMPLETE_REQUEST,
       });
     }
     if (
@@ -108,7 +113,7 @@ const ActionThreeDropDown: FC<
       baseMenu.push({
         icon: <CloseIcon className={'text-primary'} />,
         label: t('common.denyRequest'),
-        key: ACTION.DENY_REQUEST,
+        key: ACTION.DENY_COMPLETE_REQUEST,
       });
     }
 
@@ -120,13 +125,54 @@ const ActionThreeDropDown: FC<
           key: ACTION.EXPORT,
         });
       }
-
+    }
+    if (versionCount > 1 && canDelete && !isCompletedVersion) {
       baseMenu.push({
         icon: <TrashOutlined className={'text-primary'} />,
         label: t('common.delete'),
         key: ACTION.DELETE,
       });
     }
+
+    if (
+      versionCount > 1 &&
+      canUpdate &&
+      isCompletedVersion &&
+      !record.isAwaitingDeletion
+    ) {
+      baseMenu.push({
+        icon: <LightingIcon className={'text-primary'} />,
+        label: t('common.requestDeleteVersion'),
+        key: ACTION.REQUEST_DELETE,
+      });
+    }
+    if (
+      canUpdate &&
+      record.isAwaitingDeletion &&
+      profile?.id === record?.deletedBy
+    ) {
+      baseMenu.push({
+        icon: <CheckIcon className={'text-primary'} />,
+        label: t('common.approveDeleteRequest'),
+        key: ACTION.APPROVE_DELETE_REQUEST,
+      });
+    }
+    if (
+      canUpdate &&
+      record.isAwaitingDeletion &&
+      (profile?.id === record?.createdBy ||
+        profile?.id === record?.approvalUserId)
+    ) {
+      baseMenu.push({
+        icon: <CloseIcon className={'text-primary'} />,
+        label: t('common.denyDeleteRequest'),
+        key: ACTION.DENY_DELETE_REQUEST,
+      });
+    }
+
+    baseMenu.push({
+      type: 'divider',
+    });
     baseMenu.push({
       icon: <Clock className={'text-primary'} />,
       label: t('common.showChangeLog'),
@@ -134,16 +180,21 @@ const ActionThreeDropDown: FC<
     });
     return baseMenu;
   }, [
-    canRead,
     canUpdate,
     isDraftVersion,
-    isExternalProject,
-    profile?.id,
+    t,
+    record.surveyFlowElements?.length,
+    record.status,
     record?.approvalUserId,
     record?.createdBy,
-    record.status,
-    record.surveyFlowElements?.length,
-    t,
+    record.isAwaitingDeletion,
+    record?.deletedBy,
+    profile?.id,
+    canRead,
+    canDelete,
+    isCompletedVersion,
+    versionCount,
+    isExternalProject,
   ]);
 
   return (

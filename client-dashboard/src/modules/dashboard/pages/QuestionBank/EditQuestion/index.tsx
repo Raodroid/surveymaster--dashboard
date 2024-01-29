@@ -38,6 +38,8 @@ export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   options?: IBaseQuestionOptionsVersionDto[];
 };
 
+const RANDOME_ID_PREFIX = 'random';
+
 type transformDataType =
   | IQuestionVersionPostNewDto
   | IQuestionVersionPutUpdateDtoExtendId;
@@ -100,14 +102,14 @@ const EditQuestion = () => {
       masterSubCategoryId,
       masterVariableName,
       options: currentVersionQuestionData?.options?.map(opt => ({
-        id: opt.sort,
+        id: opt.id,
         sort: opt.sort,
         text: opt.text,
         keyPath: opt?.keyPath || '',
         imageUrl: opt.imageUrl,
       })) || [
         {
-          id: generateRandom(),
+          id: `${RANDOME_ID_PREFIX}_${generateRandom()}`,
           text: '',
           sort: 1,
         },
@@ -172,12 +174,15 @@ const EditQuestion = () => {
     async (values: IEditQuestionFormValue) => {
       const newValues = {
         ...values,
-        options: values?.options?.map(({ text, imageUrl, keyPath }, idx) => ({
-          text,
-          imageUrl,
-          sort: idx + 1,
-          keyPath,
-        })),
+        options: values?.options?.map(
+          ({ text, imageUrl, keyPath, id }, idx) => ({
+            text,
+            imageUrl,
+            sort: idx + 1,
+            keyPath,
+            id: (id as string)?.includes(RANDOME_ID_PREFIX) ? undefined : id,
+          }),
+        ),
       };
 
       if (
@@ -185,6 +190,8 @@ const EditQuestion = () => {
       ) {
         newValues.status = QuestionVersionStatus.DRAFT;
       }
+      // console.log(newValues);
+      // return;
 
       const newVal = transformData(newValues, currentVersionQuestionData);
       if (!newVal) return;

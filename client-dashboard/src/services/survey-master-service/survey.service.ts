@@ -2,15 +2,18 @@ import { AxiosResponse } from 'axios';
 import {
   CreateSurveyBodyDto,
   DuplicateSurveyVersionDto,
+  HistoryQueryParam,
   IGetParams,
   IPaginationResponse,
   IPostSurveyVersionBodyDto,
   IPutSurveyVersionBodyDtoExtendId,
+  IRequestDeleteRecordDto,
   ISurvey,
   ISurveyRemark,
   ISurveyVersion,
   IUpdateSurveyVersionStatusDto,
-} from 'type';
+  SurveyHistory,
+} from '@/type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
 import { IAction } from '@/interfaces';
@@ -107,6 +110,27 @@ export default class SurveyService {
     const { id } = payload;
     return APIService.delete(`/${EntityEnum.SURVEY}/${id}`);
   }
+
+  static requestDeleteSurvey(
+    payload: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = payload;
+    return APIService.put(
+      `/${EntityEnum.SURVEY}/${id}/survey-deletion-process`,
+      rest,
+    );
+  }
+
+  static requestDeleteSurveyVersion(
+    payload: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = payload;
+    return APIService.put(
+      `/${EntityEnum.SURVEY}/version/${id}/survey-deletion-process`,
+      rest,
+    );
+  }
+
   static restoreSurveyById(payload: { id: string }): Promise<AxiosResponse> {
     const { id } = payload;
     return APIService.post(`/${EntityEnum.SURVEY}/${id}/restore`);
@@ -143,14 +167,22 @@ export default class SurveyService {
     remark: string;
   }) {
     return APIService.post(
-      `/${EntityEnum.SURVEY}/survey_version_remark`,
+      `/${EntityEnum.SURVEY}/survey-version-remark`,
       params,
     );
   }
   static getSurveyRemarks(
     params: IGetParams & { surveyVersionId: string },
   ): Promise<AxiosResponse<ISurveyRemark[]>> {
-    return APIService.get(`/${EntityEnum.SURVEY}/survey_version_remark`, {
+    return APIService.get(`/${EntityEnum.SURVEY}/survey-version-remark`, {
+      params,
+    });
+  }
+
+  static getSurveyChangeLogHistories(
+    params: HistoryQueryParam,
+  ): Promise<AxiosResponse<SurveyHistory[]>> {
+    return APIService.get('/survey-history', {
       params,
     });
   }

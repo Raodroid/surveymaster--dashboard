@@ -21,6 +21,7 @@ const CustomTable: FC<TableCustomProps & TableProps<any>> = props => {
   const { pointer, rowClassName } = props;
   const { sizeType } = useWindowSize();
   const size = props.size || tableSizeResponsive[sizeType];
+
   return (
     <RootStyled>
       <Table

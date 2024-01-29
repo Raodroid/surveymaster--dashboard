@@ -252,7 +252,7 @@ function ProjectTable() {
         width: 150,
         render: (text: string) => {
           const str = text.toString();
-          return <div>{str.slice(0, 10)}</div>;
+          return str.slice(0, 10);
         },
       },
       {

@@ -24,6 +24,7 @@ import {
   GetListQuestionDto,
   IMenuItem,
   IQuestion,
+  IRequestDeleteRecordDto,
 } from 'type';
 import { ColumnsType } from 'antd/lib/table/interface';
 import { useTranslation } from 'react-i18next';
@@ -40,11 +41,17 @@ import SimpleBar from 'simplebar-react';
 import { keysAction, useSelectTableRecord } from '@/hooks';
 import { generatePath } from 'react-router';
 import { useCheckScopeEntityDefault } from '@/modules/common';
-import { FileIconOutlined, LightingIcon, PenFilled } from '@/icons';
+import {
+  CheckIcon,
+  CloseIcon,
+  FileIconOutlined,
+  LightingIcon,
+  PenFilled,
+} from '@/icons';
 import { ThreeDotsDropdown } from '@/customize-components';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
-import RequestApproveDeleteQuestionModal from './RequestApproveDeleteQuestionModal/RequestApproveDeleteQuestionModal';
+import { RequestDeleteQuestionModal } from '../components';
 
 const { confirm } = Modal;
 interface ICategoryDetailContext {
@@ -107,7 +114,20 @@ const CategoryDetail = () => {
       onError,
     },
   );
-
+  const requestDeleteQuestion = useMutation(
+    (data: IRequestDeleteRecordDto) => {
+      return QuestionBankService.requestDeleteQuestion({
+        ...data,
+      });
+    },
+    {
+      onSuccess: async () => {
+        notification.success({ message: t('common.updateSuccess') });
+        await queryClient.invalidateQueries('getQuestionList');
+      },
+      onError,
+    },
+  );
   const restoreMutation = useMutation(
     (data: { id: string }) => {
       return QuestionBankService.restoreQuestionByQuestionId(data);
@@ -171,6 +191,34 @@ const CategoryDetail = () => {
     [duplicateMutation, t],
   );
 
+  const handleResponseDeleteRequest = useCallback(
+    (type: 'accept' | 'deny', record: IQuestion) => {
+      if (type === 'accept') {
+        confirm({
+          icon: null,
+          content: t('common.confirmDeleteQuestion'),
+          onOk() {
+            deleteMutation.mutateAsync({ id: record?.id as string });
+          },
+        });
+
+        return;
+      }
+
+      confirm({
+        icon: null,
+        content: t('common.confirmDenyDeleteRequestQuestion'),
+        onOk() {
+          requestDeleteQuestion.mutateAsync({
+            isAwaitingDeletion: false,
+            id: record?.id as string,
+          });
+        },
+      });
+    },
+    [deleteMutation, requestDeleteQuestion, t],
+  );
+
   const tableActions = useMemo<keysAction<IQuestion>>(
     () => [
       {
@@ -181,17 +229,34 @@ const CategoryDetail = () => {
         key: ACTION.EDIT,
         action: handleEdit,
       },
-
       {
-        key: ACTION.DELETE,
+        key: ACTION.REQUEST_DELETE,
         action: toggleOpenRequestModal,
       },
       {
         key: ACTION.RESTORE,
         action: handleRestore,
       },
+      {
+        key: ACTION.ACCEPT_DELETE_REQUEST,
+        action: record => {
+          handleResponseDeleteRequest('accept', record);
+        },
+      },
+      {
+        key: ACTION.DENY_DELETE_REQUEST,
+        action: record => {
+          handleResponseDeleteRequest('deny', record);
+        },
+      },
     ],
-    [handleDuplicate, handleEdit, handleRestore, toggleOpenRequestModal],
+    [
+      handleDuplicate,
+      handleEdit,
+      handleResponseDeleteRequest,
+      handleRestore,
+      toggleOpenRequestModal,
+    ],
   );
 
   const { handleSelect, selectedRecord } =
@@ -336,7 +401,8 @@ const CategoryDetail = () => {
         getQuestionListQuery.isLoading ||
         restoreMutation.isLoading ||
         deleteMutation.isLoading ||
-        restoreMutation.isLoading
+        restoreMutation.isLoading ||
+        requestDeleteQuestion.isLoading
       }
       style={{ maxHeight: 'unset' }}
     >
@@ -368,10 +434,10 @@ const CategoryDetail = () => {
       </CategoryDetailContext.Provider>
 
       {canUpdate && (
-        <RequestApproveDeleteQuestionModal
+        <RequestDeleteQuestionModal
           open={openRequestModal}
           toggleOpen={toggleOpenRequestModal}
-          versionId={selectedRecord?.id}
+          questionId={selectedRecord?.id as string}
         />
       )}
     </Spin>
@@ -384,9 +450,9 @@ const ACTION = {
   RESTORE: 'RESTORE',
   EDIT: 'EDIT',
   DUPLICATE: 'DUPLICATE',
-  DELETE: 'DELETE',
-  ACCEPT_REQUEST: 'ACCEPT_REQUEST',
-  DENY_REQUEST: 'DENY_REQUEST',
+  REQUEST_DELETE: 'REQUEST_DELETE',
+  ACCEPT_DELETE_REQUEST: 'ACCEPT_DELETE_REQUEST',
+  DENY_DELETE_REQUEST: 'DENY_REQUEST',
 } as const;
 
 const ActionThreeDropDown: FC<ActionThreeDropDownType<IQuestion>> = props => {
@@ -425,24 +491,31 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<IQuestion>> = props => {
         key: ACTION.EDIT,
       });
     }
-    if (canUpdate && canDelete) {
+    if (canUpdate && !record.isAwaitingDeletion) {
       baseMenu.push({
         icon: <LightingIcon className={'text-primary'} />,
         label: <label> {t('common.requestDeleteQuestion')}</label>,
-        key: ACTION.DELETE,
+        key: ACTION.REQUEST_DELETE,
       });
     }
-    if (canUpdate && canDelete && profile?.id === record?.approvalUserId) {
-      baseMenu.push({
-        icon: <LightingIcon className={'text-primary'} />,
-        label: <label> {t('common.acceptDeleteRequest')}</label>,
-        key: ACTION.ACCEPT_REQUEST,
-      });
-      baseMenu.push({
-        icon: <LightingIcon className={'text-primary'} />,
-        label: <label> {t('common.denyDeleteRequest')}</label>,
-        key: ACTION.DENY_REQUEST,
-      });
+    if (canDelete && record.isAwaitingDeletion) {
+      if (profile?.id === record?.deletedBy) {
+        baseMenu.push({
+          icon: <CheckIcon className={'text-primary'} />,
+          label: <label> {t('common.acceptDeleteRequest')}</label>,
+          key: ACTION.ACCEPT_DELETE_REQUEST,
+        });
+      }
+      if (
+        profile?.id === record?.deletedBy ||
+        profile?.id === record?.createdBy
+      ) {
+        baseMenu.push({
+          icon: <CloseIcon className={'text-primary'} />,
+          label: <label> {t('common.denyDeleteRequest')}</label>,
+          key: ACTION.DENY_DELETE_REQUEST,
+        });
+      }
     }
     return baseMenu;
   }, [
@@ -450,8 +523,10 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<IQuestion>> = props => {
     canDelete,
     canUpdate,
     profile?.id,
-    record?.approvalUserId,
+    record?.createdBy,
     record?.deletedAt,
+    record?.deletedBy,
+    record?.isAwaitingDeletion,
     t,
   ]);
 

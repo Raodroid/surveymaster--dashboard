@@ -9,7 +9,6 @@ import { QsParams } from '@/type';
 
 export interface IFilter {
   counter?: number;
-  setCounter?: (payload: number) => void;
 }
 
 function ProjectFilter() {
@@ -28,9 +27,7 @@ function ProjectFilter() {
 
   return (
     <Popover
-      content={
-        <ProjectFilterOverlay counter={counter} setCounter={setCounter} />
-      }
+      content={<ProjectFilterOverlay counter={counter} />}
       trigger={['click']}
       placement="bottomRight"
     >

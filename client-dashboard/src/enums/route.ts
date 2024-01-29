@@ -30,5 +30,8 @@ export const ROUTE_PATH = {
       ROOT: '/app/profile',
       TEAM: '/app/profile/manage-users',
     },
+    CHANGE_LOG: {
+      ROOT: '/app/change-log',
+    },
   },
 };

@@ -395,6 +395,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
               return res;
             }
             const newItem: ISurveyQuestionDto = {
+              id: q.id,
               sort: res.length + 1,
               remarks: q.remarks?.length === 0 ? undefined : q.remarks,
               questionVersionId: q.questionVersionId,

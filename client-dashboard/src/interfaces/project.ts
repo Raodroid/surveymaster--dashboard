@@ -10,14 +10,15 @@ export interface ProjectPayload {
 }
 
 export interface IAction {
+  name?: string;
   actionType: string;
   createdAt: string;
   createdBy: string;
   updatedAt: string;
-  deletedAt: string;
+  deletedAt?: string;
   id: string;
   surveyId: string;
-  params: string;
+  params?: string;
   survey?: ISurvey;
   owner: UserPayload;
 }

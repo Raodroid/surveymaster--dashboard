@@ -7,6 +7,7 @@
     "build:development": "vite build --mode dev",
     "build:dev-server": "vite build --mode dev-server",
     "build:stg": "vite build --mode stg",
+    "build:prod": "vite build --mode prod",
     "deploy:dev-server": "aws s3 sync dist/ s3://eg-dev-server-survey-master-admin-origin --cache-control no-cache",
     "deploy:stg": "aws s3 sync dist/ s3://sm-stg-survey-master-admin-origin --cache-control no-cache",
     "invalidate:dev-server": "aws configure set preview.cloudfront true && aws cloudfront create-invalidation --distribution-id E1FZTWZAHX0593 --paths '/*'",

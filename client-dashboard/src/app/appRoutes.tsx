@@ -1,15 +1,19 @@
-import {lazy, Suspense, useEffect} from 'react';
-import {Navigate, Route, Routes} from 'react-router-dom';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-import {CustomSpinSuspense} from 'modules/common/styles';
-import {useScrollbarContext} from '@/scrollbarContext/useScrollBar';
-import {ProtectedRoutes} from './protected.route';
-import {NoAuthenticationRoutes} from './public.route';
-import {UnProtectedRoutes} from './unProtected.route';
-import {useCheckScopeEntityDefault} from '@/modules/common/hoc';
-import {ROUTE_PATH, SCOPE_CONFIG} from '@/enums';
-import {useSelector} from 'react-redux';
-import {AuthSelectors} from '../redux/auth';
+import { CustomSpinSuspense } from 'modules/common/styles';
+import { useScrollbarContext } from '@/scrollbarContext/useScrollBar';
+import { ProtectedRoutes } from './protected.route';
+import { NoAuthenticationRoutes } from './public.route';
+import { UnProtectedRoutes } from './unProtected.route';
+import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
+import {
+  ROUTE_PATH,
+  SCOPE_CONFIG,
+  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
+} from '@/enums';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '../redux/auth';
 
 const Home = lazy(() => import('modules/dashboard/pages/Home'));
 const Project = lazy(() => import('@pages/Project/Project'));
@@ -18,7 +22,7 @@ const QuestionBank = lazy(
   () => import('modules/dashboard/pages/QuestionBank/QuestionBank'),
 );
 const ViewQuestion = lazy(
-  () => import('modules/dashboard/pages/QuestionBank/ViewQuestion'),
+  () => import('@pages/QuestionBank/ViewQuestion/ViewQuestion'),
 );
 const EditQuestion = lazy(
   () => import('modules/dashboard/pages/QuestionBank/EditQuestion'),
@@ -28,6 +32,10 @@ const CategoryDetail = lazy(
 );
 const AddQuestion = lazy(
   () => import('modules/dashboard/pages/QuestionBank/AddQuestion'),
+);
+
+const ChangelogManagement = lazy(
+  () => import('modules/dashboard/pages/ChangeLog/Changelog/ChangeLog'),
 );
 
 export const ScrollToTop = props => {
@@ -45,8 +53,16 @@ const AppRoutes = () => {
     SCOPE_CONFIG.ENTITY.QUESTION,
   );
   const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);
+  const currentRoles = useSelector(AuthSelectors.getCurrentScopes);
+  const isAdminRole = useMemo(() => {
+    return currentRoles.some(role =>
+      STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(role.id),
+    );
+  }, [currentRoles]);
 
   const canReadQuestionFinal = isFetching ? true : canReadQuestion;
+
+  const canReadChangeLogs = isFetching ? true : isAdminRole;
 
   return (
     <ScrollToTop>
@@ -86,6 +102,13 @@ const AppRoutes = () => {
                   element={<AddQuestion />}
                 />
               </Route>
+            )}
+
+            {canReadChangeLogs && (
+              <Route
+                path={ROUTE_PATH.DASHBOARD_PATHS.CHANGE_LOG.ROOT}
+                element={<ChangelogManagement />}
+              />
             )}
             <Route path="*" element={<Navigate to={'/app'} replace />} />
           </Route>
