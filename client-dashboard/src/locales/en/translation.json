@@ -20,6 +20,7 @@
     "foods": "Foods"
   },
   "common": {
+    "actionBy": "Action By",
     "addEmbeddedCondition": "Add Embedded Condition",
     "addQuestionCondition": "Add Question Condition",
     "addEmbedded": "Add Embedded",

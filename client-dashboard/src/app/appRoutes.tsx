@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { CustomSpinSuspense } from 'modules/common/styles';
@@ -7,7 +7,11 @@ import { ProtectedRoutes } from './protected.route';
 import { NoAuthenticationRoutes } from './public.route';
 import { UnProtectedRoutes } from './unProtected.route';
 import { useCheckScopeEntityDefault } from '@/modules/common/hoc';
-import { ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
+import {
+  ROUTE_PATH,
+  SCOPE_CONFIG,
+  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
+} from '@/enums';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '../redux/auth';
 
@@ -49,8 +53,16 @@ const AppRoutes = () => {
     SCOPE_CONFIG.ENTITY.QUESTION,
   );
   const isFetching = useSelector(AuthSelectors.getIsFetchingProfile);
+  const currentRoles = useSelector(AuthSelectors.getCurrentScopes);
+  const isAdminRole = useMemo(() => {
+    return currentRoles.some(role =>
+      STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(role.id),
+    );
+  }, [currentRoles]);
 
   const canReadQuestionFinal = isFetching ? true : canReadQuestion;
+
+  const canReadChangeLogs = isFetching ? true : isAdminRole;
 
   return (
     <ScrollToTop>
@@ -92,10 +104,12 @@ const AppRoutes = () => {
               </Route>
             )}
 
-            <Route
-              path={ROUTE_PATH.DASHBOARD_PATHS.CHANGE_LOG.ROOT}
-              element={<ChangelogManagement />}
-            ></Route>
+            {canReadChangeLogs && (
+              <Route
+                path={ROUTE_PATH.DASHBOARD_PATHS.CHANGE_LOG.ROOT}
+                element={<ChangelogManagement />}
+              />
+            )}
             <Route path="*" element={<Navigate to={'/app'} replace />} />
           </Route>
           <Route path="*" element={<UnProtectedRoutes />}>

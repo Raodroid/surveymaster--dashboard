@@ -78,17 +78,13 @@ const ChangeLogTable = <P extends 'Survey' | 'Question'>(props: {
           }),
       },
       {
-        title: 'Action By',
+        title: t('common.actionBy'),
         dataIndex: 'actionBy',
         key: 'actionBy',
         render: (value, record) => {
-          return (
-            <span className={'flex gap-3 items-center'}>
-              <span>{`${record?.owner?.firstName || ''} ${
-                record?.owner?.lastName
-              }`}</span>
-            </span>
-          );
+          return `${record?.owner?.firstName || ''} ${
+              record?.owner?.lastName
+          }`;
         },
       },
       {
@@ -97,7 +93,7 @@ const ChangeLogTable = <P extends 'Survey' | 'Question'>(props: {
         key: 'createdAt',
         width: 150,
         render: value => {
-          return <div>{!value ? '--' : moment(value).fromNow()}</div>;
+          return !value ? '--' : moment(value).fromNow();
         },
       },
     ];
