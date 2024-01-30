@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { ActionHistortContext } from './ActionHistoryContext';
+import { ActionHistoryContext } from './ActionHistoryContext';
 
 export const useActionHistoryContext = () => {
-  return useContext(ActionHistortContext);
+  return useContext(ActionHistoryContext);
 };

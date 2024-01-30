@@ -1,16 +1,16 @@
-import {createContext, ReactElement, useRef, useState} from 'react';
-import {useParseQueryString} from '@/hooks';
-import {IPaginationResponse, ISurvey, QsParams} from '@/type';
-import {useParams} from 'react-router';
-import {projectSurveyParams} from '@pages/Survey';
-import {useQueries, useQuery} from 'react-query';
-import {SurveyService} from '@/services';
+import { createContext, ReactElement, useRef, useState } from 'react';
+import { useParseQueryString } from '@/hooks';
+import { IPaginationResponse, ISurvey, QsParams, SurveyHistory } from '@/type';
+import { useParams } from 'react-router';
+import { projectSurveyParams } from '@pages/Survey';
+import { useQueries, useQuery } from 'react-query';
+import { SurveyService } from '@/services';
 import moment from 'moment';
-import {IAction} from '@/interfaces';
+import { IAction } from '@/interfaces';
 import _get from 'lodash/get';
-import {onError} from '@/utils';
-import {AxiosResponse} from 'axios';
-import {Spin} from 'antd';
+import { onError } from '@/utils';
+import { AxiosResponse } from 'axios';
+import { Spin } from 'antd';
 
 type IMonthQuery = {
   createdFrom: string;
@@ -20,12 +20,12 @@ type IMonthQuery = {
 };
 
 interface IActionHistoryContext {
-  displayHistory: IAction[];
-  todayAction: IAction | undefined;
-  createAction: IAction | undefined;
+  displayHistory: SurveyHistory[];
+  todayAction: SurveyHistory | undefined;
+  createAction: SurveyHistory | undefined;
   surveyData: ISurvey | undefined;
   months: IMonthQuery[];
-  monthData: Record<string, { data?: IAction[]; index: number }>;
+  monthData: Record<string, { data?: SurveyHistory[]; index: number }>;
 }
 
 const initValueContext: IActionHistoryContext = {
@@ -37,13 +37,12 @@ const initValueContext: IActionHistoryContext = {
   monthData: {},
 };
 
-export const ActionHistortContext =
+export const ActionHistoryContext =
   createContext<IActionHistoryContext>(initValueContext);
 
 const ActionHistoryProvider = (props: { children?: ReactElement }) => {
   const [context, setContext] =
     useState<IActionHistoryContext>(initValueContext);
-  const wrapperRef = useRef<any>();
 
   const qsParams = useParseQueryString<QsParams>();
   const params = useParams<projectSurveyParams>();
@@ -93,7 +92,7 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
     context.months.map((month, index, arr) => {
       return {
         queryFn: () =>
-          SurveyService.getSurveyHistories({
+          SurveyService.getSurveyChangeLogHistories({
             surveyId: params.surveyId,
             createdFrom: month.createdFrom,
             createdTo: month.createdTo,
@@ -135,7 +134,7 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
   const getTodayActions = useQuery(
     ['getTodayActionsHistories', params],
     () =>
-      SurveyService.getSurveyHistories({
+      SurveyService.getSurveyChangeLogHistories({
         surveyId: params.surveyId,
         take: 1,
         page: 1,
@@ -158,7 +157,7 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
   const getActionsHistories = useQuery(
     ['getActionsHistories', params, qsParams],
     () =>
-      SurveyService.getSurveyHistories({
+      SurveyService.getSurveyChangeLogHistories({
         surveyId: params.surveyId,
         selectAll: true,
         createdFrom: qsParams.createdFrom || moment().startOf('month').format(),
@@ -177,7 +176,7 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
   );
 
   return (
-    <ActionHistortContext.Provider
+    <ActionHistoryContext.Provider
       value={{
         ...context,
       }}
@@ -192,7 +191,7 @@ const ActionHistoryProvider = (props: { children?: ReactElement }) => {
       >
         <div className={'h-full'}>{props.children}</div>
       </Spin>
-    </ActionHistortContext.Provider>
+    </ActionHistoryContext.Provider>
   );
 };
 

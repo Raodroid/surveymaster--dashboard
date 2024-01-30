@@ -1,10 +1,17 @@
-import {IAction} from '@/interfaces';
 import moment from 'moment';
-import {useTranslation} from 'react-i18next';
-import {genHandleActionType} from '@pages/Survey';
-import {Avatar, Divider} from 'antd';
+import { useTranslation } from 'react-i18next';
+import { Avatar, Collapse, Divider, Typography } from 'antd';
+import { QuestionHistoryType, SurveyHistory, SurveyHistoryType } from '@/type';
+import { useToggle } from '@/utils';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from '@/icons';
+const { Panel } = Collapse;
 
-function Action(props: { action?: IAction; today?: boolean }) {
+const haveChildrenToShowMap = {
+  [SurveyHistoryType.SURVEY_VERSION_UPDATED]: true,
+  [QuestionHistoryType.QUESTION_VERSION_UPDATED]: true,
+} as const;
+function Action(props: { action?: SurveyHistory; today?: boolean }) {
   const { action, today = false } = props;
   const { t } = useTranslation();
 
@@ -31,10 +38,51 @@ function Action(props: { action?: IAction; today?: boolean }) {
               : moment(action.createdAt).fromNow()}
           </span>
         </div>
-        <div className={`font-[500]`}>{genHandleActionType(action, t)}</div>
+        <div className={`font-[500]`}>
+          {haveChildrenToShowMap[action.type] ? (
+            <ExpandableRow action={action} />
+          ) : (
+            t(`actionType.${action.type}`, {
+              newItem: action.newItem,
+              oldItem: action.oldItem,
+            })
+          )}
+        </div>
       </div>
     </div>
   );
 }
+
+const ExpandableRow = (props: { action: SurveyHistory }) => {
+  const { action } = props;
+  const [open, toggle] = useToggle();
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className={'flex items-center gap-3'}>
+        <Typography
+          onClick={toggle}
+          className={'cursor-pointer text-textColor'}
+        >
+          {t(`actionType.${action.type}`, {
+            newItem: action.newItem,
+            oldItem: action.oldItem,
+          })}
+        </Typography>
+        <ArrowRight onClick={toggle} className={'cursor-pointer'} />
+      </div>
+      <ul className={!open ? 'hidden' : ''}>
+        {action?.children?.map(i => (
+          <li className={'ml-6 mt-3'} key={i.id}>
+            {t(`actionType.${i.type}`, {
+              newItem: i.newItem || action.newItem,
+              oldItem: i.oldItem || action.oldItem,
+            })}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
 
 export default Action;

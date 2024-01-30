@@ -378,4 +378,6 @@ export type HistoryQueryParam = QsParams & {
   projectIds?: string[];
   createdFrom?: string;
   createdTo?: string;
+  surveyId?: string;
+  selectAll?: boolean;
 };

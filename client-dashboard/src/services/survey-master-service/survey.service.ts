@@ -39,15 +39,6 @@ export default class SurveyService {
     return APIService.get(`/${EntityEnum.SURVEY}/${id}`);
   }
 
-  static getSurveyHistories(
-    params: IGetParams & { surveyId?: string },
-  ): Promise<AxiosResponse<IPaginationResponse<IAction[]>>> {
-    const { surveyId } = params;
-    return APIService.get(`/${EntityEnum.SURVEY}/${surveyId}/histories`, {
-      params,
-    });
-  }
-
   static createSurvey(props: CreateSurveyBodyDto): Promise<AxiosResponse> {
     return APIService.post(EntityEnum.SURVEY, props);
   }

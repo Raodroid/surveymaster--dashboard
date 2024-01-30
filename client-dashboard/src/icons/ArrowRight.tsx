@@ -1,16 +1,16 @@
-import {FC, SVGAttributes} from 'react';
+import { FC, SVGAttributes } from 'react';
 
 export const ArrowRight: FC<SVGAttributes<HTMLOrSVGElement>> = props => {
-  const { style, className } = props;
+  const { style, ...rest } = props;
   return (
     <svg
-      className={className}
       style={{ ...style, transform: 'rotate(-90deg)' }}
       width="12px"
       height="6px"
       viewBox="0 0 12 6"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
+      {...rest}
     >
       <g
         id="Design"

@@ -16,20 +16,6 @@ export type projectSurveyParams = {
   surveyId: string;
 };
 
-export const genHandleActionType = (action: IAction, t) => {
-  if (!action) return '';
-
-  switch (action.actionType) {
-    case surveyActionType[action.actionType]:
-      return t(`actionType.${action.actionType}`, {
-        params: action.params,
-      });
-
-    default:
-      return t('actionType.noActionsYet');
-  }
-};
-
 export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
   const fieldName = focusBlock.fieldName;
 
