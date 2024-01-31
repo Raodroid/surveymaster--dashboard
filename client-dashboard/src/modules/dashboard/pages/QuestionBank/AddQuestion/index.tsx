@@ -85,7 +85,10 @@ const AddQuestion = () => {
   );
   const onFinish = useCallback(
     (values: IAddQuestionFormValue) => {
-      const newValue = { ...values };
+      const newValue: IAddQuestionFormValue = {
+        ...values,
+        options: values.options?.map(({ id, ...restOption }) => restOption),
+      };
       if (values.dataMatrix) {
         const rows = values.dataMatrix.rows;
         rows.forEach(row => {

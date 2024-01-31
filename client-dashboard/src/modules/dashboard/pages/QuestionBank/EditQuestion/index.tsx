@@ -172,27 +172,19 @@ const EditQuestion = () => {
   );
   const onFinish = useCallback(
     async (values: IEditQuestionFormValue) => {
-      const newValues = {
-        ...values,
-        options: values?.options?.map(
-          ({ text, imageUrl, keyPath, id }, idx) => ({
-            text,
-            imageUrl,
-            sort: idx + 1,
-            keyPath,
-            id: (id as string)?.includes(RANDOME_ID_PREFIX) ? undefined : id,
-          }),
-        ),
-      };
+      const newValues: IEditQuestionFormValue = values;
 
       if (
         currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED
       ) {
         newValues.status = QuestionVersionStatus.DRAFT;
-      }
-      // console.log(newValues);
-      // return;
 
+        if (values.options?.length !== 0)
+          //remove id when create new question
+          newValues.options = values.options?.map(
+            ({ id, ...restOption }) => restOption,
+          );
+      }
       const newVal = transformData(newValues, currentVersionQuestionData);
       if (!newVal) return;
 

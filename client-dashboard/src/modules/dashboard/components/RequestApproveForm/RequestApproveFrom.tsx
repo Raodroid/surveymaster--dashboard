@@ -81,7 +81,6 @@ const RequestApproveFrom = (props: {
             layout={'vertical'}
             onFinish={handleSubmit}
             className={'flex flex-col h-full'}
-            id={'rename-form'}
           >
             <ControlledInput
               showSearch
@@ -98,7 +97,6 @@ const RequestApproveFrom = (props: {
               htmlType={'submit'}
               size={'large'}
               className="secondary-btn w-full"
-              form={'rename-form'}
             >
               {t('common.submit')}
             </Button>

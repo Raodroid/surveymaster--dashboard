@@ -73,26 +73,20 @@ const EditSurveyHeader = () => {
         <h3 className={'text-[16px] font-semibold m-0'}>
           {survey.currentSurveyVersion?.name}
         </h3>
-
         <SurveyVersionSelect
           value={survey.currentSurveyVersion?.displayId}
           versions={survey.surveyData?.versions}
         />
-
         <ViewSurveyButton />
         <div className={'flex-1'} />
         <SurveyVersionRemarkButton />
         <Divider type="vertical" className={'m-0 h-[8px]'} />
-        {dirty && (
-          <>
-            <Button type={'default'} onClick={handleCancel}>
-              <span className={'!text-[1rem] font-semibold'}>
-                {t('common.cancel')}
-              </span>
-            </Button>
-            <Divider type="vertical" className={'m-0 h-[8px]'} />
-          </>
-        )}
+        <Button type={'default'} onClick={handleCancel}>
+          <span className={'!text-[1rem] font-semibold'}>
+            {t('common.cancel')}
+          </span>
+        </Button>
+        <Divider type="vertical" className={'m-0 h-[8px]'} />
         <SurveyFormSubmitButton />
         {!isExternalProject && <OverviewQuestionButton />}
       </div>

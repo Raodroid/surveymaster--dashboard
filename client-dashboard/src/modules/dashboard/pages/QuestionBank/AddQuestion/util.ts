@@ -13,7 +13,7 @@ export const transformQuestionData = (
     case QuestionType.FORM_FIELD:
     case QuestionType.RANK_ORDER:
       result.options = input?.options?.map((opt, index) => ({
-        id: opt?.id,
+        id: !(opt?.id as string)?.includes('random') ? opt.id : undefined,
         sort: index + 1,
         text: opt.text,
         keyPath: opt?.keyPath,
@@ -22,7 +22,7 @@ export const transformQuestionData = (
 
     case QuestionType.PHOTO:
       result.options = input?.options?.map((opt, index) => ({
-        id: opt?.id,
+        id: !(opt?.id as string)?.includes('random') ? opt.id : undefined,
         sort: index + 1,
         text: opt.text,
         imageUrl: (opt as any)?.imageUrl.response?.url || opt.imageUrl,

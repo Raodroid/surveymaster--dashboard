@@ -102,7 +102,6 @@ const SurveyRenameModal: FC<
                   layout={'vertical'}
                   onFinish={handleSubmit}
                   className={'flex flex-col h-full'}
-                  id={'rename-form'}
                 >
                   <ControlledInput
                     inputType={INPUT_TYPES.INPUT}
@@ -115,7 +114,6 @@ const SurveyRenameModal: FC<
                     htmlType={'submit'}
                     size={'large'}
                     className="secondary-btn w-full"
-                    form={'rename-form'}
                   >
                     {t('common.confirm')}
                   </Button>
