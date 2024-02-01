@@ -2,6 +2,8 @@ import { ColumnsType } from 'antd/lib/table';
 import {
   HistoryQueryParam,
   IGetParams,
+  IQuestion,
+  ISurvey,
   QsParams,
   QuestionHistory,
   QuestionHistoryType,
@@ -82,9 +84,7 @@ const ChangeLogTable = <P extends 'Survey' | 'Question'>(props: {
         dataIndex: 'actionBy',
         key: 'actionBy',
         render: (value, record) => {
-          return `${record?.owner?.firstName || ''} ${
-              record?.owner?.lastName
-          }`;
+          return `${record?.owner?.firstName || ''} ${record?.owner?.lastName}`;
         },
       },
       {
@@ -109,7 +109,11 @@ const ChangeLogTable = <P extends 'Survey' | 'Question'>(props: {
         title: t('common.surveyName'),
         dataIndex: ['newItem', 'name'],
         key: 'surveyName',
-        render: value => value || '--',
+        render: (value, record) => {
+          return record.type === SurveyHistoryType.SURVEY_CREATED
+            ? (record?.newItem as ISurvey)?.versions?.[0]?.name
+            : value || '--';
+        },
       });
     } else if (qsParams.type === 'Question') {
       base.unshift({
@@ -128,7 +132,11 @@ const ChangeLogTable = <P extends 'Survey' | 'Question'>(props: {
         title: t('common.questionName'),
         dataIndex: ['newItem', 'title'],
         key: 'surveyName',
-        render: value => value || '--',
+        render: (value, record) => {
+          return record.type === QuestionHistoryType.QUESTION_CREATED
+            ? (record?.newItem as IQuestion)?.versions?.[0]?.title
+            : value || '--';
+        },
       });
     }
     return base;

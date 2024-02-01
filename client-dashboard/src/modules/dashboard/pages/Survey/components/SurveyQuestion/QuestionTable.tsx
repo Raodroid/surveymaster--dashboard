@@ -57,7 +57,7 @@ const QuestionTable: FC<{
             ...i,
             type: chooseVersionQuestion?.type as string,
             questionTitle: chooseVersionQuestion?.title as string,
-            id: questionId,
+            // id: questionId,
             questionVersionId: newQuestionVersionId,
             createdAt: chooseVersionQuestion.createdAt,
           };

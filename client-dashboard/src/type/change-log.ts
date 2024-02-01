@@ -1,6 +1,6 @@
 import { UserPayload } from '@/redux/user';
-import { IQuestionVersion } from '@/type/question-bank';
-import { ISurveyVersionBaseDto } from '@/type/survey';
+import { IQuestion, IQuestionVersion } from '@/type/question-bank';
+import { ISurvey, ISurveyVersionBaseDto } from '@/type/survey';
 import { IProject } from '@/type/project';
 
 export enum SurveyHistoryType {
@@ -66,7 +66,7 @@ export type SurveyHistory = {
   id: string;
   type: SurveyHistoryType;
   oldItem: ISurveyVersionBaseDto;
-  newItem: ISurveyVersionBaseDto;
+  newItem: ISurveyVersionBaseDto | ISurvey;
   // parent	{...}
   children?: Array<SurveyHistory>;
   createdBy: string;
@@ -81,7 +81,7 @@ export type QuestionHistory = {
   id: string;
   type: QuestionHistoryType;
   oldItem: IQuestionVersion;
-  newItem: IQuestionVersion;
+  newItem: IQuestionVersion | IQuestion;
   // parent	{...}
   children?: Array<QuestionHistory>;
   createdBy: string;

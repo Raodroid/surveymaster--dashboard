@@ -647,7 +647,7 @@
     "SURVEY_VERSION_CHANGED_NAME":"Survey version changed name from \"{{oldItem.name}}\" to \"{{newItem.name}}\"",
     "SURVEY_VERSION_ADDED_BLOCK_ELEMENT":"Survey version added new block element \"{{newItem.blockDescription}}\"",
 	"SURVEY_VERSION_DELETED_BLOCK_ELEMENT":"Deleted block element \"{{oldItem.blockDescription}}\"",
-	"BLOCK_ELEMENT_ADDED_SURVEY_QUESTION":"Block element added new survey question {{newItem}}",
+	"BLOCK_ELEMENT_ADDED_SURVEY_QUESTION":"Block element added new survey question",
 	"BLOCK_ELEMENT_DELETED_SURVEY_QUESTION":"Block element deleted survey question",
 	"BLOCK_ELEMENT_REORDERED_SURVEY_QUESTIONS":"Block element reordered some survey questions",
 	"SURVEY_VERSION_ADDED_EMBEDDED_ELEMENT":"Survey version added Embedded element",

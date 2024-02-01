@@ -255,7 +255,7 @@ const AddQuestionFormCategoryModal: FC<
           category: question.masterCategory?.name as string,
           remarks: [],
           sort,
-          id: question.id,
+          // id: question.id,
           questionTitle: question.latestCompletedVersion.title,
         };
         sort += 1;

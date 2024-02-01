@@ -48,6 +48,7 @@ import {
   createQuestionMap,
   transformSurveyVersion,
 } from '@pages/Survey/components/SurveyFormContext/util';
+import surveyQuestions from '@pages/Survey/components/SurveyQuestion/SurveyQuestions';
 
 const { confirm } = Modal;
 
@@ -348,6 +349,19 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         onOk() {
           duplicateSurveyVersionMutation.mutateAsync({
             ...value,
+            surveyFlowElements: value.surveyFlowElements?.map(element => {
+              const { id, surveyQuestions, ...rest } = element;
+
+              const newSurveyQuestions = surveyQuestions?.map(q => {
+                const { id, ...restQ } = q;
+                return restQ;
+              });
+
+              return {
+                ...rest,
+                surveyQuestions: newSurveyQuestions,
+              };
+            }),
             surveyId: params.surveyId as string,
           });
           return;
