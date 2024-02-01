@@ -418,6 +418,11 @@ const ViewQuestion = () => {
                       <div className={'version-wrapper'}>
                         {versions?.map(version => {
                           const { displayId } = version;
+
+                          const statusColor =
+                            version.status === QuestionVersionStatus.COMPLETED
+                              ? '#00AB00'
+                              : 'rgb(37 33 107)';
                           if (displayId === queryString?.version) {
                             return (
                               <Button
@@ -425,6 +430,10 @@ const ViewQuestion = () => {
                                 key={displayId}
                                 className={'info-btn'}
                               >
+                                <span
+                                  className={'w-[8px] h-[8px] rounded-full'}
+                                  style={{ background: statusColor }}
+                                />
                                 {t('common.version')} {displayId}
                               </Button>
                             );
@@ -437,6 +446,10 @@ const ViewQuestion = () => {
                                 handleChangeViewVersion(displayId);
                               }}
                             >
+                              <span
+                                className={'w-[8px] h-[8px] rounded-full'}
+                                style={{ background: statusColor }}
+                              />
                               {t('common.version')} {displayId}
                             </Button>
                           );

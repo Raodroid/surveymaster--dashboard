@@ -665,9 +665,9 @@
 
     "QUESTION_VERSION_CREATED":"Question version \"{{newItem.title}}\" was created",
 	"QUESTION_VERSION_UPDATED":"Question version \"{{newItem.title}}\" was updated",
-	"QUESTION_VERSION_CHANGED_STATUS":"Question version {{param.questionName}} was changed status",
-	"QUESTION_VERSION_DELETED":"Question version {{param.questionName}} was deleted",
-	"QUESTION_VERSION_RESTORED":"Question version {{param.questionName}} was restored",
+	"QUESTION_VERSION_CHANGED_STATUS":"Question version \"{{newItem.title}}\" was changed status to \"{{newItem.status}}\"",
+	"QUESTION_VERSION_DELETED":"Question version \"{{newItem.title}}\" was deleted",
+	"QUESTION_VERSION_RESTORED":"Question version \"{{newItem.title}}\" was restored",
 	"QUESTION_CREATED":"Question was created",
 	"QUESTION_DELETED":"Question was deleted",
 	"QUESTION_RESTORED":"Question was restored",
