@@ -101,13 +101,15 @@ const EditQuestion = () => {
       masterCategoryId,
       masterSubCategoryId,
       masterVariableName,
-      options: currentVersionQuestionData?.options?.map(opt => ({
-        id: opt.id,
-        sort: opt.sort,
-        text: opt.text,
-        keyPath: opt?.keyPath || '',
-        imageUrl: opt.imageUrl,
-      })) || [
+      options: currentVersionQuestionData?.options
+        ?.sort((a, b) => a.sort - b.sort)
+        .map(opt => ({
+          id: opt.id,
+          sort: opt.sort,
+          text: opt.text,
+          keyPath: opt?.keyPath || '',
+          imageUrl: opt.imageUrl,
+        })) || [
         {
           id: `${RANDOME_ID_PREFIX}_${generateRandom()}`,
           text: '',
@@ -155,6 +157,7 @@ const EditQuestion = () => {
       onSuccess: async response => {
         const data: IQuestionVersion = response.data;
         await queryClient.invalidateQueries('getQuestionList');
+        await queryClient.invalidateQueries('getQuestionQuery');
         notification.success({ message: t('common.updateSuccess') });
         navigate(
           `${generatePath(

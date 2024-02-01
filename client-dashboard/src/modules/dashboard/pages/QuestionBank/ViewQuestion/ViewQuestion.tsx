@@ -74,15 +74,15 @@ const ViewQuestion = () => {
     [queryString?.version, versions],
   );
 
-  const isDraftVersion =
-    selectedVerQuestionData?.status === QuestionVersionStatus.DRAFT;
-
   const isCompletedVersion =
     selectedVerQuestionData?.status === QuestionVersionStatus.COMPLETED;
 
   const initValue = useMemo<IViewQuestionFormValue>(
     () => ({
       ...selectedVerQuestionData,
+      options: selectedVerQuestionData?.options?.sort(
+        (a, b) => a.sort - b.sort,
+      ),
       createdAt: moment(selectedVerQuestionData?.createdAt),
       title: selectedVerQuestionData?.title || '',
       type: selectedVerQuestionData?.type as QuestionType,
