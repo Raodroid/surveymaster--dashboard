@@ -46,9 +46,9 @@ import { ROUTE_PATH } from '@/enums';
 import { Modal, notification, Spin } from 'antd';
 import {
   createQuestionMap,
+  transformCloneSurveyVersion,
   transformSurveyVersion,
-} from '@pages/Survey/components/SurveyFormContext/util';
-import surveyQuestions from '@pages/Survey/components/SurveyQuestion/SurveyQuestions';
+} from './util';
 
 const { confirm } = Modal;
 
@@ -349,19 +349,9 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         onOk() {
           duplicateSurveyVersionMutation.mutateAsync({
             ...value,
-            surveyFlowElements: value.surveyFlowElements?.map(element => {
-              const { id, surveyQuestions, ...rest } = element;
-
-              const newSurveyQuestions = surveyQuestions?.map(q => {
-                const { id, ...restQ } = q;
-                return restQ;
-              });
-
-              return {
-                ...rest,
-                surveyQuestions: newSurveyQuestions,
-              };
-            }),
+            surveyFlowElements: transformCloneSurveyVersion(
+              value.surveyFlowElements,
+            ),
             surveyId: params.surveyId as string,
           });
           return;

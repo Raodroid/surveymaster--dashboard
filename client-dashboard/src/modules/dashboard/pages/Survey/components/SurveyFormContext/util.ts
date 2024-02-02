@@ -144,3 +144,33 @@ export const transformSurveyVersion = (
 
   return { ...values.version, surveyFlowElements };
 };
+
+export const transformCloneSurveyVersion = (
+  input: SubSurveyFlowElementDto[] | undefined,
+): SubSurveyFlowElementDto[] => {
+  if (!input) return [];
+
+  return input.map(i => {
+    const {
+      id,
+      surveyQuestions,
+      branchLogics,
+      listEmbeddedData,
+      children,
+      ...rest
+    } = i;
+
+    const result: SubSurveyFlowElementDto = {
+      ...rest,
+      surveyQuestions: surveyQuestions?.map(({ id, ...restQ }) => restQ),
+      branchLogics: branchLogics?.map(({ id, ...restB }) => restB),
+      listEmbeddedData: listEmbeddedData?.map(({ id, ...restE }) => restE),
+    };
+
+    if (children) {
+      result.children = transformCloneSurveyVersion(children);
+    }
+
+    return result;
+  });
+};

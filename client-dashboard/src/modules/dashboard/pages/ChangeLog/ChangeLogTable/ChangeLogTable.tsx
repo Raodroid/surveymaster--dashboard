@@ -28,6 +28,16 @@ const haveChildrenToShowMap = {
   [SurveyHistoryType.SURVEY_VERSION_UPDATED]: true,
   [QuestionHistoryType.QUESTION_VERSION_UPDATED]: true,
 } as const;
+const SurveyActions = {
+  [SurveyHistoryType.SURVEY_CREATED]: true,
+  [SurveyHistoryType.SURVEY_DELETED]: true,
+  [SurveyHistoryType.SURVEY_RESTORED]: true,
+};
+const QuestionActions = {
+  [QuestionHistoryType.QUESTION_CREATED]: true,
+  [QuestionHistoryType.QUESTION_DELETED]: true,
+  [QuestionHistoryType.QUESTION_RESTORED]: true,
+} as const;
 
 const initParams: IGetParams = {
   q: '',
@@ -110,7 +120,7 @@ const ChangeLogTable = <P extends 'Survey' | 'Question'>(props: {
         dataIndex: ['newItem', 'name'],
         key: 'surveyName',
         render: (value, record) => {
-          return record.type === SurveyHistoryType.SURVEY_CREATED
+          return SurveyActions[record.type as keyof typeof SurveyActions]
             ? (record?.newItem as ISurvey)?.versions?.[0]?.name
             : value || '--';
         },
@@ -133,7 +143,7 @@ const ChangeLogTable = <P extends 'Survey' | 'Question'>(props: {
         dataIndex: ['newItem', 'title'],
         key: 'surveyName',
         render: (value, record) => {
-          return record.type === QuestionHistoryType.QUESTION_CREATED
+          return QuestionActions[record.type as keyof typeof QuestionActions]
             ? (record?.newItem as IQuestion)?.versions?.[0]?.title
             : value || '--';
         },
