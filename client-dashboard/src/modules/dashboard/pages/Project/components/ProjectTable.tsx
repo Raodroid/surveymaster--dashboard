@@ -30,6 +30,7 @@ import { keysAction, useSelectTableRecord } from '@/hooks/useSelectTableRecord';
 import ThreeDotsDropdown from '@/customize-components/ThreeDotsDropdown';
 import { ProjectModal } from '@pages/Project';
 import qs from 'qs';
+import { SimpleBarCustom } from '@/customize-components';
 
 const { confirm } = Modal;
 
@@ -278,20 +279,20 @@ function ProjectTable() {
   );
 
   return (
-    <Spin
-      spinning={getProjectListQuery.isLoading}
-      style={{ maxHeight: 'unset' }}
-    >
-      <ProjectTableWrapper centerLastChild>
-        <SimpleBar className={'ProjectTableWrapper__body'}>
-          <Table
-            dataSource={projects}
-            columns={columns}
-            pagination={false}
-            rowKey={record => record.id as string}
-            scroll={{ x: 800 }}
-          />
-        </SimpleBar>
+    <>
+      <ProjectTableWrapper>
+        <Spin spinning={getProjectListQuery.isLoading}>
+          <SimpleBarCustom>
+            <Table
+              dataSource={projects}
+              columns={columns}
+              pagination={false}
+              rowKey={record => record.id as string}
+              scroll={{ x: 800 }}
+              className={'h-full'}
+            />
+          </SimpleBarCustom>
+        </Spin>
         <Divider className={'m-0'} />
         <StyledPagination
           onChange={(page, pageSize) => {
@@ -309,7 +310,7 @@ function ProjectTable() {
         toggleOpen={toggleProjectModal}
         projectId={selectedRecord?.id}
       />
-    </Spin>
+    </>
   );
 }
 

@@ -17,12 +17,13 @@ import { StyledPagination } from '@components/index';
 import { useHandleNavigate, useParseQueryString } from '@/hooks';
 import { onError } from '@/utils';
 import moment from 'moment';
-import { CustomTable } from '@/customize-components';
+import { CustomTable, SimpleBarCustom } from '@/customize-components';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { QuestionBankService, SurveyService } from '@/services';
 import _get from 'lodash/get';
 import { AxiosResponse } from 'axios';
+import { ChangeLogTableWrapper } from '@pages/ChangeLog/ChangeLogTable/style';
 
 const haveChildrenToShowMap = {
   [SurveyHistoryType.SURVEY_VERSION_UPDATED]: true,
@@ -201,34 +202,34 @@ const ChangeLogTable = <P extends 'Survey' | 'Question'>(props: {
   const total = _get(getChangeLogs.data, 'data.itemCount', []);
 
   return (
-    <div className={'p-3 flex-1 flex flex-col'}>
+    <ChangeLogTableWrapper
+      className={'p-3 flex-1 flex flex-col overflow-hidden'}
+    >
       <Spin spinning={getChangeLogs.isLoading}>
-        <SimpleBar className={'flex-1'}>
-          <div className={'p-3 pr-1'}>
-            <CustomTable
-              dataSource={dataSource}
-              rowKey={record => record.id}
-              columns={columns}
-              pagination={false}
-              scroll={{ x: 800 }}
-              expandable={{
-                rowExpandable: record => haveChildrenToShowMap[record.type],
-                expandedRowRender: record => (
-                  <span style={{ margin: 0 }}>
-                    {record.changedItems.map(i => (
-                      <div className={'ml-6 mt-3'} key={i.id}>
-                        {t(`actionType.${i.type}`, {
-                          newItem: i.newItem || record.newItem,
-                          oldItem: i.oldItem || record.oldItem,
-                        })}
-                      </div>
-                    ))}
-                  </span>
-                ),
-              }}
-            />
-          </div>
-        </SimpleBar>
+        <SimpleBarCustom>
+          <CustomTable
+            dataSource={dataSource}
+            rowKey={record => record.id}
+            columns={columns}
+            pagination={false}
+            scroll={{ x: 800 }}
+            expandable={{
+              rowExpandable: record => haveChildrenToShowMap[record.type],
+              expandedRowRender: record => (
+                <span style={{ margin: 0 }}>
+                  {record.changedItems.map(i => (
+                    <div className={'ml-6 mt-3'} key={i.id}>
+                      {t(`actionType.${i.type}`, {
+                        newItem: i.newItem || record.newItem,
+                        oldItem: i.oldItem || record.oldItem,
+                      })}
+                    </div>
+                  ))}
+                </span>
+              ),
+            }}
+          />
+        </SimpleBarCustom>
       </Spin>
 
       <Divider className={'m-0'} />
@@ -242,7 +243,7 @@ const ChangeLogTable = <P extends 'Survey' | 'Question'>(props: {
         total={total}
         current={formatQsParams.page}
       />
-    </div>
+    </ChangeLogTableWrapper>
   );
 };
 
