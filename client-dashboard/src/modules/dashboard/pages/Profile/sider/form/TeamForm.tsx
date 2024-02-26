@@ -1,4 +1,4 @@
-import { Button, Divider, Form, notification } from 'antd';
+import { Button, Form, notification } from 'antd';
 import { SCOPE_CONFIG } from 'enums';
 import { Formik } from 'formik';
 import { PostPutMember } from 'interfaces';
@@ -7,11 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { AdminService } from 'services';
 import SimpleBar from 'simplebar-react';
-import { onError } from '../../../../../../utils/funcs';
+import { onError } from '@/utils';
 import InviteMemberInputs from '../../content/inputs/InviteMemberInputs';
 import { InviteMemberFormWrapper } from '../../styles';
 import { postPutInitialValues } from '../../utils';
-import { INVITE_MEMBER_SCHEMA } from '../../../../../common/validate/validate';
+import { INVITE_MEMBER_SCHEMA } from '@/modules/common';
 
 function TeamForm() {
   const { t } = useTranslation();
@@ -31,7 +31,8 @@ function TeamForm() {
   );
 
   const handleFinish = (payload: PostPutMember, actions) => {
-    return mutationInviteMember.mutateAsync(payload, {
+    const { id, ...rest } = payload;
+    return mutationInviteMember.mutateAsync(rest, {
       onSuccess: () => {
         actions.resetForm();
       },

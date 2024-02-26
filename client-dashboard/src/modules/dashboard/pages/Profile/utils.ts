@@ -10,8 +10,10 @@ export const postPutInitialValues: PostPutMember = {
   firstName: '',
   lastName: '',
   email: '',
-  roles: [],
+  roleIds: [],
   departmentName: '',
+  phone: '000000000',
+  phonePrefix: '+84',
 };
 
 export const useGetAllRoles = () => {

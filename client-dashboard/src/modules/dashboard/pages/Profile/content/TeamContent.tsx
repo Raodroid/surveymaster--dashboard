@@ -96,7 +96,7 @@ function TeamContent() {
       page: Number(qsParams.page) || initParams.page,
       take: Number(qsParams.take) || initParams.take,
       isDeleted: qsParams.isDeleted === 'true',
-      roleIds: Object.values(allRoles).map(elm => elm.id),
+      roleIds: allRoles.map(elm => elm.id),
     };
   }, [allRoles, qsParams]);
 
@@ -105,7 +105,7 @@ function TeamContent() {
     () => AdminService.getTeamMembers(baseParams),
     {
       refetchOnWindowFocus: false,
-      enabled: canRead,
+      enabled: canRead && !isGettingRoles,
     },
   );
 
@@ -226,18 +226,13 @@ function TeamContent() {
         title: 'Authentication',
         dataIndex: 'authentication',
         render: (_, record: TeamMember) => {
-          // const list = Object.values(allRoles).filter(elm =>
-          //   record.userRoles?.some(el => el.roleId === elm.id),
-          // );
-
-          const x = record.roles;
-          console.log(record, x);
+          const roles = record.roles;
 
           return (
             <div>
-              {x?.map((elm, index: number) => (
+              {roles?.map((elm, index: number) => (
                 <span style={{ fontSize: 12 }} key={elm.id}>
-                  {elm.name} {index !== x?.length - 1 && '| '}
+                  {elm.name} {index !== roles?.length - 1 && '| '}
                 </span>
               ))}
             </div>
