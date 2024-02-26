@@ -26,7 +26,9 @@ function Sider(props: SiderProps) {
   const routePath = ROUTE_PATH.DASHBOARD_PATHS.PROFILE;
   const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
   const isAdminRole = useMemo(() => {
-    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
+    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.some(roleId =>
+      currentRoles.includes(roleId),
+    );
   }, [currentRoles]);
   const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USER);
 

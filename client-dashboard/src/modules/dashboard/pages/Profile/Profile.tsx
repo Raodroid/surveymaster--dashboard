@@ -22,9 +22,11 @@ const Profile = () => {
 
   const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.USER);
 
-  const currentRoles = useSelector(AuthSelectors.getCurrentRoleIds);
+  const currentRoles = useSelector(AuthSelectors.getCurrentScopes);
   const isAdminRole = useMemo(() => {
-    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
+    return currentRoles.some(role =>
+      STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(role.id),
+    );
   }, [currentRoles]);
 
   const tab = useMemo(() => {

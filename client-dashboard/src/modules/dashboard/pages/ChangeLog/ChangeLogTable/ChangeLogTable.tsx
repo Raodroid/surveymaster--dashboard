@@ -12,7 +12,6 @@ import {
 } from '@/type';
 import { Divider, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
-import SimpleBar from 'simplebar-react';
 import { StyledPagination } from '@components/index';
 import { useHandleNavigate, useParseQueryString } from '@/hooks';
 import { onError } from '@/utils';

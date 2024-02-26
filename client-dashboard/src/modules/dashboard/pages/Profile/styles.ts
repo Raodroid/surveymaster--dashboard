@@ -1,6 +1,6 @@
 import { Menu } from 'antd';
 import styled from 'styled-components/macro';
-import { screenSize } from './../../../../enums/screenSize';
+import { screenSize } from '@/enums';
 
 export const ProfileStyled = styled.div`
   .custom-ant-hover {
@@ -392,6 +392,11 @@ export const TeamContentStyled = styled(ContentStyled)`
     flex: 1;
     overflow: scroll;
     position: relative;
+  }
+
+  .ant-spin-nested-loading {
+    flex: 1;
+    overflow: hidden;
   }
 `;
 

@@ -3,16 +3,7 @@ import {
   SettingOutlined,
   UserDeleteOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Form,
-  Input,
-  InputRef,
-  Spin,
-  Table,
-} from 'antd';
+import { Button, Checkbox, Divider, Form, Input, InputRef, Spin } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { STAFF_ADMIN_DASHBOARD_ROLE_LIMIT } from 'enums';
 import { SCOPE_CONFIG } from 'enums/user';
@@ -28,7 +19,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { AuthSelectors } from 'redux/auth';
 import { UserPayload } from 'redux/user';
 import { AdminService } from 'services';
-import { ActionThreeDropDownType, IGetParams, IMenuItem, QsParams } from 'type';
+import { ActionThreeDropDownType, IGetParams, QsParams } from 'type';
 
 import { CustomFallbackStyled, TeamContentStyled } from '../styles';
 import {
@@ -37,12 +28,12 @@ import {
   ResetUserPasswordModal,
   UpdateMemberModal,
 } from './modals';
-import SimpleBar from 'simplebar-react';
 import { StyledPagination } from 'modules/dashboard';
 import { useCheckScopeEntityDefault } from 'modules/common';
 import { keysAction, useSelectTableRecord } from 'hooks';
 import { ThreeDotsDropdown } from 'customize-components';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import { CustomTable, SimpleBarCustom } from '@/customize-components';
 
 interface TeamMember extends UserPayload {
   key: string;
@@ -286,7 +277,7 @@ function TeamContent() {
     <TeamContentStyled>
       <div className="cell padding-24 name title flex-a-center">AMiLi</div>
 
-      <div className="cell flex flex-col" style={{ overflow: 'hidden' }}>
+      <div className="cell flex flex-col flex-1 overflow-hidden">
         {canRead && (
           <>
             <div className="search padding-24 flex-center">
@@ -316,24 +307,21 @@ function TeamContent() {
             </div>
 
             <Divider />
-
-            <Spin spinning={isLoading} style={{ maxHeight: 'unset' }}>
-              <div className="table-wrapper">
-                <SimpleBar>
-                  <Table
-                    style={{ padding: '0 10px' }}
-                    rowSelection={{
-                      type: 'checkbox',
-                      ...rowSelection,
-                    }}
-                    columns={columns}
-                    dataSource={data}
-                    pagination={false}
-                    scroll={{ x: 800 }}
-                  />
-                </SimpleBar>
-              </div>
+            <Spin spinning={isLoading}>
+              <SimpleBarCustom>
+                <CustomTable
+                  rowSelection={{
+                    type: 'checkbox',
+                    ...rowSelection,
+                  }}
+                  columns={columns}
+                  dataSource={data}
+                  pagination={false}
+                  scroll={{ x: 800 }}
+                />
+              </SimpleBarCustom>
             </Spin>
+
             <StyledPagination
               onChange={(page, pageSize) =>
                 handleNavigate({ page: page, take: pageSize })
@@ -395,7 +383,9 @@ const ActionThreeDropDown: FC<
     SCOPE_CONFIG.ENTITY.USER,
   );
   const isAdminRole = useMemo(() => {
-    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(currentRoles);
+    return STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.some(roleId =>
+      currentRoles.includes(roleId),
+    );
   }, [currentRoles]);
 
   const items = useMemo<ItemType[]>(() => {

@@ -1,6 +1,6 @@
 import { UserSelectors } from 'redux/user';
 import { createSelector } from 'reselect';
-import { getAllScopes } from 'utils/funcs';
+import { getAllRoleIds, getAllScopes } from 'utils/funcs';
 import { RootState } from '../types';
 
 export default class AuthSelectors {
@@ -55,8 +55,8 @@ export default class AuthSelectors {
 
   static getCurrentRoleIds = createSelector(AuthSelectors.getProfile, user => {
     if (!user) return [];
-    if (user && user.userRoles) {
-      return user.userRoles[0].roleId;
+    if (user && user.roles) {
+      return getAllRoleIds(user.roles);
     }
     return [];
   });

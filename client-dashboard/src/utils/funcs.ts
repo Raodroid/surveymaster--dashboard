@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import useWindowSize from 'modules/common/hoc/useWindowSize';
-import { mobileSize } from '@/enums';
+import { mobileSize, RoleEnum } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 
 declare global {
@@ -58,6 +58,20 @@ export const getAllScopes = (roleData: Role[]) => {
     }
   });
   return scopesArr;
+};
+
+export const getAllRoleIds = (roleData: Role[]): RoleEnum[] => {
+  const roleIdMap: Record<string, boolean> = {};
+  const roleIds: RoleEnum[] = [];
+
+  roleData.forEach(role => {
+    const roleId = role?.id;
+    if (!roleIdMap[roleId] && roleId) {
+      roleIds.push(roleId);
+      roleIdMap[roleId] = true;
+    }
+  });
+  return roleIds;
 };
 
 export const useQuery = () => {
