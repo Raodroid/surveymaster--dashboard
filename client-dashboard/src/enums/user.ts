@@ -4,6 +4,7 @@ export enum EntityEnum {
   PROJECT = 'project',
   CATEGORY = 'category',
   QUESTION = 'question',
+  ROLE = 'role',
 }
 
 export const SCOPE_CONFIG = {
