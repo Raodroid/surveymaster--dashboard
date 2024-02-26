@@ -34,6 +34,7 @@ import { keysAction, useSelectTableRecord } from 'hooks';
 import { ThreeDotsDropdown } from 'customize-components';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { CustomTable, SimpleBarCustom } from '@/customize-components';
+import { useGetAllRoles } from '@pages/Profile';
 
 interface TeamMember extends UserPayload {
   key: string;
@@ -69,7 +70,8 @@ function TeamContent() {
   const { pathname } = useLocation();
 
   const [userId, setUserId] = useState<string>('');
-  const allRoles = useSelector(AuthSelectors.getAllRoles);
+
+  const { data: allRoles, isLoading: isGettingRoles } = useGetAllRoles();
 
   const [search, setSearch] = useState('');
   const searchRef = useRef<InputRef>(null);
@@ -224,15 +226,18 @@ function TeamContent() {
         title: 'Authentication',
         dataIndex: 'authentication',
         render: (_, record: TeamMember) => {
-          const list = Object.values(allRoles).filter(elm =>
-            record.userRoles?.some(el => el.roleId === elm.id),
-          );
+          // const list = Object.values(allRoles).filter(elm =>
+          //   record.userRoles?.some(el => el.roleId === elm.id),
+          // );
+
+          const x = record.roles;
+          console.log(record, x);
 
           return (
             <div>
-              {list.map((elm: TeamMember, index: number) => (
+              {x?.map((elm, index: number) => (
                 <span style={{ fontSize: 12 }} key={elm.id}>
-                  {elm.name} {index !== list.length - 1 && '| '}
+                  {elm.name} {index !== x?.length - 1 && '| '}
                 </span>
               ))}
             </div>
@@ -252,7 +257,7 @@ function TeamContent() {
         ),
       },
     ],
-    [allRoles, handleSelect, profile],
+    [handleSelect, profile],
   );
 
   const data: TeamMember[] = useMemo(
@@ -268,6 +273,7 @@ function TeamContent() {
               email: user.email,
               userRoles: user.userRoles,
               deletedAt: user.deletedAt,
+              roles: user.roles,
             };
           })
         : [],
@@ -307,7 +313,7 @@ function TeamContent() {
             </div>
 
             <Divider />
-            <Spin spinning={isLoading}>
+            <Spin spinning={isLoading || isGettingRoles}>
               <SimpleBarCustom>
                 <CustomTable
                   rowSelection={{
