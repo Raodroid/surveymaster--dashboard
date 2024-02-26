@@ -33,7 +33,7 @@ function UpdateMemberModal(props: UpdateModal) {
           lastName: userData.lastName,
           email: userData.email,
           departmentName: userData.departmentName,
-          roles: userData.userRoles?.map(elm => elm.roleId),
+          roleIds: userData.roles?.map(elm => elm.id),
         }
       : postPutInitialValues;
   }, [userData]);

@@ -52,7 +52,7 @@ function InviteMemberInputs(props: { edit: boolean }) {
         mode="multiple"
         inputType={INPUT_TYPES.SELECT}
         type={'text'}
-        name="roles"
+        name="roleIds"
         optionFilterProp="label"
         label={t('common.authentication')}
         options={optionsList}
