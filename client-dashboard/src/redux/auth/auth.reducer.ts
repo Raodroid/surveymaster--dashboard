@@ -1,5 +1,5 @@
-import { RecordOf, Record } from 'immutable';
-import jwt_decode from 'jwt-decode';
+import { Record, RecordOf } from 'immutable';
+import jwt_decode, { JwtPayload } from 'jwt-decode';
 import AuthAction from './auth.actions';
 import { StandardAction } from '../types';
 import { AuthState } from './types';
@@ -248,15 +248,18 @@ export default class AuthReducer {
         return state.set('error', '');
 
       case AuthAction.TYPES.CONFIRM_TEXT_SMS.SUCCESS:
-        const idDecodeToken: {
-          userId: string | null;
-        } = action.payload.idToken
+        const idDecodeToken: JwtPayload | null = action.payload.idToken
           ? jwt_decode(action.payload.idToken)
-          : { userId: null };
+          : null;
+
+        if (!idDecodeToken) return state;
         return state
           .set('accessToken', action.payload.accessToken)
           .set('refreshToken', action.payload.refreshToken)
-          .set('currentUserId', idDecodeToken.userId)
+          .set(
+            'currentUserId',
+            idDecodeToken.sub === undefined ? null : idDecodeToken.sub,
+          )
           .set('idToken', action.payload.idToken);
 
       case AuthAction.TYPES.CONFIRM_TEXT_SMS.FAILURE:
@@ -276,16 +279,18 @@ export default class AuthReducer {
         return state.set('error', '');
 
       case AuthAction.TYPES.CHALLENGE_REQUIRED_PASSWORD.SUCCESS:
-        const idDecodeToken: {
-          defaultProfileId: string | null;
-          userId: string | null;
-        } = action.payload.idToken
+        const idDecodeToken: JwtPayload | null = action.payload.idToken
           ? jwt_decode(action.payload.idToken)
-          : { defaultProfileId: null, userId: null };
+          : null;
+
+        if (!idDecodeToken) return state;
         return state
           .set('accessToken', action.payload.accessToken)
           .set('refreshToken', action.payload.refreshToken)
-          .set('currentUserId', idDecodeToken.userId)
+          .set(
+            'currentUserId',
+            idDecodeToken.sub === undefined ? null : idDecodeToken.sub,
+          )
           .set('idToken', action.payload.idToken);
 
       case AuthAction.TYPES.CHALLENGE_REQUIRED_PASSWORD.FAILURE:

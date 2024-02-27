@@ -56,7 +56,11 @@ function Sider(props: SiderProps) {
       ) : null}
 
       <div className="form">
-        {tab === PROFILE_TAB.USER ? <UserForm /> : <TeamForm />}
+        {tab === PROFILE_TAB.USER || !isAdminRole || !canRead ? (
+          <UserForm />
+        ) : (
+          <TeamForm />
+        )}
       </div>
     </SiderWrapper>
   );
