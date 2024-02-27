@@ -29,7 +29,6 @@ export default class AuthSelectors {
   }
 
   static getAllRoles(state: RootState) {
-    console.log(state);
     return state.auth.allRoles;
   }
 

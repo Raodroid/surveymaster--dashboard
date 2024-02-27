@@ -49,7 +49,6 @@ export const errorNotification = (input: IErr) => {
 export const getAllScopes = (roleData: Role[]) => {
   const scopes: Record<string, boolean> = {};
   let scopesArr: Scope[] = [];
-
   roleData.forEach(role => {
     const scope = role.scopes;
     if (!scopes[role?.id] && scope) {

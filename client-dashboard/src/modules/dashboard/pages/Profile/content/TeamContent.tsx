@@ -44,11 +44,11 @@ interface TeamMember extends UserPayload {
 
 const rowSelection = {
   onChange: (selectedRowKeys: Key[], selectedRows: TeamMember[]) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      'selectedRows: ',
-      selectedRows,
-    );
+    // console.log(
+    //   `selectedRowKeys: ${selectedRowKeys}`,
+    //   'selectedRows: ',
+    //   selectedRows,
+    // );
   },
   getCheckboxProps: (record: TeamMember) => ({
     disabled: record.name === 'Disabled User',

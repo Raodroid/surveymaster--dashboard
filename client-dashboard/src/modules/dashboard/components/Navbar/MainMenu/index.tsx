@@ -1,11 +1,15 @@
 import { useMemo } from 'react';
-import {ROUTE_PATH, SCOPE_CONFIG, STAFF_ADMIN_DASHBOARD_ROLE_LIMIT} from '@/enums';
+import {
+  ROUTE_PATH,
+  SCOPE_CONFIG,
+  STAFF_ADMIN_DASHBOARD_ROLE_LIMIT,
+} from '@/enums';
 import BaseMenu from '../BaseMenu';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { useCheckScopeEntityDefault } from '@/modules/common';
 import { Clock, DiagramIcon, QuestionTypeIcon } from '@/icons';
-import {useSelector} from "react-redux";
-import {AuthSelectors} from "@/redux/auth";
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '@/redux/auth';
 
 export const mainMenuItem = [
   {
@@ -32,13 +36,15 @@ const MainMenu = () => {
 
   const currentRoles = useSelector(AuthSelectors.getCurrentScopes);
   const isAdminRole = useMemo(() => {
-
-    return  currentRoles.some((role) => STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(role.id))
+    return currentRoles.some(role =>
+      STAFF_ADMIN_DASHBOARD_ROLE_LIMIT.includes(role.id),
+    );
   }, [currentRoles]);
 
   const { canRead: canReadProject } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.PROJECT,
   );
+
   const menuItems = useMemo<ItemType[]>(() => {
     const result: ItemType[] = [];
     if (canReadProject) {
@@ -47,7 +53,7 @@ const MainMenu = () => {
     if (canReadQuestion) {
       result.push(mainMenuItem[1]);
     }
-    if(isAdminRole) {
+    if (isAdminRole) {
       result.push(mainMenuItem[2]);
     }
     return result;
