@@ -66,12 +66,14 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
 
     const parentBlockSort = getParentBlockSort(fieldName);
 
+    const { id, ...restOtherFieldValueWithoutId } = value;
+
     if (!isNaN(parentBlockSort)) {
       const parentFieldName = fieldName.match(/(.*)\.children.*$/)?.[1];
 
       setParentNodeValue(
         transformToSurveyDataTreeNode(
-          [...parentNodeValue, value],
+          [...parentNodeValue, restOtherFieldValueWithoutId],
           parentBlockSort,
           parentFieldName,
         ),
@@ -79,7 +81,10 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
       return;
     }
     setParentNodeValue(
-      transformToSurveyDataTreeNode([...parentNodeValue, value]),
+      transformToSurveyDataTreeNode([
+        ...parentNodeValue,
+        restOtherFieldValueWithoutId,
+      ]),
     );
   }, [fieldName, parentNodeValue, setParentNodeValue, value]);
 
