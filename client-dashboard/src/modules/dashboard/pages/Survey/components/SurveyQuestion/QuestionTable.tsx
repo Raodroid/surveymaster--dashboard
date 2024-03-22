@@ -1,12 +1,13 @@
 import { FC, useCallback, useMemo, useState } from 'react';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { useField } from 'formik';
-import { Button, Tooltip } from 'antd';
+import { useField, useFormikContext } from 'formik';
+import { Button, Modal, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { SubSurveyFlowElementDto } from '@/type';
+import { SubSurveyFlowElement, SubSurveyFlowElementDto } from '@/type';
 import { DragTable, RoundedTag } from '@/modules/dashboard';
 import {
   GroupSurveyButton,
+  IEditSurveyFormValues,
   questionValueType,
   UpdateQuestionVersion,
   useCheckSurveyFormMode,
@@ -14,8 +15,91 @@ import {
 import { DragHandle } from '@/customize-components';
 import { Clock, TrashOutlined } from '@/icons';
 import SimpleBar from 'simplebar-react';
-import { useToggle } from '@/utils';
+import { objectKeys, useToggle } from '@/utils';
 import DisplaySurveyQuestion from '@pages/Survey/components/SurveyQuestion/DisplaySurveyQuestion';
+import { block_qVersionId_template } from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/Body/types/Branch';
+import { FormikHelpers } from 'formik/dist/types';
+
+const { confirm } = Modal;
+
+const check = (
+  blockNumber: number,
+  question: questionValueType,
+  surveyValue: IEditSurveyFormValues,
+  setSurveyValues: FormikHelpers<IEditSurveyFormValues>['setValues'],
+): {
+  isExisted: boolean;
+  removeQuestionFromBranch: () => void;
+} => {
+  const valueQuestionOption = block_qVersionId_template({
+    blockSort: blockNumber,
+    questionVersionId: question.questionVersionId,
+  });
+
+  const surveyFlowElements = surveyValue.version?.surveyFlowElements;
+
+  const branchIdBlocksHaveQuestionVersionId = surveyFlowElements?.reduce(
+    (result: Record<number, boolean>, blockElement) => {
+      if (blockElement.type !== SubSurveyFlowElement.BRANCH) return result;
+      if (
+        blockElement.branchLogics.some(
+          logic => logic.blockSort_qId === valueQuestionOption,
+        )
+      ) {
+        if (blockElement.blockSort) result[blockElement.blockSort] = true;
+      }
+      return result;
+    },
+    {},
+  );
+
+  const isExisted = !(
+    !branchIdBlocksHaveQuestionVersionId ||
+    !objectKeys(branchIdBlocksHaveQuestionVersionId)?.length
+  );
+
+  const removeQuestionFromBranch = () => {
+    if (!isExisted) return;
+
+    const updateSurveyFlowElements = surveyFlowElements?.map(blockElement => {
+      if (blockElement.blockSort === blockNumber) {
+        return {
+          ...blockElement,
+          surveyQuestions: blockElement.surveyQuestions.filter(
+            q => q.questionVersionId !== question.questionVersionId,
+          ),
+        };
+      }
+      if (
+        !blockElement?.blockSort ||
+        !branchIdBlocksHaveQuestionVersionId[blockElement.blockSort]
+      )
+        return blockElement;
+
+      return {
+        ...blockElement,
+        branchLogics: blockElement.branchLogics.filter(
+          logic => logic.blockSort_qId !== valueQuestionOption,
+        ),
+      };
+    }, []);
+
+    const updateValues: IEditSurveyFormValues = {
+      ...surveyValue,
+      version: {
+        ...surveyValue.version,
+        surveyFlowElements: updateSurveyFlowElements,
+      },
+    };
+
+    setSurveyValues(updateValues);
+  };
+
+  return {
+    isExisted,
+    removeQuestionFromBranch,
+  };
+};
 
 const QuestionTable: FC<{
   fieldName: string;
@@ -28,11 +112,37 @@ const QuestionTable: FC<{
   );
   const [{ value: blockData }] = useField<SubSurveyFlowElementDto>(fieldName);
 
+  const { values: surveyValues, setValues: setSurveyValues } =
+    useFormikContext<IEditSurveyFormValues>();
+
   const removeQuestion = useCallback(
     (questionIndex: number) => {
+      //   check if the question using in other branch logic
+
+      const question = value.find((i, idx) => idx === questionIndex);
+      if (!question) return;
+
+      const { isExisted, removeQuestionFromBranch } = check(
+        1,
+        question,
+        surveyValues,
+        setSurveyValues,
+      );
+      if (isExisted) {
+        confirm({
+          icon: null,
+          content:
+            'If you delete this question, other condistion related to the question will be remove!',
+          onOk() {
+            removeQuestionFromBranch();
+          },
+        });
+        return;
+      }
+
       setValue(value.filter((i, idx) => idx !== questionIndex));
     },
-    [setValue, value],
+    [setSurveyValues, setValue, surveyValues, value],
   );
   const [selectedQuestion, setSelectedQuestion] = useState<{
     index: number | null;
