@@ -9,6 +9,7 @@ import {
   GroupSurveyButton,
   IEditSurveyFormValues,
   questionValueType,
+  SurveyDataTreeNode,
   UpdateQuestionVersion,
   useCheckSurveyFormMode,
 } from '@pages/Survey';
@@ -23,7 +24,7 @@ import { FormikHelpers } from 'formik/dist/types';
 const { confirm } = Modal;
 
 const check = (
-  blockNumber: number,
+  blockData: SubSurveyFlowElementDto,
   question: questionValueType,
   surveyValue: IEditSurveyFormValues,
   setSurveyValues: FormikHelpers<IEditSurveyFormValues>['setValues'],
@@ -32,26 +33,38 @@ const check = (
   removeQuestionFromBranch: () => void;
 } => {
   const valueQuestionOption = block_qVersionId_template({
-    blockSort: blockNumber,
+    blockSort: blockData.blockSort,
     questionVersionId: question.questionVersionId,
   });
 
   const surveyFlowElements = surveyValue.version?.surveyFlowElements;
 
-  const branchIdBlocksHaveQuestionVersionId = surveyFlowElements?.reduce(
-    (result: Record<number, boolean>, blockElement) => {
-      if (blockElement.type !== SubSurveyFlowElement.BRANCH) return result;
+  const getBranchIdRecursion = (
+    mapId: Record<string, boolean>,
+    arrInput: SurveyDataTreeNode[] | undefined,
+  ) => {
+    if (!arrInput) return mapId;
+
+    arrInput?.forEach(blockElement => {
+      if (blockElement.type !== SubSurveyFlowElement.BRANCH) return;
+
       if (
         blockElement.branchLogics.some(
           logic => logic.blockSort_qId === valueQuestionOption,
         )
       ) {
-        if (blockElement.blockSort) result[blockElement.blockSort] = true;
+        if (blockElement.blockSort) mapId[blockElement.blockSort] = true;
       }
-      return result;
-    },
-    {},
-  );
+
+      if (blockElement.children) {
+        getBranchIdRecursion(mapId, blockElement.children);
+      }
+    });
+  };
+
+  const branchIdBlocksHaveQuestionVersionId = {};
+
+  getBranchIdRecursion(branchIdBlocksHaveQuestionVersionId, surveyFlowElements);
 
   const isExisted = !(
     !branchIdBlocksHaveQuestionVersionId ||
@@ -61,28 +74,43 @@ const check = (
   const removeQuestionFromBranch = () => {
     if (!isExisted) return;
 
-    const updateSurveyFlowElements = surveyFlowElements?.map(blockElement => {
-      if (blockElement.blockSort === blockNumber) {
-        return {
-          ...blockElement,
-          surveyQuestions: blockElement.surveyQuestions.filter(
-            q => q.questionVersionId !== question.questionVersionId,
-          ),
-        };
-      }
-      if (
-        !blockElement?.blockSort ||
-        !branchIdBlocksHaveQuestionVersionId[blockElement.blockSort]
-      )
-        return blockElement;
+    const removeQuestionInBranchRecursion = (
+      arrInput: SurveyDataTreeNode[] | undefined,
+    ): SurveyDataTreeNode[] => {
+      if (!arrInput) return [];
 
-      return {
-        ...blockElement,
-        branchLogics: blockElement.branchLogics.filter(
-          logic => logic.blockSort_qId !== valueQuestionOption,
-        ),
-      };
-    }, []);
+      return arrInput?.map(blockElement => {
+        if (blockElement.blockSort === blockData.blockSort) {
+          return {
+            ...blockElement,
+            surveyQuestions: blockElement.surveyQuestions.filter(
+              q => q.questionVersionId !== question.questionVersionId,
+            ),
+          };
+        }
+
+        const result = blockElement;
+
+        if (blockElement?.children?.length !== 0) {
+          result.children = removeQuestionInBranchRecursion(
+            blockElement?.children,
+          );
+        }
+
+        if (
+          blockElement?.blockSort &&
+          branchIdBlocksHaveQuestionVersionId[blockElement.blockSort]
+        ) {
+          result.branchLogics = blockElement.branchLogics.filter(
+            logic => logic.blockSort_qId !== valueQuestionOption,
+          );
+        }
+        return result;
+      });
+    };
+
+    const updateSurveyFlowElements =
+      removeQuestionInBranchRecursion(surveyFlowElements);
 
     const updateValues: IEditSurveyFormValues = {
       ...surveyValue,
@@ -123,7 +151,7 @@ const QuestionTable: FC<{
       if (!question) return;
 
       const { isExisted, removeQuestionFromBranch } = check(
-        1,
+        blockData,
         question,
         surveyValues,
         setSurveyValues,
@@ -142,7 +170,7 @@ const QuestionTable: FC<{
 
       setValue(value.filter((i, idx) => idx !== questionIndex));
     },
-    [setSurveyValues, setValue, surveyValues, value],
+    [blockData, setSurveyValues, setValue, surveyValues, value],
   );
   const [selectedQuestion, setSelectedQuestion] = useState<{
     index: number | null;
