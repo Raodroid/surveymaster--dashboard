@@ -49,6 +49,7 @@ import {
   transformCloneSurveyVersion,
   transformSurveyVersion,
 } from './util';
+import { genBlockSort } from '@pages/Survey';
 
 const { confirm } = Modal;
 
@@ -414,7 +415,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
               {
                 type: SubSurveyFlowElement.BLOCK,
                 sort: 0,
-                blockSort: 0,
+                blockSort: genBlockSort(),
                 blockDescription: '',
                 surveyQuestions: transformSurveyQuestions,
               },

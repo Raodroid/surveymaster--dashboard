@@ -55,12 +55,8 @@ const SurveyRenameModal: FC<
 
   const onSubmit = useCallback(
     (values: IPutSurveyVersionBodyDtoExtendId) => {
-      const blockSortCounting = 0;
       const surveyFlowElements: SubSurveyFlowElementDto[] =
-        transSurveyFLowElement(
-          values.surveyFlowElements || [],
-          blockSortCounting,
-        );
+        transSurveyFLowElement(values.surveyFlowElements || []);
 
       const remarks = values.remarks?.map(i => ({
         id: i.id,

@@ -6,6 +6,7 @@ import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { blockColor } from '@pages/Survey/components/QuestionBranchIcon/QuestionBranchIcon';
 import {
+  genBlockSort,
   genDefaultBlockDescription,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
@@ -41,7 +42,7 @@ const EmptyBlock = () => {
       const newBlockValue: SurveyDataTreeNode = {
         ...defaultNode,
         type,
-        blockSort: 1,
+        blockSort: genBlockSort(),
         fieldName,
         key: `${rootSurveyFlowElementFieldName}[0]`,
         blockDescription: genDefaultBlockDescription(fieldName),

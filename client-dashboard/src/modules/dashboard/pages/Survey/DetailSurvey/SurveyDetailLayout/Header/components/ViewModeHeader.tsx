@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,
+  handleExportSurvey,
   RequestCompleteSurveyModal,
   RequestDeleteSurveyVersionModal,
   SurveyRenameModal,
@@ -19,12 +20,10 @@ import {
 } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { EntityEnum, MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
+import { EntityEnum, ROUTE_PATH } from '@/enums';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
-import { onError, saveBlob, useToggle } from '@/utils';
-import _get from 'lodash/get';
-import moment from 'moment';
+import { onError, useToggle } from '@/utils';
 import { keysAction, useParseQueryString, useSelectTableRecord } from '@/hooks';
 import {
   ACTION,
@@ -164,22 +163,7 @@ const RightMenu = () => {
     async (record: ISurveyVersion) => {
       try {
         toggleExporting();
-        const response = await SurveyService.getSurveyFile(record.id as string);
-        const data: {
-          SurveyElements: any[];
-          SurveyEntry: { SurveyName: string };
-        } = _get(response, 'data', {});
-        const blob = new Blob([JSON.stringify(data, null, 2)], {
-          type: 'application/octet-stream',
-        });
-        saveBlob(
-          blob,
-          `${data.SurveyEntry.SurveyName}-${moment().format(
-            MOMENT_FORMAT.EXPORT,
-          )}.qsf`,
-        );
-      } catch (error) {
-        console.error({ error });
+        await handleExportSurvey(record);
       } finally {
         toggleExporting();
       }
@@ -230,13 +214,8 @@ const RightMenu = () => {
     (record: ISurveyVersion) => {
       if (!record?.id) return;
 
-      const blockSortCounting = 0;
-
       const surveyFlowElements: SubSurveyFlowElementDto[] =
-        transSurveyFLowElement(
-          record.surveyFlowElements || [],
-          blockSortCounting,
-        );
+        transSurveyFLowElement(record.surveyFlowElements || []);
 
       handleCloneSurveyVersion({
         name: createDuplicateSurveyVersionName(record.name),

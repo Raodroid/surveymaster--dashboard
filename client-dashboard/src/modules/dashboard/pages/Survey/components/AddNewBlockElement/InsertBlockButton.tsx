@@ -55,11 +55,7 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
       if (!isNaN(parentBlockSort)) {
         const parentFieldName = getParentFieldName(fieldName);
         setParentNodeValue(
-          transformToSurveyDataTreeNode(
-            newValue,
-            parentBlockSort,
-            parentFieldName,
-          ),
+          transformToSurveyDataTreeNode(newValue, parentFieldName),
         );
       } else {
         setParentNodeValue(transformToSurveyDataTreeNode(newValue));

@@ -45,22 +45,8 @@ export const transSurveyFLowElement = (
     | SurveyDataTreeNode[]
     | SurveyFlowElementResponseDto[]
     | SubSurveyFlowElementDto[],
-  blockSortCounting: number,
 ): SubSurveyFlowElementDto[] => {
-  let newBlockSortCounting = blockSortCounting;
-
   return input.map((i, idx) => {
-    let blockSort = i.blockSort;
-
-    if (i.type === SubSurveyFlowElement.BLOCK) {
-      if (i.blockSort === undefined) {
-        blockSort = newBlockSortCounting;
-        newBlockSortCounting += 1;
-      } else {
-        newBlockSortCounting = blockSort + 1;
-      }
-    }
-
     const surveyQuestions: ISurveyQuestionDto[] | undefined = !i.surveyQuestions
       ?.length
       ? undefined
@@ -121,14 +107,14 @@ export const transSurveyFLowElement = (
 
     return {
       id: i?.id,
-      blockSort,
+      blockSort: i.blockSort,
       type: i.type,
       sort: idx,
       blockDescription: i.blockDescription,
       surveyQuestions,
       branchLogics,
       listEmbeddedData,
-      children: transSurveyFLowElement(i?.children || [], newBlockSortCounting),
+      children: transSurveyFLowElement(i?.children || []),
     };
   });
 };
@@ -136,10 +122,8 @@ export const transSurveyFLowElement = (
 export const transformSurveyVersion = (
   values: IEditSurveyFormValues,
 ): ISurveyVersionBaseDto => {
-  const blockSortCounting = 0;
   const surveyFlowElements: SubSurveyFlowElementDto[] = transSurveyFLowElement(
     values.version?.surveyFlowElements || [],
-    blockSortCounting,
   );
 
   return { ...values.version, surveyFlowElements };

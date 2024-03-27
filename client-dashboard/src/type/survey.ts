@@ -16,6 +16,7 @@ export enum BranchChoiceType {
   SELECTABLE_ANSWER = 'SelectableAnswer',
   SELECTED_ANSWER_COUNT = 'SelectedAnswerCount',
   SELECTED_ANSWER_RECODE = 'SelectedAnswerRecode',
+  CHOICE_NUMERIC_ENTRY_VALUE = 'ChoiceNumericEntryValue',
 }
 
 export enum Conjunction {

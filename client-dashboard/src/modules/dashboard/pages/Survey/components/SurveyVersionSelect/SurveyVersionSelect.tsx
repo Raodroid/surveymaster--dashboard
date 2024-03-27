@@ -15,6 +15,7 @@ import {
 } from '@/type';
 import {
   createDuplicateSurveyVersionName,
+  handleExportSurvey,
   useCheckSurveyFormMode,
   useSurveyFormContext,
 } from '@pages/Survey';
@@ -22,7 +23,7 @@ import { useFormikContext } from 'formik';
 import { Modal, notification } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 import { useCheckScopeEntityDefault } from '@/modules/common';
-import { MOMENT_FORMAT, ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
+import { ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
 import {
   DownloadIcon,
   LightingIcon,
@@ -33,11 +34,9 @@ import {
 import { useGetProjectByIdQuery } from '@pages/Project';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
-import { onError, saveBlob, useToggle } from '@/utils';
+import { onError, useToggle } from '@/utils';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
-import _get from 'lodash/get';
-import moment from 'moment';
 import styled from 'styled-components/macro';
 
 const { confirm } = Modal;
@@ -152,13 +151,8 @@ const SurveyVersionSelect: FC<{
     (record: ISurveyVersion) => {
       if (!record?.id) return;
 
-      const blockSortCounting = 0;
-
       const surveyFlowElements: SubSurveyFlowElementDto[] =
-        transSurveyFLowElement(
-          record.surveyFlowElements || [],
-          blockSortCounting,
-        );
+        transSurveyFLowElement(record.surveyFlowElements || []);
 
       handleCloneSurveyVersion({
         name: createDuplicateSurveyVersionName(record.name),
@@ -189,22 +183,7 @@ const SurveyVersionSelect: FC<{
     async (record: ISurveyVersion) => {
       try {
         toggleExporting();
-        const response = await SurveyService.getSurveyFile(record.id as string);
-        const data: {
-          SurveyElements: any[];
-          SurveyEntry: { SurveyName: string };
-        } = _get(response, 'data', {});
-        const blob = new Blob([JSON.stringify(data, null, 2)], {
-          type: 'application/octet-stream',
-        });
-        saveBlob(
-          blob,
-          `${data.SurveyEntry.SurveyName}-${moment().format(
-            MOMENT_FORMAT.EXPORT,
-          )}.qsf`,
-        );
-      } catch (error) {
-        console.error({ error });
+        await handleExportSurvey(record);
       } finally {
         toggleExporting();
       }

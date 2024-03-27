@@ -1,12 +1,13 @@
 import { FC, useCallback, useMemo, useState } from 'react';
 import { ColumnsType } from 'antd/lib/table/interface';
-import { useField } from 'formik';
-import { Button, Tooltip } from 'antd';
+import { useField, useFormikContext } from 'formik';
+import { Button, Modal, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { SubSurveyFlowElementDto } from '@/type';
 import { DragTable, RoundedTag } from '@/modules/dashboard';
 import {
   GroupSurveyButton,
+  IEditSurveyFormValues,
   questionValueType,
   UpdateQuestionVersion,
   useCheckSurveyFormMode,
@@ -16,7 +17,9 @@ import { Clock, TrashOutlined } from '@/icons';
 import SimpleBar from 'simplebar-react';
 import { useToggle } from '@/utils';
 import DisplaySurveyQuestion from '@pages/Survey/components/SurveyQuestion/DisplaySurveyQuestion';
+import { checkQuestionUsedInBranchBlock } from './util';
 
+const { confirm } = Modal;
 const QuestionTable: FC<{
   fieldName: string;
 }> = props => {
@@ -28,11 +31,38 @@ const QuestionTable: FC<{
   );
   const [{ value: blockData }] = useField<SubSurveyFlowElementDto>(fieldName);
 
+  const { values: surveyValues, setValues: setSurveyValues } =
+    useFormikContext<IEditSurveyFormValues>();
+
   const removeQuestion = useCallback(
     (questionIndex: number) => {
+      //   check if the question using in other branch logic
+
+      const question = value.find((i, idx) => idx === questionIndex);
+      if (!question) return;
+
+      const { isExisted, removeQuestionFromBranch } =
+        checkQuestionUsedInBranchBlock(
+          blockData,
+          question,
+          surveyValues,
+          setSurveyValues,
+        );
+      if (isExisted) {
+        confirm({
+          icon: null,
+          content:
+            'If you delete this question, other condition related to the question will be remove!',
+          onOk() {
+            removeQuestionFromBranch();
+          },
+        });
+        return;
+      }
+
       setValue(value.filter((i, idx) => idx !== questionIndex));
     },
-    [setValue, value],
+    [blockData, setSurveyValues, setValue, surveyValues, value],
   );
   const [selectedQuestion, setSelectedQuestion] = useState<{
     index: number | null;
