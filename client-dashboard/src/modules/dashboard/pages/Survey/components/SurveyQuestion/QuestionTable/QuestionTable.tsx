@@ -3,132 +3,23 @@ import { ColumnsType } from 'antd/lib/table/interface';
 import { useField, useFormikContext } from 'formik';
 import { Button, Modal, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { SubSurveyFlowElement, SubSurveyFlowElementDto } from '@/type';
+import { SubSurveyFlowElementDto } from '@/type';
 import { DragTable, RoundedTag } from '@/modules/dashboard';
 import {
   GroupSurveyButton,
   IEditSurveyFormValues,
   questionValueType,
-  SurveyDataTreeNode,
   UpdateQuestionVersion,
   useCheckSurveyFormMode,
 } from '@pages/Survey';
 import { DragHandle } from '@/customize-components';
 import { Clock, TrashOutlined } from '@/icons';
 import SimpleBar from 'simplebar-react';
-import { objectKeys, useToggle } from '@/utils';
+import { useToggle } from '@/utils';
 import DisplaySurveyQuestion from '@pages/Survey/components/SurveyQuestion/DisplaySurveyQuestion';
-import { block_qVersionId_template } from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/Body/types/Branch';
-import { FormikHelpers } from 'formik/dist/types';
+import { checkQuestionUsedInBranchBlock } from './util';
 
 const { confirm } = Modal;
-
-const check = (
-  blockData: SubSurveyFlowElementDto,
-  question: questionValueType,
-  surveyValue: IEditSurveyFormValues,
-  setSurveyValues: FormikHelpers<IEditSurveyFormValues>['setValues'],
-): {
-  isExisted: boolean;
-  removeQuestionFromBranch: () => void;
-} => {
-  const valueQuestionOption = block_qVersionId_template({
-    blockSort: blockData.blockSort,
-    questionVersionId: question.questionVersionId,
-  });
-
-  const surveyFlowElements = surveyValue.version?.surveyFlowElements;
-
-  const getBranchIdRecursion = (
-    mapId: Record<string, boolean>,
-    arrInput: SurveyDataTreeNode[] | undefined,
-  ) => {
-    if (!arrInput) return mapId;
-
-    arrInput?.forEach(blockElement => {
-      if (blockElement.type !== SubSurveyFlowElement.BRANCH) return;
-
-      if (
-        blockElement.branchLogics.some(
-          logic => logic.blockSort_qId === valueQuestionOption,
-        )
-      ) {
-        if (blockElement.blockSort) mapId[blockElement.blockSort] = true;
-      }
-
-      if (blockElement.children) {
-        getBranchIdRecursion(mapId, blockElement.children);
-      }
-    });
-  };
-
-  const branchIdBlocksHaveQuestionVersionId = {};
-
-  getBranchIdRecursion(branchIdBlocksHaveQuestionVersionId, surveyFlowElements);
-
-  const isExisted = !(
-    !branchIdBlocksHaveQuestionVersionId ||
-    !objectKeys(branchIdBlocksHaveQuestionVersionId)?.length
-  );
-
-  const removeQuestionFromBranch = () => {
-    if (!isExisted) return;
-
-    const removeQuestionInBranchRecursion = (
-      arrInput: SurveyDataTreeNode[] | undefined,
-    ): SurveyDataTreeNode[] => {
-      if (!arrInput) return [];
-
-      return arrInput?.map(blockElement => {
-        if (blockElement.blockSort === blockData.blockSort) {
-          return {
-            ...blockElement,
-            surveyQuestions: blockElement.surveyQuestions.filter(
-              q => q.questionVersionId !== question.questionVersionId,
-            ),
-          };
-        }
-
-        const result = blockElement;
-
-        if (blockElement?.children?.length !== 0) {
-          result.children = removeQuestionInBranchRecursion(
-            blockElement?.children,
-          );
-        }
-
-        if (
-          blockElement?.blockSort &&
-          branchIdBlocksHaveQuestionVersionId[blockElement.blockSort]
-        ) {
-          result.branchLogics = blockElement.branchLogics.filter(
-            logic => logic.blockSort_qId !== valueQuestionOption,
-          );
-        }
-        return result;
-      });
-    };
-
-    const updateSurveyFlowElements =
-      removeQuestionInBranchRecursion(surveyFlowElements);
-
-    const updateValues: IEditSurveyFormValues = {
-      ...surveyValue,
-      version: {
-        ...surveyValue.version,
-        surveyFlowElements: updateSurveyFlowElements,
-      },
-    };
-
-    setSurveyValues(updateValues);
-  };
-
-  return {
-    isExisted,
-    removeQuestionFromBranch,
-  };
-};
-
 const QuestionTable: FC<{
   fieldName: string;
 }> = props => {
@@ -150,17 +41,18 @@ const QuestionTable: FC<{
       const question = value.find((i, idx) => idx === questionIndex);
       if (!question) return;
 
-      const { isExisted, removeQuestionFromBranch } = check(
-        blockData,
-        question,
-        surveyValues,
-        setSurveyValues,
-      );
+      const { isExisted, removeQuestionFromBranch } =
+        checkQuestionUsedInBranchBlock(
+          blockData,
+          question,
+          surveyValues,
+          setSurveyValues,
+        );
       if (isExisted) {
         confirm({
           icon: null,
           content:
-            'If you delete this question, other condistion related to the question will be remove!',
+            'If you delete this question, other condition related to the question will be remove!',
           onOk() {
             removeQuestionFromBranch();
           },

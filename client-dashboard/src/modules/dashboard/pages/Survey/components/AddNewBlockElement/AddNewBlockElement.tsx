@@ -6,12 +6,17 @@ import { useTranslation } from 'react-i18next';
 import { objectKeys } from '@/utils';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import {
-    IEditSurveyFormValues,
-    rootSurveyFlowElementFieldName,
-    SurveyDataTreeNode,
+  IEditSurveyFormValues,
+  rootSurveyFlowElementFieldName,
+  SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
-import {PlusOutLinedIcon} from '@/icons';
-import {calcLevelNodeByFieldName, genDefaultBlockDescription, useSurveyFormContext,} from '@pages/Survey';
+import { PlusOutLinedIcon } from '@/icons';
+import {
+  calcLevelNodeByFieldName,
+  genBlockSort,
+  genDefaultBlockDescription,
+  useSurveyFormContext,
+} from '@pages/Survey';
 import _uniq from 'lodash/uniq';
 import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
 
@@ -66,7 +71,7 @@ const AddNewBlockElement: FC<{
         const fieldName = rootSurveyFlowElementFieldName + `[${blockIndex}]`;
         const blockDescription = genDefaultBlockDescription(fieldName);
         return {
-          blockSort: blockIndex + 1,
+          blockSort: genBlockSort(),
           fieldName,
           key: fieldName,
           blockDescription,
@@ -76,22 +81,22 @@ const AddNewBlockElement: FC<{
 
       if (!x)
         return {
-          blockSort: 1,
+          blockSort: genBlockSort(),
           fieldName: `${rootSurveyFlowElementFieldName}.children[0]`,
           key: `${rootSurveyFlowElementFieldName}.children[0]`,
           blockDescription: `Block 1`,
         };
 
-      const preFix = x?.map(i => Number(i.match(/[0-9]/g)?.[0]) + 1).join('');
+      // const preFix = x?.map(i => Number(i.match(/[0-9]/g)?.[0]) + 1).join('');
 
-      const blockIndex = Number(preFix + (value?.children || []).length);
+      // const blockIndex = Number(preFix + (value?.children || []).length);
       const fieldName =
         currentFieldName + `.children[${(value?.children || []).length}]`;
 
       const blockDescription = genDefaultBlockDescription(fieldName);
 
       return {
-        blockSort: blockIndex + 1,
+        blockSort: genBlockSort(),
         fieldName,
         key: fieldName,
         blockDescription: blockDescription || '',

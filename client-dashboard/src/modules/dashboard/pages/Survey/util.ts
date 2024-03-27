@@ -2,11 +2,15 @@ import {
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
+import { ISurveyVersion } from '@/type';
+import { SurveyService } from '@/services';
+import _get from 'lodash/get';
+import { saveBlob } from '@/utils';
+import { MOMENT_FORMAT } from '@/enums';
+import moment from 'moment';
 
 const getParentBlockSort = (fieldName: string): number => {
-  return Number(
-    fieldName.match(/(.*)\.children.*$/)?.[1]?.match(/\[([0-9+])\]$/)?.[1],
-  );
+  return Number(getParentFieldName(fieldName)?.match(/\[([0-9+])\]$/)?.[1]);
 };
 
 const getParentFieldName = (fieldName: string): string | undefined => {
@@ -32,29 +36,20 @@ const genDefaultBlockDescription = (fieldName: string): string =>
 
 const transformToSurveyDataTreeNode = (
   data: SurveyDataTreeNode[],
-  parentBlockSort?: number,
   parentFieldName?: string,
 ): SurveyDataTreeNode[] => {
   return (data || []).map((i, index) => {
-    const fieldName = !parentFieldName
-      ? `${rootSurveyFlowElementFieldName}[${index}]`
-      : `${parentFieldName}.children[${index}]`;
+    const fieldName = genFieldName(parentFieldName, index);
 
-    const blockSort = Number(
-      parentBlockSort === undefined
-        ? index + 1
-        : `${parentBlockSort}` + (index + 1),
-    );
     const { children, ...rest } = i;
 
     return {
       ...rest,
       key: fieldName,
       fieldName,
-      blockSort,
       children: !children
         ? []
-        : transformToSurveyDataTreeNode(children, blockSort, fieldName),
+        : transformToSurveyDataTreeNode(children, fieldName),
     };
   });
 };
@@ -115,6 +110,37 @@ const updateExpandKeysAfterInsertNewBlock = (
   });
 };
 
+const genBlockSort = (): number => {
+  return Math.floor(1000 + Math.random() * 9000); // random for digit for blockSort if logger will cause error when import to qualtric
+};
+
+const genFieldName = (parentFieldName: string | undefined, index: number) => {
+  return !parentFieldName
+    ? `${rootSurveyFlowElementFieldName}[${index}]`
+    : `${parentFieldName}.children[${index}]`;
+};
+
+const handleExportSurvey = async (record: ISurveyVersion) => {
+  try {
+    const response = await SurveyService.getSurveyFile(record.id as string);
+    const data: {
+      SurveyElements: unknown[];
+      SurveyEntry: { SurveyName: string };
+    } = _get(response, 'data', {});
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'application/octet-stream',
+    });
+    saveBlob(
+      blob,
+      `${data.SurveyEntry.SurveyName}-${moment().format(
+        MOMENT_FORMAT.EXPORT,
+      )}.qsf`,
+    );
+  } catch (error) {
+    console.error({ error });
+  }
+};
+
 export {
   calcLevelNodeByFieldName,
   getParentChildrenFieldName,
@@ -125,4 +151,7 @@ export {
   createDuplicateSurveyVersionName,
   genDefaultBlockDescription,
   updateExpandKeysAfterInsertNewBlock,
+  genBlockSort,
+  genFieldName,
+  handleExportSurvey,
 };

@@ -13,22 +13,25 @@ import {
   MultipleChoice,
   Photo,
   RadioButton,
+  RankOrder,
   Signature,
   Slider,
   TextEntry,
   TextGraphic,
+  TextNumber,
   TimePicker,
 } from './Content';
 import { SurveyDataTreeNode } from '@pages/Survey/SurveyForm/type';
 import { IQuestionChoiceComponent } from './type';
 
+export const splitBlockSortQVersionIdChar = '*';
 export const block_qVersionId_template = (input: {
   blockSort: number | undefined;
   questionVersionId: string | undefined;
   // optionSort: number | undefined;
 }): string => {
   const { blockSort, questionVersionId } = input;
-  return `${blockSort}*${questionVersionId}`;
+  return `${blockSort}${splitBlockSortQVersionIdChar}${questionVersionId}`;
 };
 
 export const gen_row_column_BranchChoiceType = (input: {
@@ -105,6 +108,8 @@ export const questionChoiceMap: Record<
   [QuestionType.TEXT_GRAPHIC]: TextGraphic,
   [QuestionType.SLIDER]: Slider,
   [QuestionType.TIME_PICKER]: TimePicker,
+  [QuestionType.TEXT_NUMBER]: TextNumber,
+  [QuestionType.RANK_ORDER]: RankOrder,
 };
 
 export const defaultOperatorQuestion: Record<QuestionType, LogicOperator> = {
@@ -119,6 +124,8 @@ export const defaultOperatorQuestion: Record<QuestionType, LogicOperator> = {
   [QuestionType.SLIDER]: LogicOperator.EQUAL_TO,
   [QuestionType.TIME_PICKER]: LogicOperator.EQUAL_TO,
   [QuestionType.DATE_PICKER]: LogicOperator.EQUAL_TO,
+  [QuestionType.TEXT_NUMBER]: LogicOperator.EQUAL_TO,
+  [QuestionType.RANK_ORDER]: LogicOperator.EQUAL_TO,
 };
 
 export const defaultChoiceType: Record<QuestionType, BranchChoiceType> = {
@@ -134,4 +141,6 @@ export const defaultChoiceType: Record<QuestionType, BranchChoiceType> = {
   [QuestionType.FORM_FIELD]: BranchChoiceType.CHOICE_TEXT_ENTRY_VALUE,
   [QuestionType.TEXT_GRAPHIC]: BranchChoiceType.CHOICE_TEXT_ENTRY_VALUE,
   [QuestionType.SLIDER]: BranchChoiceType.CHOICE_TEXT_ENTRY_VALUE,
+  [QuestionType.TEXT_NUMBER]: BranchChoiceType.CHOICE_TEXT_ENTRY_VALUE,
+  [QuestionType.RANK_ORDER]: BranchChoiceType.CHOICE_NUMERIC_ENTRY_VALUE,
 };
