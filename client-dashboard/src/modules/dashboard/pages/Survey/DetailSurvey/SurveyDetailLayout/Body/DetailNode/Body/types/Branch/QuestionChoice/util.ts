@@ -28,7 +28,6 @@ export const splitBlockSortQVersionIdChar = '*';
 export const block_qVersionId_template = (input: {
   blockSort: number | undefined;
   questionVersionId: string | undefined;
-  // optionSort: number | undefined;
 }): string => {
   const { blockSort, questionVersionId } = input;
   return `${blockSort}${splitBlockSortQVersionIdChar}${questionVersionId}`;

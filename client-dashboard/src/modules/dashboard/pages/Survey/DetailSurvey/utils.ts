@@ -47,14 +47,15 @@ const check = (
     blockSortList: Record<number, true>,
     arr: SurveyDataTreeNode[],
   ) => {
-    arr.forEach(node => {
+    for (const index in arr) {
+      const node = arr[index];
       if (node.type === SubSurveyFlowElement.BLOCK && node.blockSort)
         blockSortList[node.blockSort] = true;
 
       if (node.children) {
         getAllQuestionRecursion(blockSortList, node.children);
       }
-    });
+    }
   };
 
   const allQuestionBlockSort: Record<number, true> = {};
@@ -116,8 +117,6 @@ const check = (
       parentFieldName?: string,
     ): SurveyDataTreeNode[] => {
       if (!arrInput) return [];
-
-      let marked: number;
 
       return arrInput.reduce(
         (res: SurveyDataTreeNode[], blockElement, index) => {
