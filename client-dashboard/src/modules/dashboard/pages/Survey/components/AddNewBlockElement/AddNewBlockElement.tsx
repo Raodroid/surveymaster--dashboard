@@ -47,7 +47,7 @@ const AddNewBlockElement: FC<{
 }> = props => {
   const { fieldName, type } = props;
   const { t } = useTranslation();
-  const { setSurveyFormContext } = useSurveyFormContext();
+  const { setSurveyFormContext, tree } = useSurveyFormContext();
 
   const { isEditMode } = useCheckSurveyFormMode();
 
@@ -60,6 +60,7 @@ const AddNewBlockElement: FC<{
   const genKey = useCallback(
     (
       currentFieldName: string,
+      nextBLockSort: number,
     ): {
       blockSort: number;
       fieldName: string;
@@ -71,23 +72,23 @@ const AddNewBlockElement: FC<{
         const fieldName = rootSurveyFlowElementFieldName + `[${blockIndex}]`;
         const blockDescription = genDefaultBlockDescription(fieldName);
         return {
-          blockSort: genBlockSort(),
+          blockSort: nextBLockSort,
           fieldName,
           key: fieldName,
           blockDescription,
         };
       }
-      const x = calcLevelNodeByFieldName(currentFieldName);
+      const nodeLevel = calcLevelNodeByFieldName(currentFieldName);
 
-      if (!x)
+      if (!nodeLevel)
         return {
-          blockSort: genBlockSort(),
+          blockSort: nextBLockSort,
           fieldName: `${rootSurveyFlowElementFieldName}.children[0]`,
           key: `${rootSurveyFlowElementFieldName}.children[0]`,
           blockDescription: `Block 1`,
         };
 
-      // const preFix = x?.map(i => Number(i.match(/[0-9]/g)?.[0]) + 1).join('');
+      // const preFix = nodeLevel?.map(i => Number(i.match(/[0-9]/g)?.[0]) + 1).join('');
 
       // const blockIndex = Number(preFix + (value?.children || []).length);
       const fieldName =
@@ -96,7 +97,7 @@ const AddNewBlockElement: FC<{
       const blockDescription = genDefaultBlockDescription(fieldName);
 
       return {
-        blockSort: genBlockSort(),
+        blockSort: nextBLockSort,
         fieldName,
         key: fieldName,
         blockDescription: blockDescription || '',
@@ -107,11 +108,14 @@ const AddNewBlockElement: FC<{
 
   const handleAddElement = useCallback(
     (type: SubSurveyFlowElement) => {
+      const nextBLockSort = genBlockSort(tree.maxBlockSort);
+
       const newBlockValue: SurveyDataTreeNode = {
         ...defaultNode,
         type,
-        ...genKey(fieldName),
+        ...genKey(fieldName, nextBLockSort),
       };
+
       if (isRootPath(fieldName, value)) {
         setValue([...value, newBlockValue]);
 
@@ -120,10 +124,12 @@ const AddNewBlockElement: FC<{
           tree: {
             ...oldState.tree,
             focusBlock: newBlockValue,
+            maxBlockSort: nextBLockSort,
           },
         }));
         return;
       }
+
       setValue({
         ...value,
         children: [...(value?.children || []), newBlockValue],
@@ -136,10 +142,18 @@ const AddNewBlockElement: FC<{
           ...oldState.tree,
           expendKeys: _uniq([...oldState.tree.expendKeys, fieldName]),
           focusBlock: newBlockValue,
+          maxBlockSort: nextBLockSort,
         },
       }));
     },
-    [fieldName, genKey, setSurveyFormContext, setValue, value],
+    [
+      fieldName,
+      genKey,
+      setSurveyFormContext,
+      setValue,
+      tree.maxBlockSort,
+      value,
+    ],
   );
 
   if (!isEditMode) return null;

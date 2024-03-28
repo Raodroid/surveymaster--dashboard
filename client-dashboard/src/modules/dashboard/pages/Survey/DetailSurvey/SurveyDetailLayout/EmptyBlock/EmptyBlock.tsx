@@ -34,15 +34,17 @@ const EmptyBlock = () => {
     rootSurveyFlowElementFieldName,
   );
 
-  const { setSurveyFormContext } = useSurveyFormContext();
+  const { setSurveyFormContext, tree } = useSurveyFormContext();
 
   const handleAddBlock = useCallback(
     (type: SubSurveyFlowElement) => {
       const fieldName = `${rootSurveyFlowElementFieldName}[0]`;
+      const newBlockSort = genBlockSort(tree.maxBlockSort);
+
       const newBlockValue: SurveyDataTreeNode = {
         ...defaultNode,
         type,
-        blockSort: genBlockSort(),
+        blockSort: newBlockSort,
         fieldName,
         key: `${rootSurveyFlowElementFieldName}[0]`,
         blockDescription: genDefaultBlockDescription(fieldName),
@@ -54,11 +56,12 @@ const EmptyBlock = () => {
         ...oldState,
         tree: {
           ...oldState.tree,
+          maxBlockSort: newBlockSort,
           focusBlock: newBlockValue,
         },
       }));
     },
-    [setSurveyFormContext, setValue],
+    [setSurveyFormContext, setValue, tree.maxBlockSort],
   );
 
   return (

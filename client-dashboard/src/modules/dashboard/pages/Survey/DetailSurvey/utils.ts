@@ -190,7 +190,7 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
 
-  const { setSurveyFormContext } = useSurveyFormContext();
+  const { setSurveyFormContext, tree } = useSurveyFormContext();
 
   const { values: surveyValues, setValues: setSurveyValues } =
     useFormikContext<IEditSurveyFormValues>();
@@ -232,6 +232,7 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
     } else {
       setParentNodeValue(transformToSurveyDataTreeNode(remainData));
     }
+
     setSurveyFormContext(oldState => ({
       ...oldState,
       tree: {
@@ -256,27 +257,45 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
     const parentBlockSort = getParentBlockSort(fieldName);
 
     const { id, blockSort, ...restOtherFieldValueWithoutId } = value;
+    const nextBlockSort = genBlockSort(tree.maxBlockSort);
     const newBlock: SurveyDataTreeNode = {
       ...restOtherFieldValueWithoutId,
-      blockSort: genBlockSort(),
+      blockSort: nextBlockSort,
     };
 
-    if (!isNaN(parentBlockSort)) {
-      const parentFieldName = getParentFieldName(fieldName);
+    try {
+      if (!isNaN(parentBlockSort)) {
+        const parentFieldName = getParentFieldName(fieldName);
+
+        setParentNodeValue(
+          transformToSurveyDataTreeNode(
+            [...parentNodeValue, newBlock],
+            parentFieldName,
+          ),
+        );
+        return;
+      }
 
       setParentNodeValue(
-        transformToSurveyDataTreeNode(
-          [...parentNodeValue, newBlock],
-          parentFieldName,
-        ),
+        transformToSurveyDataTreeNode([...parentNodeValue, newBlock]),
       );
-      return;
+    } finally {
+      setSurveyFormContext(oldState => ({
+        ...oldState,
+        tree: {
+          ...oldState.tree,
+          maxBlockSort: nextBlockSort,
+        },
+      }));
     }
-
-    setParentNodeValue(
-      transformToSurveyDataTreeNode([...parentNodeValue, newBlock]),
-    );
-  }, [fieldName, parentNodeValue, setParentNodeValue, value]);
+  }, [
+    fieldName,
+    parentNodeValue,
+    setParentNodeValue,
+    setSurveyFormContext,
+    tree.maxBlockSort,
+    value,
+  ]);
 
   return { handleDuplicateBlock, handleRemoveBlock };
 };

@@ -49,9 +49,10 @@ import {
   transformCloneSurveyVersion,
   transformSurveyVersion,
 } from './util';
-import { genBlockSort } from '@pages/Survey';
 
 const { confirm } = Modal;
+
+const INIT_BLOCK_SORT = 0;
 
 interface ISurveyFormContext {
   setSurveyFormContext: Dispatch<SetStateAction<ISurveyFormContext>>;
@@ -83,6 +84,7 @@ interface ISurveyFormContext {
   tree: {
     focusBlock?: SurveyDataTreeNode;
     expendKeys: Key[];
+    maxBlockSort: number;
   };
 
   survey: {
@@ -129,6 +131,7 @@ const intValue: ISurveyFormContext = {
   },
   tree: {
     expendKeys: [],
+    maxBlockSort: INIT_BLOCK_SORT,
   },
   survey: {},
   project: {
@@ -242,6 +245,30 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     () => project.type === ProjectTypes.EXTERNAL,
     [project.type],
   );
+
+  useEffect(() => {
+    if (!currentSurveyVersion) return;
+
+    const { surveyFlowElements } = currentSurveyVersion;
+
+    if (!surveyFlowElements?.length) return;
+
+    let maxBlockSort = INIT_BLOCK_SORT;
+
+    for (const blockElement of surveyFlowElements) {
+      if (!blockElement?.blockSort) continue;
+      if (blockElement?.blockSort > maxBlockSort) {
+        maxBlockSort = blockElement.blockSort;
+      }
+    }
+    setContext(s => ({
+      ...s,
+      tree: {
+        ...s.tree,
+        maxBlockSort,
+      },
+    }));
+  }, [currentSurveyVersion]);
 
   const initialValues = useMemo<IEditSurveyFormValues>(() => {
     return {
@@ -364,7 +391,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     },
     [duplicateSurveyVersionMutation, params.surveyId, t],
   );
-
   const actionLoading =
     mutationUploadExcelFile.isLoading ||
     duplicateSurveyVersionMutation.isLoading ||
@@ -415,7 +441,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
               {
                 type: SubSurveyFlowElement.BLOCK,
                 sort: 0,
-                blockSort: genBlockSort(),
+                blockSort: 0,
                 blockDescription: '',
                 surveyQuestions: transformSurveyQuestions,
               },
