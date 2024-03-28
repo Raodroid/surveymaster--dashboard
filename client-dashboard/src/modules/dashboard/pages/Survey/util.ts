@@ -110,8 +110,8 @@ const updateExpandKeysAfterInsertNewBlock = (
   });
 };
 
-const genBlockSort = (): number => {
-  return Math.floor(1000 + Math.random() * 9000); // random for digit for blockSort if logger will cause error when import to qualtric
+const genBlockSort = (maxBlockSort: number): number => {
+  return maxBlockSort + 1;
 };
 
 const genFieldName = (parentFieldName: string | undefined, index: number) => {

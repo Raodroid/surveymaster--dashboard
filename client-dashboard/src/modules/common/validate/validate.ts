@@ -452,6 +452,7 @@ const QUESTION_BLOCK_VALIDATION = {
               ![
                 QuestionType.MULTIPLE_CHOICE,
                 QuestionType.RADIO_BUTTONS,
+                QuestionType.RANK_ORDER,
               ].includes(questionType)
             )
               return true;
@@ -492,6 +493,8 @@ const QUESTION_BLOCK_VALIDATION = {
                 QuestionType.DATE_PICKER,
                 QuestionType.TIME_PICKER,
                 QuestionType.TEXT_ENTRY,
+                QuestionType.TEXT_NUMBER,
+                QuestionType.RANK_ORDER,
                 QuestionType.SLIDER,
               ].includes(questionType)
             )
