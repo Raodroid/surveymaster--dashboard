@@ -23,6 +23,33 @@ export type projectSurveyParams = {
   surveyId: string;
 };
 
+const handleDuplicateNodes = (
+  arr: SurveyDataTreeNode[],
+  count: number,
+): SurveyDataTreeNode[] => {
+  let countBlockSort = count;
+
+  const recursiveFn = (arr: SurveyDataTreeNode[]): SurveyDataTreeNode[] => {
+    return arr.map(i => {
+      const { id, blockSort, children, ...rest } = i;
+
+      countBlockSort = genBlockSort(countBlockSort);
+
+      const newNode: SurveyDataTreeNode = {
+        ...rest,
+        blockSort: countBlockSort,
+      };
+
+      if (children) {
+        newNode.children = recursiveFn(children);
+      }
+      return newNode;
+    });
+  };
+
+  return recursiveFn(arr);
+};
+
 const check = (
   block: SurveyDataTreeNode,
   surveyValue: IEditSurveyFormValues,
@@ -256,12 +283,9 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
 
     const parentBlockSort = getParentBlockSort(fieldName);
 
-    const { id, blockSort, ...restOtherFieldValueWithoutId } = value;
-    const nextBlockSort = genBlockSort(tree.maxBlockSort);
-    const newBlock: SurveyDataTreeNode = {
-      ...restOtherFieldValueWithoutId,
-      blockSort: nextBlockSort,
-    };
+    const newBlock = handleDuplicateNodes([value], tree.maxBlockSort)[0]; // Because array has only one element
+
+    const nextBlockSort = genBlockSort(newBlock.blockSort as number);
 
     try {
       if (!isNaN(parentBlockSort)) {
