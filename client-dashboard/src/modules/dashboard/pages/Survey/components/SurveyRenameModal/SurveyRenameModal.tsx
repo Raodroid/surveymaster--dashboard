@@ -14,7 +14,7 @@ import {
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
 import { onError } from '@/utils';
-import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
+import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/SurveyDataContext/util';
 
 const SurveyRenameModal: FC<
   IModal & { surveyId?: string; versionId?: string }
@@ -23,20 +23,21 @@ const SurveyRenameModal: FC<
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const updateSurveyMutation = useMutation(
-    (data: IPutSurveyVersionBodyDtoExtendId) => {
-      return SurveyService.updateSurveyVersion(data);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('getSurveys');
-        queryClient.invalidateQueries('getSurveyById');
-        notification.success({ message: t('common.updateSuccess') });
-        toggleOpen();
+  const { mutateAsync: updateSurveyMutate, isLoading: updateSurveyLoading } =
+    useMutation(
+      (data: IPutSurveyVersionBodyDtoExtendId) => {
+        return SurveyService.updateSurveyVersion(data);
       },
-      onError,
-    },
-  );
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries('getSurveys');
+          queryClient.invalidateQueries('getSurveyById');
+          notification.success({ message: t('common.updateSuccess') });
+          toggleOpen();
+        },
+        onError,
+      },
+    );
 
   const { surveyData, isLoading } = useGetSurveyById(surveyId);
 
@@ -65,13 +66,13 @@ const SurveyRenameModal: FC<
         remark: i.remark,
       }));
 
-      updateSurveyMutation.mutateAsync({
+      updateSurveyMutate({
         ...values,
         surveyFlowElements,
         remarks,
       });
     },
-    [updateSurveyMutation],
+    [updateSurveyMutate],
   );
 
   return (
@@ -83,7 +84,7 @@ const SurveyRenameModal: FC<
         open={open}
         footer={false}
       >
-        <Spin spinning={isLoading || updateSurveyMutation.isLoading}>
+        <Spin spinning={isLoading || updateSurveyLoading}>
           <Formik
             enableReinitialize={true}
             onSubmit={onSubmit}

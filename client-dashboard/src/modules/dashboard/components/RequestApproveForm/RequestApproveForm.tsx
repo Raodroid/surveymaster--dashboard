@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import * as Yup from 'yup';
 import { ControlledInput, INVALID_FIELDS } from '@/modules/common';
 import { Button, Divider, Form } from 'antd';
@@ -21,10 +21,10 @@ const baseParams: IGetParams = {
   roleIds: [RoleEnum.STAFF_SUPER_ADMIN],
 };
 
-const RequestApproveFrom = (props: {
+const RequestApproveForm = (props: {
   onSubmit: (
     values: typeof initValue,
-    helper: FormikHelpers<any>,
+    helper: FormikHelpers<typeof initValue>,
   ) => Promise<void>;
 }) => {
   const { t } = useTranslation();
@@ -37,7 +37,7 @@ const RequestApproveFrom = (props: {
 
   const searchDebounce = useDebounce(search);
 
-  const query = useQuery(
+  const { data, isLoading } = useQuery(
     ['getAdmins', baseParams],
     () => AdminService.getTeamMembers(baseParams),
     {
@@ -47,13 +47,13 @@ const RequestApproveFrom = (props: {
   );
   const optionsList = useMemo<IOptionItem[]>(
     () =>
-      _get(query.data, 'data.data', []).map(elm => {
+      _get(data, 'data.data', []).map(elm => {
         return {
           label: `${elm.firstName || ''} ${elm.lastName || ''}`,
           value: elm.id,
         };
       }),
-    [query.data],
+    [data],
   );
 
   const options = useMemo<IOptionItem[]>(
@@ -89,7 +89,7 @@ const RequestApproveFrom = (props: {
               label={t('common.approvalPerson')}
               options={options}
               onSearch={handleTyping}
-              loading={query.isLoading}
+              loading={isLoading}
             />
             <Divider />
             <Button
@@ -107,4 +107,4 @@ const RequestApproveFrom = (props: {
   );
 };
 
-export default RequestApproveFrom;
+export default memo(RequestApproveForm);

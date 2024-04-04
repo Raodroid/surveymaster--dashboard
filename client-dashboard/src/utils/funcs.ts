@@ -23,7 +23,7 @@ declare global {
 interface IErr {
   error: any;
   i18nKey: string;
-  contentObj?: Object;
+  contentObj?: object;
 }
 
 export const errorNotification = (input: IErr) => {

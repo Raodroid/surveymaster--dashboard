@@ -6,4 +6,4 @@ export { default as Navbar } from './Navbar';
 export { default as ProfilesMenu } from './ProfilesMenu';
 export { default as Block } from './Block/Block';
 export { default as RoundedTag } from './RoundedTag/RoundedTag';
-export { default as RequestApproveFrom } from './RequestApproveForm/RequestApproveFrom';
+export { default as RequestApproveFrom } from './RequestApproveForm/RequestApproveForm';

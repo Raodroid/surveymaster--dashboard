@@ -8,7 +8,7 @@ import { QuestionBankService } from '@/services';
 import { onError } from '@/utils';
 import { ROUTE_PATH } from '@/enums';
 import { useNavigate } from 'react-router-dom';
-import RequestApproveFrom from '@components/RequestApproveForm/RequestApproveFrom';
+import RequestApproveForm from '@components/RequestApproveForm/RequestApproveForm';
 
 const RequestCompleteQuestionModal: FC<
   IModal & { versionId?: string }
@@ -63,7 +63,7 @@ const RequestCompleteQuestionModal: FC<
         footer={false}
       >
         <Spin spinning={updateQuestionVersionStatus.isLoading}>
-          <RequestApproveFrom onSubmit={onSubmit} />
+          <RequestApproveForm onSubmit={onSubmit} />
         </Spin>
       </Modal>
     </>

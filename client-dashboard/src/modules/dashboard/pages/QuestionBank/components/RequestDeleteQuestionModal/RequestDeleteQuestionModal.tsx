@@ -15,7 +15,7 @@ const RequestDeleteQuestionModal: FC<
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const requestDeleteQuestion = useMutation(
+  const { mutateAsync, isLoading } = useMutation(
     (data: IRequestDeleteRecordDto) => {
       return QuestionBankService.requestDeleteQuestion(data);
     },
@@ -30,15 +30,18 @@ const RequestDeleteQuestionModal: FC<
   );
 
   const onSubmit = useCallback(
-    async (values: { userId: string }, helper: FormikHelpers<any>) => {
-      await requestDeleteQuestion.mutateAsync({
+    async (
+      values: { userId: string },
+      helper: FormikHelpers<{ userId: string }>,
+    ) => {
+      await mutateAsync({
         isAwaitingDeletion: true,
         deletedBy: values.userId,
         id: questionId,
       });
       helper.resetForm();
     },
-    [questionId, requestDeleteQuestion],
+    [questionId, mutateAsync],
   );
 
   return (
@@ -50,7 +53,7 @@ const RequestDeleteQuestionModal: FC<
         open={open}
         footer={false}
       >
-        <Spin spinning={requestDeleteQuestion.isLoading}>
+        <Spin spinning={isLoading}>
           <RequestApproveFrom onSubmit={onSubmit} />
         </Spin>
       </Modal>

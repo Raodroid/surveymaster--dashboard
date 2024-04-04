@@ -62,6 +62,9 @@ function SurveyTable() {
   const { t } = useTranslation();
   const handleNavigate = useHandleNavigate(initParams);
   const queryClient = useQueryClient();
+  const [openRenameModal, toggleOpenRenameModal] = useToggle();
+  const [openApproveDeleteSurveyModal, toggleOpenApproveDeleteSurveyModal] =
+    useToggle();
 
   const formatQsParams = useMemo(() => {
     const formatQs: IGetParams = {
@@ -77,77 +80,10 @@ function SurveyTable() {
     return formatQs;
   }, [qsParams]);
 
-  const duplicateMutation = useMutation(
-    (data: DuplicateSurveyVersionDto) => {
-      return SurveyService.duplicateSurvey(data as any);
-    },
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries('getSurveys');
-        notification.success({ message: t('common.duplicateSuccess') });
-      },
-      onError,
-    },
-  );
-
-  const deleteSurvey = useMutation(
-    (record: ISurvey) =>
-      SurveyService.deleteSurveyById({ id: record.id as string }),
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries('getSurveys');
-        notification.success({
-          message: t('common.deleteSuccess'),
-        });
-      },
-      onError,
-    },
-  );
-  const restoreSurvey = useMutation(
-    (record: ISurvey) =>
-      SurveyService.restoreSurveyById({ id: record.id as string }),
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries('getSurveys');
-        notification.success({
-          message: t('common.restoreSuccess'),
-        });
-      },
-      onError,
-    },
-  );
-
-  const handleDuplicateSurvey = useCallback(
-    (record: ISurvey) => {
-      duplicateMutation.mutateAsync({
-        version: {
-          name: createDuplicateSurveyVersionName(record?.latestVersion?.name),
-          remarks: [],
-        },
-        // projectId: params.projectId as string,
-        surveyId: record.id as string,
-      });
-    },
-    [duplicateMutation],
-  );
-
-  const handleRestore = useCallback(
-    (record: ISurvey) => {
-      confirm({
-        icon: null,
-        content: t('common.confirmRestoreSurvey'),
-        onOk() {
-          restoreSurvey.mutateAsync(record);
-        },
-      });
-    },
-    [restoreSurvey, t],
-  );
-  const [openRenameModal, toggleOpenRenameModal] = useToggle();
-  const [openApproveDeleteSurveyModal, toggleOpenApproveDeleteSurveyModal] =
-    useToggle();
-
-  const requestDeleteSurvey = useMutation(
+  const {
+    mutateAsync: requestDeleteSurveyMutate,
+    isLoading: requestDeleteSurveyLoading,
+  } = useMutation(
     (data: IRequestDeleteRecordDto) => {
       return SurveyService.requestDeleteSurvey({
         ...data,
@@ -162,6 +98,75 @@ function SurveyTable() {
     },
   );
 
+  const { mutateAsync: duplicateMutate, isLoading: duplicateLoading } =
+    useMutation(
+      (data: DuplicateSurveyVersionDto) => {
+        return SurveyService.duplicateSurvey(data as any);
+      },
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries('getSurveys');
+          notification.success({ message: t('common.duplicateSuccess') });
+        },
+        onError,
+      },
+    );
+
+  const { mutateAsync: deleteSurveyMutate, isLoading: deleteSurveyLoading } =
+    useMutation(
+      (record: ISurvey) =>
+        SurveyService.deleteSurveyById({ id: record.id as string }),
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries('getSurveys');
+          notification.success({
+            message: t('common.deleteSuccess'),
+          });
+        },
+        onError,
+      },
+    );
+  const { mutateAsync: restoreSurveyMutate, isLoading: restoreSurveyLoading } =
+    useMutation(
+      (record: ISurvey) =>
+        SurveyService.restoreSurveyById({ id: record.id as string }),
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries('getSurveys');
+          notification.success({
+            message: t('common.restoreSuccess'),
+          });
+        },
+        onError,
+      },
+    );
+
+  const handleDuplicateSurvey = useCallback(
+    (record: ISurvey) => {
+      duplicateMutate({
+        version: {
+          name: createDuplicateSurveyVersionName(record?.latestVersion?.name),
+          remarks: [],
+        },
+        surveyId: record.id as string,
+      });
+    },
+    [duplicateMutate],
+  );
+
+  const handleRestore = useCallback(
+    (record: ISurvey) => {
+      confirm({
+        icon: null,
+        content: t('common.confirmRestoreSurvey'),
+        onOk() {
+          restoreSurveyMutate(record);
+        },
+      });
+    },
+    [restoreSurveyMutate, t],
+  );
+
   const handleResponseDeleteRequest = useCallback(
     (type: 'accept' | 'deny', record: ISurvey) => {
       if (type === 'accept') {
@@ -169,7 +174,7 @@ function SurveyTable() {
           icon: null,
           content: t('common.confirmDeleteSurvey'),
           onOk() {
-            deleteSurvey.mutateAsync(record);
+            deleteSurveyMutate(record);
           },
         });
 
@@ -180,14 +185,14 @@ function SurveyTable() {
         icon: null,
         content: t('common.confirmDenyDeleteRequestSurvey'),
         onOk() {
-          requestDeleteSurvey.mutateAsync({
+          requestDeleteSurveyMutate({
             isAwaitingDeletion: false,
             id: record?.id as string,
           });
         },
       });
     },
-    [deleteSurvey, requestDeleteSurvey, t],
+    [deleteSurveyMutate, requestDeleteSurveyMutate, t],
   );
 
   const tableActions = useMemo<keysAction<ISurvey>>(
@@ -233,23 +238,24 @@ function SurveyTable() {
   const { handleSelect, selectedRecord } =
     useSelectTableRecord<ISurvey>(tableActions);
 
-  const getSurveyListQuery = useQuery(
-    ['getSurveys', formatQsParams, params],
-    () =>
-      SurveyService.getSurveys({
-        ...formatQsParams,
-        projectId: params.projectId,
-      }),
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
+  const { isLoading: getSurveyListQueryLoading, data: getSurveyListQueryData } =
+    useQuery(
+      ['getSurveys', formatQsParams, params],
+      () =>
+        SurveyService.getSurveys({
+          ...formatQsParams,
+          projectId: params.projectId,
+        }),
+      {
+        refetchOnWindowFocus: false,
+      },
+    );
 
-  const total: number = _get(getSurveyListQuery.data, 'data.itemCount', 0);
+  const total: number = _get(getSurveyListQueryData, 'data.itemCount', 0);
 
   const surveys = useMemo<ISurvey[]>(
-    () => _get(getSurveyListQuery.data, 'data.data'),
-    [getSurveyListQuery.data],
+    () => _get(getSurveyListQueryData, 'data.data'),
+    [getSurveyListQueryData],
   );
 
   const columns: ColumnsType<ISurvey> = useMemo(
@@ -346,9 +352,11 @@ function SurveyTable() {
         <SimpleBar className={'h-full overflow-scroll'}>
           <Spin
             spinning={
-              getSurveyListQuery.isLoading ||
-              requestDeleteSurvey.isLoading ||
-              deleteSurvey.isLoading
+              getSurveyListQueryLoading ||
+              requestDeleteSurveyLoading ||
+              deleteSurveyLoading ||
+              duplicateLoading ||
+              restoreSurveyLoading
             }
           >
             <Table

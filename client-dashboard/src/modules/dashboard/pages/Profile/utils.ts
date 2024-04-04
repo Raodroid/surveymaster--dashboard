@@ -17,7 +17,7 @@ export const postPutInitialValues: PostPutMember = {
 };
 
 export const useGetAllRoles = () => {
-  const getRoleQuery = useQuery(
+  const { isLoading, data } = useQuery(
     ['getAllRoles'],
     () => RoleService.getRoles({ selectAll: true }),
     {
@@ -26,10 +26,7 @@ export const useGetAllRoles = () => {
   );
 
   return {
-    isLoading: getRoleQuery.isLoading,
-    data: useMemo<Role[]>(
-      () => _get(getRoleQuery.data, 'data', []),
-      [getRoleQuery.data],
-    ),
+    isLoading,
+    data: useMemo<Role[]>(() => _get(data, 'data', []), [data]),
   };
 };

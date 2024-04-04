@@ -10,7 +10,7 @@ import {
   genDefaultBlockDescription,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
-  useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
 import { useField } from 'formik';
 
@@ -34,7 +34,7 @@ const EmptyBlock = () => {
     rootSurveyFlowElementFieldName,
   );
 
-  const { setSurveyFormContext, tree } = useSurveyFormContext();
+  const { setSurveyTreeContext, tree } = useSurveyTreeContext();
 
   const handleAddBlock = useCallback(
     (type: SubSurveyFlowElement) => {
@@ -52,7 +52,7 @@ const EmptyBlock = () => {
 
       setValue([newBlockValue]);
 
-      setSurveyFormContext(oldState => ({
+      setSurveyTreeContext(oldState => ({
         ...oldState,
         tree: {
           ...oldState.tree,
@@ -61,7 +61,7 @@ const EmptyBlock = () => {
         },
       }));
     },
-    [setSurveyFormContext, setValue, tree.maxBlockSort],
+    [setSurveyTreeContext, setValue, tree.maxBlockSort],
   );
 
   return (

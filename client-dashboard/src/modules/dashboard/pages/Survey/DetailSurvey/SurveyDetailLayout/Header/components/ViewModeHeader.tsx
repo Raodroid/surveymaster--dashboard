@@ -31,7 +31,7 @@ import {
 } from './SurveyVersionActionThreeDropdown';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
-import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
+import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/SurveyDataContext/util';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
 

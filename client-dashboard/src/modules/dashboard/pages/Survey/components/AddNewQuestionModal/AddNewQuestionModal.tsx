@@ -78,7 +78,7 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
   }, [setSearchParams, toggleOpen]);
 
   const handleSelectQuestion = useCallback(
-    questionId => {
+    (questionId: string) => {
       const chooseQuestion = questionVersionIdMap[questionId];
 
       if (chooseQuestion) {

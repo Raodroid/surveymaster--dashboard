@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react';
+import { FC, Fragment, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { INPUT_TYPES } from '@input/type';
 import { FieldArray, useField } from 'formik';
@@ -113,4 +113,4 @@ const DisplayEmbedded: FC<QuestionBlockProps> = props => {
   );
 };
 
-export default Embedded;
+export default memo(Embedded);

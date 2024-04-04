@@ -6,14 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
 import { onError } from '@/utils';
-import RequestApproveFrom from '@components/RequestApproveForm/RequestApproveFrom';
+import RequestApproveForm from '@components/RequestApproveForm/RequestApproveForm';
 
 const RequestDeleteSurveyModal: FC<IModal & { versionId?: string }> = props => {
   const { toggleOpen, open, versionId } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const requestDeleteSurvey = useMutation(
+  const { mutateAsync, isLoading } = useMutation(
     (data: IRequestDeleteRecordDto) => {
       return SurveyService.requestDeleteSurvey({
         ...data,
@@ -30,9 +30,12 @@ const RequestDeleteSurveyModal: FC<IModal & { versionId?: string }> = props => {
   );
 
   const onSubmit = useCallback(
-    async (values: { userId: string }, helper: FormikHelpers<any>) => {
+    async (
+      values: { userId: string },
+      helper: FormikHelpers<{ userId: string }>,
+    ) => {
       if (!versionId) return;
-      await requestDeleteSurvey.mutateAsync({
+      await mutateAsync({
         isAwaitingDeletion: true,
         deletedBy: values.userId,
         id: versionId,
@@ -40,7 +43,7 @@ const RequestDeleteSurveyModal: FC<IModal & { versionId?: string }> = props => {
 
       helper.resetForm();
     },
-    [requestDeleteSurvey, versionId],
+    [mutateAsync, versionId],
   );
 
   return (
@@ -52,8 +55,8 @@ const RequestDeleteSurveyModal: FC<IModal & { versionId?: string }> = props => {
         open={open}
         footer={false}
       >
-        <Spin spinning={requestDeleteSurvey.isLoading}>
-          <RequestApproveFrom onSubmit={onSubmit} />
+        <Spin spinning={isLoading}>
+          <RequestApproveForm onSubmit={onSubmit} />
         </Spin>
       </Modal>
     </>

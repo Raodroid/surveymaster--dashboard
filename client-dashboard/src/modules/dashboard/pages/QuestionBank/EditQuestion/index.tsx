@@ -140,7 +140,7 @@ const EditQuestion = () => {
     return value;
   }, [currentVersionQuestionData, questionData]);
 
-  const updateQuestionMutation = useMutation(
+  const { mutateAsync, isLoading: updateQuestionLoading } = useMutation(
     (data: transformDataType) => {
       if (
         currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED
@@ -191,11 +191,9 @@ const EditQuestion = () => {
       const newVal = transformData(newValues, currentVersionQuestionData);
       if (!newVal) return;
 
-      await updateQuestionMutation.mutateAsync(
-        newVal as IQuestionVersionPutUpdateDtoExtendId,
-      );
+      await mutateAsync(newVal as IQuestionVersionPutUpdateDtoExtendId);
     },
-    [currentVersionQuestionData, updateQuestionMutation],
+    [currentVersionQuestionData, mutateAsync],
   );
 
   return (
@@ -259,7 +257,7 @@ const EditQuestion = () => {
                   className={'info-btn'}
                   type={'primary'}
                   disabled={!dirty || !isValid}
-                  loading={isLoading}
+                  loading={isLoading || updateQuestionLoading}
                 >
                   {t('common.saveNewQuestionVersion')}
                 </Button>

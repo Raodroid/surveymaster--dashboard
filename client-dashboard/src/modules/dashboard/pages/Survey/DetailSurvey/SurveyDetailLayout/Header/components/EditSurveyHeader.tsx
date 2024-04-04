@@ -7,6 +7,7 @@ import {
   SurveyVersionRemarkButton,
   SurveyVersionSelect,
   useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
@@ -20,8 +21,9 @@ const { confirm } = Modal;
 const EditSurveyHeader = () => {
   const { t } = useTranslation();
   const params = useParams<projectSurveyParams>();
-  const { survey, setSurveyFormContext, project } = useSurveyFormContext();
-  const { resetForm, dirty } = useFormikContext<IEditSurveyFormValues>();
+  const { survey, project } = useSurveyFormContext();
+  const { setSurveyTreeContext } = useSurveyTreeContext();
+  const { resetForm } = useFormikContext<IEditSurveyFormValues>();
 
   const isExternalProject = useMemo(
     () => project.projectData?.type === ProjectTypes.EXTERNAL,
@@ -44,7 +46,7 @@ const EditSurveyHeader = () => {
           )}?version=${survey.currentSurveyVersion?.displayId}`,
         );
         resetForm();
-        setSurveyFormContext(oldState => ({
+        setSurveyTreeContext(oldState => ({
           ...oldState,
           tree: {
             ...oldState.tree,
@@ -62,7 +64,7 @@ const EditSurveyHeader = () => {
     params?.projectId,
     params?.surveyId,
     resetForm,
-    setSurveyFormContext,
+    setSurveyTreeContext,
     survey.currentSurveyVersion?.displayId,
     t,
   ]);

@@ -76,6 +76,7 @@ const UploadExternalFile = () => {
   const [{ value }, , { setValue }] = useField<questionValueType[]>(
     `${rootSurveyFlowElementFieldName}[0].surveyQuestions`,
   );
+
   const handleFiles = useCallback(
     (file: File) => {
       const reader = new FileReader();

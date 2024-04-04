@@ -21,7 +21,7 @@ export const useGetQuestionByQuestionId = (
 };
 
 export const useGetAllCategories = () => {
-  const getCategoryQuery = useQuery(
+  const { data, isLoading } = useQuery(
     ['getCategories'],
     () =>
       QuestionBankService.getCategories({
@@ -35,8 +35,8 @@ export const useGetAllCategories = () => {
   );
 
   const categories = useMemo<IQuestionCategory[]>(
-    () => _get(getCategoryQuery.data, 'data.data', []),
-    [getCategoryQuery.data],
+    () => _get(data, 'data.data', []),
+    [data],
   );
   const categoryOptions = useMemo<IOptionItem[]>(
     () =>
@@ -47,5 +47,5 @@ export const useGetAllCategories = () => {
     [categories],
   );
 
-  return { categories, categoryOptions, isLoading: getCategoryQuery.isLoading };
+  return { categories, categoryOptions, isLoading };
 };
