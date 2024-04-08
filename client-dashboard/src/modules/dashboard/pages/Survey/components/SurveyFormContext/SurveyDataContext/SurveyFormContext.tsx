@@ -1,6 +1,5 @@
 import {
   createContext,
-  Dispatch,
   ReactElement,
   SetStateAction,
   useCallback,
@@ -16,11 +15,9 @@ import {
   GetListQuestionDto,
   IPaginationResponse,
   IPostSurveyVersionBodyDto,
-  IProject,
   IPutSurveyVersionBodyDtoExtendId,
   IQuestion,
   IQuestionVersion,
-  ISurvey,
   ISurveyQuestionDto,
   ISurveyVersion,
   ISurveyVersionBaseDto,
@@ -44,57 +41,16 @@ import { ROUTE_PATH } from '@/enums';
 import { Modal, notification, Spin } from 'antd';
 import {
   createQuestionMap,
+  findMaxBlockSort,
   transformCloneSurveyVersion,
   transformSurveyVersion,
 } from './util';
 import { useSurveyTreeContext } from '@pages/Survey';
+import { ISurveyFormContext } from './type';
 
 const { confirm } = Modal;
 
-const INIT_BLOCK_SORT = 0;
-
-interface ISurveyFormContext {
-  setSurveyFormContext: Dispatch<SetStateAction<ISurveyFormContext>>;
-  actionLoading: boolean;
-
-  question: {
-    questionVersionIdMap: Record<
-      string,
-      IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
-    >;
-    newQuestions: Array<
-      IQuestionVersion & {
-        masterCategory: IQuestion['masterCategory'];
-      }
-    >;
-    fetchNextQuestionPage: () => void;
-    hasNextQuestionPage: boolean;
-    searchParams: GetListQuestionDto;
-    isFetchingQuestion: boolean;
-    setSearchParams: <T extends keyof GetListQuestionDto>(
-      value: Record<T, GetListQuestionDto[T]>,
-    ) => void;
-  };
-
-  form: {
-    initialValues: IEditSurveyFormValues;
-    onSubmit: (value: IEditSurveyFormValues) => void;
-  };
-
-  survey: {
-    currentSurveyVersion?: ISurveyVersion;
-    surveyData?: ISurvey;
-  };
-  project: {
-    projectData?: IProject;
-    isExternalProject: boolean;
-    setExcelUploadFile: Dispatch<SetStateAction<string | Blob>>;
-  };
-
-  handleCloneSurveyVersion: (value: IPostSurveyVersionBodyDto) => void;
-}
-
-const intValue: ISurveyFormContext = {
+const intValueContext: ISurveyFormContext = {
   actionLoading: false,
 
   question: {
@@ -121,7 +77,6 @@ const intValue: ISurveyFormContext = {
   survey: {},
   project: {
     isExternalProject: false,
-    setExcelUploadFile: value => {},
   },
   setSurveyFormContext: function (
     value: SetStateAction<ISurveyFormContext>,
@@ -131,83 +86,11 @@ const intValue: ISurveyFormContext = {
 
   handleCloneSurveyVersion: () => {},
 };
-
-export const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
+export const SurveyFormContext =
+  createContext<ISurveyFormContext>(intValueContext);
 
 const SurveyFormProvider = (props: { children?: ReactElement }) => {
-  const [context, setContext] = useState<ISurveyFormContext>(intValue);
-
-  const { isFetching, fetchNextPage } = useInfiniteQuery(
-    ['getQuestionList', context.question.searchParams],
-    ({ pageParam = context.question.searchParams }) => {
-      return QuestionBankService.getQuestions({
-        ...pageParam,
-      });
-    },
-    {
-      getNextPageParam: lastPage => {
-        return lastPage.data.hasNextPage
-          ? { ...context.question.searchParams, page: lastPage.data.page + 1 }
-          : false;
-      },
-      onError,
-      refetchOnWindowFocus: false,
-      onSuccess: res => {
-        const questionListData = res as unknown as {
-          pages: { data: IPaginationResponse<IQuestion> }[];
-        };
-        setContext(s => {
-          if (!questionListData) return s;
-
-          const normalizeByQuestionId: Record<
-            string,
-            IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
-          > = { ...s.question.questionVersionIdMap };
-
-          questionListData.pages.at(-1)?.data?.data.forEach((q: IQuestion) => {
-            const latestQuestionVersionId = q.latestCompletedVersion
-              ?.id as string;
-
-            if (!normalizeByQuestionId[latestQuestionVersionId]) {
-              normalizeByQuestionId[latestQuestionVersionId] = {
-                ...q.latestCompletedVersion,
-                masterCategory: q.masterCategory,
-              };
-            }
-          });
-
-          const newQuestions: Array<
-            IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
-          > = [];
-          questionListData.pages.forEach(page => {
-            page.data.data.forEach(q => {
-              if (!normalizeByQuestionId[q.latestCompletedVersion.id as string])
-                //make sure context store this question
-                return;
-
-              newQuestions.push({
-                ...q.latestCompletedVersion,
-                masterCategory: q.masterCategory,
-              });
-            });
-          });
-
-          return {
-            ...s,
-            question: {
-              ...s.question,
-              newQuestions,
-              hasNextQuestionPage:
-                !!questionListData.pages.at(-1)?.data?.hasNextPage,
-              fetchNextQuestionPage: fetchNextPage,
-              questionVersionIdMap: normalizeByQuestionId,
-            },
-          };
-        });
-      },
-    },
-  );
-
+  const [context, setContext] = useState<ISurveyFormContext>(intValueContext);
   const params = useParams<{ projectId?: string; surveyId?: string }>();
   const projectId = params.projectId || '';
 
@@ -215,90 +98,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { isEditMode } = useCheckSurveyFormMode();
-
-  const {
-    isLoading: isFetchingSurveyData,
-    currentSurveyVersion,
-    surveyData,
-  } = useGetSurveyById(params?.surveyId);
-
-  const { project, isLoading: isFetchingProject } = useGetProjectByIdQuery(
-    params?.projectId,
-  );
-  const { setSurveyTreeContext } = useSurveyTreeContext();
-
-  const isExternalProject = useMemo(
-    () => project.type === ProjectTypes.EXTERNAL,
-    [project.type],
-  );
-
-  useEffect(() => {
-    if (!currentSurveyVersion) return;
-
-    const { surveyFlowElements } = currentSurveyVersion;
-
-    if (!surveyFlowElements?.length) return;
-
-    let maxBlockSort = INIT_BLOCK_SORT;
-
-    for (const blockElement of surveyFlowElements) {
-      if (!blockElement?.blockSort) continue;
-      if (blockElement?.blockSort > maxBlockSort) {
-        maxBlockSort = blockElement.blockSort;
-      }
-    }
-    setSurveyTreeContext(s => ({
-      ...s,
-      tree: {
-        ...s.tree,
-        maxBlockSort,
-      },
-    }));
-  }, [currentSurveyVersion, setSurveyTreeContext]);
-
-  const initialValues = useMemo<IEditSurveyFormValues>(() => {
-    return {
-      ...transformInitSurveyFormData(currentSurveyVersion),
-      projectId,
-      surveyId: surveyData.displayId || '',
-      selectedRowKeys: !isExternalProject
-        ? []
-        : (
-            currentSurveyVersion?.surveyFlowElements?.[0]?.surveyQuestions || []
-          ).map(q => q.questionVersionId),
-    };
-  }, [
-    currentSurveyVersion,
-    isExternalProject,
-    projectId,
-    surveyData.displayId,
-  ]);
-
-  const onSuccess = useCallback(async () => {
-    await queryClient.invalidateQueries('getProjects');
-    await queryClient.invalidateQueries('getSurveyById');
-
-    notification.success({
-      message: t(`common.${isEditMode ? 'updateSuccess' : 'createSuccess'}`),
-    });
-  }, [isEditMode, queryClient, t]);
-
-  const [excelUploadFile, setExcelUploadFile] = useState<string | Blob>('');
-
-  const {
-    mutateAsync: uploadExcelFileMutate,
-    isLoading: uploadExcelFileLoading,
-  } = useMutation(
-    (id: string) =>
-      SurveyService.uploadExcelFile({
-        id,
-        file: excelUploadFile,
-      }),
-    {
-      onError,
-    },
-  );
-
   const { mutateAsync: updateSurveyMutate, isLoading: updateSurveyLoading } =
     useMutation(
       (data: IPutSurveyVersionBodyDtoExtendId) => {
@@ -345,6 +144,136 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     },
   );
 
+  //handle get question infinity
+  const { isFetching, fetchNextPage } = useInfiniteQuery(
+    ['getQuestionList', context.question.searchParams],
+    ({ pageParam = context.question.searchParams }) => {
+      return QuestionBankService.getQuestions({
+        ...pageParam,
+      });
+    },
+    {
+      getNextPageParam: lastPage => {
+        return lastPage.data.hasNextPage
+          ? { ...context.question.searchParams, page: lastPage.data.page + 1 }
+          : false;
+      },
+      onError,
+      refetchOnWindowFocus: false,
+      onSuccess: res => {
+        const questionListData = res as unknown as {
+          pages: { data: IPaginationResponse<IQuestion> }[];
+        };
+        setContext(oldState => {
+          if (!questionListData) return oldState;
+
+          const normalizeByQuestionId: Record<
+            string,
+            IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
+          > = { ...oldState.question.questionVersionIdMap };
+
+          questionListData.pages.at(-1)?.data?.data.forEach((q: IQuestion) => {
+            const latestQuestionVersionId = q.latestCompletedVersion
+              ?.id as string;
+
+            if (!normalizeByQuestionId[latestQuestionVersionId]) {
+              normalizeByQuestionId[latestQuestionVersionId] = {
+                ...q.latestCompletedVersion,
+                masterCategory: q.masterCategory,
+              };
+            }
+          });
+
+          const newQuestions: Array<
+            IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
+          > = [];
+
+          questionListData.pages.forEach(page => {
+            page.data.data.forEach(q => {
+              if (!normalizeByQuestionId[q.latestCompletedVersion.id as string])
+                //make sure context store this question
+                return;
+
+              newQuestions.push({
+                ...q.latestCompletedVersion,
+                masterCategory: q.masterCategory,
+              });
+            });
+          });
+
+          return {
+            ...oldState,
+            question: {
+              ...oldState.question,
+              newQuestions,
+              hasNextQuestionPage:
+                !!questionListData.pages.at(-1)?.data?.hasNextPage,
+              fetchNextQuestionPage: fetchNextPage,
+              questionVersionIdMap: normalizeByQuestionId,
+            },
+          };
+        });
+      },
+    },
+  );
+
+  const {
+    isLoading: isFetchingSurveyData,
+    currentSurveyVersion,
+    surveyData,
+  } = useGetSurveyById(params?.surveyId);
+
+  const { project, isLoading: isFetchingProject } = useGetProjectByIdQuery(
+    params?.projectId,
+  );
+  const { setSurveyTreeContext } = useSurveyTreeContext();
+
+  const isExternalProject = useMemo(
+    () => project.type === ProjectTypes.EXTERNAL,
+    [project.type],
+  );
+
+  const setSearchParams = useCallback((value: GetListQuestionDto) => {
+    setContext(s => ({
+      ...s,
+      question: {
+        ...s.question,
+        searchParams: {
+          ...s.question.searchParams,
+          ...value,
+        },
+      },
+    }));
+  }, []);
+
+  const initialFormValues = useMemo<IEditSurveyFormValues>(() => {
+    return {
+      ...transformInitSurveyFormData(currentSurveyVersion),
+      projectId,
+      surveyId: surveyData.displayId || '',
+      selectedRowKeys: !isExternalProject
+        ? []
+        : (
+            currentSurveyVersion?.surveyFlowElements?.[0]?.surveyQuestions || []
+          ).map(q => q.questionVersionId),
+    };
+  }, [
+    currentSurveyVersion,
+    isExternalProject,
+    projectId,
+    surveyData.displayId,
+  ]);
+
+  const onSuccess = useCallback(async () => {
+    await queryClient.invalidateQueries('getProjects');
+    await queryClient.invalidateQueries('getSurveyById');
+
+    notification.success({
+      message: t(`common.${isEditMode ? 'updateSuccess' : 'createSuccess'}`),
+    });
+  }, [isEditMode, queryClient, t]);
+
+  // loading state of context
   const [loading, toggleLoading] = useToggle();
 
   const handleCloneSurveyVersion = useCallback(
@@ -369,8 +298,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     },
     [duplSurveyVersionMutate, params.surveyId, t],
   );
-  const actionLoading =
-    uploadExcelFileLoading || duplSurveyVersionLoading || updateSurveyLoading;
+  const actionLoading = duplSurveyVersionLoading || updateSurveyLoading;
 
   const onSubmit = useCallback(
     async (values: IEditSurveyFormValues) => {
@@ -433,8 +361,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
             surveyVersionId: currentSurveyVersion?.id as string,
             status: values.version?.status || SurveyVersionStatus.DRAFT,
           });
-          if (currentSurveyVersion?.id)
-            await uploadExcelFileMutate(currentSurveyVersion.id);
           return;
         }
 
@@ -461,23 +387,10 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
       toggleLoading,
       isExternalProject,
       updateSurveyMutate,
-      uploadExcelFileMutate,
     ],
   );
 
-  const setSearchParams = useCallback(value => {
-    setContext(s => ({
-      ...s,
-      question: {
-        ...s.question,
-        searchParams: {
-          ...s.question.searchParams,
-          ...value,
-        },
-      },
-    }));
-  }, []);
-
+  //Get and transform all questions was existed in current survey version, put into questionVersionIdMap
   useEffect(() => {
     setContext(s => {
       const questionIdMap = s.question.questionVersionIdMap;
@@ -502,6 +415,24 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     });
   }, [currentSurveyVersion?.surveyFlowElements]);
 
+  // find MaxBlockSort and set to context
+  useEffect(() => {
+    if (!currentSurveyVersion) return;
+
+    const { surveyFlowElements } = currentSurveyVersion;
+    if (!surveyFlowElements?.length) return;
+
+    const maxBlockSort = findMaxBlockSort(surveyFlowElements);
+
+    setSurveyTreeContext(s => ({
+      ...s,
+      tree: {
+        ...s.tree,
+        maxBlockSort,
+      },
+    }));
+  }, [currentSurveyVersion, setSurveyTreeContext]);
+
   return (
     <SurveyFormContext.Provider
       value={{
@@ -511,7 +442,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         handleCloneSurveyVersion,
         form: {
           ...context.form,
-          initialValues,
+          initialValues: initialFormValues,
           onSubmit,
         },
         question: {
@@ -526,7 +457,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         project: {
           projectData: project,
           isExternalProject: project.type === ProjectTypes.EXTERNAL,
-          setExcelUploadFile,
         },
       }}
     >

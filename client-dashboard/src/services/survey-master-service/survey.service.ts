@@ -16,7 +16,6 @@ import {
 } from '@/type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
-import { IAction } from '@/interfaces';
 
 interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
   projectId?: string;
@@ -137,21 +136,22 @@ export default class SurveyService {
       params,
     );
   }
-  static uploadExcelFile(payload: {
-    id: string;
-    file: string | Blob;
-  }): Promise<AxiosResponse> {
-    const { id, file } = payload;
-    const formData = new FormData();
-    formData.append('file', file);
-    return APIService.post(
-      `/${EntityEnum.SURVEY}/version/${id}/survey-results/excel`,
-      formData,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      },
-    );
-  }
+
+  // static uploadExcelFile(payload: {
+  //   id: string;
+  //   file: string | Blob;
+  // }): Promise<AxiosResponse> {
+  //   const { id, file } = payload;
+  //   const formData = new FormData();
+  //   formData.append('file', file);
+  //   return APIService.post(
+  //     `/${EntityEnum.SURVEY}/version/${id}/survey-results/excel`,
+  //     formData,
+  //     {
+  //       headers: { 'Content-Type': 'multipart/form-data' },
+  //     },
+  //   );
+  // }
 
   static createSurveyRemark(params: {
     surveyVersionId: string;

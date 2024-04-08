@@ -21,7 +21,6 @@ const initNewRowValue: questionValueType = {
   parameter: '',
   sort: Math.random(),
   questionVersionId: '',
-  // id: '',
   questionTitle: '',
   type: QuestionType.TEXT_ENTRY,
   createdAt: '',

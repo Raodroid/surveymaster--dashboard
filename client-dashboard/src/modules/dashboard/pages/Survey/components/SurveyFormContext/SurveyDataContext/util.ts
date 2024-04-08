@@ -129,6 +129,7 @@ export const transformSurveyVersion = (
   return { ...values.version, surveyFlowElements };
 };
 
+//Make sure remove all id of every surveyQuestions, branchLogics,listEmbeddedData
 export const transformCloneSurveyVersion = (
   input: SubSurveyFlowElementDto[] | undefined,
 ): SubSurveyFlowElementDto[] => {
@@ -158,3 +159,23 @@ export const transformCloneSurveyVersion = (
     return result;
   });
 };
+
+export function findMaxBlockSort(
+  inputArr: SurveyFlowElementResponseDto[],
+): number {
+  let max = 0;
+  const findMaxRecursive = (input: SurveyFlowElementResponseDto[]) => {
+    for (const blockElement of input) {
+      if (!blockElement?.blockSort) continue;
+
+      if (blockElement?.blockSort > max) {
+        max = blockElement.blockSort;
+      }
+      if (blockElement.children) {
+        findMaxRecursive(blockElement.children);
+      }
+    }
+  };
+  findMaxRecursive(inputArr);
+  return max;
+}

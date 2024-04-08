@@ -1,8 +1,8 @@
-import {PlusIcon} from '@/icons';
-import {Button} from 'antd';
+import { PlusIcon } from '@/icons';
+import { Button } from 'antd';
 import SurveyModal from './SurveyModal';
-import {useToggle} from '@/utils';
-import {useTranslation} from 'react-i18next';
+import { useToggle } from '@/utils';
+import { useTranslation } from 'react-i18next';
 
 const AddSurveyButton = () => {
   const [openForm, toggleForm] = useToggle();
