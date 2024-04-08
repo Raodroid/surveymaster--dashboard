@@ -23,7 +23,7 @@ declare global {
 interface IErr {
   error: any;
   i18nKey: string;
-  contentObj?: Object;
+  contentObj?: object;
 }
 
 export const errorNotification = (input: IErr) => {
@@ -243,4 +243,11 @@ export const objectKeys = <T extends object | Record<string | number, unknown>>(
   object: T,
 ): Array<keyof T> => {
   return Object.keys(object) as Array<keyof T>;
+};
+export const createBinaryFile = (excelFile, callback) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    callback(excelFile);
+  };
+  reader.readAsBinaryString(excelFile);
 };

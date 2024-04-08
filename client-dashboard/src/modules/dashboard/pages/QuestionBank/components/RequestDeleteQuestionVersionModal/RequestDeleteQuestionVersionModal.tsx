@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { QuestionBankService } from '@/services';
 import { onError } from '@/utils';
-import RequestApproveFrom from '@components/RequestApproveForm/RequestApproveFrom';
+import RequestApproveForm from '@components/RequestApproveForm/RequestApproveForm';
 
 const RequestDeleteQuestionVersionModal: FC<
   IModal & { versionId?: string }
@@ -56,7 +56,7 @@ const RequestDeleteQuestionVersionModal: FC<
         footer={false}
       >
         <Spin spinning={requestDeleteQuestionVersion.isLoading}>
-          <RequestApproveFrom onSubmit={onSubmit} />
+          <RequestApproveForm onSubmit={onSubmit} />
         </Spin>
       </Modal>
     </>

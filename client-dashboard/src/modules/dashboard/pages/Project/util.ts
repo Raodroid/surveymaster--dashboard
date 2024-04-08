@@ -9,7 +9,7 @@ import { onError } from 'utils';
 
 export const useGetAllProjects = () => {
   const { canRead } = useCheckScopeEntityDefault(SCOPE_CONFIG.ENTITY.PROJECT);
-  const getAllProjectQuery = useQuery(
+  const { data, isLoading } = useQuery(
     ['getAllProjects', canRead],
     () =>
       ProjectService.getProjects({
@@ -24,17 +24,17 @@ export const useGetAllProjects = () => {
   );
 
   const projects = useMemo<IProject[]>(
-    () => _get(getAllProjectQuery.data, 'data.data', []),
-    [getAllProjectQuery.data],
+    () => _get(data, 'data.data', []),
+    [data],
   );
 
-  return { projects, isLoading: getAllProjectQuery.isLoading };
+  return { projects, isLoading };
 };
 
 export const useGetProjectByIdQuery = (
   projectId?: string,
 ): { project: IProject; isLoading: boolean } => {
-  const getProjectByIdQuery = useQuery(
+  const { data, isLoading } = useQuery(
     ['getProjectById', projectId],
     () => ProjectService.getProjectById(projectId),
     {
@@ -45,8 +45,8 @@ export const useGetProjectByIdQuery = (
   );
 
   const project = useMemo<IProject>(() => {
-    return _get(getProjectByIdQuery.data, 'data', {});
-  }, [getProjectByIdQuery.data]);
+    return _get(data, 'data', {});
+  }, [data]);
 
-  return { project, isLoading: getProjectByIdQuery.isLoading };
+  return { project, isLoading };
 };

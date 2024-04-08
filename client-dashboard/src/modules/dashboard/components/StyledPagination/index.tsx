@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import styled from 'styled-components/macro';
 import { Button, Pagination, PaginationProps } from 'antd';
 import { ArrowLeft, ArrowRight } from '@/icons';
@@ -33,7 +33,7 @@ const StyledPagination: FC<PaginationProps> = props => {
   );
 };
 
-export default StyledPagination;
+export default memo(StyledPagination);
 
 const StyledPaginationWrapper = styled.div`
   display: flex;

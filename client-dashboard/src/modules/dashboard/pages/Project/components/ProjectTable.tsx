@@ -22,7 +22,6 @@ import { useHandleNavigate, useParseQueryString } from '@/hooks';
 import { objectKeys, onError, useToggle } from '@/utils';
 import { StyledPagination } from '@/modules/dashboard';
 import { ProjectTableWrapper } from '../ProjectContent/styles';
-import SimpleBar from 'simplebar-react';
 import { useCheckScopeEntityDefault } from '@hoc/index';
 import { EntityEnum, ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
 import { ProjectService } from '@/services';
@@ -90,7 +89,10 @@ function ProjectTable() {
     return formatQs;
   }, [qsParams]);
 
-  const getProjectListQuery = useQuery(
+  const {
+    data: getProjectListQueryData,
+    isLoading: getProjectListQueryLoading,
+  } = useQuery(
     ['getProjects', formatQsParams],
     () => getProjects(formatQsParams),
     {
@@ -100,28 +102,32 @@ function ProjectTable() {
     },
   );
 
-  const total: number = _get(getProjectListQuery.data, 'data.itemCount', 0);
+  const total: number = _get(getProjectListQueryData, 'data.itemCount', 0);
 
   const projects = useMemo<IProject[]>(
-    () => _get(getProjectListQuery.data, 'data.data'),
-    [getProjectListQuery.data],
+    () => _get(getProjectListQueryData, 'data.data'),
+    [getProjectListQueryData],
   );
 
-  const mutationDeleteProject = useMutation(
-    () =>
-      ProjectService.deleteProject({
-        projectId,
-      }),
-    {
-      onSuccess: () => {
-        notification.success({ message: t('common.deleteSuccess') });
-        queryClient.invalidateQueries('getProjects');
-        queryClient.invalidateQueries('getAllProjects');
+  const { mutateAsync: deleteProjectMutate, isLoading: deleteProjectLoading } =
+    useMutation(
+      () =>
+        ProjectService.deleteProject({
+          projectId,
+        }),
+      {
+        onSuccess: () => {
+          notification.success({ message: t('common.deleteSuccess') });
+          queryClient.invalidateQueries('getProjects');
+          queryClient.invalidateQueries('getAllProjects');
+        },
+        onError,
       },
-      onError,
-    },
-  );
-  const mutationRestoreProject = useMutation(
+    );
+  const {
+    mutateAsync: restoreProjectMutate,
+    isLoading: restoreProjectLoading,
+  } = useMutation(
     () =>
       ProjectService.restoreProject({
         projectId,
@@ -145,20 +151,20 @@ function ProjectTable() {
       icon: null,
       content: t('common.confirmDeleteProject'),
       onOk() {
-        mutationDeleteProject.mutateAsync();
+        deleteProjectMutate();
       },
     });
-  }, [mutationDeleteProject, t]);
+  }, [deleteProjectMutate, t]);
 
   const handleRestore = useCallback(() => {
     confirm({
       icon: null,
       content: t('common.confirmRestoreProject'),
       onOk() {
-        mutationRestoreProject.mutateAsync();
+        restoreProjectMutate();
       },
     });
-  }, [mutationRestoreProject, t]);
+  }, [restoreProjectMutate, t]);
 
   const tableActions = useMemo<keysAction<IProject>>(
     () => [
@@ -281,7 +287,13 @@ function ProjectTable() {
   return (
     <>
       <ProjectTableWrapper>
-        <Spin spinning={getProjectListQuery.isLoading}>
+        <Spin
+          spinning={
+            getProjectListQueryLoading ||
+            deleteProjectLoading ||
+            restoreProjectLoading
+          }
+        >
           <SimpleBarCustom>
             <Table
               dataSource={projects}

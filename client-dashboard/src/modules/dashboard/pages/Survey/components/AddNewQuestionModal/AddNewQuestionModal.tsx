@@ -21,7 +21,6 @@ const initNewRowValue: questionValueType = {
   parameter: '',
   sort: Math.random(),
   questionVersionId: '',
-  // id: '',
   questionTitle: '',
   type: QuestionType.TEXT_ENTRY,
   createdAt: '',
@@ -78,7 +77,7 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
   }, [setSearchParams, toggleOpen]);
 
   const handleSelectQuestion = useCallback(
-    questionId => {
+    (questionId: string) => {
       const chooseQuestion = questionVersionIdMap[questionId];
 
       if (chooseQuestion) {

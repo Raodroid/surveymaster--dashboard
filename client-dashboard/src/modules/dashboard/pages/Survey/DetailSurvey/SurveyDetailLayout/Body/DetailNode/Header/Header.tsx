@@ -1,11 +1,16 @@
-import {FC} from 'react';
-import {QuestionBranchIcon, SurveyDataTreeNode, useCheckSurveyFormMode, useSurveyBlockAction,} from '@pages/Survey';
-import {useTranslation} from 'react-i18next';
-import {SubSurveyFlowElement} from '@/type';
-import {ControlledInput} from '@/modules/common';
-import {INPUT_TYPES} from '@input/type';
-import {Button, Divider, Tooltip} from 'antd';
-import {DuplicateIcon, TrashOutlined} from '@/icons';
+import { FC, memo } from 'react';
+import {
+  QuestionBranchIcon,
+  SurveyDataTreeNode,
+  useCheckSurveyFormMode,
+  useSurveyBlockAction,
+} from '@pages/Survey';
+import { useTranslation } from 'react-i18next';
+import { SubSurveyFlowElement } from '@/type';
+import { ControlledInput } from '@/modules/common';
+import { INPUT_TYPES } from '@input/type';
+import { Button, Divider, Tooltip } from 'antd';
+import { DuplicateIcon, TrashOutlined } from '@/icons';
 
 const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   const { t } = useTranslation();
@@ -57,4 +62,4 @@ const Header: FC<{ focusBlock: SurveyDataTreeNode }> = props => {
   );
 };
 
-export default Header;
+export default memo(Header);

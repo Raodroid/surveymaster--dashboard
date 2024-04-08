@@ -16,7 +16,7 @@ import {
   InsertBlockButton,
   QuestionBranchIcon,
   useSurveyBlockAction,
-  useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
 import { ThreeDotsDropdown } from '@/customize-components';
 import { CloseIcon, DuplicateIcon, PenFilled, TrashOutlined } from '@/icons';
@@ -39,12 +39,18 @@ const bgColor: Record<SubSurveyFlowElement, string> = {
   [SubSurveyFlowElement.EMBEDDED_DATA]: '#00AEC720',
 };
 
+const mapErrorType: Record<SubSurveyFlowElement, string> = {
+  [SubSurveyFlowElement.BLOCK]: '',
+  [SubSurveyFlowElement.EMBEDDED_DATA]: 'Embedded formula',
+  [SubSurveyFlowElement.BRANCH]: 'Condition',
+  [SubSurveyFlowElement.END_SURVEY]: '',
+};
 const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   const { t } = useTranslation();
   const { record } = props;
   const fieldName = record.fieldName;
   const { isEditMode } = useCheckSurveyFormMode();
-  const { setSurveyFormContext } = useSurveyFormContext();
+  const { setSurveyTreeContext } = useSurveyTreeContext();
 
   const { handleDuplicateBlock, handleRemoveBlock } =
     useSurveyBlockAction(record);
@@ -67,7 +73,7 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
 
   const handleRename = useCallback(
     (record: SurveyDataTreeNode) => {
-      setSurveyFormContext(oldState => ({
+      setSurveyTreeContext(oldState => ({
         ...oldState,
         tree: {
           ...oldState.tree,
@@ -75,7 +81,7 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
         },
       }));
     },
-    [setSurveyFormContext],
+    [setSurveyTreeContext],
   );
 
   const tableActions = useMemo<keysAction<SurveyDataTreeNode>>(
@@ -108,13 +114,6 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
     const keyErrors = Object.keys(errorMessages);
     if (keyErrors.length === 0) return null;
 
-    const mapErrorType: Record<SubSurveyFlowElement, string> = {
-      [SubSurveyFlowElement.BLOCK]: '',
-      [SubSurveyFlowElement.EMBEDDED_DATA]: 'Embedded formula',
-      [SubSurveyFlowElement.BRANCH]: 'Condition',
-      [SubSurveyFlowElement.END_SURVEY]: '',
-    };
-
     return (
       <>
         {keyErrors.map(key => (
@@ -136,6 +135,8 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
     );
   }, [error, record.type, t, touched]);
 
+  const ActionThreeDropDownMemo = memo(ActionThreeDropDown);
+
   return (
     <>
       <Wrapper
@@ -148,6 +149,7 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
       >
         <div className={'group/block flex gap-3 items-center'}>
           <QuestionBranchIcon type={record?.type} />
+
           <span className={'font-semibold'}>
             {record?.type === SubSurveyFlowElement.BLOCK
               ? value?.blockDescription
@@ -173,7 +175,10 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
             </div>
           )}
           {isEditMode && (
-            <ActionThreeDropDown record={record} handleSelect={handleSelect} />
+            <ActionThreeDropDownMemo
+              record={record}
+              handleSelect={handleSelect}
+            />
           )}
         </div>
 

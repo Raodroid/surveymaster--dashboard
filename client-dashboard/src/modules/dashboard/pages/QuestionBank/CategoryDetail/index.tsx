@@ -102,7 +102,7 @@ const CategoryDetail = () => {
 
   const [params, setParams] = useState<GetListQuestionDto>(initParams);
 
-  const deleteMutation = useMutation(
+  const { mutateAsync: deleteMutate, isLoading: deleteLoading } = useMutation(
     (data: { id: string }) => {
       return QuestionBankService.deleteQuestion(data);
     },
@@ -114,7 +114,10 @@ const CategoryDetail = () => {
       onError,
     },
   );
-  const requestDeleteQuestion = useMutation(
+  const {
+    mutateAsync: requestDeleteQuestionMutate,
+    isLoading: requestDeleteQuestionLoading,
+  } = useMutation(
     (data: IRequestDeleteRecordDto) => {
       return QuestionBankService.requestDeleteQuestion({
         ...data,
@@ -128,7 +131,7 @@ const CategoryDetail = () => {
       onError,
     },
   );
-  const restoreMutation = useMutation(
+  const { mutateAsync: restoreMutate, isLoading: restoreLoading } = useMutation(
     (data: { id: string }) => {
       return QuestionBankService.restoreQuestionByQuestionId(data);
     },
@@ -141,18 +144,19 @@ const CategoryDetail = () => {
     },
   );
 
-  const duplicateMutation = useMutation(
-    (data: { id: string }) => {
-      return QuestionBankService.duplicateQuestion(data);
-    },
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries('getQuestionList');
-        notification.success({ message: t('common.duplicateSuccess') });
+  const { mutateAsync: duplicateMutate, isLoading: duplicateLoading } =
+    useMutation(
+      (data: { id: string }) => {
+        return QuestionBankService.duplicateQuestion(data);
       },
-      onError,
-    },
-  );
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries('getQuestionList');
+          notification.success({ message: t('common.duplicateSuccess') });
+        },
+        onError,
+      },
+    );
 
   const handleRestore = useCallback(
     (record: IQuestion) => {
@@ -160,11 +164,11 @@ const CategoryDetail = () => {
         icon: null,
         content: t('common.confirmRestoreQuestion'),
         onOk() {
-          restoreMutation.mutateAsync({ id: record.id as string });
+          restoreMutate({ id: record.id as string });
         },
       });
     },
-    [restoreMutation, t],
+    [restoreMutate, t],
   );
 
   const handleEdit = useCallback(
@@ -184,11 +188,11 @@ const CategoryDetail = () => {
         icon: null,
         content: t('common.confirmDuplicateQuestion'),
         onOk() {
-          duplicateMutation.mutateAsync({ id: record.id as string });
+          duplicateMutate({ id: record.id as string });
         },
       });
     },
-    [duplicateMutation, t],
+    [duplicateMutate, t],
   );
 
   const handleResponseDeleteRequest = useCallback(
@@ -198,7 +202,7 @@ const CategoryDetail = () => {
           icon: null,
           content: t('common.confirmDeleteQuestion'),
           onOk() {
-            deleteMutation.mutateAsync({ id: record?.id as string });
+            deleteMutate({ id: record?.id as string });
           },
         });
 
@@ -209,14 +213,14 @@ const CategoryDetail = () => {
         icon: null,
         content: t('common.confirmDenyDeleteRequestQuestion'),
         onOk() {
-          requestDeleteQuestion.mutateAsync({
+          requestDeleteQuestionMutate({
             isAwaitingDeletion: false,
             id: record?.id as string,
           });
         },
       });
     },
-    [deleteMutation, requestDeleteQuestion, t],
+    [deleteMutate, requestDeleteQuestionMutate, t],
   );
 
   const tableActions = useMemo<keysAction<IQuestion>>(
@@ -262,7 +266,10 @@ const CategoryDetail = () => {
   const { handleSelect, selectedRecord } =
     useSelectTableRecord<IQuestion>(tableActions);
 
-  const getQuestionListQuery = useQuery(
+  const {
+    data: getQuestionListQueryData,
+    isLoading: getQuestionListQueryLoading,
+  } = useQuery(
     ['getQuestionList', params],
     () => {
       return getQuestion(params);
@@ -273,11 +280,11 @@ const CategoryDetail = () => {
     },
   );
 
-  const total: number = _get(getQuestionListQuery.data, 'data.itemCount', 0);
+  const total: number = _get(getQuestionListQueryData, 'data.itemCount', 0);
 
   const questionList = useMemo<IQuestion[]>(
-    () => _get(getQuestionListQuery.data, 'data.data'),
-    [getQuestionListQuery.data],
+    () => _get(getQuestionListQueryData, 'data.data'),
+    [getQuestionListQueryData],
   );
 
   const columns = useMemo<ColumnsType<IQuestion>>(
@@ -398,11 +405,11 @@ const CategoryDetail = () => {
     <Spin
       spinning={
         loading ||
-        getQuestionListQuery.isLoading ||
-        restoreMutation.isLoading ||
-        deleteMutation.isLoading ||
-        restoreMutation.isLoading ||
-        requestDeleteQuestion.isLoading
+        getQuestionListQueryLoading ||
+        restoreLoading ||
+        deleteLoading ||
+        requestDeleteQuestionLoading ||
+        duplicateLoading
       }
       style={{ maxHeight: 'unset' }}
     >

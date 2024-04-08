@@ -1,16 +1,16 @@
-import {FC, useCallback} from 'react';
-import {Button, Form, notification} from 'antd';
-import {Formik} from 'formik';
+import { FC, useCallback } from 'react';
+import { Button, Form, notification } from 'antd';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
-import {useDispatch, useSelector} from 'react-redux';
-import {AuthAction, AuthSelectors} from 'redux/auth';
-import {useTranslation} from 'react-i18next';
-import {ControlledInput} from 'modules/common';
-import {INPUT_TYPES} from 'modules/common/input/type';
-import {CHANGE_EMAIL_FIELD} from 'modules/common/validate/validate';
+import { useDispatch, useSelector } from 'react-redux';
+import { AuthAction, AuthSelectors } from 'redux/auth';
+import { useTranslation } from 'react-i18next';
+import { ControlledInput } from 'modules/common';
+import { INPUT_TYPES } from 'modules/common/input/type';
+import { CHANGE_EMAIL_FIELD } from 'modules/common/validate/validate';
 import Modal from 'antd/lib/modal/Modal';
-import {useMutation} from 'react-query';
-import {AuthService, CognitoService} from 'services';
+import { useMutation } from 'react-query';
+import { AuthService, CognitoService } from 'services';
 
 export interface changeEmailPayload {
   oldEmail: string;
@@ -34,7 +34,7 @@ const initialValues: {
 const changeEmailSchema = Yup.object().shape(CHANGE_EMAIL_FIELD);
 interface Props {
   isShowModal: boolean;
-  setIsShowModal: Function;
+  setIsShowModal: (input: boolean) => void;
 }
 
 const ChangeEmailForm: FC<Props> = props => {

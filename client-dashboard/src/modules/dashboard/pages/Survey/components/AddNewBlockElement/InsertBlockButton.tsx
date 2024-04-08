@@ -1,11 +1,7 @@
 import { FC, useCallback } from 'react';
 
 import { defaultNode } from './AddNewBlockElement';
-import { objectKeys } from '@/utils';
 import { SubSurveyFlowElement } from '@/type';
-import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
-import { Button, Dropdown } from 'antd';
-import { PlusOutLinedIcon } from '@/icons';
 import {
   genDefaultBlockDescription,
   getBranchLevel,
@@ -15,20 +11,19 @@ import {
   SurveyDataTreeNode,
   transformToSurveyDataTreeNode,
   updateExpandKeysAfterInsertNewBlock,
-  useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
 import { useField } from 'formik';
-import { useTranslation } from 'react-i18next';
+import { AddElementIconBtn } from './components/AddElementIconBtn';
 
 const InsertBlockButton: FC<{ fieldName: string }> = props => {
   const { fieldName } = props;
-  const { t } = useTranslation();
 
   const parentLayerFieldName = getParentChildrenFieldName(fieldName);
 
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
-  const { setSurveyFormContext } = useSurveyFormContext();
+  const { setSurveyTreeContext } = useSurveyTreeContext();
 
   const handleAddElement = useCallback(
     (type: SubSurveyFlowElement) => {
@@ -61,7 +56,7 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
         setParentNodeValue(transformToSurveyDataTreeNode(newValue));
       }
 
-      setSurveyFormContext(oldState => {
+      setSurveyTreeContext(oldState => {
         return {
           ...oldState,
           tree: {
@@ -80,41 +75,11 @@ const InsertBlockButton: FC<{ fieldName: string }> = props => {
       parentLayerFieldName,
       parentNodeValue,
       setParentNodeValue,
-      setSurveyFormContext,
+      setSurveyTreeContext,
     ],
   );
 
-  return (
-    <Dropdown
-      trigger={['hover']}
-      menu={{
-        items: objectKeys(SubSurveyFlowElement).map(key => {
-          const val = SubSurveyFlowElement[key];
-          return {
-            label: (
-              <div className={'pb-2 flex gap-3 items-center'}>
-                <QuestionBranchIcon type={val} />
-                <span className={'font-semibold'}>{t(`common.${val}`)}</span>
-              </div>
-            ),
-            key: val,
-          };
-        }),
-        onClick: e => {
-          e.domEvent.stopPropagation();
-          handleAddElement(e.key as SubSurveyFlowElement);
-        },
-      }}
-    >
-      <Button
-        type={'primary'}
-        shape={'round'}
-        className={'!px-[3px] !h-[20px]'}
-        size={'small'}
-        icon={<PlusOutLinedIcon />}
-      />
-    </Dropdown>
-  );
+  return <AddElementIconBtn handleAddElement={handleAddElement} />;
 };
 
 export default InsertBlockButton;

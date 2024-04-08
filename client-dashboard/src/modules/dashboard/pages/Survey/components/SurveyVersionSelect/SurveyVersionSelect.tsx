@@ -36,7 +36,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
 import { onError, useToggle } from '@/utils';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
-import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
+import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/SurveyDataContext/util';
 import styled from 'styled-components/macro';
 
 const { confirm } = Modal;
@@ -57,30 +57,31 @@ const SurveyVersionSelect: FC<{
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const completeMutation = useMutation(
-    (data: { surveyVersionId: string }) => {
-      return SurveyService.updateStatusSurvey(data);
-    },
-    {
-      onSuccess: async res => {
-        await queryClient.invalidateQueries('getSurveyById');
-        notification.success({ message: t('common.updateSuccess') });
-
-        navigate(
-          `${generatePath(
-            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
-            {
-              projectId: params.projectId,
-              surveyId: params.surveyId,
-            },
-          )}?version=${res.data.displayId}`,
-        );
+  const { mutateAsync: completeMutate, isLoading: completeLoading } =
+    useMutation(
+      (data: { surveyVersionId: string }) => {
+        return SurveyService.updateStatusSurvey(data);
       },
-      onError,
-    },
-  );
+      {
+        onSuccess: async res => {
+          await queryClient.invalidateQueries('getSurveyById');
+          notification.success({ message: t('common.updateSuccess') });
 
-  const deleteMutation = useMutation(
+          navigate(
+            `${generatePath(
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
+              {
+                projectId: params.projectId,
+                surveyId: params.surveyId,
+              },
+            )}?version=${res.data.displayId}`,
+          );
+        },
+        onError,
+      },
+    );
+
+  const { mutateAsync: deleteMutate, isLoading: deleteLoading } = useMutation(
     (data: { id: string }) => {
       return SurveyService.deleteSurveyVersion(data);
     },
@@ -131,11 +132,11 @@ const SurveyVersionSelect: FC<{
         icon: null,
         content: t('common.confirmDeleteSurveyVersion'),
         onOk() {
-          deleteMutation.mutateAsync({ id: record.id as string });
+          deleteMutate({ id: record.id as string });
         },
       });
     },
-    [deleteMutation, t],
+    [deleteMutate, t],
   );
 
   const handleEdit = useCallback(() => {
@@ -170,13 +171,13 @@ const SurveyVersionSelect: FC<{
         icon: null,
         content: t('common.confirmCompleteSurveyVersion'),
         onOk() {
-          completeMutation.mutateAsync({
+          completeMutate({
             surveyVersionId: record.id as string,
           });
         },
       });
     },
-    [completeMutation, t],
+    [completeMutate, t],
   );
 
   const handleExport = useCallback(
@@ -247,9 +248,7 @@ const SurveyVersionSelect: FC<{
       options={options}
       className={'w-[250px]'}
       onChange={changeVersion}
-      loading={
-        isExporting || deleteMutation.isLoading || completeMutation.isLoading
-      }
+      loading={isExporting || deleteLoading || completeLoading}
     />
   );
 };

@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
 import { onError } from '@/utils';
-import RequestApproveFrom from '@components/RequestApproveForm/RequestApproveFrom';
+import RequestApproveForm from '@components/RequestApproveForm/RequestApproveForm';
 
 const RequestCompleteSurveyVersionModal: FC<
   IModal & { surveyId?: string; versionId?: string }
@@ -58,7 +58,7 @@ const RequestCompleteSurveyVersionModal: FC<
         footer={false}
       >
         <Spin spinning={changeSurveyVersionStatusMutation.isLoading}>
-          <RequestApproveFrom onSubmit={onSubmit} />
+          <RequestApproveForm onSubmit={onSubmit} />
         </Spin>
       </Modal>
     </>

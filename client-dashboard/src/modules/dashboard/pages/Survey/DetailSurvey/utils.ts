@@ -9,7 +9,7 @@ import {
   IEditSurveyFormValues,
   SurveyDataTreeNode,
   transformToSurveyDataTreeNode,
-  useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
 import { useField, useFormikContext } from 'formik';
 import { useCallback } from 'react';
@@ -50,7 +50,7 @@ const handleDuplicateNodes = (
   return recursiveFn(arr);
 };
 
-const check = (
+const checkBlockEffectOtherBlocks = (
   block: SurveyDataTreeNode,
   surveyValue: IEditSurveyFormValues,
   setSurveyValues: FormikHelpers<IEditSurveyFormValues>['setValues'],
@@ -217,7 +217,7 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
 
-  const { setSurveyFormContext, tree } = useSurveyFormContext();
+  const { setSurveyTreeContext, tree } = useSurveyTreeContext();
 
   const { values: surveyValues, setValues: setSurveyValues } =
     useFormikContext<IEditSurveyFormValues>();
@@ -227,7 +227,7 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
   const handleRemoveBlock = useCallback(() => {
     const parentBlockSort = getParentBlockSort(parentLayerFieldName);
 
-    const { isExisted, removeQuestionFromBranch } = check(
+    const { isExisted, removeQuestionFromBranch } = checkBlockEffectOtherBlocks(
       value,
       surveyValues,
       setSurveyValues,
@@ -260,7 +260,7 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
       setParentNodeValue(transformToSurveyDataTreeNode(remainData));
     }
 
-    setSurveyFormContext(oldState => ({
+    setSurveyTreeContext(oldState => ({
       ...oldState,
       tree: {
         ...oldState.tree,
@@ -272,7 +272,7 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
     parentLayerFieldName,
     parentNodeValue,
     setParentNodeValue,
-    setSurveyFormContext,
+    setSurveyTreeContext,
     setSurveyValues,
     surveyValues,
     value,
@@ -304,7 +304,7 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
         transformToSurveyDataTreeNode([...parentNodeValue, newBlock]),
       );
     } finally {
-      setSurveyFormContext(oldState => ({
+      setSurveyTreeContext(oldState => ({
         ...oldState,
         tree: {
           ...oldState.tree,
@@ -316,7 +316,7 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
     fieldName,
     parentNodeValue,
     setParentNodeValue,
-    setSurveyFormContext,
+    setSurveyTreeContext,
     tree.maxBlockSort,
     value,
   ]);

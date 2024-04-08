@@ -1,12 +1,12 @@
-import {Button, notification} from 'antd';
-import {MODAL_WIDTH} from 'enums';
-import {CloseIcon} from 'icons';
-import {useTranslation} from 'react-i18next';
-import {useMutation, useQueryClient} from 'react-query';
-import {AdminService} from 'services';
-import {onError} from 'utils';
-import {ProfileModal} from '.';
-import {ConfirmDeactivateModalStyled} from './styles';
+import { Button, notification } from 'antd';
+import { MODAL_WIDTH } from 'enums';
+import { CloseIcon } from 'icons';
+import { useTranslation } from 'react-i18next';
+import { useMutation, useQueryClient } from 'react-query';
+import { AdminService } from 'services';
+import { onError } from 'utils';
+import { ProfileModal } from '.';
+import { ConfirmDeactivateModalStyled } from './styles';
 
 function ConfirmRestoreUserModal(props: ProfileModal) {
   const { showModal, setShowModal, userId } = props;

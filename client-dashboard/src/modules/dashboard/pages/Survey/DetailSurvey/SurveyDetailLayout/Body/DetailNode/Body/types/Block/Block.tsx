@@ -1,5 +1,5 @@
-import {FC} from 'react';
-import {QuestionBlockProps} from '../type';
+import { FC, memo } from 'react';
+import { QuestionBlockProps } from '../type';
 import SurveyQuestions from '@pages/Survey/components/SurveyQuestion/SurveyQuestions';
 
 const Block: FC<QuestionBlockProps> = props => {
@@ -8,4 +8,4 @@ const Block: FC<QuestionBlockProps> = props => {
   return <SurveyQuestions fieldName={fieldName} />;
 };
 
-export default Block;
+export default memo(Block);

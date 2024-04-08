@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useRef, useState } from 'react';
+import { FC, memo, useCallback, useMemo, useRef, useState } from 'react';
 import { Button, Input, Spin } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import { IQuestion, IQuestionCategory } from '@/type';
@@ -152,7 +152,7 @@ const AddQuestionFormCategoryModal: FC<
     );
   }, [data]);
 
-  const getQuestionByCategoryIdListQuery = useQuery(
+  const { isLoading: getQuestionByCategoryIdListQueryLoading } = useQuery(
     ['getAllQuestionByCategoryIdList', selectedCategoryIds],
     () => {
       return QuestionBankService.getQuestions({
@@ -309,7 +309,7 @@ const AddQuestionFormCategoryModal: FC<
       centered
       title={t('common.addWholeCategory')}
     >
-      <Spin spinning={isLoading || getQuestionByCategoryIdListQuery.isLoading}>
+      <Spin spinning={isLoading || getQuestionByCategoryIdListQueryLoading}>
         <div className={'AddQuestionFormCategoryModal_body'}>
           <SimpleBar>
             <div className={'category-column'}>
@@ -349,4 +349,4 @@ const AddQuestionFormCategoryModal: FC<
   );
 };
 
-export default AddQuestionFormCategoryModal;
+export default memo(AddQuestionFormCategoryModal);

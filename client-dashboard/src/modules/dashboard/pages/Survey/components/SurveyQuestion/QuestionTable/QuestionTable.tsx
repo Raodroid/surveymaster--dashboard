@@ -16,8 +16,8 @@ import { DragHandle } from '@/customize-components';
 import { Clock, TrashOutlined } from '@/icons';
 import SimpleBar from 'simplebar-react';
 import { useToggle } from '@/utils';
-import DisplaySurveyQuestion from '@pages/Survey/components/SurveyQuestion/DisplaySurveyQuestion';
 import { checkQuestionUsedInBranchBlock } from './util';
+import DisplaySurveyQuestion from '../DisplaySurveyQuestion';
 
 const { confirm } = Modal;
 const QuestionTable: FC<{
@@ -70,7 +70,7 @@ const QuestionTable: FC<{
   }>({ index: null, data: null });
 
   const handleSelectNewQuestionVersion = useCallback(
-    newQuestionVersionId => {
+    (newQuestionVersionId: string) => {
       const questionId = selectedQuestion.data?.id;
       if (!questionId) return;
 

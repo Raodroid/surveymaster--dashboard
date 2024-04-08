@@ -1,24 +1,21 @@
 import { FC, memo, useCallback } from 'react';
-import { Button, Dropdown } from 'antd';
 import { useField, useFormikContext } from 'formik';
 import { EmptyString, SubSurveyFlowElement } from '@/type';
-import { useTranslation } from 'react-i18next';
-import { objectKeys } from '@/utils';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import {
   IEditSurveyFormValues,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
 } from '@pages/Survey/SurveyForm/type';
-import { PlusOutLinedIcon } from '@/icons';
 import {
   calcLevelNodeByFieldName,
   genBlockSort,
   genDefaultBlockDescription,
-  useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
 import _uniq from 'lodash/uniq';
-import QuestionBranchIcon from '../QuestionBranchIcon/QuestionBranchIcon';
+import { AddElementBtn } from './components/AddElementBtn';
+import { AddElementIconBtn } from './components/AddElementIconBtn';
 
 const defaultNode: SurveyDataTreeNode = {
   blockSort: 0,
@@ -41,13 +38,17 @@ const isRootPath = (
   return fieldName === rootSurveyFlowElementFieldName;
 };
 
+const mapContent: Record<'button' | 'icon', typeof AddElementBtn> = {
+  button: AddElementBtn,
+  icon: AddElementIconBtn,
+};
+
 const AddNewBlockElement: FC<{
   fieldName: string;
   type: 'button' | 'icon';
 }> = props => {
   const { fieldName, type } = props;
-  const { t } = useTranslation();
-  const { setSurveyFormContext, tree } = useSurveyFormContext();
+  const { tree, setSurveyTreeContext } = useSurveyTreeContext();
 
   const { isEditMode } = useCheckSurveyFormMode();
 
@@ -119,7 +120,7 @@ const AddNewBlockElement: FC<{
       if (isRootPath(fieldName, value)) {
         setValue([...value, newBlockValue]);
 
-        setSurveyFormContext(oldState => ({
+        setSurveyTreeContext(oldState => ({
           ...oldState,
           tree: {
             ...oldState.tree,
@@ -136,7 +137,7 @@ const AddNewBlockElement: FC<{
       });
 
       //auto expend parent root branch and focus on new block
-      setSurveyFormContext(oldState => ({
+      setSurveyTreeContext(oldState => ({
         ...oldState,
         tree: {
           ...oldState.tree,
@@ -149,7 +150,7 @@ const AddNewBlockElement: FC<{
     [
       fieldName,
       genKey,
-      setSurveyFormContext,
+      setSurveyTreeContext,
       setValue,
       tree.maxBlockSort,
       value,
@@ -158,73 +159,9 @@ const AddNewBlockElement: FC<{
 
   if (!isEditMode) return null;
 
-  if (type === 'button')
-    return (
-      <Dropdown
-        placement={'bottomRight'}
-        trigger={['hover']}
-        menu={{
-          items: objectKeys(SubSurveyFlowElement).map(key => {
-            const val = SubSurveyFlowElement[key];
-            return {
-              label: (
-                <div className={'pb-2 flex gap-3 items-center'}>
-                  <QuestionBranchIcon type={val} />
-                  <span className={'font-semibold'}>{t(`common.${val}`)}</span>
-                </div>
-              ),
-              key: val,
-            };
-          }),
-          onClick: e => {
-            e.domEvent.stopPropagation();
-            handleAddElement(e.key as SubSurveyFlowElement);
-          },
-        }}
-      >
-        <Button
-          type={'primary'}
-          className={'info-btn'}
-          icon={<PlusOutLinedIcon />}
-        >
-          <span className={'text-white font-semibold'}>
-            {t('common.addNewElement')}
-          </span>
-        </Button>
-      </Dropdown>
-    );
+  const Content = memo(mapContent[type]);
 
-  return (
-    <Dropdown
-      trigger={['hover']}
-      menu={{
-        items: objectKeys(SubSurveyFlowElement).map(key => {
-          const val = SubSurveyFlowElement[key];
-          return {
-            label: (
-              <div className={'pb-2 flex gap-3 items-center'}>
-                <QuestionBranchIcon type={val} />
-                <span className={'font-semibold'}>{t(`common.${val}`)}</span>
-              </div>
-            ),
-            key: val,
-          };
-        }),
-        onClick: e => {
-          e.domEvent.stopPropagation();
-          handleAddElement(e.key as SubSurveyFlowElement);
-        },
-      }}
-    >
-      <Button
-        type={'primary'}
-        shape={'round'}
-        className={'!px-[3px] !h-[20px]'}
-        size={'small'}
-        icon={<PlusOutLinedIcon />}
-      />
-    </Dropdown>
-  );
+  return <Content handleAddElement={handleAddElement} />;
 };
 
 export default memo(AddNewBlockElement);
