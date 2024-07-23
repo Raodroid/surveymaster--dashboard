@@ -23,6 +23,7 @@ const defaultNode: SurveyDataTreeNode = {
   type: SubSurveyFlowElement.BRANCH,
   blockDescription: '',
   surveyQuestions: [],
+  endMessageId: '',
   branchLogics: [],
   listEmbeddedData: [],
   children: [],

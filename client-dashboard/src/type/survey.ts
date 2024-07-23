@@ -68,6 +68,7 @@ export interface SubBranchLogicDto {
 export interface SubSurveyFlowElementDto {
   id?: string;
   type: SubSurveyFlowElement;
+  endMessageId?: string;
   sort: number;
   blockDescription?: string;
   blockSort?: number;

@@ -109,6 +109,7 @@ export const transSurveyFLowElement = (
       id: i?.id,
       blockSort: i.blockSort,
       type: i.type,
+      endMessageId: i.endMessageId,
       sort: idx,
       blockDescription: i.blockDescription,
       surveyQuestions,

@@ -74,6 +74,15 @@ export type SurveyHistory = {
   project: IProject;
 };
 
+export type EndMessage = {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
+  id: string;
+  name: string;
+  content: string;
+};
+
 export type QuestionHistory = {
   createdAt: string;
   updatedAt: string;

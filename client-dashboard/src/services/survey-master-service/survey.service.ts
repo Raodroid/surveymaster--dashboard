@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
 import {
+  QsParams,
   CreateSurveyBodyDto,
   DuplicateSurveyVersionDto,
   HistoryQueryParam,
@@ -13,6 +14,7 @@ import {
   ISurveyVersion,
   IUpdateSurveyVersionStatusDto,
   SurveyHistory,
+  EndMessage,
 } from '@/type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
@@ -174,6 +176,22 @@ export default class SurveyService {
     params: HistoryQueryParam,
   ): Promise<AxiosResponse<SurveyHistory[]>> {
     return APIService.get('/survey-history', {
+      params,
+    });
+  }
+
+  static createEndMessage(payload: { name: string, content: string }): Promise<AxiosResponse<EndMessage>> {
+    return APIService.post('/end-message', payload);
+  }
+
+  static getEndMessage(id: string): Promise<AxiosResponse<EndMessage>> {
+    return APIService.get(`/end-message/${id}`);
+  }
+
+  static getEndMessages(
+    params: QsParams,
+  ): Promise<AxiosResponse<{ data: EndMessage[]}>> {
+    return APIService.get('/end-message', {
       params,
     });
   }
