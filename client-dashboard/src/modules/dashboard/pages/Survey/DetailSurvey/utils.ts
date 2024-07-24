@@ -1,33 +1,212 @@
-import { IAction } from '@/interfaces';
-import { surveyActionType } from '@/type';
+import { SubSurveyFlowElement } from '@/type';
 import {
+  ExtraSubBranchLogicDto,
+  genBlockSort,
+  genFieldName,
   getParentBlockSort,
   getParentChildrenFieldName,
   getParentFieldName,
+  IEditSurveyFormValues,
   SurveyDataTreeNode,
   transformToSurveyDataTreeNode,
-  useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
-import { useField } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { useCallback } from 'react';
+import { FormikHelpers } from 'formik/dist/types';
+import { objectKeys } from '@/utils';
+import { Modal } from 'antd';
 
+const { confirm } = Modal;
 export type projectSurveyParams = {
   projectId: string;
   surveyId: string;
 };
 
-export const genHandleActionType = (action: IAction, t) => {
-  if (!action) return '';
+const handleDuplicateNodes = (
+  arr: SurveyDataTreeNode[],
+  count: number,
+): SurveyDataTreeNode[] => {
+  let countBlockSort = count;
 
-  switch (action.actionType) {
-    case surveyActionType[action.actionType]:
-      return t(`actionType.${action.actionType}`, {
-        params: action.params,
-      });
+  const recursiveFn = (arr: SurveyDataTreeNode[]): SurveyDataTreeNode[] => {
+    return arr.map(i => {
+      const { id, blockSort, children, ...rest } = i;
 
-    default:
-      return t('actionType.noActionsYet');
+      countBlockSort = genBlockSort(countBlockSort);
+
+      const newNode: SurveyDataTreeNode = {
+        ...rest,
+        blockSort: countBlockSort,
+      };
+
+      if (children) {
+        newNode.children = recursiveFn(children);
+      }
+      return newNode;
+    });
+  };
+
+  return recursiveFn(arr);
+};
+
+const checkBlockEffectOtherBlocks = (
+  block: SurveyDataTreeNode,
+  surveyValue: IEditSurveyFormValues,
+  setSurveyValues: FormikHelpers<IEditSurveyFormValues>['setValues'],
+): {
+  isExisted: boolean;
+  removeQuestionFromBranch?: () => void;
+} => {
+  if (
+    [
+      SubSurveyFlowElement.EMBEDDED_DATA,
+      SubSurveyFlowElement.END_SURVEY,
+    ].includes(block.type)
+  ) {
+    return {
+      isExisted: false,
+      removeQuestionFromBranch: undefined,
+    };
   }
+
+  const getAllQuestionRecursion = (
+    blockSortList: Record<number, true>,
+    arr: SurveyDataTreeNode[],
+  ) => {
+    for (const index in arr) {
+      const node = arr[index];
+      if (node.type === SubSurveyFlowElement.BLOCK && node.blockSort)
+        blockSortList[node.blockSort] = true;
+
+      if (node.children) {
+        getAllQuestionRecursion(blockSortList, node.children);
+      }
+    }
+  };
+
+  const allQuestionBlockSort: Record<number, true> = {};
+  getAllQuestionRecursion(allQuestionBlockSort, [block]);
+
+  const surveyFlowElements = surveyValue.version?.surveyFlowElements;
+
+  const getBranchIdRecursion = (
+    mapId: Record<string, boolean>,
+    arrInput: SurveyDataTreeNode[] | undefined,
+  ) => {
+    if (!arrInput) return;
+
+    arrInput?.forEach(blockElement => {
+      if (blockElement.type !== SubSurveyFlowElement.BRANCH) return;
+
+      if (
+        blockElement.blockSort &&
+        blockElement.branchLogics.some(
+          logic => logic.blockSort && allQuestionBlockSort[logic.blockSort],
+        )
+      ) {
+        mapId[blockElement.blockSort] = true;
+      }
+
+      if (blockElement.children) {
+        getBranchIdRecursion(mapId, blockElement.children);
+      }
+    });
+  };
+
+  const branchIdBlocksHaveQuestionVersionId = {};
+
+  getBranchIdRecursion(branchIdBlocksHaveQuestionVersionId, surveyFlowElements);
+
+  const isExisted = !(
+    !branchIdBlocksHaveQuestionVersionId ||
+    !objectKeys(branchIdBlocksHaveQuestionVersionId)?.length
+  );
+
+  const removeQuestionFromBranch = () => {
+    if (!isExisted) {
+      setSurveyValues({
+        ...surveyValue,
+        version: {
+          ...surveyValue.version,
+          surveyFlowElements: transformToSurveyDataTreeNode(
+            surveyValue.version?.surveyFlowElements || [],
+          ),
+        },
+      });
+      return;
+    }
+
+    //remove questionId in branch logic
+    //rearrange sort of all block
+    const removeQuestionInBranchRecursion = (
+      arrInput: SurveyDataTreeNode[] | undefined,
+      parentFieldName?: string,
+    ): SurveyDataTreeNode[] => {
+      if (!arrInput) return [];
+
+      return arrInput.reduce(
+        (res: SurveyDataTreeNode[], blockElement, index) => {
+          if (blockElement.blockSort === block.blockSort) {
+            return res;
+          }
+
+          const fieldName = genFieldName(parentFieldName, index);
+
+          const { children, ...rest } = blockElement;
+
+          const result = {
+            ...rest,
+            key: fieldName,
+            fieldName,
+            children: !children
+              ? []
+              : removeQuestionInBranchRecursion(children, fieldName),
+          };
+
+          if (
+            blockElement?.blockSort &&
+            branchIdBlocksHaveQuestionVersionId[blockElement.blockSort]
+          ) {
+            result.branchLogics = blockElement.branchLogics.reduce(
+              (r: ExtraSubBranchLogicDto[], logic) => {
+                if (!logic.blockSort) return r;
+                if (allQuestionBlockSort[logic.blockSort]) {
+                  return r;
+                }
+                r.push(logic);
+                return r;
+              },
+              [],
+            );
+          }
+
+          res.push(result);
+
+          return res;
+        },
+        [],
+      );
+    };
+
+    const updateSurveyFlowElements =
+      removeQuestionInBranchRecursion(surveyFlowElements);
+
+    const updateValues: IEditSurveyFormValues = {
+      ...surveyValue,
+      version: {
+        ...surveyValue.version,
+        surveyFlowElements: updateSurveyFlowElements,
+      },
+    };
+
+    setSurveyValues(updateValues);
+  };
+
+  return {
+    isExisted,
+    removeQuestionFromBranch,
+  };
 };
 
 export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
@@ -38,29 +217,50 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
   const [{ value: parentNodeValue }, , { setValue: setParentNodeValue }] =
     useField<SurveyDataTreeNode[]>(parentLayerFieldName);
 
-  const { setSurveyFormContext } = useSurveyFormContext();
+  const { setSurveyTreeContext, tree } = useSurveyTreeContext();
+
+  const { values: surveyValues, setValues: setSurveyValues } =
+    useFormikContext<IEditSurveyFormValues>();
 
   const [{ value }] = useField<SurveyDataTreeNode>(fieldName);
 
   const handleRemoveBlock = useCallback(() => {
     const parentBlockSort = getParentBlockSort(parentLayerFieldName);
+
+    const { isExisted, removeQuestionFromBranch } = checkBlockEffectOtherBlocks(
+      value,
+      surveyValues,
+      setSurveyValues,
+    );
+
+    if (isExisted) {
+      confirm({
+        icon: null,
+        content:
+          'If you delete this block, other condition in branch element related to the block will be remove!',
+        onOk() {
+          if (removeQuestionFromBranch) {
+            removeQuestionFromBranch();
+          }
+        },
+      });
+      return;
+    }
+
+    const remainData = (parentNodeValue || []).filter(
+      node => node.fieldName !== fieldName,
+    );
+
     if (!isNaN(parentBlockSort)) {
       const parentFieldName = getParentFieldName(fieldName);
       setParentNodeValue(
-        transformToSurveyDataTreeNode(
-          (parentNodeValue || []).filter(node => node.fieldName !== fieldName),
-          parentBlockSort,
-          parentFieldName,
-        ),
+        transformToSurveyDataTreeNode(remainData, parentFieldName),
       );
     } else {
-      setParentNodeValue(
-        transformToSurveyDataTreeNode(
-          (parentNodeValue || []).filter(node => node.fieldName !== fieldName),
-        ),
-      );
+      setParentNodeValue(transformToSurveyDataTreeNode(remainData));
     }
-    setSurveyFormContext(oldState => ({
+
+    setSurveyTreeContext(oldState => ({
       ...oldState,
       tree: {
         ...oldState.tree,
@@ -72,7 +272,10 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
     parentLayerFieldName,
     parentNodeValue,
     setParentNodeValue,
-    setSurveyFormContext,
+    setSurveyTreeContext,
+    setSurveyValues,
+    surveyValues,
+    value,
   ]);
 
   const handleDuplicateBlock = useCallback(() => {
@@ -80,22 +283,43 @@ export const useSurveyBlockAction = (focusBlock: SurveyDataTreeNode) => {
 
     const parentBlockSort = getParentBlockSort(fieldName);
 
-    if (!isNaN(parentBlockSort)) {
-      const parentFieldName = fieldName.match(/(.*)\.children.*$/)?.[1];
+    const newBlock = handleDuplicateNodes([value], tree.maxBlockSort)[0]; // Because array has only one element
+
+    const nextBlockSort = genBlockSort(newBlock.blockSort as number);
+
+    try {
+      if (!isNaN(parentBlockSort)) {
+        const parentFieldName = getParentFieldName(fieldName);
+
+        setParentNodeValue(
+          transformToSurveyDataTreeNode(
+            [...parentNodeValue, newBlock],
+            parentFieldName,
+          ),
+        );
+        return;
+      }
 
       setParentNodeValue(
-        transformToSurveyDataTreeNode(
-          [...parentNodeValue, value],
-          parentBlockSort,
-          parentFieldName,
-        ),
+        transformToSurveyDataTreeNode([...parentNodeValue, newBlock]),
       );
-      return;
+    } finally {
+      setSurveyTreeContext(oldState => ({
+        ...oldState,
+        tree: {
+          ...oldState.tree,
+          maxBlockSort: nextBlockSort,
+        },
+      }));
     }
-    setParentNodeValue(
-      transformToSurveyDataTreeNode([...parentNodeValue, value]),
-    );
-  }, [fieldName, parentNodeValue, setParentNodeValue, value]);
+  }, [
+    fieldName,
+    parentNodeValue,
+    setParentNodeValue,
+    setSurveyTreeContext,
+    tree.maxBlockSort,
+    value,
+  ]);
 
   return { handleDuplicateBlock, handleRemoveBlock };
 };

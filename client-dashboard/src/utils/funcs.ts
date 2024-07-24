@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import useWindowSize from 'modules/common/hoc/useWindowSize';
-import { mobileSize } from '@/enums';
+import { mobileSize, RoleEnum } from '@/enums';
 import { ColumnsType } from 'antd/lib/table/interface';
 
 declare global {
@@ -23,7 +23,7 @@ declare global {
 interface IErr {
   error: any;
   i18nKey: string;
-  contentObj?: Object;
+  contentObj?: object;
 }
 
 export const errorNotification = (input: IErr) => {
@@ -49,7 +49,6 @@ export const errorNotification = (input: IErr) => {
 export const getAllScopes = (roleData: Role[]) => {
   const scopes: Record<string, boolean> = {};
   let scopesArr: Scope[] = [];
-
   roleData.forEach(role => {
     const scope = role.scopes;
     if (!scopes[role?.id] && scope) {
@@ -58,6 +57,20 @@ export const getAllScopes = (roleData: Role[]) => {
     }
   });
   return scopesArr;
+};
+
+export const getAllRoleIds = (roleData: Role[]): RoleEnum[] => {
+  const roleIdMap: Record<string, boolean> = {};
+  const roleIds: RoleEnum[] = [];
+
+  roleData.forEach(role => {
+    const roleId = role?.id;
+    if (!roleIdMap[roleId] && roleId) {
+      roleIds.push(roleId);
+      roleIdMap[roleId] = true;
+    }
+  });
+  return roleIds;
 };
 
 export const useQuery = () => {
@@ -226,6 +239,15 @@ export function formatBytes(bytes, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-export const objectKeys = <T extends object>(object: T): Array<keyof T> => {
+export const objectKeys = <T extends object | Record<string | number, unknown>>(
+  object: T,
+): Array<keyof T> => {
   return Object.keys(object) as Array<keyof T>;
+};
+export const createBinaryFile = (excelFile, callback) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    callback(excelFile);
+  };
+  reader.readAsBinaryString(excelFile);
 };

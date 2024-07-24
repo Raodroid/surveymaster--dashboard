@@ -2,11 +2,14 @@ import APIService from './base.service';
 import { AxiosResponse } from 'axios';
 import {
   GetListQuestionDto,
+  HistoryQueryParam,
   IGetParams,
   IQuestionCreatePostDto,
   IQuestionVersionPatchUpdateDtoExtendId,
   IQuestionVersionPostNewDto,
   IQuestionVersionPutUpdateDtoExtendId,
+  IRequestDeleteRecordDto,
+  QuestionHistory,
   QuestionVersionStatus,
 } from '@/type';
 import { EntityEnum } from '@/enums';
@@ -55,6 +58,26 @@ export default class QuestionBankService {
     return APIService.put(`/${EntityEnum.QUESTION}/version/${id}/status`, rest);
   }
 
+  static requestDeleteQuestionVersion(
+    props: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = props;
+    return APIService.put(
+      `/${EntityEnum.QUESTION}/version/${id}/question-deletion-process`,
+      rest,
+    );
+  }
+
+  static requestDeleteQuestion(
+    props: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = props;
+    return APIService.put(
+      `/${EntityEnum.QUESTION}/${id}/question-deletion-process`,
+      rest,
+    );
+  }
+
   static createQuestionVersion(
     props: IQuestionVersionPostNewDto,
   ): Promise<AxiosResponse> {
@@ -78,5 +101,13 @@ export default class QuestionBankService {
   static restoreQuestionByVersionId(props): Promise<AxiosResponse> {
     const { id } = props;
     return APIService.post(`/${EntityEnum.QUESTION}/${id}/restore`);
+  }
+
+  static getQuestionChangeLogHistories(
+    params: HistoryQueryParam,
+  ): Promise<AxiosResponse<QuestionHistory[]>> {
+    return APIService.get('/question-history', {
+      params,
+    });
   }
 }

@@ -23,6 +23,8 @@ export interface PostPutMember {
   lastName?: string;
   email?: string;
   description?: string;
-  roles?: number[];
+  roleIds?: number[];
   departmentName?: string;
+  phonePrefix?: string;
+  phone?: string;
 }

@@ -69,7 +69,7 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
     });
   }, [queryClient, t]);
 
-  const duplicateSurveyMutation = useMutation(
+  const { mutateAsync: duplicateSurveyMutate } = useMutation(
     (data: DuplicateSurveyVersionDto & { surveyId: string }) => {
       return SurveyService.duplicateSurvey(data);
     },
@@ -88,41 +88,45 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
       onError,
     },
   );
-  const addSurveyMutation = useMutation(
-    (data: CreateSurveyBodyDto) => {
-      return SurveyService.createSurvey({
-        ...data,
-      });
-    },
-    {
-      onSuccess: async res => {
-        const newVersion = res.data.versions[0];
-        // const fileType = 'application/octet-stream';
-
-        // if (excelUploadFile) {
-        //   const file = excelUploadFile as Blob;
-        //   const res = await SurveyService.getSignedUrl({
-        //     filename: file['name'] as string,
-        //     surveyVersionId: newVersion.id,
-        //     fileType: fileType,
-        //   });
-        //   const { data } = res;
-        //   await UploadService.putWithFormFileAsync(data.url, file, fileType);
-        //   // await mutationUploadExcelFile.mutateAsync(newVersion.id);
-        // }
-        // await onSuccess();
-
-        navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
-            projectId: params.projectId,
-            surveyId: newVersion.surveyId,
-          }) +
-            `?version=${newVersion.displayId}&surveyVersionId=${newVersion.id}`,
-        );
+  const { mutateAsync: addSurveyMutate, isLoading: addSurveyLoading } =
+    useMutation(
+      (data: CreateSurveyBodyDto) => {
+        return SurveyService.createSurvey({
+          ...data,
+        });
       },
-      onError,
-    },
-  );
+      {
+        onSuccess: async res => {
+          const newVersion = res.data.versions[0];
+          // const fileType = 'application/octet-stream';
+
+          // if (excelUploadFile) {
+          //   const file = excelUploadFile as Blob;
+          //   const res = await SurveyService.getSignedUrl({
+          //     filename: file['name'] as string,
+          //     surveyVersionId: newVersion.id,
+          //     fileType: fileType,
+          //   });
+          //   const { data } = res;
+          //   await UploadService.putWithFormFileAsync(data.url, file, fileType);
+          //   // await mutationUploadExcelFile.mutateAsync(newVersion.id);
+          // }
+          // await onSuccess();
+
+          navigate(
+            generatePath(
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT,
+              {
+                projectId: params.projectId,
+                surveyId: newVersion.surveyId,
+              },
+            ) +
+              `?version=${newVersion.displayId}&surveyVersionId=${newVersion.id}`,
+          );
+        },
+        onError,
+      },
+    );
 
   const onFinish = useCallback(
     async (values: IForm) => {
@@ -134,18 +138,18 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
       };
 
       if (values.template === SurveyTemplateEnum.DUPLICATE) {
-        await duplicateSurveyMutation.mutateAsync({
+        await duplicateSurveyMutate({
           version: data,
           surveyId: values.duplicateSurveyId as string,
         });
         return;
       }
-      await addSurveyMutation.mutateAsync({
+      await addSurveyMutate({
         version: data,
         projectId: params.projectId,
       });
     },
-    [addSurveyMutation, duplicateSurveyMutation, params.projectId],
+    [addSurveyMutate, duplicateSurveyMutate, params.projectId],
   );
 
   return (
@@ -159,7 +163,7 @@ const SurveyModal: FC<IModal & { mode: 'create' | 'view' }> = props => {
         mode === 'create' ? t('common.addNewSurvey') : t('common.surveyInfo')
       }
     >
-      <Spin spinning={addSurveyMutation.isLoading}>
+      <Spin spinning={addSurveyLoading}>
         <Formik
           enableReinitialize
           onSubmit={onFinish}

@@ -1,13 +1,14 @@
 import Header from './Header/Header';
-import Body from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/Body/Body';
-import {Divider} from 'antd';
-import {useSurveyFormContext} from '@pages/Survey';
-import EmptyContentBlock
-    from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/DetailNode/Header/components/EmptyContentBlock';
+import { Divider } from 'antd';
+import { useSurveyTreeContext } from '@pages/Survey';
+import EmptyContentBlock from './Header/components/EmptyContentBlock';
+import Body from './Body/Body';
+import { memo } from 'react';
 
 const DetailNode = () => {
-  const { tree } = useSurveyFormContext();
+  const { tree } = useSurveyTreeContext();
   const { focusBlock } = tree;
+
   return (
     <div className={'w-full h-full flex flex-col'}>
       {!focusBlock ? (
@@ -23,4 +24,4 @@ const DetailNode = () => {
   );
 };
 
-export default DetailNode;
+export default memo(DetailNode);

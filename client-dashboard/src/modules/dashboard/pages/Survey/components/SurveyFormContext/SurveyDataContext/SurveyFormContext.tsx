@@ -1,7 +1,5 @@
 import {
   createContext,
-  Dispatch,
-  Key,
   ReactElement,
   SetStateAction,
   useCallback,
@@ -17,11 +15,9 @@ import {
   GetListQuestionDto,
   IPaginationResponse,
   IPostSurveyVersionBodyDto,
-  IProject,
   IPutSurveyVersionBodyDtoExtendId,
   IQuestion,
   IQuestionVersion,
-  ISurvey,
   ISurveyQuestionDto,
   ISurveyVersion,
   ISurveyVersionBaseDto,
@@ -34,75 +30,28 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useGetSurveyById } from '@pages/Survey/SurveyManagement/util';
 import { useGetProjectByIdQuery } from '@pages/Project/util';
-import {
-  IEditSurveyFormValues,
-  SurveyDataTreeNode,
-} from '@pages/Survey/SurveyForm/type';
+import { IEditSurveyFormValues } from '@pages/Survey/SurveyForm/type';
+
 import {
   transformInitSurveyFormData,
   useCheckSurveyFormMode,
 } from '@pages/Survey/SurveyForm/util';
+
 import { ROUTE_PATH } from '@/enums';
 import { Modal, notification, Spin } from 'antd';
 import {
   createQuestionMap,
+  findMaxBlockSort,
+  transformCloneSurveyVersion,
   transformSurveyVersion,
-} from '@pages/Survey/components/SurveyFormContext/util';
+} from './util';
+import { useSurveyTreeContext } from '@pages/Survey';
+import { ISurveyFormContext } from './type';
 
 const { confirm } = Modal;
 
-interface ISurveyFormContext {
-  setSurveyFormContext: Dispatch<SetStateAction<ISurveyFormContext>>;
-  actionLoading: boolean;
-
-  question: {
-    questionVersionIdMap: Record<
-      string,
-      IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
-    >;
-    newQuestions: Array<
-      IQuestionVersion & {
-        masterCategory: IQuestion['masterCategory'];
-      }
-    >;
-    fetchNextQuestionPage: () => void;
-    hasNextQuestionPage: boolean;
-    searchParams: GetListQuestionDto;
-    isFetchingQuestion: boolean;
-    setSearchParams: <T extends keyof GetListQuestionDto>(
-      value: Record<T, GetListQuestionDto[T]>,
-    ) => void;
-  };
-
-  form: {
-    initialValues: IEditSurveyFormValues;
-    onSubmit: (value: IEditSurveyFormValues) => void;
-  };
-  tree: {
-    focusBlock?: SurveyDataTreeNode;
-    expendKeys: Key[];
-  };
-
-  survey: {
-    currentSurveyVersion?: ISurveyVersion;
-    surveyData?: ISurvey;
-  };
-  project: {
-    projectData?: IProject;
-    isExternalProject: boolean;
-    setExcelUploadFile: Dispatch<SetStateAction<string | Blob>>;
-  };
-
-  handleFocusBlock: (value: SurveyDataTreeNode | undefined) => void;
-  handleExpendTree: (expendKeys: Key[]) => void;
-
-  handleCloneSurveyVersion: (value: IPostSurveyVersionBodyDto) => void;
-}
-
-const intValue: ISurveyFormContext = {
+const intValueContext: ISurveyFormContext = {
   actionLoading: false,
-  handleFocusBlock: (value: SurveyDataTreeNode | undefined) => {},
-  handleExpendTree: (value: Key[]) => {},
 
   question: {
     setSearchParams<T extends keyof GetListQuestionDto>(
@@ -125,13 +74,9 @@ const intValue: ISurveyFormContext = {
     onSubmit(value: IEditSurveyFormValues): void {},
     initialValues: {} as IEditSurveyFormValues,
   },
-  tree: {
-    expendKeys: [],
-  },
   survey: {},
   project: {
     isExternalProject: false,
-    setExcelUploadFile: value => {},
   },
   setSurveyFormContext: function (
     value: SetStateAction<ISurveyFormContext>,
@@ -141,12 +86,65 @@ const intValue: ISurveyFormContext = {
 
   handleCloneSurveyVersion: () => {},
 };
-
-export const SurveyFormContext = createContext<ISurveyFormContext>(intValue);
+export const SurveyFormContext =
+  createContext<ISurveyFormContext>(intValueContext);
 
 const SurveyFormProvider = (props: { children?: ReactElement }) => {
-  const [context, setContext] = useState<ISurveyFormContext>(intValue);
+  const [context, setContext] = useState<ISurveyFormContext>(intValueContext);
+  const params = useParams<{ projectId?: string; surveyId?: string }>();
+  const projectId = params.projectId || '';
 
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { isEditMode } = useCheckSurveyFormMode();
+  const { mutateAsync: updateSurveyMutate, isLoading: updateSurveyLoading } =
+    useMutation(
+      (data: IPutSurveyVersionBodyDtoExtendId) => {
+        return SurveyService.updateSurveyVersion(data);
+      },
+      {
+        onSuccess: async res => {
+          await onSuccess();
+          navigate(
+            generatePath(
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
+              {
+                projectId: params.projectId,
+                surveyId: params.surveyId,
+              },
+            ) + `?version=${res.data.displayId}`,
+          );
+        },
+        onError,
+      },
+    );
+
+  const {
+    mutateAsync: duplSurveyVersionMutate,
+    isLoading: duplSurveyVersionLoading,
+  } = useMutation(
+    (data: IPostSurveyVersionBodyDto & { surveyId: string }) => {
+      return SurveyService.createSurveyVersion(data);
+    },
+    {
+      onSuccess: async res => {
+        notification.success({
+          message: t('common.createSuccess'),
+        });
+        const newVersion: ISurveyVersion = res.data;
+        navigate(
+          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
+            projectId: params.projectId,
+            surveyId: newVersion?.surveyId,
+          }) + `?version=${newVersion?.displayId}`,
+        );
+      },
+      onError,
+    },
+  );
+
+  //handle get question infinity
   const { isFetching, fetchNextPage } = useInfiniteQuery(
     ['getQuestionList', context.question.searchParams],
     ({ pageParam = context.question.searchParams }) => {
@@ -166,13 +164,13 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         const questionListData = res as unknown as {
           pages: { data: IPaginationResponse<IQuestion> }[];
         };
-        setContext(s => {
-          if (!questionListData) return s;
+        setContext(oldState => {
+          if (!questionListData) return oldState;
 
           const normalizeByQuestionId: Record<
             string,
             IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
-          > = { ...s.question.questionVersionIdMap };
+          > = { ...oldState.question.questionVersionIdMap };
 
           questionListData.pages.at(-1)?.data?.data.forEach((q: IQuestion) => {
             const latestQuestionVersionId = q.latestCompletedVersion
@@ -189,6 +187,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           const newQuestions: Array<
             IQuestionVersion & { masterCategory: IQuestion['masterCategory'] }
           > = [];
+
           questionListData.pages.forEach(page => {
             page.data.data.forEach(q => {
               if (!normalizeByQuestionId[q.latestCompletedVersion.id as string])
@@ -203,9 +202,9 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           });
 
           return {
-            ...s,
+            ...oldState,
             question: {
-              ...s.question,
+              ...oldState.question,
               newQuestions,
               hasNextQuestionPage:
                 !!questionListData.pages.at(-1)?.data?.hasNextPage,
@@ -218,14 +217,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     },
   );
 
-  const params = useParams<{ projectId?: string; surveyId?: string }>();
-  const projectId = params.projectId || '';
-
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const { t } = useTranslation();
-  const { isEditMode } = useCheckSurveyFormMode();
-
   const {
     isLoading: isFetchingSurveyData,
     currentSurveyVersion,
@@ -235,13 +226,27 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
   const { project, isLoading: isFetchingProject } = useGetProjectByIdQuery(
     params?.projectId,
   );
+  const { setSurveyTreeContext } = useSurveyTreeContext();
 
   const isExternalProject = useMemo(
     () => project.type === ProjectTypes.EXTERNAL,
     [project.type],
   );
 
-  const initialValues = useMemo<IEditSurveyFormValues>(() => {
+  const setSearchParams = useCallback((value: GetListQuestionDto) => {
+    setContext(s => ({
+      ...s,
+      question: {
+        ...s.question,
+        searchParams: {
+          ...s.question.searchParams,
+          ...value,
+        },
+      },
+    }));
+  }, []);
+
+  const initialFormValues = useMemo<IEditSurveyFormValues>(() => {
     return {
       ...transformInitSurveyFormData(currentSurveyVersion),
       projectId,
@@ -268,76 +273,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     });
   }, [isEditMode, queryClient, t]);
 
-  const [excelUploadFile, setExcelUploadFile] = useState<string | Blob>('');
-
-  const mutationUploadExcelFile = useMutation(
-    (id: string) =>
-      SurveyService.uploadExcelFile({
-        id,
-        file: excelUploadFile,
-      }),
-    {
-      onError,
-    },
-  );
-
-  const addSurveyVersionMutation = useMutation(
-    (data: IPostSurveyVersionBodyDto) => {
-      return SurveyService.createSurveyVersion(data);
-    },
-    {
-      onSuccess: async res => {
-        await onSuccess();
-        navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
-            projectId: params.projectId,
-            surveyId: res.data.surveyId,
-          }) + `?version=${res.data.displayId}`,
-        );
-      },
-      onError,
-    },
-  );
-
-  const updateSurveyMutation = useMutation(
-    (data: IPutSurveyVersionBodyDtoExtendId) => {
-      return SurveyService.updateSurveyVersion(data);
-    },
-    {
-      onSuccess: async res => {
-        await onSuccess();
-        navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT, {
-            projectId: params.projectId,
-            surveyId: params.surveyId,
-          }) + `?version=${res.data.displayId}`,
-        );
-      },
-      onError,
-    },
-  );
-
-  const duplicateSurveyVersionMutation = useMutation(
-    (data: IPostSurveyVersionBodyDto & { surveyId: string }) => {
-      return SurveyService.createSurveyVersion(data);
-    },
-    {
-      onSuccess: async res => {
-        notification.success({
-          message: t('common.createSuccess'),
-        });
-        const newVersion: ISurveyVersion = res.data;
-        navigate(
-          generatePath(ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.EDIT, {
-            projectId: params.projectId,
-            surveyId: newVersion?.surveyId,
-          }) + `?version=${newVersion?.displayId}`,
-        );
-      },
-      onError,
-    },
-  );
-
+  // loading state of context
   const [loading, toggleLoading] = useToggle();
 
   const handleCloneSurveyVersion = useCallback(
@@ -346,8 +282,11 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         icon: null,
         content: t('common.confirmCloneSurveyVersion'),
         onOk() {
-          duplicateSurveyVersionMutation.mutateAsync({
+          duplSurveyVersionMutate({
             ...value,
+            surveyFlowElements: transformCloneSurveyVersion(
+              value.surveyFlowElements,
+            ),
             surveyId: params.surveyId as string,
           });
           return;
@@ -357,14 +296,9 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         },
       });
     },
-    [duplicateSurveyVersionMutation, params.surveyId, t],
+    [duplSurveyVersionMutate, params.surveyId, t],
   );
-
-  const actionLoading =
-    mutationUploadExcelFile.isLoading ||
-    duplicateSurveyVersionMutation.isLoading ||
-    updateSurveyMutation.isLoading ||
-    addSurveyVersionMutation.isLoading;
+  const actionLoading = duplSurveyVersionLoading || updateSurveyLoading;
 
   const onSubmit = useCallback(
     async (values: IEditSurveyFormValues) => {
@@ -395,6 +329,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
               return res;
             }
             const newItem: ISurveyQuestionDto = {
+              id: q.id,
               sort: res.length + 1,
               remarks: q.remarks?.length === 0 ? undefined : q.remarks,
               questionVersionId: q.questionVersionId,
@@ -421,7 +356,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
                 : values.version?.remarks,
           };
 
-          await updateSurveyMutation.mutateAsync({
+          await updateSurveyMutate({
             ...transformValues,
             surveyVersionId: currentSurveyVersion?.id as string,
             status: values.version?.status || SurveyVersionStatus.DRAFT,
@@ -434,7 +369,7 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
           projectId: values.projectId,
         };
 
-        await updateSurveyMutation.mutateAsync({
+        await updateSurveyMutate({
           ...transformValue.version,
           surveyVersionId: currentSurveyVersion?.id as string,
           name: transformValue.version?.name || '',
@@ -445,42 +380,17 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
       }
     },
     [
-      navigate,
-      toggleLoading,
-      isExternalProject,
       currentSurveyVersion?.status,
       currentSurveyVersion?.id,
+      navigate,
       t,
-      updateSurveyMutation,
+      toggleLoading,
+      isExternalProject,
+      updateSurveyMutate,
     ],
   );
 
-  const setSearchParams = useCallback(value => {
-    setContext(s => ({
-      ...s,
-      question: {
-        ...s.question,
-        searchParams: {
-          ...s.question.searchParams,
-          ...value,
-        },
-      },
-    }));
-  }, []);
-
-  const handleFocusBlock = useCallback(
-    (node: SurveyDataTreeNode | undefined) => {
-      setContext(s => ({ ...s, tree: { ...s.tree, focusBlock: node } }));
-    },
-    [],
-  );
-  const handleExpendTree = useCallback((expandedKeysValue: Key[]) => {
-    setContext(s => ({
-      ...s,
-      tree: { ...s.tree, expendKeys: expandedKeysValue },
-    }));
-  }, []);
-
+  //Get and transform all questions was existed in current survey version, put into questionVersionIdMap
   useEffect(() => {
     setContext(s => {
       const questionIdMap = s.question.questionVersionIdMap;
@@ -505,18 +415,34 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
     });
   }, [currentSurveyVersion?.surveyFlowElements]);
 
+  // find MaxBlockSort and set to context
+  useEffect(() => {
+    if (!currentSurveyVersion) return;
+
+    const { surveyFlowElements } = currentSurveyVersion;
+    if (!surveyFlowElements?.length) return;
+
+    const maxBlockSort = findMaxBlockSort(surveyFlowElements);
+
+    setSurveyTreeContext(s => ({
+      ...s,
+      tree: {
+        ...s.tree,
+        maxBlockSort,
+      },
+    }));
+  }, [currentSurveyVersion, setSurveyTreeContext]);
+
   return (
     <SurveyFormContext.Provider
       value={{
         ...context,
         setSurveyFormContext: setContext,
         actionLoading,
-        handleFocusBlock,
-        handleExpendTree,
         handleCloneSurveyVersion,
         form: {
           ...context.form,
-          initialValues,
+          initialValues: initialFormValues,
           onSubmit,
         },
         question: {
@@ -531,7 +457,6 @@ const SurveyFormProvider = (props: { children?: ReactElement }) => {
         project: {
           projectData: project,
           isExternalProject: project.type === ProjectTypes.EXTERNAL,
-          setExcelUploadFile,
         },
       }}
     >

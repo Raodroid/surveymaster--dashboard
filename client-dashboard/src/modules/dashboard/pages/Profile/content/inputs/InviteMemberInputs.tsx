@@ -2,22 +2,21 @@ import { ControlledInput } from 'modules/common';
 import { INPUT_TYPES } from 'modules/common/input/type';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { AuthSelectors } from 'redux/auth';
+import { useGetAllRoles } from '@pages/Profile';
 
 function InviteMemberInputs(props: { edit: boolean }) {
   const { edit } = props;
   const { t } = useTranslation();
 
-  const allRoles = useSelector(AuthSelectors.getAllRoles);
+  const { data, isLoading } = useGetAllRoles();
   const optionsList = useMemo(() => {
-    return Object.values(allRoles).map(elm => {
+    return Object.values(data).map(elm => {
       return {
         label: elm.name,
         value: elm.id,
       };
     });
-  }, [allRoles]);
+  }, [data]);
 
   return (
     <>
@@ -49,10 +48,11 @@ function InviteMemberInputs(props: { edit: boolean }) {
         label={t('common.departmentName')}
       />
       <ControlledInput
+        loading={isLoading}
         mode="multiple"
         inputType={INPUT_TYPES.SELECT}
         type={'text'}
-        name="roles"
+        name="roleIds"
         optionFilterProp="label"
         label={t('common.authentication')}
         options={optionsList}

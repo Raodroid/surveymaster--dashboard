@@ -1,4 +1,4 @@
-import {CSSProperties, ReactNode} from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
 export interface Component {
   (props): JSX.Element;
@@ -37,6 +37,7 @@ export interface QsParams {
   isDeleted?: string;
   createdFrom?: string;
   createdTo?: string;
+  order?: 'ASC' | 'DESC';
 }
 
 export interface FetchParamsSelect {

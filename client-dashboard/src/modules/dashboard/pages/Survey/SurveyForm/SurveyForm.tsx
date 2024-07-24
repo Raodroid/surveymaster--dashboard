@@ -5,15 +5,23 @@ import {
   SURVEY_INTERNAL_FORM_SCHEMA,
 } from '@/modules/common';
 
-import { SurveyFormProvider, useSurveyFormContext } from '../components';
+import {
+  SurveyFormProvider,
+  SurveyTreeProvider,
+  useSurveyFormContext,
+} from '../components';
 import Header from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Header/Header';
 import Body from '@pages/Survey/DetailSurvey/SurveyDetailLayout/Body/Body';
+import { memo } from 'react';
+import { IEditSurveyFormValues } from '@pages/Survey';
 
 const SurveyForm = () => {
   return (
-    <SurveyFormProvider>
-      <SurveyFormContent />
-    </SurveyFormProvider>
+    <SurveyTreeProvider>
+      <SurveyFormProvider>
+        <SurveyFormContent />
+      </SurveyFormProvider>
+    </SurveyTreeProvider>
   );
 };
 
@@ -23,12 +31,31 @@ const SurveyFormContent = () => {
   const { form, project } = useSurveyFormContext();
   const { initialValues, onSubmit } = form;
 
+  const { isExternalProject } = project;
+
+  return (
+    <Content
+      isExternalProject={isExternalProject}
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+    />
+  );
+};
+
+interface IContent {
+  initialValues: IEditSurveyFormValues;
+  isExternalProject: boolean;
+  onSubmit: (value: IEditSurveyFormValues) => void;
+}
+
+const Content = memo(function Content(props: IContent) {
+  const { initialValues, onSubmit, isExternalProject } = props;
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={
-        project.isExternalProject
+        isExternalProject
           ? SURVEY_EXTERNAL_FORM_SCHEMA
           : SURVEY_INTERNAL_FORM_SCHEMA
       }
@@ -51,4 +78,4 @@ const SurveyFormContent = () => {
       )}
     </Formik>
   );
-};
+});

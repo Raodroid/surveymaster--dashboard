@@ -6,10 +6,11 @@ import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { blockColor } from '@pages/Survey/components/QuestionBranchIcon/QuestionBranchIcon';
 import {
+  genBlockSort,
   genDefaultBlockDescription,
   rootSurveyFlowElementFieldName,
   SurveyDataTreeNode,
-  useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
 import { useField } from 'formik';
 
@@ -33,15 +34,17 @@ const EmptyBlock = () => {
     rootSurveyFlowElementFieldName,
   );
 
-  const { setSurveyFormContext } = useSurveyFormContext();
+  const { setSurveyTreeContext, tree } = useSurveyTreeContext();
 
   const handleAddBlock = useCallback(
     (type: SubSurveyFlowElement) => {
       const fieldName = `${rootSurveyFlowElementFieldName}[0]`;
+      const newBlockSort = genBlockSort(tree.maxBlockSort);
+
       const newBlockValue: SurveyDataTreeNode = {
         ...defaultNode,
         type,
-        blockSort: 1,
+        blockSort: newBlockSort,
         fieldName,
         key: `${rootSurveyFlowElementFieldName}[0]`,
         blockDescription: genDefaultBlockDescription(fieldName),
@@ -49,15 +52,16 @@ const EmptyBlock = () => {
 
       setValue([newBlockValue]);
 
-      setSurveyFormContext(oldState => ({
+      setSurveyTreeContext(oldState => ({
         ...oldState,
         tree: {
           ...oldState.tree,
+          maxBlockSort: newBlockSort,
           focusBlock: newBlockValue,
         },
       }));
     },
-    [setSurveyFormContext, setValue],
+    [setSurveyTreeContext, setValue, tree.maxBlockSort],
   );
 
   return (

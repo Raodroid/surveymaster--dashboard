@@ -71,40 +71,42 @@ const ProjectModal: FC<IProjectModal> = props => {
     return project;
   }, [mode, project]);
 
-  const mutationCreateProject = useMutation(ProjectService.createProject, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('getProjects');
-      notification.success({ message: t('common.createSuccess') });
-      toggleOpen();
-    },
-    onError,
-  });
-  const mutationEditProject = useMutation(ProjectService.updateProject, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('getProjectById');
-      queryClient.invalidateQueries('getProjects');
-      notification.success({ message: t('common.updateSuccess') });
-      toggleOpen();
-    },
-    onError,
-  });
+  const { mutateAsync: createProjectMutate, isLoading: createProjectLoading } =
+    useMutation(ProjectService.createProject, {
+      onSuccess: () => {
+        queryClient.invalidateQueries('getProjects');
+        notification.success({ message: t('common.createSuccess') });
+        toggleOpen();
+      },
+      onError,
+    });
+  const { mutateAsync: editProjectMutate, isLoading: editProjectLoading } =
+    useMutation(ProjectService.updateProject, {
+      onSuccess: () => {
+        queryClient.invalidateQueries('getProjectById');
+        queryClient.invalidateQueries('getProjects');
+        notification.success({ message: t('common.updateSuccess') });
+        toggleOpen();
+      },
+      onError,
+    });
 
   const onFinish = useCallback(
-    async (payload: ProjectPayload, helper: FormikHelpers<any>) => {
+    async (payload: ProjectPayload, helper: FormikHelpers<ProjectPayload>) => {
       if (mode === 'create') {
-        await mutationCreateProject.mutateAsync(payload);
+        await createProjectMutate(payload);
         helper.resetForm();
         return;
       }
       if (mode === 'edit') {
-        await mutationEditProject.mutateAsync({
+        await editProjectMutate({
           ...payload,
           // type: project.type,
         });
         helper.resetForm();
       }
     },
-    [mode, mutationCreateProject, mutationEditProject],
+    [mode, createProjectMutate, editProjectMutate],
   );
   return (
     <>
@@ -114,14 +116,9 @@ const ProjectModal: FC<IProjectModal> = props => {
         onCancel={toggleOpen}
         width={488}
         footer={renderFooter(mode, t)}
-        // destroyOnClose
       >
         <Spin
-          spinning={
-            isLoading ||
-            mutationCreateProject.isLoading ||
-            mutationEditProject.isLoading
-          }
+          spinning={isLoading || createProjectLoading || editProjectLoading}
         >
           <Formik
             enableReinitialize

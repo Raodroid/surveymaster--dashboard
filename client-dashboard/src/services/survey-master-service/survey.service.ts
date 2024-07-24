@@ -1,19 +1,23 @@
 import { AxiosResponse } from 'axios';
 import {
+  QsParams,
   CreateSurveyBodyDto,
   DuplicateSurveyVersionDto,
+  HistoryQueryParam,
   IGetParams,
   IPaginationResponse,
   IPostSurveyVersionBodyDto,
   IPutSurveyVersionBodyDtoExtendId,
+  IRequestDeleteRecordDto,
   ISurvey,
   ISurveyRemark,
   ISurveyVersion,
   IUpdateSurveyVersionStatusDto,
-} from 'type';
+  SurveyHistory,
+  EndMessage,
+} from '@/type';
 import APIService from './base.service';
 import { EntityEnum } from '@/enums';
-import { IAction } from '@/interfaces';
 
 interface GetSurveyParams extends Omit<IGetParams, 'isDeleted'> {
   projectId?: string;
@@ -34,15 +38,6 @@ export default class SurveyService {
     id: string | undefined,
   ): Promise<AxiosResponse<ISurvey>> {
     return APIService.get(`/${EntityEnum.SURVEY}/${id}`);
-  }
-
-  static getSurveyHistories(
-    params: IGetParams & { surveyId?: string },
-  ): Promise<AxiosResponse<IPaginationResponse<IAction[]>>> {
-    const { surveyId } = params;
-    return APIService.get(`/${EntityEnum.SURVEY}/${surveyId}/histories`, {
-      params,
-    });
   }
 
   static createSurvey(props: CreateSurveyBodyDto): Promise<AxiosResponse> {
@@ -107,6 +102,27 @@ export default class SurveyService {
     const { id } = payload;
     return APIService.delete(`/${EntityEnum.SURVEY}/${id}`);
   }
+
+  static requestDeleteSurvey(
+    payload: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = payload;
+    return APIService.put(
+      `/${EntityEnum.SURVEY}/${id}/survey-deletion-process`,
+      rest,
+    );
+  }
+
+  static requestDeleteSurveyVersion(
+    payload: IRequestDeleteRecordDto,
+  ): Promise<AxiosResponse> {
+    const { id, ...rest } = payload;
+    return APIService.put(
+      `/${EntityEnum.SURVEY}/version/${id}/survey-deletion-process`,
+      rest,
+    );
+  }
+
   static restoreSurveyById(payload: { id: string }): Promise<AxiosResponse> {
     const { id } = payload;
     return APIService.post(`/${EntityEnum.SURVEY}/${id}/restore`);
@@ -122,35 +138,60 @@ export default class SurveyService {
       params,
     );
   }
-  static uploadExcelFile(payload: {
-    id: string;
-    file: string | Blob;
-  }): Promise<AxiosResponse> {
-    const { id, file } = payload;
-    const formData = new FormData();
-    formData.append('file', file);
-    return APIService.post(
-      `/${EntityEnum.SURVEY}/version/${id}/survey-results/excel`,
-      formData,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      },
-    );
-  }
+
+  // static uploadExcelFile(payload: {
+  //   id: string;
+  //   file: string | Blob;
+  // }): Promise<AxiosResponse> {
+  //   const { id, file } = payload;
+  //   const formData = new FormData();
+  //   formData.append('file', file);
+  //   return APIService.post(
+  //     `/${EntityEnum.SURVEY}/version/${id}/survey-results/excel`,
+  //     formData,
+  //     {
+  //       headers: { 'Content-Type': 'multipart/form-data' },
+  //     },
+  //   );
+  // }
 
   static createSurveyRemark(params: {
     surveyVersionId: string;
     remark: string;
   }) {
     return APIService.post(
-      `/${EntityEnum.SURVEY}/survey_version_remark`,
+      `/${EntityEnum.SURVEY}/survey-version-remark`,
       params,
     );
   }
   static getSurveyRemarks(
     params: IGetParams & { surveyVersionId: string },
   ): Promise<AxiosResponse<ISurveyRemark[]>> {
-    return APIService.get(`/${EntityEnum.SURVEY}/survey_version_remark`, {
+    return APIService.get(`/${EntityEnum.SURVEY}/survey-version-remark`, {
+      params,
+    });
+  }
+
+  static getSurveyChangeLogHistories(
+    params: HistoryQueryParam,
+  ): Promise<AxiosResponse<SurveyHistory[]>> {
+    return APIService.get('/survey-history', {
+      params,
+    });
+  }
+
+  static createEndMessage(payload: { name: string, content: string }): Promise<AxiosResponse<EndMessage>> {
+    return APIService.post('/end-message', payload);
+  }
+
+  static getEndMessage(id: string): Promise<AxiosResponse<EndMessage>> {
+    return APIService.get(`/end-message/${id}`);
+  }
+
+  static getEndMessages(
+    params: QsParams,
+  ): Promise<AxiosResponse<{ data: EndMessage[]}>> {
+    return APIService.get('/end-message', {
       params,
     });
   }

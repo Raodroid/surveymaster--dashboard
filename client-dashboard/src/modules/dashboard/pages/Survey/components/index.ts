@@ -1,6 +1,6 @@
 export { default as AddNewBlockElement } from './AddNewBlockElement/AddNewBlockElement';
 export { default as InsertBlockButton } from './AddNewBlockElement/InsertBlockButton';
-export { default as AddQuestionFormCategoryModal } from './AddQuestionFormCategoryModal/index';
+export { default as AddQuestionFormCategoryModal } from './AddQuestionFormCategoryModal/AddQuestionFormCategoryModal';
 export { default as DynamicSelect } from './DynamicSelect/DynamicSelect';
 export { default as GroupSurveyButton } from './GroupSurveyButton/GroupSurveyButton';
 export { default as QuestionBranchIcon } from './QuestionBranchIcon/QuestionBranchIcon';
@@ -14,7 +14,9 @@ export { default as SurveyVersionRemarkButton } from './SurveyVersionRemarkModal
 export { default as SurveyVersionSelect } from './SurveyVersionSelect/SurveyVersionSelect';
 export { default as DisplayRemarkItem } from './RemarkSection/DisplayRemarkItem';
 export { default as SurveyFormSubmitButton } from './ConfirmSubmitSurveyForm/SurveyFormSubmitButton';
-export { default as RequestApproveCompleteSurveyModal } from './RequestApproveCompleteSurveyModal/RequestApproveCompleteSurveyModal';
+export { default as RequestCompleteSurveyModal } from '@pages/Survey/components/RequestCompleteSurveyVersionModal/RequestCompleteSurveyVersionModal';
+export { default as RequestDeleteSurveyModal } from '@pages/Survey/components/RequestDeleteSurveyModal/RequestDeleteSurveyModal';
+export { default as RequestDeleteSurveyVersionModal } from '@pages/Survey/components/RequestDeleteSurveyVersionModal/RequestDeleteSurveyVersionModal';
 export { default as OverviewQuestionButton } from './OverviewQuestionButton/OverviewQuestionButton';
 
 export * from './SurveyFormContext';

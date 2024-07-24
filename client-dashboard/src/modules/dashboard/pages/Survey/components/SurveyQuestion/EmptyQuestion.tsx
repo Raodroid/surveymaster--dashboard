@@ -1,13 +1,13 @@
-import {FC} from 'react';
+import { FC } from 'react';
 import Block from '@components/Block/Block';
-import {SubSurveyFlowElement} from '@/type';
-import {CubeIcon, SingleChoiceCubeIcon} from '@/icons';
-import {Button} from 'antd';
-import {AddNewQuestionModal} from '@pages/Survey';
-import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal';
-import {useToggle} from '@/utils';
-import {useTranslation} from 'react-i18next';
-import {blockColor} from '../QuestionBranchIcon/QuestionBranchIcon';
+import { SubSurveyFlowElement } from '@/type';
+import { CubeIcon, SingleChoiceCubeIcon } from '@/icons';
+import { Button } from 'antd';
+import { AddNewQuestionModal } from '@pages/Survey';
+import AddQuestionFormCategoryModal from '../AddQuestionFormCategoryModal/AddQuestionFormCategoryModal';
+import { useToggle } from '@/utils';
+import { useTranslation } from 'react-i18next';
+import { blockColor } from '../QuestionBranchIcon/QuestionBranchIcon';
 
 const EmptyQuestion: FC<{ fieldName: string }> = props => {
   const { fieldName } = props;

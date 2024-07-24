@@ -100,12 +100,13 @@ const CustomSelect = (props: CustomSelectProps) => {
       ),
     };
     if (res.loading) delete baseProps.suffixIcon;
+
+    
     return baseProps;
   }, [res, value, showSearch, handleSearch, options, fetchedOptions]);
+
 
   return <SelectStyled {...selectProps} />;
 };
 
 export default memo(CustomSelect);
-
-//hanh

@@ -22,7 +22,6 @@ import { useHandleNavigate, useParseQueryString } from '@/hooks';
 import { objectKeys, onError, useToggle } from '@/utils';
 import { StyledPagination } from '@/modules/dashboard';
 import { ProjectTableWrapper } from '../ProjectContent/styles';
-import SimpleBar from 'simplebar-react';
 import { useCheckScopeEntityDefault } from '@hoc/index';
 import { EntityEnum, ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
 import { ProjectService } from '@/services';
@@ -30,6 +29,7 @@ import { keysAction, useSelectTableRecord } from '@/hooks/useSelectTableRecord';
 import ThreeDotsDropdown from '@/customize-components/ThreeDotsDropdown';
 import { ProjectModal } from '@pages/Project';
 import qs from 'qs';
+import { SimpleBarCustom } from '@/customize-components';
 
 const { confirm } = Modal;
 
@@ -89,7 +89,10 @@ function ProjectTable() {
     return formatQs;
   }, [qsParams]);
 
-  const getProjectListQuery = useQuery(
+  const {
+    data: getProjectListQueryData,
+    isLoading: getProjectListQueryLoading,
+  } = useQuery(
     ['getProjects', formatQsParams],
     () => getProjects(formatQsParams),
     {
@@ -99,28 +102,32 @@ function ProjectTable() {
     },
   );
 
-  const total: number = _get(getProjectListQuery.data, 'data.itemCount', 0);
+  const total: number = _get(getProjectListQueryData, 'data.itemCount', 0);
 
   const projects = useMemo<IProject[]>(
-    () => _get(getProjectListQuery.data, 'data.data'),
-    [getProjectListQuery.data],
+    () => _get(getProjectListQueryData, 'data.data'),
+    [getProjectListQueryData],
   );
 
-  const mutationDeleteProject = useMutation(
-    () =>
-      ProjectService.deleteProject({
-        projectId,
-      }),
-    {
-      onSuccess: () => {
-        notification.success({ message: t('common.deleteSuccess') });
-        queryClient.invalidateQueries('getProjects');
-        queryClient.invalidateQueries('getAllProjects');
+  const { mutateAsync: deleteProjectMutate, isLoading: deleteProjectLoading } =
+    useMutation(
+      () =>
+        ProjectService.deleteProject({
+          projectId,
+        }),
+      {
+        onSuccess: () => {
+          notification.success({ message: t('common.deleteSuccess') });
+          queryClient.invalidateQueries('getProjects');
+          queryClient.invalidateQueries('getAllProjects');
+        },
+        onError,
       },
-      onError,
-    },
-  );
-  const mutationRestoreProject = useMutation(
+    );
+  const {
+    mutateAsync: restoreProjectMutate,
+    isLoading: restoreProjectLoading,
+  } = useMutation(
     () =>
       ProjectService.restoreProject({
         projectId,
@@ -144,20 +151,20 @@ function ProjectTable() {
       icon: null,
       content: t('common.confirmDeleteProject'),
       onOk() {
-        mutationDeleteProject.mutateAsync();
+        deleteProjectMutate();
       },
     });
-  }, [mutationDeleteProject, t]);
+  }, [deleteProjectMutate, t]);
 
   const handleRestore = useCallback(() => {
     confirm({
       icon: null,
       content: t('common.confirmRestoreProject'),
       onOk() {
-        mutationRestoreProject.mutateAsync();
+        restoreProjectMutate();
       },
     });
-  }, [mutationRestoreProject, t]);
+  }, [restoreProjectMutate, t]);
 
   const tableActions = useMemo<keysAction<IProject>>(
     () => [
@@ -252,7 +259,7 @@ function ProjectTable() {
         width: 150,
         render: (text: string) => {
           const str = text.toString();
-          return <div>{str.slice(0, 10)}</div>;
+          return str.slice(0, 10);
         },
       },
       {
@@ -278,20 +285,26 @@ function ProjectTable() {
   );
 
   return (
-    <Spin
-      spinning={getProjectListQuery.isLoading}
-      style={{ maxHeight: 'unset' }}
-    >
-      <ProjectTableWrapper centerLastChild>
-        <SimpleBar className={'ProjectTableWrapper__body'}>
-          <Table
-            dataSource={projects}
-            columns={columns}
-            pagination={false}
-            rowKey={record => record.id as string}
-            scroll={{ x: 800 }}
-          />
-        </SimpleBar>
+    <>
+      <ProjectTableWrapper>
+        <Spin
+          spinning={
+            getProjectListQueryLoading ||
+            deleteProjectLoading ||
+            restoreProjectLoading
+          }
+        >
+          <SimpleBarCustom>
+            <Table
+              dataSource={projects}
+              columns={columns}
+              pagination={false}
+              rowKey={record => record.id as string}
+              scroll={{ x: 800 }}
+              className={'h-full'}
+            />
+          </SimpleBarCustom>
+        </Spin>
         <Divider className={'m-0'} />
         <StyledPagination
           onChange={(page, pageSize) => {
@@ -309,7 +322,7 @@ function ProjectTable() {
         toggleOpen={toggleProjectModal}
         projectId={selectedRecord?.id}
       />
-    </Spin>
+    </>
   );
 }
 

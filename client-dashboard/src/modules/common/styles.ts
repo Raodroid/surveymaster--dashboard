@@ -6,6 +6,7 @@ export const BaseSectionWrapper = styled.section`
   background: white;
   border-radius: ${templateVariable.border_radius};
   height: 100%;
+  overflow: hidden;
 `;
 
 export const CustomSpinSuspense = styled(Spin)`

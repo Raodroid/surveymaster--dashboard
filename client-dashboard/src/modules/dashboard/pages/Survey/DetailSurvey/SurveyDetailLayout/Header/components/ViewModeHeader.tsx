@@ -2,7 +2,9 @@ import { useCallback, useMemo } from 'react';
 import { ProjectHeader } from '@pages/Project';
 import {
   createDuplicateSurveyVersionName,
-  RequestApproveCompleteSurveyModal,
+  handleExportSurvey,
+  RequestCompleteSurveyModal,
+  RequestDeleteSurveyVersionModal,
   SurveyRenameModal,
   SurveyVersionRemarkButton,
   useSurveyFormContext,
@@ -10,6 +12,7 @@ import {
 import { Modal, notification, Spin } from 'antd';
 import {
   IGetParams,
+  IRequestDeleteRecordDto,
   ISurveyVersion,
   IUpdateSurveyVersionStatusDto,
   SubSurveyFlowElementDto,
@@ -17,12 +20,10 @@ import {
 } from '@/type';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { EntityEnum, MOMENT_FORMAT, ROUTE_PATH } from '@/enums';
+import { EntityEnum, ROUTE_PATH } from '@/enums';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
-import { onError, saveBlob, useToggle } from '@/utils';
-import _get from 'lodash/get';
-import moment from 'moment';
+import { onError, useToggle } from '@/utils';
 import { keysAction, useParseQueryString, useSelectTableRecord } from '@/hooks';
 import {
   ACTION,
@@ -30,7 +31,7 @@ import {
 } from './SurveyVersionActionThreeDropdown';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
 import { IBreadcrumbItem, useCheckScopeEntityDefault } from '@/modules/common';
-import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
+import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/SurveyDataContext/util';
 import { useSelector } from 'react-redux';
 import { AuthSelectors } from '@/redux/auth';
 
@@ -92,7 +93,12 @@ const RightMenu = () => {
   const navigate = useNavigate();
   const { canUpdate } = useCheckScopeEntityDefault(EntityEnum.SURVEY);
   const [openRenameModal, toggleRenameModal] = useToggle();
-  const [openApproveSurveyModal, toggleOpenApproveSurveyModal] = useToggle();
+  const [
+    openRequestCompleteVersionModal,
+    toggleOpenRequestCompleteVersionModal,
+  ] = useToggle();
+  const [openRequestDeleteVersionModal, toggleOpenRequestDeleteVersionModal] =
+    useToggle();
   const profile = useSelector(AuthSelectors.getProfile);
 
   const deleteMutation = useMutation(
@@ -113,6 +119,21 @@ const RightMenu = () => {
       onError,
     },
   );
+  const requestDeleteSurvey = useMutation(
+    (data: IRequestDeleteRecordDto) => {
+      return SurveyService.requestDeleteSurveyVersion({
+        ...data,
+      });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('getSurveyById');
+        notification.success({ message: t('common.denySuccess') });
+      },
+      onError,
+    },
+  );
+
   const changeSurveyVersionStatusMutation = useMutation(
     (data: IUpdateSurveyVersionStatusDto & { surveyVersionId: string }) => {
       return SurveyService.updateStatusSurveyVersion(data);
@@ -142,29 +163,14 @@ const RightMenu = () => {
     async (record: ISurveyVersion) => {
       try {
         toggleExporting();
-        const response = await SurveyService.getSurveyFile(record.id as string);
-        const data: {
-          SurveyElements: any[];
-          SurveyEntry: { SurveyName: string };
-        } = _get(response, 'data', {});
-        const blob = new Blob([JSON.stringify(data, null, 2)], {
-          type: 'application/octet-stream',
-        });
-        saveBlob(
-          blob,
-          `${data.SurveyEntry.SurveyName}-${moment().format(
-            MOMENT_FORMAT.EXPORT,
-          )}.qsf`,
-        );
-      } catch (error) {
-        console.error({ error });
+        await handleExportSurvey(record);
       } finally {
         toggleExporting();
       }
     },
     [toggleExporting],
   );
-  const handleAcceptDenyRequest = useCallback(
+  const handleResponseCompleteRequest = useCallback(
     (type: 'APPROVE' | 'DENY', record: ISurveyVersion) => {
       confirm({
         icon: null,
@@ -184,17 +190,32 @@ const RightMenu = () => {
     [changeSurveyVersionStatusMutation, profile?.id, t],
   );
 
+  const handleResponseDeleteRequest = useCallback(
+    (type: 'APPROVE' | 'DENY', record: ISurveyVersion) => {
+      if (type === 'APPROVE') {
+        handleDelete(record);
+        return;
+      }
+      confirm({
+        icon: null,
+        content: t('common.confirmDenyDeleteSurveyVersion'),
+        onOk() {
+          requestDeleteSurvey.mutateAsync({
+            id: record.id as string,
+            isAwaitingDeletion: false,
+          });
+        },
+      });
+    },
+    [handleDelete, requestDeleteSurvey, t],
+  );
+
   const handleCLone = useCallback(
     (record: ISurveyVersion) => {
       if (!record?.id) return;
 
-      const blockSortCounting = 0;
-
       const surveyFlowElements: SubSurveyFlowElementDto[] =
-        transSurveyFLowElement(
-          record.surveyFlowElements || [],
-          blockSortCounting,
-        );
+        transSurveyFLowElement(record.surveyFlowElements || []);
 
       handleCloneSurveyVersion({
         name: createDuplicateSurveyVersionName(record.name),
@@ -239,15 +260,15 @@ const RightMenu = () => {
       },
 
       {
-        key: ACTION.APPROVE_REQUEST,
+        key: ACTION.APPROVE_COMPLETE_REQUEST,
         action: record => {
-          handleAcceptDenyRequest('APPROVE', record);
+          handleResponseCompleteRequest('APPROVE', record);
         },
       },
       {
-        key: ACTION.DENY_REQUEST,
+        key: ACTION.DENY_COMPLETE_REQUEST,
         action: record => {
-          handleAcceptDenyRequest('DENY', record);
+          handleResponseCompleteRequest('DENY', record);
         },
       },
       {
@@ -268,18 +289,36 @@ const RightMenu = () => {
       },
       {
         key: ACTION.REQUEST_COMPLETE,
-        action: toggleOpenApproveSurveyModal,
+        action: toggleOpenRequestCompleteVersionModal,
+      },
+      {
+        key: ACTION.REQUEST_DELETE,
+        action: toggleOpenRequestDeleteVersionModal,
+      },
+      {
+        key: ACTION.APPROVE_DELETE_REQUEST,
+        action: record => {
+          handleResponseDeleteRequest('APPROVE', record);
+        },
+      },
+      {
+        key: ACTION.DENY_DELETE_REQUEST,
+        action: record => {
+          handleResponseDeleteRequest('DENY', record);
+        },
       },
     ],
     [
       handleDelete,
       handleExport,
-      handleAcceptDenyRequest,
       handleCLone,
       handleShowChangeLog,
       handleEdit,
       toggleRenameModal,
-      toggleOpenApproveSurveyModal,
+      toggleOpenRequestCompleteVersionModal,
+      toggleOpenRequestDeleteVersionModal,
+      handleResponseCompleteRequest,
+      handleResponseDeleteRequest,
     ],
   );
 
@@ -294,12 +333,14 @@ const RightMenu = () => {
           spinning={
             isExporting ||
             deleteMutation.isLoading ||
-            changeSurveyVersionStatusMutation.isLoading
+            changeSurveyVersionStatusMutation.isLoading ||
+            requestDeleteSurvey.isLoading
           }
         >
           <ActionThreeDropDown
             record={survey.currentSurveyVersion}
             handleSelect={handleSelect}
+            versionCount={survey.surveyData?.versions?.length || 0}
           />
         </Spin>
       )}
@@ -310,9 +351,16 @@ const RightMenu = () => {
         versionId={selectedRecord?.id}
       />
       {canUpdate && (
-        <RequestApproveCompleteSurveyModal
-          open={openApproveSurveyModal}
-          toggleOpen={toggleOpenApproveSurveyModal}
+        <RequestCompleteSurveyModal
+          open={openRequestCompleteVersionModal}
+          toggleOpen={toggleOpenRequestCompleteVersionModal}
+          versionId={selectedRecord?.id}
+        />
+      )}
+      {canUpdate && (
+        <RequestDeleteSurveyVersionModal
+          open={openRequestDeleteVersionModal}
+          toggleOpen={toggleOpenRequestDeleteVersionModal}
           versionId={selectedRecord?.id}
         />
       )}

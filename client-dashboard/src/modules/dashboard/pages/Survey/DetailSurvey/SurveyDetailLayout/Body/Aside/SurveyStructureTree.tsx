@@ -1,6 +1,6 @@
 import { Tree } from 'antd';
 import type { DataNode, TreeProps } from 'antd/es/tree';
-import { FC, Key, useCallback } from 'react';
+import { FC, Key, memo, useCallback } from 'react';
 import { useField } from 'formik';
 import {
   getParentChildrenFieldName,
@@ -9,7 +9,7 @@ import {
   SurveyDataTreeNode,
   transformToSurveyDataTreeNode,
   useCheckSurveyFormMode,
-  useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
 import _get from 'lodash/get';
 import { SubSurveyFlowElement } from '@/type';
@@ -41,7 +41,7 @@ const SurveyStructureTree: FC = () => {
     Array<SurveyDataTreeNode>
   >(rootSurveyFlowElementFieldName);
 
-  const { handleFocusBlock, handleExpendTree, tree } = useSurveyFormContext();
+  const { handleFocusBlock, handleExpendTree, tree } = useSurveyTreeContext();
   const { isViewMode } = useCheckSurveyFormMode();
 
   const onDrop: TreeProps['onDrop'] = useCallback(
@@ -152,7 +152,7 @@ const SurveyStructureTree: FC = () => {
   );
 };
 
-export default SurveyStructureTree;
+export default memo(SurveyStructureTree);
 
 const WrapperTree = styled(Tree)`
   padding-right: 1rem;

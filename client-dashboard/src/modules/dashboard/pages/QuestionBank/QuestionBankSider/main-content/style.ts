@@ -13,4 +13,8 @@ export const QuestionBankSiderMainContentWrapper = styled.div`
       transform: rotateX(180deg);
     }
   }
+  .ant-spin-nested-loading {
+    flex: 1;
+    overflow: hidden;
+  }
 `;

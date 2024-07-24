@@ -16,6 +16,7 @@ export enum BranchChoiceType {
   SELECTABLE_ANSWER = 'SelectableAnswer',
   SELECTED_ANSWER_COUNT = 'SelectedAnswerCount',
   SELECTED_ANSWER_RECODE = 'SelectedAnswerRecode',
+  CHOICE_NUMERIC_ENTRY_VALUE = 'ChoiceNumericEntryValue',
 }
 
 export enum Conjunction {
@@ -44,9 +45,11 @@ export enum LogicOperator {
 export interface SubEmbeddedDataDto {
   field: string;
   value: string;
+  id?: string;
 }
 
 export interface SubBranchLogicDto {
+  id?: string;
   sort: number;
   conjunction: Conjunction;
   logicType: BranchLogicType;
@@ -63,7 +66,9 @@ export interface SubBranchLogicDto {
 }
 
 export interface SubSurveyFlowElementDto {
+  id?: string;
   type: SubSurveyFlowElement;
+  endMessageId?: string;
   sort: number;
   blockDescription?: string;
   blockSort?: number;
@@ -108,6 +113,7 @@ export interface ISurveyVersion {
   id?: string;
   displayId: string;
   approvalUserId?: string;
+  isAwaitingDeletion?: boolean;
 
   name: string;
   remarks?: ISurveyRemark[];
@@ -117,9 +123,9 @@ export interface ISurveyVersion {
   survey?: ISurvey;
   surveyId?: string;
 
-  createdBy?: UserPayload;
+  createdBy?: string;
   updatedBy?: UserPayload;
-  deletedBy?: UserPayload;
+  deletedBy?: string;
   createdAt?: Date | string;
   updatedAt?: Date | string | null;
   deletedAt?: Date | string | null;
@@ -144,10 +150,11 @@ export interface ISurvey {
   latestCompletedVersion?: ISurveyVersion;
   versions?: ISurveyVersion[];
   project?: IProject;
+  isAwaitingDeletion?: boolean;
 
-  createdBy?: UserPayload;
+  createdBy?: string;
   updatedBy?: UserPayload;
-  deletedBy?: UserPayload;
+  deletedBy?: string;
   createdAt: Date | string;
   updatedAt?: Date | string | null;
   deletedAt?: Date | string | null;
@@ -163,9 +170,11 @@ export interface ISurveyQuestionDto {
   sort?: number;
   remarks?: IQuestionRemark[];
   parameter?: string;
+  id?: string;
 }
 
 export interface ISurveyVersionBaseDto {
+  id?: string;
   name?: string;
   remarks?: ISurveyRemark[] | null;
   status?: SurveyVersionStatus;

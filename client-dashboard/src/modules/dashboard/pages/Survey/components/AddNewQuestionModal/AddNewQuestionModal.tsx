@@ -1,19 +1,26 @@
-import {FC, memo, useCallback, useEffect, useMemo, useRef, useState,} from 'react';
-import {IModal, IOptionItem, QuestionType} from '@/type';
-import {Input, List, Spin} from 'antd';
-import {useTranslation} from 'react-i18next';
-import {questionValueType, useSurveyFormContext} from '@pages/Survey';
-import {useField} from 'formik';
-import {useDebounce} from '@/utils';
-import {SimpleBarCustom} from '@/customize-components';
-import {AddNewQuestionModalWrapper} from '@pages/Survey/components/AddNewQuestionModal/style';
+import {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { IModal, IOptionItem, QuestionType } from '@/type';
+import { Input, List, Spin } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { questionValueType, useSurveyFormContext } from '@pages/Survey';
+import { useField } from 'formik';
+import { useDebounce } from '@/utils';
+import { SimpleBarCustom } from '@/customize-components';
+import { AddNewQuestionModalWrapper } from '@pages/Survey/components/AddNewQuestionModal/style';
 
 const initNewRowValue: questionValueType = {
   remarks: [],
   parameter: '',
   sort: Math.random(),
   questionVersionId: '',
-  id: '',
   questionTitle: '',
   type: QuestionType.TEXT_ENTRY,
   createdAt: '',
@@ -70,7 +77,7 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
   }, [setSearchParams, toggleOpen]);
 
   const handleSelectQuestion = useCallback(
-    questionId => {
+    (questionId: string) => {
       const chooseQuestion = questionVersionIdMap[questionId];
 
       if (chooseQuestion) {
@@ -82,7 +89,7 @@ const AddNewQuestionModal: FC<IAddNewQuestionModal> = props => {
             (chooseQuestion.question?.masterCategory?.name as string),
           type: chooseQuestion?.type as string,
           questionTitle: chooseQuestion?.title as string,
-          id: chooseQuestion?.questionId,
+          // id: chooseQuestion?.questionId,
           questionVersionId: chooseQuestion?.id as string,
           versions: chooseQuestion?.question?.versions,
           createdAt: chooseQuestion.createdAt,

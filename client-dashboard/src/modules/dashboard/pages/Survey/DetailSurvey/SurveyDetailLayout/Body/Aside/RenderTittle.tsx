@@ -16,10 +16,10 @@ import {
   InsertBlockButton,
   QuestionBranchIcon,
   useSurveyBlockAction,
-  useSurveyFormContext,
+  useSurveyTreeContext,
 } from '@pages/Survey';
 import { ThreeDotsDropdown } from '@/customize-components';
-import { DuplicateIcon, PenFilled, TrashOutlined } from '@/icons';
+import { CloseIcon, DuplicateIcon, PenFilled, TrashOutlined } from '@/icons';
 import { keysAction, useSelectTableRecord } from '@/hooks';
 
 const Wrapper = styled.div`
@@ -39,12 +39,18 @@ const bgColor: Record<SubSurveyFlowElement, string> = {
   [SubSurveyFlowElement.EMBEDDED_DATA]: '#00AEC720',
 };
 
+const mapErrorType: Record<SubSurveyFlowElement, string> = {
+  [SubSurveyFlowElement.BLOCK]: '',
+  [SubSurveyFlowElement.EMBEDDED_DATA]: 'Embedded formula',
+  [SubSurveyFlowElement.BRANCH]: 'Condition',
+  [SubSurveyFlowElement.END_SURVEY]: '',
+};
 const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   const { t } = useTranslation();
   const { record } = props;
   const fieldName = record.fieldName;
   const { isEditMode } = useCheckSurveyFormMode();
-  const { setSurveyFormContext } = useSurveyFormContext();
+  const { setSurveyTreeContext } = useSurveyTreeContext();
 
   const { handleDuplicateBlock, handleRemoveBlock } =
     useSurveyBlockAction(record);
@@ -65,14 +71,9 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
     }
   }, [record]);
 
-  const blockError = useMemo(() => {
-    const errorChildren = (error as unknown as { children: string })?.children;
-    return typeof errorChildren === 'string' ? errorChildren : '';
-  }, [error]);
-
   const handleRename = useCallback(
     (record: SurveyDataTreeNode) => {
-      setSurveyFormContext(oldState => ({
+      setSurveyTreeContext(oldState => ({
         ...oldState,
         tree: {
           ...oldState.tree,
@@ -80,7 +81,7 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
         },
       }));
     },
-    [setSurveyFormContext],
+    [setSurveyTreeContext],
   );
 
   const tableActions = useMemo<keysAction<SurveyDataTreeNode>>(
@@ -104,6 +105,38 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
   const { handleSelect } =
     useSelectTableRecord<SurveyDataTreeNode>(tableActions);
 
+  const renderError = useMemo<JSX.Element | null>(() => {
+    const errorMessages: Record<string, string[] | string> = {
+      ...(error as unknown as object),
+    };
+
+    if (!touched || !error) return null;
+    const keyErrors = Object.keys(errorMessages);
+    if (keyErrors.length === 0) return null;
+
+    return (
+      <>
+        {keyErrors.map(key => (
+          <div
+            key={key}
+            className={
+              'px-2 py-1 flex items-center gap-1.5 ant-form-item-explain-error font-[600] text-[12px]'
+            }
+          >
+            <CloseIcon />
+            {typeof errorMessages[key] === 'string'
+              ? errorMessages[key]
+              : t('validation.messages.contentNotCorrect', {
+                  type: mapErrorType[record.type],
+                })}
+          </div>
+        ))}
+      </>
+    );
+  }, [error, record.type, t, touched]);
+
+  const ActionThreeDropDownMemo = memo(ActionThreeDropDown);
+
   return (
     <>
       <Wrapper
@@ -116,6 +149,7 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
       >
         <div className={'group/block flex gap-3 items-center'}>
           <QuestionBranchIcon type={record?.type} />
+
           <span className={'font-semibold'}>
             {record?.type === SubSurveyFlowElement.BLOCK
               ? value?.blockDescription
@@ -141,15 +175,14 @@ const QuestionBlock: FC<{ record: SurveyDataTreeNode }> = props => {
             </div>
           )}
           {isEditMode && (
-            <ActionThreeDropDown record={record} handleSelect={handleSelect} />
+            <ActionThreeDropDownMemo
+              record={record}
+              handleSelect={handleSelect}
+            />
           )}
         </div>
 
-        {touched && blockError && (
-          <div className={'p-3 rounded ant-form-item-explain-error font-[600]'}>
-            {blockError}
-          </div>
-        )}
+        {renderError}
 
         {isEditMode && (
           <span className={'group/node add-icon p-0'}>

@@ -9,3 +9,5 @@ export { default as Signature } from './Signature';
 export { default as Slider } from './Slider';
 export { default as TimePicker } from './TimePicker';
 export { default as TextGraphic } from './TextGraphic';
+export { default as TextNumber } from './TextNumber';
+export { default as RankOrder } from './RankOrder';

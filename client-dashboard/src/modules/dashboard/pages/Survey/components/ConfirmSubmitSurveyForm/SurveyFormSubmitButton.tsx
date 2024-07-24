@@ -10,11 +10,12 @@ import _isEmpty from 'lodash/isEmpty';
 const SurveyFormSubmitButton = () => {
   const [open, toggleOpen] = useToggle();
   const { t } = useTranslation();
-  const { setTouched, touched, validateForm } =
+  const { setTouched, touched, dirty, validateForm } =
     useFormikContext<IEditSurveyFormValues>();
   return (
     <>
       <Button
+        disabled={!dirty}
         type={'primary'}
         onClick={() => {
           validateForm().then(errors => {
@@ -28,7 +29,7 @@ const SurveyFormSubmitButton = () => {
         }}
         icon={<SaveIcon />}
       >
-        {t('common.completed')}
+        {t('common.save')}
       </Button>
       <ConfirmSubmitSurveyForm open={open} toggleOpen={toggleOpen} />
     </>

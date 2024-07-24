@@ -15,6 +15,7 @@ import {
 } from '@/type';
 import {
   createDuplicateSurveyVersionName,
+  handleExportSurvey,
   useCheckSurveyFormMode,
   useSurveyFormContext,
 } from '@pages/Survey';
@@ -22,7 +23,7 @@ import { useFormikContext } from 'formik';
 import { Modal, notification } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 import { useCheckScopeEntityDefault } from '@/modules/common';
-import { MOMENT_FORMAT, ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
+import { ROUTE_PATH, SCOPE_CONFIG } from '@/enums';
 import {
   DownloadIcon,
   LightingIcon,
@@ -33,11 +34,9 @@ import {
 import { useGetProjectByIdQuery } from '@pages/Project';
 import { useMutation, useQueryClient } from 'react-query';
 import { SurveyService } from '@/services';
-import { onError, saveBlob, useToggle } from '@/utils';
+import { onError, useToggle } from '@/utils';
 import { projectSurveyParams } from '@pages/Survey/DetailSurvey/DetailSurvey';
-import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/util';
-import _get from 'lodash/get';
-import moment from 'moment';
+import { transSurveyFLowElement } from '@pages/Survey/components/SurveyFormContext/SurveyDataContext/util';
 import styled from 'styled-components/macro';
 
 const { confirm } = Modal;
@@ -58,30 +57,31 @@ const SurveyVersionSelect: FC<{
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const completeMutation = useMutation(
-    (data: { surveyVersionId: string }) => {
-      return SurveyService.updateStatusSurvey(data);
-    },
-    {
-      onSuccess: async res => {
-        await queryClient.invalidateQueries('getSurveyById');
-        notification.success({ message: t('common.updateSuccess') });
-
-        navigate(
-          `${generatePath(
-            ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
-            {
-              projectId: params.projectId,
-              surveyId: params.surveyId,
-            },
-          )}?version=${res.data.displayId}`,
-        );
+  const { mutateAsync: completeMutate, isLoading: completeLoading } =
+    useMutation(
+      (data: { surveyVersionId: string }) => {
+        return SurveyService.updateStatusSurvey(data);
       },
-      onError,
-    },
-  );
+      {
+        onSuccess: async res => {
+          await queryClient.invalidateQueries('getSurveyById');
+          notification.success({ message: t('common.updateSuccess') });
 
-  const deleteMutation = useMutation(
+          navigate(
+            `${generatePath(
+              ROUTE_PATH.DASHBOARD_PATHS.PROJECT.DETAIL_SURVEY.ROOT,
+              {
+                projectId: params.projectId,
+                surveyId: params.surveyId,
+              },
+            )}?version=${res.data.displayId}`,
+          );
+        },
+        onError,
+      },
+    );
+
+  const { mutateAsync: deleteMutate, isLoading: deleteLoading } = useMutation(
     (data: { id: string }) => {
       return SurveyService.deleteSurveyVersion(data);
     },
@@ -132,11 +132,11 @@ const SurveyVersionSelect: FC<{
         icon: null,
         content: t('common.confirmDeleteSurveyVersion'),
         onOk() {
-          deleteMutation.mutateAsync({ id: record.id as string });
+          deleteMutate({ id: record.id as string });
         },
       });
     },
-    [deleteMutation, t],
+    [deleteMutate, t],
   );
 
   const handleEdit = useCallback(() => {
@@ -152,13 +152,8 @@ const SurveyVersionSelect: FC<{
     (record: ISurveyVersion) => {
       if (!record?.id) return;
 
-      const blockSortCounting = 0;
-
       const surveyFlowElements: SubSurveyFlowElementDto[] =
-        transSurveyFLowElement(
-          record.surveyFlowElements || [],
-          blockSortCounting,
-        );
+        transSurveyFLowElement(record.surveyFlowElements || []);
 
       handleCloneSurveyVersion({
         name: createDuplicateSurveyVersionName(record.name),
@@ -176,35 +171,20 @@ const SurveyVersionSelect: FC<{
         icon: null,
         content: t('common.confirmCompleteSurveyVersion'),
         onOk() {
-          completeMutation.mutateAsync({
+          completeMutate({
             surveyVersionId: record.id as string,
           });
         },
       });
     },
-    [completeMutation, t],
+    [completeMutate, t],
   );
 
   const handleExport = useCallback(
     async (record: ISurveyVersion) => {
       try {
         toggleExporting();
-        const response = await SurveyService.getSurveyFile(record.id as string);
-        const data: {
-          SurveyElements: any[];
-          SurveyEntry: { SurveyName: string };
-        } = _get(response, 'data', {});
-        const blob = new Blob([JSON.stringify(data, null, 2)], {
-          type: 'application/octet-stream',
-        });
-        saveBlob(
-          blob,
-          `${data.SurveyEntry.SurveyName}-${moment().format(
-            MOMENT_FORMAT.EXPORT,
-          )}.qsf`,
-        );
-      } catch (error) {
-        console.error({ error });
+        await handleExportSurvey(record);
       } finally {
         toggleExporting();
       }
@@ -268,9 +248,7 @@ const SurveyVersionSelect: FC<{
       options={options}
       className={'w-[250px]'}
       onChange={changeVersion}
-      loading={
-        isExporting || deleteMutation.isLoading || completeMutation.isLoading
-      }
+      loading={isExporting || deleteLoading || completeLoading}
     />
   );
 };

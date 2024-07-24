@@ -45,22 +45,8 @@ export const transSurveyFLowElement = (
     | SurveyDataTreeNode[]
     | SurveyFlowElementResponseDto[]
     | SubSurveyFlowElementDto[],
-  blockSortCounting: number,
 ): SubSurveyFlowElementDto[] => {
-  let newBlockSortCounting = blockSortCounting;
-
   return input.map((i, idx) => {
-    let blockSort = i.blockSort;
-
-    if (i.type === SubSurveyFlowElement.BLOCK) {
-      if (i.blockSort === undefined) {
-        blockSort = newBlockSortCounting;
-        newBlockSortCounting += 1;
-      } else {
-        newBlockSortCounting = blockSort + 1;
-      }
-    }
-
     const surveyQuestions: ISurveyQuestionDto[] | undefined = !i.surveyQuestions
       ?.length
       ? undefined
@@ -71,6 +57,7 @@ export const transSurveyFLowElement = (
             i.remarks?.length === 0
               ? undefined
               : i.remarks?.map(rm => ({
+                  id: rm?.id,
                   remark: rm.remark,
                   ownerId: rm.id ? rm?.owner?.id : undefined,
                 })),
@@ -98,6 +85,7 @@ export const transSurveyFLowElement = (
                 'operator',
                 'rightOperand',
                 'leftOperand',
+                'id',
               ]);
               return { ...x, sort: logicIndex + 1 };
             }
@@ -118,14 +106,16 @@ export const transSurveyFLowElement = (
         : undefined;
 
     return {
-      blockSort,
+      id: i?.id,
+      blockSort: i.blockSort,
       type: i.type,
+      endMessageId: i.endMessageId,
       sort: idx,
       blockDescription: i.blockDescription,
       surveyQuestions,
       branchLogics,
       listEmbeddedData,
-      children: transSurveyFLowElement(i?.children || [], newBlockSortCounting),
+      children: transSurveyFLowElement(i?.children || []),
     };
   });
 };
@@ -133,11 +123,60 @@ export const transSurveyFLowElement = (
 export const transformSurveyVersion = (
   values: IEditSurveyFormValues,
 ): ISurveyVersionBaseDto => {
-  const blockSortCounting = 0;
   const surveyFlowElements: SubSurveyFlowElementDto[] = transSurveyFLowElement(
     values.version?.surveyFlowElements || [],
-    blockSortCounting,
   );
 
   return { ...values.version, surveyFlowElements };
 };
+
+//Make sure remove all id of every surveyQuestions, branchLogics,listEmbeddedData
+export const transformCloneSurveyVersion = (
+  input: SubSurveyFlowElementDto[] | undefined,
+): SubSurveyFlowElementDto[] => {
+  if (!input) return [];
+
+  return input.map(i => {
+    const {
+      id,
+      surveyQuestions,
+      branchLogics,
+      listEmbeddedData,
+      children,
+      ...rest
+    } = i;
+
+    const result: SubSurveyFlowElementDto = {
+      ...rest,
+      surveyQuestions: surveyQuestions?.map(({ id, ...restQ }) => restQ),
+      branchLogics: branchLogics?.map(({ id, ...restB }) => restB),
+      listEmbeddedData: listEmbeddedData?.map(({ id, ...restE }) => restE),
+    };
+
+    if (children) {
+      result.children = transformCloneSurveyVersion(children);
+    }
+
+    return result;
+  });
+};
+
+export function findMaxBlockSort(
+  inputArr: SurveyFlowElementResponseDto[],
+): number {
+  let max = 0;
+  const findMaxRecursive = (input: SurveyFlowElementResponseDto[]) => {
+    for (const blockElement of input) {
+      if (!blockElement?.blockSort) continue;
+
+      if (blockElement?.blockSort > max) {
+        max = blockElement.blockSort;
+      }
+      if (blockElement.children) {
+        findMaxRecursive(blockElement.children);
+      }
+    }
+  };
+  findMaxRecursive(inputArr);
+  return max;
+}

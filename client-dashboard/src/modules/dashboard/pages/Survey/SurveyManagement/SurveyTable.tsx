@@ -21,25 +21,31 @@ import {
   ActionThreeDropDownType,
   DuplicateSurveyVersionDto,
   IGetParams,
-  IMenuItem,
+  IRequestDeleteRecordDto,
   ISurvey,
   QsParams,
   SurveyVersionStatus,
 } from '@/type';
 import { useCheckScopeEntityDefault } from '@/modules/common';
 import {
+  CheckIcon,
+  CloseIcon,
   DuplicateIcon,
+  LightingIcon,
   PenFilled,
   RollbackOutlined,
-  TrashOutlined,
 } from '@/icons';
 import { onError, useToggle } from '@/utils';
 import { ThreeDotsDropdown } from '@/customize-components';
 import {
   createDuplicateSurveyVersionName,
+  RequestDeleteSurveyModal,
   SurveyRenameModal,
 } from '@pages/Survey';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { AuthSelectors } from '@/redux/auth';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 const { confirm } = Modal;
 
@@ -56,6 +62,9 @@ function SurveyTable() {
   const { t } = useTranslation();
   const handleNavigate = useHandleNavigate(initParams);
   const queryClient = useQueryClient();
+  const [openRenameModal, toggleOpenRenameModal] = useToggle();
+  const [openApproveDeleteSurveyModal, toggleOpenApproveDeleteSurveyModal] =
+    useToggle();
 
   const formatQsParams = useMemo(() => {
     const formatQs: IGetParams = {
@@ -71,85 +80,120 @@ function SurveyTable() {
     return formatQs;
   }, [qsParams]);
 
-  const duplicateMutation = useMutation(
-    (data: DuplicateSurveyVersionDto) => {
-      return SurveyService.duplicateSurvey(data as any);
+  const {
+    mutateAsync: requestDeleteSurveyMutate,
+    isLoading: requestDeleteSurveyLoading,
+  } = useMutation(
+    (data: IRequestDeleteRecordDto) => {
+      return SurveyService.requestDeleteSurvey({
+        ...data,
+      });
     },
     {
       onSuccess: async () => {
+        notification.success({ message: t('common.denySuccess') });
         await queryClient.invalidateQueries('getSurveys');
-        notification.success({ message: t('common.duplicateSuccess') });
       },
       onError,
     },
   );
 
-  const deleteSurvey = useMutation(
-    (record: ISurvey) =>
-      SurveyService.deleteSurveyById({ id: record.id as string }),
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries('getSurveys');
-        notification.success({
-          message: t('common.deleteSuccess'),
-        });
+  const { mutateAsync: duplicateMutate, isLoading: duplicateLoading } =
+    useMutation(
+      (data: DuplicateSurveyVersionDto) => {
+        return SurveyService.duplicateSurvey(data as any);
       },
-      onError,
-    },
-  );
-  const restoreSurvey = useMutation(
-    (record: ISurvey) =>
-      SurveyService.restoreSurveyById({ id: record.id as string }),
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries('getSurveys');
-        notification.success({
-          message: t('common.restoreSuccess'),
-        });
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries('getSurveys');
+          notification.success({ message: t('common.duplicateSuccess') });
+        },
+        onError,
       },
-      onError,
-    },
-  );
+    );
+
+  const { mutateAsync: deleteSurveyMutate, isLoading: deleteSurveyLoading } =
+    useMutation(
+      (record: ISurvey) =>
+        SurveyService.deleteSurveyById({ id: record.id as string }),
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries('getSurveys');
+          notification.success({
+            message: t('common.deleteSuccess'),
+          });
+        },
+        onError,
+      },
+    );
+  const { mutateAsync: restoreSurveyMutate, isLoading: restoreSurveyLoading } =
+    useMutation(
+      (record: ISurvey) =>
+        SurveyService.restoreSurveyById({ id: record.id as string }),
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries('getSurveys');
+          notification.success({
+            message: t('common.restoreSuccess'),
+          });
+        },
+        onError,
+      },
+    );
 
   const handleDuplicateSurvey = useCallback(
     (record: ISurvey) => {
-      duplicateMutation.mutateAsync({
+      duplicateMutate({
         version: {
           name: createDuplicateSurveyVersionName(record?.latestVersion?.name),
           remarks: [],
         },
-        // projectId: params.projectId as string,
         surveyId: record.id as string,
       });
     },
-    [duplicateMutation],
+    [duplicateMutate],
   );
 
-  const handleDelete = useCallback(
-    (record: ISurvey) => {
-      confirm({
-        icon: null,
-        content: t('common.confirmDeleteSurvey'),
-        onOk() {
-          deleteSurvey.mutateAsync(record);
-        },
-      });
-    },
-    [deleteSurvey, t],
-  );
   const handleRestore = useCallback(
     (record: ISurvey) => {
       confirm({
         icon: null,
         content: t('common.confirmRestoreSurvey'),
         onOk() {
-          restoreSurvey.mutateAsync(record);
+          restoreSurveyMutate(record);
         },
       });
     },
-    [restoreSurvey, t],
+    [restoreSurveyMutate, t],
   );
-  const [openRenameModal, toggleOpenRenameModal] = useToggle();
+
+  const handleResponseDeleteRequest = useCallback(
+    (type: 'accept' | 'deny', record: ISurvey) => {
+      if (type === 'accept') {
+        confirm({
+          icon: null,
+          content: t('common.confirmDeleteSurvey'),
+          onOk() {
+            deleteSurveyMutate(record);
+          },
+        });
+
+        return;
+      }
+
+      confirm({
+        icon: null,
+        content: t('common.confirmDenyDeleteRequestSurvey'),
+        onOk() {
+          requestDeleteSurveyMutate({
+            isAwaitingDeletion: false,
+            id: record?.id as string,
+          });
+        },
+      });
+    },
+    [deleteSurveyMutate, requestDeleteSurveyMutate, t],
+  );
 
   const tableActions = useMemo<keysAction<ISurvey>>(
     () => [
@@ -162,37 +206,56 @@ function SurveyTable() {
         action: handleDuplicateSurvey,
       },
       {
-        key: ACTION.DELETE,
-        action: handleDelete,
+        key: ACTION.REQUEST_DELETE,
+        action: toggleOpenApproveDeleteSurveyModal,
       },
       {
         key: ACTION.RESTORE,
         action: handleRestore,
       },
+      {
+        key: ACTION.ACCEPT_REQUEST_DELETE,
+        action: record => {
+          handleResponseDeleteRequest('accept', record);
+        },
+      },
+      {
+        key: ACTION.DENY_REQUEST_DELETE,
+        action: record => {
+          handleResponseDeleteRequest('deny', record);
+        },
+      },
     ],
-    [toggleOpenRenameModal, handleDuplicateSurvey, handleDelete, handleRestore],
+    [
+      toggleOpenRenameModal,
+      handleDuplicateSurvey,
+      toggleOpenApproveDeleteSurveyModal,
+      handleRestore,
+      handleResponseDeleteRequest,
+    ],
   );
 
   const { handleSelect, selectedRecord } =
     useSelectTableRecord<ISurvey>(tableActions);
 
-  const getSurveyListQuery = useQuery(
-    ['getSurveys', formatQsParams, params],
-    () =>
-      SurveyService.getSurveys({
-        ...formatQsParams,
-        projectId: params.projectId,
-      }),
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
+  const { isLoading: getSurveyListQueryLoading, data: getSurveyListQueryData } =
+    useQuery(
+      ['getSurveys', formatQsParams, params],
+      () =>
+        SurveyService.getSurveys({
+          ...formatQsParams,
+          projectId: params.projectId,
+        }),
+      {
+        refetchOnWindowFocus: false,
+      },
+    );
 
-  const total: number = _get(getSurveyListQuery.data, 'data.itemCount', 0);
+  const total: number = _get(getSurveyListQueryData, 'data.itemCount', 0);
 
   const surveys = useMemo<ISurvey[]>(
-    () => _get(getSurveyListQuery.data, 'data.data'),
-    [getSurveyListQuery.data],
+    () => _get(getSurveyListQueryData, 'data.data'),
+    [getSurveyListQueryData],
   );
 
   const columns: ColumnsType<ISurvey> = useMemo(
@@ -287,7 +350,15 @@ function SurveyTable() {
     <>
       <div className="h-full w-full p-2 relative overflow-hidden">
         <SimpleBar className={'h-full overflow-scroll'}>
-          <Spin spinning={getSurveyListQuery.isLoading}>
+          <Spin
+            spinning={
+              getSurveyListQueryLoading ||
+              requestDeleteSurveyLoading ||
+              deleteSurveyLoading ||
+              duplicateLoading ||
+              restoreSurveyLoading
+            }
+          >
             <Table
               rowClassName={'pointer'}
               dataSource={surveys}
@@ -314,6 +385,11 @@ function SurveyTable() {
         toggleOpen={toggleOpenRenameModal}
         surveyId={selectedRecord?.id}
       />
+      <RequestDeleteSurveyModal
+        open={openApproveDeleteSurveyModal}
+        toggleOpen={toggleOpenApproveDeleteSurveyModal}
+        versionId={selectedRecord?.id}
+      />
     </>
   );
 }
@@ -324,19 +400,23 @@ const ACTION = {
   RENAME: 'RENAME',
   DUPLICATE_SURVEY: 'DUPLICATE_SURVEY',
   RESTORE: 'RESTORE',
-  DELETE: 'DELETE',
+  REQUEST_DELETE: 'REQUEST_DELETE',
+  DENY_REQUEST_DELETE: 'DENY_REQUEST_DELETE',
+  ACCEPT_REQUEST_DELETE: 'ACCEPT_REQUEST_DELETE',
 } as const;
 
 const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
   const { record, handleSelect } = props;
   const { t } = useTranslation();
 
+  const profile = useSelector(AuthSelectors.getProfile);
+
   const { canDelete, canRestore, canUpdate } = useCheckScopeEntityDefault(
     SCOPE_CONFIG.ENTITY.QUESTION,
   );
 
-  const items = useMemo<IMenuItem[]>(() => {
-    const baseMenu: IMenuItem[] = [];
+  const items = useMemo<ItemType[]>(() => {
+    const baseMenu: ItemType[] = [];
     if (canUpdate) {
       baseMenu.push({
         icon: <PenFilled className={'text-primary'} />,
@@ -356,15 +436,44 @@ const ActionThreeDropDown: FC<ActionThreeDropDownType<ISurvey>> = props => {
         });
       }
     }
-    if (canDelete && !record.deletedAt) {
+    if (canDelete && !record.isAwaitingDeletion && !record.deletedAt) {
       baseMenu.push({
-        icon: <TrashOutlined className={'text-primary'} />,
-        label: t('common.deleteSurvey'),
-        key: ACTION.DELETE,
+        icon: <LightingIcon className={'text-primary'} />,
+        label: t('common.requestDeleteSurvey'),
+        key: ACTION.REQUEST_DELETE,
       });
     }
+    if (canDelete && !record.deletedAt && record.isAwaitingDeletion) {
+      if (record.deletedBy === profile?.id) {
+        baseMenu.push({
+          icon: <CheckIcon className={'text-primary'} />,
+          label: t('common.acceptDeleteRequest'),
+          key: ACTION.ACCEPT_REQUEST_DELETE,
+        });
+      }
+      if (
+        record.deletedBy === profile?.id ||
+        profile?.id === record?.createdBy
+      ) {
+        baseMenu.push({
+          icon: <CloseIcon className={'text-primary'} />,
+          label: t('common.denyDeleteRequest'),
+          key: ACTION.DENY_REQUEST_DELETE,
+        });
+      }
+    }
     return baseMenu;
-  }, [canDelete, canRestore, canUpdate, record.deletedAt, t]);
+  }, [
+    canDelete,
+    canRestore,
+    canUpdate,
+    profile?.id,
+    record?.createdBy,
+    record.deletedAt,
+    record.deletedBy,
+    record.isAwaitingDeletion,
+    t,
+  ]);
 
   return (
     <ThreeDotsDropdown

@@ -5,77 +5,21 @@ import { UploadExternalFileWrapper } from './style';
 import * as XLSX from 'xlsx';
 import Dragger from 'antd/lib/upload/Dragger';
 import { useField } from 'formik';
-import { IQuestion, IQuestionVersion, QuestionVersionStatus } from '@/type';
+import { IQuestion } from '@/type';
 import { QuestionBankService } from '@/services';
-import moment from 'moment';
 import { initNewRowValue } from '@pages/Survey/components/GroupSurveyButton/GroupSurveyButton';
 import {
   questionValueType,
   rootSurveyFlowElementFieldName,
 } from '@pages/Survey/SurveyForm/type';
-import { useSurveyFormContext } from '@pages/Survey';
-
-const storeResultX = {};
-
-export const determineVersionOfSurveyQuestion = (
-  record: questionValueType,
-): IQuestionVersion[][] | undefined[] => {
-  const versions = record.versions;
-  if (!versions) return [undefined, undefined];
-
-  if (storeResultX[record.questionVersionId]) {
-    return storeResultX[record.questionVersionId];
-  }
-
-  const newVersions: IQuestionVersion[] = [];
-  const historyVersions: IQuestionVersion[] = [];
-
-  let chosenValueIdx: undefined | number = undefined;
-
-  versions
-    .filter(q => q.status === QuestionVersionStatus.COMPLETED)
-    .sort((a, b) => (moment(a.createdAt).isBefore(a.createdAt) ? 1 : 0))
-    ?.forEach((ver, idx) => {
-      const isCurrentValue = ver.id === record.questionVersionId;
-
-      if (ver.deletedAt && !isCurrentValue) {
-        return;
-      }
-
-      if (chosenValueIdx !== undefined && idx > chosenValueIdx) {
-        historyVersions.push(ver);
-        return;
-      }
-
-      if (isCurrentValue) {
-        chosenValueIdx = idx;
-      }
-      newVersions.push(ver);
-    }, []);
-
-  const result = [newVersions, historyVersions];
-
-  storeResultX[record.questionVersionId] = result;
-
-  return result;
-};
-
-const createBinaryFile = (excelFile, callback) => {
-  const reader = new FileReader();
-  reader.onload = () => {
-    callback(excelFile);
-  };
-  reader.readAsBinaryString(excelFile);
-};
 
 const UploadExternalFile = () => {
   const { t } = useTranslation();
-  const { project } = useSurveyFormContext();
-  const { setExcelUploadFile } = project;
 
   const [{ value }, , { setValue }] = useField<questionValueType[]>(
     `${rootSurveyFlowElementFieldName}[0].surveyQuestions`,
   );
+
   const handleFiles = useCallback(
     (file: File) => {
       const reader = new FileReader();
@@ -118,13 +62,13 @@ const UploadExternalFile = () => {
           getQuestionByParametersList.data.data || [];
 
         const uniqParameter: questionValueType[] = columnHeaders.reduce(
-          (res: questionValueType[], x) => {
-            if (valueQuestionMap[x]) {
+          (res: questionValueType[], parameter) => {
+            if (valueQuestionMap[parameter]) {
               return res;
             }
 
             const questionHasVariableNameSameParameter = questionList.find(
-              q => q.masterVariableName === x,
+              q => q.masterVariableName === parameter,
             );
             //hannah
             if (questionHasVariableNameSameParameter) {
@@ -142,17 +86,18 @@ const UploadExternalFile = () => {
                 questionTitle:
                   questionHasVariableNameSameParameter.latestCompletedVersion
                     .title,
-                id: x,
-                parameter: x,
+                id: undefined,
+                parameter,
               };
               return [...res, newValue];
             }
+
             return [
               ...res,
               {
                 ...initNewRowValue,
-                id: x,
-                parameter: x,
+                id: undefined,
+                parameter: parameter,
               },
             ];
           },
@@ -175,15 +120,15 @@ const UploadExternalFile = () => {
       }
       if (status !== 'uploading') {
         setTimeout(() => {
-          createBinaryFile(info.file.originFileObj, res => {
-            setExcelUploadFile(res);
-          });
+          // createBinaryFile(info.file.originFileObj, res => {
+          //   setExcelUploadFile(res);
+          // });
           handleFiles(info.file.originFileObj);
           setUploading(false);
         });
       }
     },
-    [handleFiles, setExcelUploadFile],
+    [handleFiles],
   );
 
   const onDrop = useCallback(

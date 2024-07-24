@@ -164,7 +164,7 @@ const GroupSurveyButton = () => {
         ...(s.options || []),
         {
           ...initNewRowValue,
-          id: generateRandom().toString(),
+          id: `random_${generateRandom()}`,
           sort: generateRandom(),
         },
       ],

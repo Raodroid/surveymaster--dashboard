@@ -1,6 +1,7 @@
-import {useCheckSurveyFormMode} from '@pages/Survey';
+import { useCheckSurveyFormMode } from '@pages/Survey';
 import EditSurveyHeader from './components/EditSurveyHeader';
 import ViewModeHeader from './components/ViewModeHeader';
+import { memo } from 'react';
 
 const Header = () => {
   const { isViewMode } = useCheckSurveyFormMode();
@@ -8,4 +9,4 @@ const Header = () => {
   return isViewMode ? <ViewModeHeader /> : <EditSurveyHeader />;
 };
 
-export default Header;
+export default memo(Header);

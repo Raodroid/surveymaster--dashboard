@@ -162,6 +162,11 @@ export const CHANGE_EMAIL_FIELD = {
   // verifyPassword: verifyPasswordYub,
 };
 
+export const CREATE_MESSAGE_FIELDS = {
+  name: Yup.string().required(),
+  content: Yup.string().required(),
+};
+
 export const ADD_QUESTION_FIELDS = Yup.object().shape({
   title: Yup.string().required(INVALID_FIELDS.REQUIRED),
   type: Yup.string().required(INVALID_FIELDS.REQUIRED),
@@ -356,7 +361,7 @@ const QUESTION_BLOCK_VALIDATION = {
     )
     .test(
       '',
-      'Survey questions can not be empty',
+      'Survey question required',
       (
         value,
         values: {
@@ -378,7 +383,7 @@ const QUESTION_BLOCK_VALIDATION = {
     )
     .test(
       '',
-      'Embedded Data list can not be empty',
+      'Embedded required',
       (
         value,
         values: {
@@ -452,6 +457,7 @@ const QUESTION_BLOCK_VALIDATION = {
               ![
                 QuestionType.MULTIPLE_CHOICE,
                 QuestionType.RADIO_BUTTONS,
+                QuestionType.RANK_ORDER,
               ].includes(questionType)
             )
               return true;
@@ -492,6 +498,8 @@ const QUESTION_BLOCK_VALIDATION = {
                 QuestionType.DATE_PICKER,
                 QuestionType.TIME_PICKER,
                 QuestionType.TEXT_ENTRY,
+                QuestionType.TEXT_NUMBER,
+                QuestionType.RANK_ORDER,
                 QuestionType.SLIDER,
               ].includes(questionType)
             )
@@ -503,7 +511,7 @@ const QUESTION_BLOCK_VALIDATION = {
     )
     .test(
       '',
-      'Branch Logics can not be empty',
+      'Condition required',
       (
         value,
         values: {
@@ -526,7 +534,7 @@ const QUESTION_BLOCK_VALIDATION = {
     )
     .test(
       '',
-      'Block can not be empty',
+      'Element required',
       (
         value,
         values: {

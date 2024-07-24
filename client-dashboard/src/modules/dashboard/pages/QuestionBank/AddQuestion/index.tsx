@@ -56,7 +56,7 @@ const AddQuestion = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const addQuestionMutation = useMutation(
+  const { mutateAsync, isLoading } = useMutation(
     (data: IQuestionCreatePostDto) => {
       return QuestionBankService.addQuestion(data);
     },
@@ -85,7 +85,10 @@ const AddQuestion = () => {
   );
   const onFinish = useCallback(
     (values: IAddQuestionFormValue) => {
-      const newValue = { ...values };
+      const newValue: IAddQuestionFormValue = {
+        ...values,
+        options: values.options?.map(({ id, ...restOption }) => restOption),
+      };
       if (values.dataMatrix) {
         const rows = values.dataMatrix.rows;
         rows.forEach(row => {
@@ -99,9 +102,9 @@ const AddQuestion = () => {
           delete column.id;
         });
       }
-      return addQuestionMutation.mutateAsync(transformData(newValue));
+      return mutateAsync(transformData(newValue));
     },
-    [addQuestionMutation],
+    [mutateAsync],
   );
 
   return (
@@ -166,7 +169,7 @@ const AddQuestion = () => {
                   className={'info-btn'}
                   type={'primary'}
                   disabled={!dirty || !isValid}
-                  loading={addQuestionMutation.isLoading}
+                  loading={isLoading}
                 >
                   {t('common.saveQuestion')}
                 </Button>

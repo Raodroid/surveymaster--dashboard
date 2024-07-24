@@ -38,6 +38,8 @@ export type IEditQuestionFormValue = BaseQuestionVersionDto & {
   options?: IBaseQuestionOptionsVersionDto[];
 };
 
+const RANDOME_ID_PREFIX = 'random';
+
 type transformDataType =
   | IQuestionVersionPostNewDto
   | IQuestionVersionPutUpdateDtoExtendId;
@@ -99,15 +101,17 @@ const EditQuestion = () => {
       masterCategoryId,
       masterSubCategoryId,
       masterVariableName,
-      options: currentVersionQuestionData?.options?.map(opt => ({
-        id: opt.sort,
-        sort: opt.sort,
-        text: opt.text,
-        keyPath: opt?.keyPath || '',
-        imageUrl: opt.imageUrl,
-      })) || [
+      options: currentVersionQuestionData?.options
+        ?.sort((a, b) => a.sort - b.sort)
+        .map(opt => ({
+          id: opt.id,
+          sort: opt.sort,
+          text: opt.text,
+          keyPath: opt?.keyPath || '',
+          imageUrl: opt.imageUrl,
+        })) || [
         {
-          id: generateRandom(),
+          id: `${RANDOME_ID_PREFIX}_${generateRandom()}`,
           text: '',
           sort: 1,
         },
@@ -136,7 +140,7 @@ const EditQuestion = () => {
     return value;
   }, [currentVersionQuestionData, questionData]);
 
-  const updateQuestionMutation = useMutation(
+  const { mutateAsync, isLoading: updateQuestionLoading } = useMutation(
     (data: transformDataType) => {
       if (
         currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED
@@ -153,6 +157,7 @@ const EditQuestion = () => {
       onSuccess: async response => {
         const data: IQuestionVersion = response.data;
         await queryClient.invalidateQueries('getQuestionList');
+        await queryClient.invalidateQueries('getQuestionQuery');
         notification.success({ message: t('common.updateSuccess') });
         navigate(
           `${generatePath(
@@ -170,30 +175,25 @@ const EditQuestion = () => {
   );
   const onFinish = useCallback(
     async (values: IEditQuestionFormValue) => {
-      const newValues = {
-        ...values,
-        options: values?.options?.map(({ text, imageUrl, keyPath }, idx) => ({
-          text,
-          imageUrl,
-          sort: idx + 1,
-          keyPath,
-        })),
-      };
+      const newValues: IEditQuestionFormValue = values;
 
       if (
         currentVersionQuestionData?.status === QuestionVersionStatus.COMPLETED
       ) {
         newValues.status = QuestionVersionStatus.DRAFT;
-      }
 
+        if (values.options?.length !== 0)
+          //remove id when create new question
+          newValues.options = values.options?.map(
+            ({ id, ...restOption }) => restOption,
+          );
+      }
       const newVal = transformData(newValues, currentVersionQuestionData);
       if (!newVal) return;
 
-      await updateQuestionMutation.mutateAsync(
-        newVal as IQuestionVersionPutUpdateDtoExtendId,
-      );
+      await mutateAsync(newVal as IQuestionVersionPutUpdateDtoExtendId);
     },
-    [currentVersionQuestionData, updateQuestionMutation],
+    [currentVersionQuestionData, mutateAsync],
   );
 
   return (
@@ -257,7 +257,7 @@ const EditQuestion = () => {
                   className={'info-btn'}
                   type={'primary'}
                   disabled={!dirty || !isValid}
-                  loading={isLoading}
+                  loading={isLoading || updateQuestionLoading}
                 >
                   {t('common.saveNewQuestionVersion')}
                 </Button>
