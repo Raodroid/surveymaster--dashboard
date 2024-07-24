@@ -7,7 +7,7 @@ import { useQuery } from 'react-query';
 import { SurveyService } from '@/services';
 import { useCheckSurveyFormMode } from '@pages/Survey/SurveyForm/util';
 import { ControlledInput } from '@/modules/common';
-import { Input } from 'antd';
+import { Input, Empty } from 'antd';
 
 const { TextArea } =Input;
 
@@ -39,9 +39,11 @@ const EndSurvey: FC<QuestionBlockProps> = (props) => {
 
   const messageContent = useMemo(() => {
     const endMessages = messageData?.data?.data || [];
-    const focusMessage = endMessages?.find((item) => item.id === value.endMessageId);
+    const focusMessage = endMessages?.find((item) => item.id === value?.endMessageId);
     return focusMessage?.content || '';
   }, [messageData, value])
+
+  if (!value) return <Empty />;
 
   return (
     <>
