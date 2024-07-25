@@ -154,7 +154,10 @@ function TeamContent() {
   }, []);
 
   const handleRemoveFromTeam = useCallback(
-    () => setShowConfirmDeactivateModal(true),
+    (record: TeamMember) => {
+      setUserId(record?.key);
+      setShowConfirmDeactivateModal(true);
+    },
     [],
   );
 
