@@ -161,7 +161,10 @@ function TeamContent() {
     [],
   );
 
-  const handleRestore = useCallback(() => setShowConfirmRestoreModal(true), []);
+  const handleRestore = useCallback((record: TeamMember) => {
+    setUserId(record?.key);
+    setShowConfirmRestoreModal(true);
+  }, []);
 
   const tableActions = useMemo<keysAction<TeamMember>>(
     () => [
