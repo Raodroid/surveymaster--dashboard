@@ -350,6 +350,17 @@ const QUESTION_BLOCK_VALIDATION = {
         return !!value;
       },
     ),
+  endMessageId: Yup.string().nullable().test(
+    '',
+    'Message required',
+    (
+      value,
+      values: { parent: { type?: SubSurveyFlowElement; } },
+    ) => {
+      if (values.parent?.type !== SubSurveyFlowElement.END_SURVEY) return true;
+      return !!value;
+    },
+  ),
   surveyQuestions: Yup.array()
     .of(
       Yup.object().shape({
