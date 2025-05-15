@@ -27,6 +27,7 @@ yarn-error.log*
 .env.stg
 .env.stg2
 .env.dev
+.env
 
 .createI18nex
 
@@ -34,6 +35,5 @@ yarn-error.log*
 generated-cra-app
 .cra-template-rb
 template
-
 
 bun.lockb
