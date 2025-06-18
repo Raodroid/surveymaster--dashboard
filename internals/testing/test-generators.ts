@@ -16,7 +16,7 @@ interface PlopGenerator extends PG {
   ) => Promise<{ changes: []; failures: [] }>;
 }
 
-process.chdir(path.join(__dirname, '../generators'));
+process.chdir(path.join(__dirname, './generators'));
 
 const plop = nodePlop('./plopfile.ts');
 const componentGen = plop.getGenerator('component') as PlopGenerator;

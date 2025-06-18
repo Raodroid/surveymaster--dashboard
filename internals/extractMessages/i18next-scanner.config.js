@@ -1,7 +1,7 @@
 var fs = require('fs');
 const path = require('path');
 const typescript = require('typescript');
-const compilerOptions = require('../../tsconfig.json').compilerOptions;
+const compilerOptions = require('../tsconfig.json').compilerOptions;
 
 const stringfyTranslationObjects = require('./stringfyTranslations.js');
 

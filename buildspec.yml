@@ -40,6 +40,6 @@ phases:
 
 cache:
   paths:
-   - 'client-dashboard/node_module/**/*'
+   - 'node_module/**/*'
    - /root/.cache/yarn/**/*
    - /root/.yarn-cache/**/*
