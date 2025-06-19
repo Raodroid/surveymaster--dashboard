@@ -1,39 +1,43 @@
-# NOTE: Access to client-dashboard folder before installation and running
+# SurveyMaster Frontend
+
+This is the frontend dashboard for SurveyMaster, a survey management platform.
+
+## 🚀 Features
+
+- Survey creation and management
+- Dashboard UI with React
+- Integrated with AWS and SurveyJS
+
+## 📦 Tech Stack
+
+- React 18
+- TypeScript
+- Vite
+
+## 📁 Project Structure
+survey-master-dashboard/
+├── src/                    # React source code
+├── public/                 # Static assets
+├── internals/              # i18n, Plop generators
+├── .env / .env.dev         # Env configs
+├── vite.config.ts          # Vite config
+├── package.json            # Project scripts & dependencies
+├── tailwind.config.cjs     # Tailwind setup (if used)
+└── README.md               # This file
+
+
+--- Getting Started ---
+
+### 1️⃣ Clone the repository
 
 ```bash
-$ cd client-dashboard
-```
+git clone https://github.com/Raodroid/survey-master-dashboard.git
+cd survey-master-dashboard
 
-### ==> Installation <==
+# WIP
 
-```bash
-$ yarn install
-```
 
-### ==> Running the app <==
 
-# Step 2: Create an ENV file based on .env.example file before running
 
-```bash
-# Local
-$ .env
 
-# Development
-$ .env.dev
 
-# Staging
-$ .env.dev
-```
-
-# Step 3: Run command
-
-```bash
-# Local
-$ yarn start
-
-# Development
-$ yarn start:dev
-
-# Staging
-$ yarn start:stg
-```
