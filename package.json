@@ -5,6 +5,7 @@
   "scripts": {
     "start": "env-cmd -f .env vite --host 0.0.0.0",
     "start:dev": "env-cmd -f .env.dev vite --host 0.0.0.0",
+    "dev": "next dev ",
     "start:stg": "env-cmd -f .env.stg vite --host 0.0.0.0",
     "build:development": "vite build --mode dev",
     "build:dev-server": "vite build --mode dev-server",
