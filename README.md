@@ -238,3 +238,10 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
 > _Happy coding! Need help? Open an issue or reach out to the maintainers._
+
+## Contributors
+
+Tan Rihao
+Jonas Tua
+Sweeken
+Yeo Feng Ren
