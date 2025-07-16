@@ -7,8 +7,8 @@ A modern web dashboard built with React, Vite, and SurveyJS for managing and ana
 <!-- Diagram placeholder -->
 <img width="880" height="642" alt="SurveyMaster Architecture" src="https://github.com/user-attachments/assets/076bd256-3730-4ea8-856b-e6e6f1c0fef9" />
 
-- **SurveyMaster Frontend:** https://github.com/Raodroid/surveymaster--dashboard.git
 - **SurveyMaster Backend:** https://github.com/yeotzunkai/survey-master-api
+- **SurveyJS Frontend:** https://github.com/AmiliAsia/surveyjs_patient_platform_fe
 - **SurveyJS Backend:** https://github.com/AmiliAsia/surveyjs_patient_platform_be
 
 ## 🛠️ Tech Stack
